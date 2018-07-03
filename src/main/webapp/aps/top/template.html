@@ -1,0 +1,66 @@
+<nav class="navbar navbar-inner navbar-fixed-top" style="margin-bottom: 0px;">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a style="color: #ffffff;font-size: 20px;font-weight: 600;" class="navbar-brand" >教科研平台</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <!-- <ul class="nav navbar-nav">
+        
+        <li><a href=""></a></li>
+        
+      </ul> -->
+      
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+        <input style="height:30px;margin-top: 10px;border-radius:20px;" type="text" class="form-control" placeholder="Search" ng-model="searchMenu" ng-keyup="searchMenuUp()" />
+        <ul class="dropdown-menu dropdown-menu-right searchMenuList" style="left: 0px;">
+          <li ng-repeat="m1 in menuData | filter :{ MENU_LINK: 'aps/content/' } | filter :{ MENU_NAME: searchMenu } | limitTo : 5 | orderBy: 'MENU_CODE' ">
+          <a ng-click="clickMenu(m1)">{{m1.MENU_NAME}}</a></li>
+        </ul>
+        </li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{userInfo.XM}} <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+          	<!-- <li><a>{{userInfo.FK_UNITNAME}} </a></li> -->
+            <li style="text-align: center;"><a ng-click="logout()" > <span style="color: #a94442;" class="glyphicon glyphicon-off" aria-hidden="true"></span> 
+            安全退出</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+
+
+
+<div class="subnavbar">
+  <div class="subnavbar-inner">
+    <div class="container">
+      <ul class="mainnav">
+        <li ng-repeat="m1 in menuData | filter :{ MENU_FATHER_PK: 'db21c5f0ef3b41119c38db3302778fdb' } | orderBy: 'MENU_CODE' " 
+        class="dropdown subnavbar-open-right menuPk-{{m1.MENU_PK}}"><a class="dropdown-toggle" data-toggle="dropdown" > <i class="glyphicon glyphicon-{{m1.MENU_IMG}}"></i><span>{{m1.MENU_NAME}}</span> </a>
+          <ul class="dropdown-menu">
+            <li ng-repeat='m2 in menuData | filter :{ MENU_FATHER_PK:m1.MENU_PK } | orderBy: "MENU_CODE" ' >
+            <a ng-click="clickMenu(m2)">{{m2.MENU_NAME}}</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <!-- /container --> 
+  </div>
+  <!-- /subnavbar-inner --> 
+</div>
+
+
+

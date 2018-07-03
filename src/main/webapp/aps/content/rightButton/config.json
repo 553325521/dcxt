@@ -1,0 +1,10 @@
+{
+    "name": "res_admin_right_button",
+    "viewUrl": "aps/content/rightButton/template.html",
+    "controllerUrl": "aps/content/rightButton/controller.js",
+    "config": 
+    {
+    		"menuListData": "json/Api_queryForList_UserRightMenu.json",
+            "menuButtonListData": "json/Api_queryForList_UserRightMenuButton.json"
+	}
+}

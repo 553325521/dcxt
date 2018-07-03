@@ -1,0 +1,451 @@
+<form class="form-horizontal form-horizontal-condensed" >
+
+<div class="panel panel-default" >
+  <div class="panel-body" style="min-height: 680px;padding: 30px;width: 100%"  >
+	<table align="center"  style="width: 80%">
+		
+		<tr>
+			<td valign="top" >
+				<table class="table-striped table-from-big"  style="width: 100%">
+					<tbody>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+								<h4>申请书校级审核</h4>
+							</td>
+						</tr>
+				
+						<tr>
+							<td class="control-label"  align="right">申报类别：</td>
+							<td  class="form-group has-feedback" >
+							<select class="form-control xbclass"  ng-model="form.PROJECT_TYPE">
+								  <option value="">==请选择==</option>
+					              <option value="4">个人</option>
+					              <option value="5">集体</option>
+							</select>
+							</td>
+							<td class="control-label"  align="right"></td>
+							<td  class="form-group has-feedback" >
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="control-label"  align="right">审核意见：</td>
+							<td  colspan="3" >
+								<textarea rows="5" cols="118" ng-model="form.SCHOOL_CHECK_OPINION"></textarea>
+							</td>	
+						</tr>
+							
+						<tr>
+							<td class="control-label"  align="right">经费：</td>
+							<td colspan="3" >
+								<textarea rows="5" cols="118"   ng-model="form.FINANCE_MONEY"></textarea>
+							</td>
+						</tr>		
+					
+					<tr>
+						<td valign="top" style="text-align: center;" colspan="4">
+							<button type="button" class="btn btn-success" ng-click="success();">通过</button>
+					      	&nbsp; 
+					      	<button type="button" class="btn btn-warning" ng-click="fail();">否决</button>
+						</td>
+					</tr>
+					
+					<tbody >
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+								<h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> 松江区教育科学研究项目申请书</h4>
+							</td>
+						</tr>
+					
+						<tr>
+							<td style="width: 15%"  align="right">申请编号：</td>
+							<td style="width: 35%">
+								{{form.APPLY_CODE}}
+							</td>
+							<td style="width: 15%"  align="right">项目名称：</td>
+							<td style="width: 35%">
+								{{form.PROJECT_TITLE}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">申报类别：</td>
+							<td style="width: 35%" ng-switch on="form.PROJECT_TYPE">
+						        <!-- <span ng-switch-when="1">校级</span> -->
+						        <span ng-switch-when="4">个人</span>
+						        <span ng-switch-when="5">集体</span>
+					         </td>
+							<td style="width: 15%" align="right">项目级别：</td>
+							<td style="width: 35%" ng-switch on="form.PROJECT_LEVEL">
+						       <span ng-switch-when="1">校级</span>
+					           <span ng-switch-when="2">区级</span>
+					           <span ng-switch-when="3">市级</span>
+					         </td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">负责人：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_NAME}}
+							</td>
+							<td style="width: 15%"  align="right">工作单位：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_SCHOOL_NAME}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">申请经费：</td>
+							<td style="width: 35%">
+								{{form.PRICE}}
+							</td>
+							<td style="width: 15%"  align="right">预期最终成果：</td>
+							<td style="width: 35%">
+								{{form.EXPECT_RESULT}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">填表日期：</td>
+							<td style="width: 35%">
+								{{form.APPLY_DATE}}
+							</td>
+							<td style="width: 15%"  align="right">预计完成时间：</td>
+							<td style="width: 35%">
+								{{form.FINISH_DATE}}
+							</td>
+						</tr>
+					
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+								<h4>一、数据表</h4>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+								<h5>负责人基本信息</h5>
+							</td>
+						</tr>
+						<tr>
+							<td style="width: 15%"  align="right">姓名：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_NAME}}
+							</td>
+							<td style="width: 15%"  align="right">性别：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_GENDER}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">职称：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_JOB_TITLE}}
+							</td>
+							<td style="width: 15%"  align="right">职务：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_JOB}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">研究专长：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_SKILL}}
+							</td>
+							<td style="width: 15%"  align="right">身份证号：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_IDCARD}}
+							</td>
+						</tr>
+							
+						<tr>
+							<td style="width: 15%"  align="right">单位电话：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_SCHOOL_TEL}}
+							</td>
+							<td style="width: 15%"  align="right">家庭电话：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_HOME_TEL}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">移动电话：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_TEL}}
+							</td>
+							<td style="width: 15%"  align="right">电子信箱：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_EMAIL}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">工作单位：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_SCHOOL_NAME}}
+							</td>
+							<td style="width: 15%"  align="right">邮政编码：</td>
+							<td style="width: 35%">
+								{{form.TEACHER_SCHOOL_POSTAL}}
+							</td>
+						</tr>
+						
+						<tr>
+							<td style="width: 15%"  align="right">单位地址：</td>
+							<td style="width: 35%" colspan="3">
+								{{form.TEACHER_SCHOOL_ADDRESS}}
+							</td>
+						</tr>
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>课题组主要成员</h5>
+						</td>
+					</tr>
+				
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>已添加课题组成员</h4>
+						</td>
+					</tr>
+					
+					<tr>
+					<td colspan="4" style="width: 100%">
+						<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="TEACHER_NAME" class="sorting" ng-click="order($event.target)">姓名 </th>
+									  <th column="TEACHER_GENDER" class="sorting" ng-click="order($event.target)">性别 </th>
+									  <th column="TEACHER_EDUCATION" class="sorting" ng-click="order($event.target)">学历 </th>
+									  <th column="TEACHER_DEGREE" class="sorting" ng-click="order($event.target)">学位 </th>
+									  <th column="BORN" class="sorting" ng-click="order($event.target)">出生年月 </th>
+									  <th column="JOB_TITLE" class="sorting" ng-click="order($event.target)">职务 </th>
+									  <th column="SPECIALTY" class="sorting" ng-click="order($event.target)">研究专长 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">工作单位 </th>
+								</tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in newTeacherList'>
+									<td>{{data.TEACHER_NAME}} <input type="hidden" value="{{data.TEACHER_PK}}"><input type="hidden" value="{{data.MEMBER_PK}}"></td>     
+									<td>{{data.TEACHER_GENDER}}</td>
+									<td>{{data.TEACHER_EDUCATION}}</td>     
+									<td>{{data.TEACHER_DEGREE}}</td>
+									<td>{{data.BORN}}</td>     
+									<td>{{data.JOB_TITLE}}</td>
+									<td>{{data.SPECIALTY}}</td>     
+									<td>{{data.SCHOOL_NAME}}</td>
+							  </tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>				
+					</td>			
+					</tr>
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>二、申请人和课题组成员近年取得的与本课题有关的研究成果</h4>
+						</td>
+					</tr>
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>三、申请人和课题组成员近年承担的研究课题</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>已添加科研课题</h4>
+						</td>
+				   </tr>
+					
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="PROJECT_NAME" class="sorting" ng-click="order($event.target)">课题名称 </th>
+									  <th column="PROJECT_KIND" class="sorting" ng-click="order($event.target)">课题类型 </th>
+									  <th column="START_DATE" class="sorting" ng-click="order($event.target)">立项时间 </th>
+									  <th column="COMPLETION" class="sorting" ng-click="order($event.target)">完成情况 </th>
+									  <th column="APPROVE_UNIT" class="sorting" ng-click="order($event.target)">批准单位 </th>
+							   </tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='task in newTaskList'>
+									<td>{{task.PROJECT_NAME}}</td>     
+									<td>{{task.PROJECT_KIND}}</td>
+									<td>{{task.START_DATE}}</td>     
+									<td>{{task.COMPLETION}}</td>
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+
+						</td>
+					
+					</tr>
+	
+				</tbody>
+				
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>四、预期研究成果</h4>
+						</td>
+					</tr>
+			
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>已添加预期成果</h4>
+						</td>
+					</tr>
+			
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="USER_NAME" class="sorting" ng-click="order($event.target)">承担人 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">研究阶段（起止时间） </th>
+									  <th column="USER_NAME" class="sorting" ng-click="order($event.target)">成果形式 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">阶段成果名称 </th>
+							   </tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in newResultList'>
+									<td>{{data.PEOPLE}}</td>     
+									<td>{{data.STAGE_START_TIME}}至{{data.STAGE_END_TIME}}</td>
+									<td>{{data.RESULT_FORM}}</td>     
+									<td>{{data.RESULT_STAGE_NAME}}</td> 
+							   </tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+
+						</td>
+					
+					</tr>
+	
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>五、研究方案</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="121" ng-model="form.DESIGN_ARGUMENT" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>
+
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>六、研究方案(匿名)</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="121" ng-model="form.PLANS" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>
+				</tbody>
+				
+					<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>七、文献综述</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="121" ng-model="form.BASIS_THEORY" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>			
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>八、文献综述(匿名)</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="121" ng-model="form.INFORMATION_REVIEW" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>			
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4><h4>九、完成项目的可行性分析</h4></h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="121" ng-model="form.CONDITION" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>		
+				</tbody>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+  </div>
+</div>
+
+
+</form>
+

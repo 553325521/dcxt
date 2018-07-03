@@ -1,0 +1,13 @@
+{
+    "name": "SchoolCheck_applycheck",
+    "viewUrl": "aps/content/EduResearch/SchoolCheck/applycheck/template.html",
+    "controllerUrl": "aps/content/EduResearch/SchoolCheck/applycheck/controller.js",
+    "config": 
+    {
+    			"findByIdURL":"json/Open_queryForObject_findSiResearchById.json",
+    			"findMemberListURL":"json/Open_queryForList_findMemberListByPk.json",
+    			"findTaskListURL":"json/Open_queryForList_findTaskListByPk.json",
+    			"findResultListURL":"json/Open_queryForList_findResultListByPk.json",
+    			"checkURL":"json/SiResearch_schoolCheck_schoolCheckApply.json"		
+	}
+}

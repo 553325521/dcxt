@@ -1,0 +1,20 @@
+{
+    "name": "ScienceReApply_reapply",
+    "viewUrl": "aps/content/EduResearch/ScienceReApply/reapply/template.html",
+    "controllerUrl": "aps/content/EduResearch/ScienceReApply/reapply/controller.js",
+    "config": 
+    {			
+    			"uploadurl":"http://rescenter.sjedu.cn/ResCenter/upload/Upload_fileUploadDomain_fileUploadDomain.json",
+    			"findByIdURL":"json/Open_queryForObject_findSiResearchById.json",
+    			"findCodeURL":"json/SiResearch_findCourseCode_findCourseCodeByTeacher.json",
+    			"findMemberListURL":"json/Open_queryForList_findMemberListByPk.json",
+    			"findTaskListURL":"json/Open_queryForList_findTaskListByPk.json",
+    			"findResultListURL":"json/Open_queryForList_findResultListByPk.json",
+    			"findSchoolTypeURL":"json/Open_queryForList_findSchoolTypeList.json",
+    			"findSchoolByTypeURL":"json/Open_queryForList_findSchoolByTypeList.json",
+    			"findTeacherBySchoolURL":"json/Open_queryForList_findTeacherBySchoolList.json",
+    			"findTeacherInfoURL":"json/Open_queryForObject_findTeacherInfoByPk.json",
+    			"reapplyURL":"json/SiResearch_reapply_reapplySiResearch.json"
+    			
+	}
+}

@@ -1,0 +1,44 @@
+<div app-part src="'aps/top/config.json'"  random="true"></div>
+
+<div class="contentDiv container" app-part src="'aps/content/rightButton/config.json'"  random="true"></div>
+<div class="container">
+<div class="contentDiv "  app-part src="appPartSrc"  random="true" ></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="mainModal" tabindex="-1" role="dialog" aria-labelledby="mainModalLabel">
+  <div class="modal-dialog {{modal.size }}" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="mainModalLabel"> <span class="glyphicon glyphicon-{{modal.icon }}"></span> {{modal.text }}</h4>
+      </div>
+      <div class="modal-body" style="overflow-y:auto;" >
+        <div app-part src="appPartModalSrc"  random="true"></div>
+      </div>
+      <div class="modal-footer" style="text-align: center;">
+        <button ng-repeat='btn in buttonsData'  style="margin-right: 10px;"
+		ng-click="clickButton(btn)" type="button" 
+		class="btn btn-{{btn.buttonStyle }} {{btn.buttonStatus }}">
+		<span class="glyphicon glyphicon-{{btn.buttonImg }}"></span> {{btn.buttonName }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ModalAlert -->
+<div class="modal fade" id="mainModalAlert" style="top:50%;margin-top:-150px;" tabindex="-1" role="dialog" aria-labelledby="mainModalAlert">
+  <div class="modal-dialog modal-sm" role="document" style="width: 300px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title mainModalLabelAlertTitle"></h4>
+      </div>
+      <div class="modal-body mainModalAlertContent"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" ng-click="closeAlert()">关闭</button>
+        <button type="button" class="btn btn-primary" ng-click="closeAlert()">确定</button>
+      </div>
+    </div>
+  </div>
+</div>

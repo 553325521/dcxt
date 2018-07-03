@@ -1,0 +1,14 @@
+{
+    "name": "ExpertManage_achieveupdate",
+    "viewUrl": "aps/content/EduResearch/ExpertManage/achieveupdate/template.html",
+    "controllerUrl": "aps/content/EduResearch/ExpertManage/achieveupdate/controller.js",
+    "config": 
+    {
+    			"findByIdURL":"json/Open_queryForObject_findExpertAchieveById.json",
+    			"findProjectInfoURL":"json/Open_queryForObject_findSiResearchById.json",
+    			"findMemberListURL":"json/Open_queryForList_findMemberListByPk.json",
+    			"findFileListURL":"json/Open_queryForList_findFileListBypk.json",
+    			"findCheckInfoURL":"json/Open_queryForList_findCheckInfoByPk.json",
+    			"checkURL":"json/Expert_update_expertCheckAchieve.json"
+	}
+}

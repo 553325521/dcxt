@@ -1,0 +1,15 @@
+{
+    "name": "SchoolCheck_reportcheck",
+    "viewUrl": "aps/content/EduResearch/SchoolCheck/reportInfo/template.html",
+    "controllerUrl": "aps/content/EduResearch/SchoolCheck/reportInfo/controller.js",
+    "config": 
+    {			"findByIdURL":"json/Open_queryForObject_findReportById.json",
+    			"findProjectInfoURL":"json/Open_queryForObject_findSiResearchById.json",
+           		"menu":{
+	            "buttons":
+	            [
+		        	
+				]
+			}
+	}
+}

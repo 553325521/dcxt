@@ -1,0 +1,168 @@
+<form class="form-horizontal form-horizontal-condensed" >
+
+<div class="panel panel-default" >
+  <div class="panel-body" style="min-height: 680px;padding: 30px;width: 100%"  >
+	<table align="center"  style="width: 80%">
+		<tr>
+			<td valign="top" >
+				<table class="table-striped table-from-big"  style="width: 100%">
+					<tbody>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+							<span class="uploadfile" style=""></span>
+							</td>
+						</tr>
+					</tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top:25px;display:none;" id="upload_show">
+							<button type="button" class="btn btn-info" ng-click="fileClick();">在线预览</button> 
+				      		 &nbsp; 
+				      		<button type="button" class="btn btn-success" ng-click="downLoadClick();">下载</button>
+						</td>
+					</tr> 
+					<tbody >
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> 松江区教育科学研究项目开题报告</h4>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 15%"  align="right">申请编号：</td>
+						<td style="width: 35%">
+							{{form.APPLY_CODE}}
+						</td>
+						<td style="width: 15%"  align="right">项目名称：</td>
+						<td style="width: 35%">
+							{{form.PROJECT_TITLE}}
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">申报类别：</td>
+						<td style="width: 35%" ng-switch on="form.PROJECT_TYPE">
+					        <!-- <span ng-switch-when="1">校级</span> -->
+					        <span ng-switch-when="4">个人</span>
+					        <span ng-switch-when="5">集体</span>
+				         </td>
+						<td style="width: 15%" align="right">项目级别：</td>
+						<td style="width: 35%" ng-switch on="form.PROJECT_LEVEL">
+					       <span ng-switch-when="1">校级</span>
+				           <span ng-switch-when="2">区级</span>
+				           <span ng-switch-when="3">市级</span>
+				         </td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">负责人：</td>
+						<td style="width: 35%">
+							{{form.TEACHER_NAME}}
+						</td>
+						<td style="width: 15%"  align="right">工作单位：</td>
+						<td style="width: 35%">
+							{{form.TEACHER_SCHOOL_NAME}}
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">申请经费：</td>
+						<td style="width: 35%">
+							{{form.PRICE}}
+						</td>
+						<td style="width: 15%"  align="right">预期最终成果：</td>
+						<td style="width: 35%">
+							{{form.EXPECT_RESULT}}
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">填表日期：</td>
+						<td style="width: 35%">
+							{{form.APPLY_DATE}}
+						</td>
+						<td style="width: 15%"  align="right">预计完成时间：</td>
+						<td style="width: 35%">
+							{{form.FINISH_DATE}}
+						</td>
+					</tr>
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>一、变更信息</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">变更类别：</td>
+						<td style="width: 35%" ng-switch on="form.DELAY_SORT">
+					        <span ng-switch-when="1">终止</span>
+					        <span ng-switch-when="2">延期</span>
+				         </td>
+						<td style="width: 15%" align="right"></td>
+						<td style="width: 35%" > </td>
+					</tr>
+					
+					<tr id="break" style="display:none;">	
+						<td style="width: 15%" align="right" >科研中止原因：</td>
+						<td style="width: 35%">
+							{{form.BREAK_RESSON}}
+				             <!--  <input type="checkbox" name="discontinue" value="1" id="break1"/>负责人变动&nbsp;&nbsp;
+				              <input type="checkbox" name="discontinue" value="2" id="break2"/>方案变动&nbsp;&nbsp;
+				              <input type="checkbox" name="discontinue" value="3" id="break3"/>主要成员变动&nbsp;&nbsp;
+				              <input type="checkbox" name="discontinue" value="4" id="break4"/>经费问题
+					          <input type="checkbox" name="discontinue" value="5" id="break5"/>其它 -->
+			             </td>
+						<td style="width: 15%" align="right"></td>
+						<td style="width: 35%" > </td>
+					</tr>		
+					
+					<tr id="delay" style="display:none;">
+						<td style="width: 15%" align="right" >科研延期原因：</td>
+						<td style="width: 35%">
+							{{form.DELAY_RESSON}}
+				              <!-- <input type="checkbox" name="extension" value="1" id="delay1"/>负责人工作调动&nbsp;&nbsp;
+				              <input type="checkbox" name="extension" value="2" id="delay2"/>学校（园）工作调整&nbsp;&nbsp;
+				              <input type="checkbox" name="extension" value="3" id="delay3"/>经费问题&nbsp;&nbsp;
+				              <input type="checkbox" name="extension" value="4" id="delay4"/>其它 -->
+			             </td>
+			            <td style="width: 15%" align="right"></td>
+						<td style="width: 35%" >
+					    	{{form.DELAY_DATE}}
+				        </td>	
+					</tr>
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>二、主要研究内容及研究进展情况</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;"  cols="121" ng-model="form.PROGRESS_ITUATION" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</td>
+		</tr>
+		
+		<tr>
+			<td valign="top" style="text-align: center;">
+	      		<button type="button" class="btn btn-default" ng-click="goback();">返回</button>
+			</td>
+		</tr> 
+	</table>
+
+  </div>
+</div>
+
+
+</form>
+

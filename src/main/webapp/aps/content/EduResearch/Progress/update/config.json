@@ -1,0 +1,32 @@
+{
+    "name": "progress_update",
+    "viewUrl": "aps/content/EduResearch/Progress/update/template.html",
+    "controllerUrl": "aps/content/EduResearch/Progress/update/controller.js",
+    "config": 
+    {			"uploadurl":"http://rescenter.sjedu.cn/ResCenter/upload/Upload_fileUploadDomain_fileUploadDomain.json",
+    			"findByIdURL":"json/Open_queryForObject_findProgressById.json",
+    			"findProjectInfoURL":"json/Open_queryForObject_findSiResearchById.json",
+    			"findAchieveListURL":"json/Open_queryForList_findStageResultListBypk.json",
+    			"findResultListURL":"json/Open_queryForList_findResultListByPk.json",
+    			"updateURL": "json/Progress_update_updateProgress.json",
+           		"menu":{
+	            "buttons":
+	            [
+		        	{
+		            	"buttonName":"关闭",
+		            	"buttonStyle":"default",
+		            	"buttonImg":"remove",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"progress_add.close"
+		        	},
+		        	{
+		            	"buttonName":"保存",
+		            	"buttonStyle":"primary",
+		            	"buttonImg":"floppy-disk",
+		            	"buttonStatus":"0",
+		            	"buttonLink":"progress_add.save"
+		        	}
+				]
+			}
+	}
+}

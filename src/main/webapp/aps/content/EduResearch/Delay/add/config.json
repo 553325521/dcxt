@@ -1,0 +1,12 @@
+{
+    "name": "Delay_add",
+    "viewUrl": "aps/content/EduResearch/Delay/add/template.html",
+    "controllerUrl": "aps/content/EduResearch/Delay/add/controller.js",
+    "config": 
+    {
+    			"uploadurl":"http://rescenter.sjedu.cn/ResCenter/upload/Upload_fileUploadDomain_fileUploadDomain.json",
+    			"findByIdURL":"json/Open_queryForObject_findApplyById.json",
+    			"addURL":"json/Delay_insert_insertDelay.json"
+    			
+	}
+}

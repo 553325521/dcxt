@@ -1,0 +1,237 @@
+<form class="form-horizontal form-horizontal-condensed" >
+
+<div class="panel panel-default" >
+  <div class="panel-body" style="min-height: 680px;padding: 30px;width: 100%"  >
+	<table align="center"  style="width: 80%">	
+		<tr>
+			<td valign="top" >
+				<table class="table-striped table-from-big"  style="width: 100%">
+					<tbody >
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> 松江区教育科学研究项目中期报告</h4>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 15%"  align="right">申请编号：</td>
+						<td style="width: 35%">
+							{{form.APPLY_CODE}}
+						</td>
+						<td style="width: 15%"  align="right">项目名称：</td>
+						<td style="width: 35%">
+							{{form.PROJECT_TITLE}}
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">申报类别：</td>
+						<td style="width: 35%" ng-switch on="form.PROJECT_TYPE">
+					        <!-- <span ng-switch-when="1">校级</span> -->
+					        <span ng-switch-when="4">个人</span>
+					        <span ng-switch-when="5">集体</span>
+				         </td>
+						<td style="width: 15%" align="right">项目级别：</td>
+						<td style="width: 35%" ng-switch on="form.PROJECT_LEVEL">
+					       <span ng-switch-when="1">校级</span>
+				           <span ng-switch-when="2">区级</span>
+				           <span ng-switch-when="3">市级</span>
+				         </td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">负责人：</td>
+						<td style="width: 35%">
+							{{form.TEACHER_NAME}}
+						</td>
+						<td style="width: 15%"  align="right">工作单位：</td>
+						<td style="width: 35%">
+							{{form.TEACHER_SCHOOL_NAME}}
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">申请经费：</td>
+						<td style="width: 35%">
+							{{form.PRICE}}
+						</td>
+						<td style="width: 15%"  align="right">预期最终成果：</td>
+						<td style="width: 35%">
+							{{form.EXPECT_RESULT}}
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">填表日期：</td>
+						<td style="width: 35%">
+							{{form.APPLY_DATE}}
+						</td>
+						<td style="width: 15%"  align="right">预计完成时间：</td>
+						<td style="width: 35%">
+							{{form.FINISH_DATE}}
+						</td>
+					</tr>
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>一、基本情况</h4>
+						</td>
+					</tr>
+				
+					<tr>
+						<td style="width: 15%"  align="right">项目经费：</td>
+						<td style="width: 35%">
+							{{form.PRICE}}
+						</td>
+						<td style="width: 15%"  align="right">已申领使用经费：</td>
+						<td style="width: 35%">
+							{{form.SPENTFUND}}
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label" align="right">校级财务经费批准：</td>
+						<td colspan="3"class="form-group has-feedback" >
+						<textarea cols="76" ng-model="form.FINANCE_MONEY" disabled="true">
+						</textarea>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>阶段研究成果</h5>
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 15%"  align="right">著作：</td>
+						<td style="width: 35%">
+							{{form.BOOK_NUMBER}}(部)
+						</td>
+						<td style="width: 15%"  align="right">论文：</td>
+						<td style="width: 35%">
+							{{form.THESIS_NUMBER}}(篇)
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="width: 15%"  align="right">研究报告：</td>
+						<td style="width: 35%">
+							{{form.RESEARCH_NUMBER}}(篇)
+						</td>
+						<td align="right" ></td>
+						<td >
+						</td>
+					</tr>
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>阶段成果</h4>
+						</td>
+					</tr>
+
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="STAGE_NAME" class="sorting" ng-click="order($event.target)">成果名称 </th>
+									  <th column="STAGE_TYPE" class="sorting" ng-click="order($event.target)">成果形式 </th>
+									  <th column="STAGE_AUTHER" class="sorting" ng-click="order($event.target)">作者 </th>
+									  <th column="STAGE_DEP" class="sorting" ng-click="order($event.target)">刊物年期、出版社和出版日期、使用单位 </th>
+								</tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in newAchieveList'>
+									<td>{{data.STAGE_NAME}}</td>     
+									<td>{{data.STAGE_TYPE}}</td>
+									<td>{{data.STAGE_AUTHER}}</td>     
+									<td>{{data.STAGE_DEP}}</td> 
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+						</td>			
+					</tr>
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>二、研究工作进展情况</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="121" ng-model="form.WORK_PROGRESS" rows="50" disabled="true">
+							</textarea>
+						</div>
+						</td>
+					</tr>
+				</tbody>
+				
+					<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>三、1－2项代表性成果简介</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="121" ng-model="form.REPRESENT_RESULTS" rows="50" disabled="true">
+							</textarea>
+						</div>
+						</td>
+					</tr>			
+				</tbody>
+				<tbody>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+								<h4>审核意见</h4>
+							</td>
+						</tr>
+						<tr>
+							<td class="control-label"  align="right">单位意见：</td>							
+							<td  colspan="3" >
+								<textarea rows="5" cols="118" ng-model="form.SCHOOL_CHECK_OPINION" disabled="true"></textarea>
+							</td>						
+						</tr>
+						<tr>
+							<td class="control-label"  align="right">区审批意见：</td>
+							<td  colspan="3" >
+								<textarea rows="5" cols="118" ng-model="form.AREA_CHECK_OPINION" disabled="true"></textarea>
+							</td>		
+						</tr>
+					</tbody>
+				
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" >
+				<hr/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td valign="top" style="text-align: center;">
+	      		<button type="button" class="btn btn-default" ng-click="goback();">返回</button>
+			</td>
+		</tr> 
+	</table>
+  </div>
+</div>
+
+
+</form>
+
+

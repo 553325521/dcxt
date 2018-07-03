@@ -1,0 +1,170 @@
+<form class="form-horizontal form-horizontal-condensed" >
+
+<div class="panel panel-default" >
+  <div class="panel-body" style="min-height: 680px;padding: 30px;width: 100%"  >
+	<table align="center"  style="width: 80%">
+		
+		<tr>
+			<td valign="top" >
+				<table class="table-striped table-from-big"  style="width: 100%">
+					<tbody>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+							<span style="color: red;">请上传附件文件(WORD、PPT、PDF)</span>
+							</td>
+						</tr>
+						
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+							<input type="file" name="uploadifyfile" id="uploadifyfile" />
+							</td>
+						</tr>
+						
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+							<span class="uploadfile" style=""></span>&nbsp;<span class="uploadresult" style="color: red; display:none;" >上传成功</span>
+							</td>
+						</tr>
+					</tbody>
+					
+					<tbody >
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> 松江区教育科学研究项目开题报告</h4>
+						</td>
+					</tr>
+					<tr>
+						<td class="control-label"  align="right">申请编号：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.APPLY_CODE"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">项目名称：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.PROJECT_TITLE"  disabled="true" >
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">申报类别：</td>
+						<td class="form-group has-feedback" >
+						<select class="form-control xbclass"  ng-model="form.PROJECT_TYPE" disabled="true">
+							  <option value="">==请选择==</option>
+				              <option value="4">个人</option>
+				              <option value="5">集体</option>
+						</select>
+						</td>
+						<td class="control-label"  align="right">项目级别：</td>
+						<td  class="form-group has-feedback" >
+						<select class="form-control xbclass"  ng-model="form.PROJECT_LEVEL" disabled="true">
+							  <option value="">==请选择==</option>
+				              <option value="1">校级</option>
+				              <option value="2">区级</option>
+				              <option value="3">市级</option>
+						</select>
+						</td>
+						
+					</tr>
+
+					<tr>
+						<td class="control-label"  align="right">负责人：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_NAME"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">工作单位：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_NAME"  disabled="true" >
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">申请经费：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.PRICE"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">预期最终成果：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.EXPECT_RESULT"  disabled="true" >
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">填表日期：</td>
+						<td  class="form-group has-feedback" >
+						<input type="text" class="form-control datepicker csrq"  ng-model="form.APPLY_DATE"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">预计完成时间：</td>
+						<td  class="form-group has-feedback" >
+						<input type="text" class="form-control datepicker csrq"  ng-model="form.FINISH_DATE" disabled="true" >
+						</td>
+					</tr>
+				</tbody>
+
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>一、开题活动简况</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+						<!-- UEditor富文本框 -->			
+						<div id="activity_design" name="activity_design" type="text/plain" style="width:100%;height:480px;">	
+						</div>
+						</td>
+					</tr>
+
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>二、开题报告要点</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">	
+						<div id="report_point" name="report_point" type="text/plain" style="width:100%;height:480px;">	
+						</div>			
+						</td>
+					</tr>
+				</tbody>
+				
+					<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>三、重要变更</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+						<div id="important_change" name="important_change" type="text/plain" style="width:100%;height:480px;">	
+						</div>
+					</tr>			
+				</tbody>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" >
+				<hr/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td valign="top" style="text-align: center;">
+				<button type="button" class="btn btn-info" ng-click="save();">保存</button>
+	      		 &nbsp; 
+	      		<button type="button" class="btn btn-default" ng-click="goback();" id="">返回</button>
+			</td>
+		</tr> 
+	</table>
+
+  </div>
+</div>
+
+
+</form>
+
+

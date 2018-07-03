@@ -1,0 +1,17 @@
+{
+    "name": "AreaFirstCheck_achievecheck",
+    "viewUrl": "aps/content/EduResearch/AreaFirstCheck/achievecheck/template.html",
+    "controllerUrl": "aps/content/EduResearch/AreaFirstCheck/achievecheck/controller.js",
+    "config": 
+    {
+    			"findByIdURL":"json/Open_queryForObject_findAchieveById.json",
+    			"findProjectInfoURL":"json/Open_queryForObject_findSiResearchById.json",
+    			"findMemberListURL":"json/Open_queryForList_findMemberListByPk.json",
+    			"findFileListURL":"json/Open_queryForList_findFileListBypk.json",
+    			"findExpertListURL":"json/Open_queryForList_findExpertList.json",
+    			"findCheckInfoURL":"json/Open_queryForList_findCheckInfoByPk.json",
+    			"checkURL":"json/Achieve_areaFristCheck_areaCheckAchieve.json"
+    			
+    			
+	}
+}

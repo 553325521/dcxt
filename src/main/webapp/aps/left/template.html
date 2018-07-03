@@ -1,0 +1,45 @@
+<img id="logo" src="assets/img/logo.png" alt="Simpla Admin logo" style="    margin: 40px 0 10px 20px;">
+
+
+<div style="padding: 0 15px 20px 35px;text-align: right;color: #fff;font-size: 14px;">
+<span style="line-height: 30px;font-size: 15px;">
+{{userInfo.FK_UNITNAME}} , </span> 
+<a style="color:#fff;font-size: 15px;text-decoration: none;text-decoration: none;cursor: pointer;" title="View the Site">
+{{userInfo.XM}}</a><br/>
+
+<a style="color:#fff;margin-top: 10px;text-decoration: none;cursor: pointer;" title="Sign Out" ng-click="logout()" >
+安全退出 <span class="glyphicon glyphicon-off" aria-hidden="true"></span> </a> &nbsp;  
+
+<br/>
+<br/> 
+当前选择班级：<div class="btn-group">
+  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    {{currentClassVo.CLASS_NAME}} <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li ng-repeat="classVo in classData" ><a ng-click="goHist(classVo)" >{{classVo.CLASS_NAME}}</a></li>
+  </ul>
+</div>
+</div>
+     
+
+<div class="list-group" style="width: 206px;padding: 0;margin: 0 0 0 24px;font-family: Helvetica, Arial, sans-serif;">
+
+<div  ng-repeat="m1 in menuData | filter :{ MENU_FATHER_PK: '9db53ec56c204a9885700fe91c072440' } | orderBy: 'MENU_CODE' " >
+
+  <a href="" 
+  class="list-group-item" 
+  ng-click="clickMenu(m1)" 
+  style="padding: 10px 40px;color: #333;font-size: 14px;font-weight: bold;text-decoration: none;cursor: pointer;background: #449d44 url('assets/img/bg-menu-item-current.png') right center no-repeat;">
+  <span class="glyphicon glyphicon-{{m1.MENU_IMG}}" ></span>&nbsp; {{m1.MENU_NAME}}</a>
+  
+  <ul class="list-group list-menu" style="margin-bottom: 5px;margin-top: 5px;margin-left: 50px;">
+	  <li class="list-group-item" ng-repeat='m2 in menuData | filter :{ MENU_FATHER_PK:m1.MENU_PK } | orderBy: "MENU_CODE" ' 
+	  ng-click="clickMenu(m2)" >
+	  <span class="glyphicon glyphicon-{{m2.MENU_IMG}}"></span> &nbsp; {{m2.MENU_NAME}}
+	  </li>
+  </ul>
+
+</div>  
+      
+</div>

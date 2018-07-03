@@ -1,0 +1,9 @@
+{
+    "name": "app_content",
+    "viewUrl": "aps/content/welcome/template.html",
+    "controllerUrl": "aps/content/welcome/controller.js",
+    "config": 
+    {
+            "findURL": ""
+	}
+}

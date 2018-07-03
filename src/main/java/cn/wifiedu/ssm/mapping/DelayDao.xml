@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapped.dtd" >
+<mapper namespace="delay" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+ 	<!-- 通过科研主键查询延期或终止 -->
+	 <select id="findDelayById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	 	select
+	  		e.SC_EXPLORE_PK,
+		 	e.STATUS,
+		 	e.FK_EXPLORE_PETITION,
+		 	e.FK_EXPLORE_REPORT,
+			e.FK_EXPLORE_PROGRESS,
+			e.FK_PROJECT_ACHIEVE,
+			e.FK_EXPLORE_ALTER,
+			e.FK_EXPLORE_DELAY,
+		   	d.EXPLORE_DELAY_PK,
+			d.DELAY_SORT,
+			d.DELAY_RESSON,
+			d.PROGRESS_ITUATION,
+			to_char(d.CREATE_TIME,'yyyy-MM-dd') CREATE_TIME,
+			to_char(d.DELAY_DATE,'yyyy-MM-dd') DELAY_DATE,
+			to_char(d.OLD_DATE,'yyyy-MM-dd') OLD_DATE,
+			d.OLD_STATUS,
+			d.SCHOOL_CHECK_OPINION,
+			d.AREA_CHECK_OPINION,
+			d.SCHOOL_CHECK_RESULT,
+			d.AREA_CHECK_RESULT,
+			to_char(d.SCHOOL_CHECK_TIME,'yyyy-MM-dd') SCHOOL_CHECK_TIME,
+			to_char(d.AREA_CHECK_TIME,'yyyy-MM-dd') AREA_CHECK_TIME,
+			(select USER_SN from SC_CORE.SC_USER where USER_PK=d.SCHOOL_CHECK_USER) SCHOOL_CHECK_USER,
+			(select USER_SN from SC_CORE.SC_USER where USER_PK=d.AREA_CHECK_USER) AREA_CHECK_USER,
+			d.RES_FILE_LINK_PK,
+			d.FILE_NAME,
+			d.EXT_NAME,
+			d.FILE_PATH,
+			d.FILE_ID
+			from SC_EXPLORE_DELAY d,SC_EXPLORE e
+		 where d.EXPLORE_DELAY_PK=e.FK_EXPLORE_DELAY
+	     and e.SC_EXPLORE_PK=#{SC_EXPLORE_PK}
+	 	</select>
+
+	 <!-- 通过延期或终止PK查询延期或终止详情 -->
+	 <select id="findDelayInfoByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	 	select
+	  		e.SC_EXPLORE_PK,
+		 	e.STATUS,
+		 	e.FK_EXPLORE_PETITION,
+		 	e.FK_EXPLORE_REPORT,
+			e.FK_EXPLORE_PROGRESS,
+			e.FK_PROJECT_ACHIEVE,
+			e.FK_EXPLORE_ALTER,
+			e.FK_EXPLORE_DELAY,
+		   	d.EXPLORE_DELAY_PK,
+			d.DELAY_SORT,
+			d.DELAY_RESSON,
+			d.PROGRESS_ITUATION,
+			to_char(d.CREATE_TIME,'yyyy-MM-dd') CREATE_TIME,
+			to_char(d.DELAY_DATE,'yyyy-MM-dd') DELAY_DATE,
+			to_char(d.OLD_DATE,'yyyy-MM-dd') OLD_DATE,
+			d.OLD_STATUS,
+			d.SCHOOL_CHECK_OPINION,
+			d.AREA_CHECK_OPINION,
+			d.SCHOOL_CHECK_RESULT,
+			d.AREA_CHECK_RESULT,
+			to_char(d.SCHOOL_CHECK_TIME,'yyyy-MM-dd') SCHOOL_CHECK_TIME,
+			to_char(d.AREA_CHECK_TIME,'yyyy-MM-dd') AREA_CHECK_TIME,
+			(select USER_SN from SC_CORE.SC_USER where USER_PK=d.SCHOOL_CHECK_USER) SCHOOL_CHECK_USER,
+			(select USER_SN from SC_CORE.SC_USER where USER_PK=d.AREA_CHECK_USER) AREA_CHECK_USER,
+			d.RES_FILE_LINK_PK,
+			d.FILE_NAME,
+			d.EXT_NAME,
+			d.FILE_PATH,
+			d.FILE_ID
+			from SC_EXPLORE_DELAY d,SC_EXPLORE e
+		 where d.EXPLORE_DELAY_PK=e.FK_EXPLORE_DELAY
+	     and d.EXPLORE_DELAY_PK=#{EXPLORE_DELAY_PK}
+	 	</select>
+	 	
+ 	<!-- 新增科研延期或终止 -->
+ 	<insert id="insertDelay" parameterMap="BaseParameterMap">
+ 		insert into 
+ 			SC_EXPLORE_DELAY
+ 			(
+ 				EXPLORE_DELAY_PK,
+				DELAY_SORT,
+				DELAY_RESSON,
+				PROGRESS_ITUATION,
+				<if test="DELAY_DATE != null and DELAY_DATE !='' ">
+		  			DELAY_DATE,
+					OLD_DATE,
+		  		 </if>
+		  		OLD_STATUS,
+		  		FK_EXPLORE,
+				CREATE_TIME,
+				RES_FILE_LINK_PK,
+				FILE_NAME,
+				EXT_NAME,
+				FILE_PATH,
+				FILE_ID,
+				SCHOOL_CHECK_RESULT,
+				AREA_CHECK_RESULT	
+ 			)
+ 		values
+ 			(
+ 				#{UUID},
+ 				#{DELAY_SORT},
+ 				#{DELAY_RESSON},
+ 				#{PROGRESS_ITUATION},
+ 				<if test="DELAY_DATE != null and DELAY_DATE !='' ">
+		  			to_date(#{DELAY_DATE},'yyyy-MM-dd'),
+		  			to_date(#{FINISH_DATE},'yyyy-MM-dd'),
+		  		 </if>
+		  		#{STATUS},
+		  		#{SC_EXPLORE_PK},
+ 				sysdate,
+ 				#{RES_FILE_LINK_PK,jdbcType=VARCHAR},
+				#{FILE_NAME,jdbcType=VARCHAR},
+				#{EXT_NAME,jdbcType=VARCHAR},
+				#{FILE_PATH,jdbcType=VARCHAR},
+				#{FILE_ID,jdbcType=VARCHAR},
+ 				'0',
+ 				'0'
+ 			)
+ 	</insert>
+	<!-- 修改科研延期或终止 -->
+	<update id="updateDelay" parameterMap="BaseParameterMap">
+		update SC_EXPLORE_DELAY
+			set 
+				DELAY_SORT=#{DELAY_SORT},
+				DELAY_RESSON=#{DELAY_RESSON},
+				PROGRESS_ITUATION=#{PROGRESS_ITUATION},
+				RES_FILE_LINK_PK=#{RES_FILE_LINK_PK,jdbcType=VARCHAR},
+				FILE_NAME=#{FILE_NAME,jdbcType=VARCHAR},
+				EXT_NAME=#{EXT_NAME,jdbcType=VARCHAR},
+				FILE_PATH=#{FILE_PATH,jdbcType=VARCHAR},
+				FILE_ID=#{FILE_ID,jdbcType=VARCHAR}
+				<if test="DELAY_DATE != null and DELAY_DATE !='' ">
+		  			,DELAY_DATE=to_date(#{DELAY_DATE},'yyyy-MM-dd')
+		  		</if>	
+		where EXPLORE_DELAY_PK=#{EXPLORE_DELAY_PK}		
+	</update>
+	
+
+	
+	
+  	
+  	<!--延期审核通过后更改完成时间  -->
+  <update id="updateFinishDate" parameterMap="BaseParameterMap">
+	  update SC_EXPLORE_PETITION
+	  set  	FINISH_DATE=to_date(#{DELAY_DATE},'yyyy-MM-dd')
+	  where  EXPLORE_PETITION_PK=#{EXPLORE_PETITION_PK}
+  </update>
+
+</mapper>

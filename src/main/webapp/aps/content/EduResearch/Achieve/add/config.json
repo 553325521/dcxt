@@ -1,0 +1,12 @@
+{
+    "name": "Achieve_add",
+    "viewUrl": "aps/content/EduResearch/Achieve/add/template.html",
+    "controllerUrl": "aps/content/EduResearch/Achieve/add/controller.js",
+    "config": 
+    {			"uploadurl":"http://rescenter.sjedu.cn/ResCenter/upload/Upload_fileUploadDomain_fileUploadDomain.json",
+    			"findByIdURL":"json/Open_queryForObject_findApplyById.json",
+    			"findMemberListURL":"json/Open_queryForList_findMemberListByPk.json",
+    			"addURL":"json/Achieve_insert_insertAchieve.json"
+    			
+	}
+}

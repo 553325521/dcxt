@@ -1,0 +1,9 @@
+{
+    "name": "viewswf_reportswf",
+    "viewUrl": "aps/content/EduResearch/ScienceReApply/viewswf/reportswf/template.html",
+    "controllerUrl": "aps/content/EduResearch/ScienceReApply/viewswf/reportswf/controller.js",
+    "config": 
+    {
+           
+	}
+}

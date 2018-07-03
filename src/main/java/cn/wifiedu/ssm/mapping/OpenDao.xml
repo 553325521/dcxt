@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="core" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+ 
+  <select id="sysdate" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+    select 
+   		sysdate
+    from dual
+  </select>
+  
+  
+  <select id="init_prop" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+    select 
+   		prop_key,
+   		prop_value,
+   		prop_group
+    from sc_prop
+  </select>
+  
+ 
+  	
+  
+  
+</mapper>

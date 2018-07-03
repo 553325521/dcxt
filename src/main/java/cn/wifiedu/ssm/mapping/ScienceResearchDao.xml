@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="scienceResearch" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+ 
+  <!--得到当前数据条数  -->
+	<select id="findCount" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+	  		select count(*)+1 COUNTNUM from SC_EXPLORE_PETITION
+	</select>
+	
+ <!--查询我的科研申请  -->
+  <select id="findMySiResearchList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	 select
+	 	e.SC_EXPLORE_PK,
+	 	e.STATUS,
+		e.FK_EXPLORE_REPORT,
+		e.FK_EXPLORE_PROGRESS,
+		e.FK_PROJECT_ACHIEVE,
+		e.FK_EXPLORE_ALTER,
+		e.FK_EXPLORE_DELAY,
+	    p.EXPLORE_PETITION_PK,
+		p.PROJECT_TITLE,
+		p.PROJECT_TYPE,
+		p.PROJECT_RESOURCE,
+		p.FK_TEACHER,
+		p.TEACHER_NAME,
+		p.TEACHER_TEL,
+		p.FK_TEACHER_SCHOOL,
+		p.TEACHER_SCHOOL_NAME,
+		p.TEACHER_SCHOOL_TEL,
+		p.TEACHER_SCHOOL_ADDRESS,
+		p.TEACHER_SCHOOL_POSTAL,
+		p.PRICE,
+		to_char(p.APPLY_DATE,'yyyy-MM-dd') APPLY_DATE,
+		to_char(p.FINISH_DATE,'yyyy-MM-dd') FINISH_DATE,
+		p.TOPIC_NAME,
+		p.TEACHER_JOB,
+		p.TEACHER_JOB_TITLE,
+		p.TEACHER_HOME_TEL,
+		p.BASIS_THEORY,
+		p.PLANS,
+		p.CONDITION,
+		p.APPLY_CODE,
+		p.PROJECT_CODE,
+		p.TEACHER_EMAIL,
+		p.INFORMATION_REVIEW,
+		p.DESIGN_ARGUMENT,
+		p.TEACHER_SKILL,
+		p.TEACHER_IDCARD,
+		p.EXPECT_RESULT,
+		p.PROJECT_LEVEL,
+		p.SCHOOL_CHECK_OPINION,
+		p.SCHOOL_CHECK_RESULT,
+		to_char(p.SCHOOL_CHECK_TIME,'yyyy-MM-dd') SCHOOL_CHECK_TIME,
+		(select USER_SN from SC_CORE.SC_USER where USER_PK=p.SCHOOL_CHECK_USER) SCHOOL_CHECK_USER,
+		p.AREA_CHECK_OPINION,
+		p.AREA_CHECK_RESULT,
+		p.FINANCE_MONEY,
+		ROUND(TO_NUMBER((p.FINISH_DATE+0)-sysdate)) as DELTA_TIME
+	 from SC_EXPLORE e,SC_EXPLORE_PETITION p
+	 where e.FK_EXPLORE_PETITION=p.EXPLORE_PETITION_PK
+     and p.FK_TEACHER=#{userInfo.GUID}
+   	 <if test=" PROJECT_TITLE!= null and  PROJECT_TITLE!='' ">
+  			and PROJECT_TITLE LIKE '%'||#{PROJECT_TITLE}||'%'
+  	 </if>
+  	 <if test=" STATUS!= null and  STATUS!='' ">
+  			and STATUS=#{STATUS}
+  	 </if>
+  </select>
+ 
+  <select id="findMySiResearchListSize" parameterMap="BaseParameterMap" resultType="java.lang.Integer">
+  	 select
+  	 	count(*)
+  	 from SC_EXPLORE e,SC_EXPLORE_PETITION p
+	 where e.FK_EXPLORE_PETITION=p.EXPLORE_PETITION_PK
+     and p.FK_TEACHER=#{userInfo.GUID}
+   	 <if test=" PROJECT_TITLE!= null and  PROJECT_TITLE!='' ">
+  			and PROJECT_TITLE LIKE '%'||#{PROJECT_TITLE}||'%'
+  	 </if>
+  	 <if test=" STATUS!= null and  STATUS!='' ">
+  			and STATUS=#{STATUS}
+  	 </if>
+  </select>
+  
+  <!-- 通过ID查询科研申请 -->
+  <select id="findSiResearchById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  	select
+  		e.SC_EXPLORE_PK,
+	 	e.STATUS,
+		e.FK_EXPLORE_REPORT,
+		e.FK_EXPLORE_PROGRESS,
+		e.FK_PROJECT_ACHIEVE,
+	    p.EXPLORE_PETITION_PK,
+		p.PROJECT_TITLE,
+		p.PROJECT_TYPE,
+		p.PROJECT_RESOURCE,
+		p.FK_TEACHER,
+		p.TEACHER_NAME,
+		p.TEACHER_GENDER,
+		p.TEACHER_TEL,
+		p.FK_TEACHER_SCHOOL,
+		p.TEACHER_SCHOOL_NAME,
+		p.TEACHER_SCHOOL_TEL,
+		p.TEACHER_SCHOOL_ADDRESS,
+		p.TEACHER_SCHOOL_POSTAL,
+		p.PRICE,
+		to_char(p.APPLY_DATE,'yyyy-MM-dd') APPLY_DATE,
+		to_char(p.FINISH_DATE,'yyyy-MM-dd') FINISH_DATE,
+		p.TOPIC_NAME,
+		p.TEACHER_JOB,
+		p.TEACHER_JOB_TITLE,
+		p.TEACHER_HOME_TEL,
+		p.BASIS_THEORY,
+		p.PLANS,
+		p.CONDITION,
+		p.APPLY_CODE,
+		p.PROJECT_CODE,
+		p.TEACHER_EMAIL,
+		p.INFORMATION_REVIEW,
+		p.DESIGN_ARGUMENT,
+		p.TEACHER_SKILL,
+		p.TEACHER_IDCARD,
+		p.EXPECT_RESULT,
+		p.PROJECT_LEVEL,
+		p.SCHOOL_CHECK_OPINION,
+		p.SCHOOL_CHECK_RESULT,
+		to_char(p.SCHOOL_CHECK_TIME,'yyyy-MM-dd') SCHOOL_CHECK_TIME,
+		to_char(p.AREA_CHECK_TIME,'yyyy-MM-dd') AREA_CHECK_TIME,
+		(select USER_SN from SC_CORE.SC_USER where USER_PK=p.SCHOOL_CHECK_USER) SCHOOL_CHECK_USER,
+		(select USER_SN from SC_CORE.SC_USER where USER_PK=p.AREA_CHECK_USER) AREA_CHECK_USER,
+		p.AREA_CHECK_OPINION,
+		p.AREA_CHECK_RESULT,
+		p.FINANCE_MONEY,
+		p.RES_FILE_LINK_PK,
+		p.FILE_NAME,
+		p.EXT_NAME,
+		p.FILE_PATH,
+		p.FILE_ID		
+	 from SC_EXPLORE e,SC_EXPLORE_PETITION p
+	 where e.FK_EXPLORE_PETITION=p.EXPLORE_PETITION_PK
+     and e.SC_EXPLORE_PK=#{SC_EXPLORE_PK}
+  </select>
+  
+  <!-- 通过ID查询科研申请,并且不查询申请书的附件 -->
+  <select id="findApplyById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  	select
+  		e.SC_EXPLORE_PK,
+	 	e.STATUS,
+		e.FK_EXPLORE_REPORT,
+		e.FK_EXPLORE_PROGRESS,
+		e.FK_PROJECT_ACHIEVE,
+	    p.EXPLORE_PETITION_PK,
+		p.PROJECT_TITLE,
+		p.PROJECT_TYPE,
+		p.PROJECT_RESOURCE,
+		p.FK_TEACHER,
+		p.TEACHER_NAME,
+		p.TEACHER_GENDER,
+		p.TEACHER_TEL,
+		p.FK_TEACHER_SCHOOL,
+		p.TEACHER_SCHOOL_NAME,
+		p.TEACHER_SCHOOL_TEL,
+		p.TEACHER_SCHOOL_ADDRESS,
+		p.TEACHER_SCHOOL_POSTAL,
+		p.PRICE,
+		to_char(p.APPLY_DATE,'yyyy-MM-dd') APPLY_DATE,
+		to_char(p.FINISH_DATE,'yyyy-MM-dd') FINISH_DATE,
+		p.TOPIC_NAME,
+		p.TEACHER_JOB,
+		p.TEACHER_JOB_TITLE,
+		p.TEACHER_HOME_TEL,
+		p.BASIS_THEORY,
+		p.PLANS,
+		p.CONDITION,
+		p.APPLY_CODE,
+		p.PROJECT_CODE,
+		p.TEACHER_EMAIL,
+		p.INFORMATION_REVIEW,
+		p.DESIGN_ARGUMENT,
+		p.TEACHER_SKILL,
+		p.TEACHER_IDCARD,
+		p.EXPECT_RESULT,
+		p.PROJECT_LEVEL,
+		p.SCHOOL_CHECK_OPINION,
+		p.SCHOOL_CHECK_RESULT,
+		to_char(p.SCHOOL_CHECK_TIME,'yyyy-MM-dd') SCHOOL_CHECK_TIME,
+		to_char(p.AREA_CHECK_TIME,'yyyy-MM-dd') AREA_CHECK_TIME,
+		(select USER_SN from SC_CORE.SC_USER where USER_PK=p.SCHOOL_CHECK_USER) SCHOOL_CHECK_USER,
+		(select USER_SN from SC_CORE.SC_USER where USER_PK=p.AREA_CHECK_USER) AREA_CHECK_USER,
+		p.AREA_CHECK_OPINION,
+		p.AREA_CHECK_RESULT,
+		p.FINANCE_MONEY
+	 from SC_EXPLORE e,SC_EXPLORE_PETITION p
+	 where e.FK_EXPLORE_PETITION=p.EXPLORE_PETITION_PK
+     and e.SC_EXPLORE_PK=#{SC_EXPLORE_PK}
+  </select>
+  
+  <!--通过科研主键查变更状态后的成员  -->
+  <select id="findMemberAlterSortByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  	select * 
+  	from SC_MEMBER
+  	where 
+  		FK_EXPLORE=#{EXPLORE_PK}
+  	and DELETE_FLAG=0
+  	and ALTER_SORT='1'
+  	<if test=" FK_EXPLORE_ALTER!= null and  FK_EXPLORE_ALTER!='' ">
+  			and FK_EXPLORE_ALTER=#{FK_EXPLORE_ALTER}
+  	</if>
+  	<if test=" STATUS!= null and  STATUS!='' ">
+  			and STATUS=#{STATUS}
+  	</if>
+  </select>
+  
+  
+  <!--通过科研主键查科研成员  -->
+  <select id="findMemberListByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  	select * 
+  	from SC_MEMBER
+  	where 
+  		FK_EXPLORE=#{EXPLORE_PK}
+  	and DELETE_FLAG=0
+  	and (ALTER_SORT is null
+  	or ALTER_SORT='2')
+  	<if test=" FK_EXPLORE_ALTER!= null and  FK_EXPLORE_ALTER!='' ">
+  		and FK_EXPLORE_ALTER=#{FK_EXPLORE_ALTER}
+  	</if>
+  </select>
+  
+    <!-- 通过科研主键查申请人和成员近年研究课题的alter_sort状态 -->
+  <select id="findTaskAlterSortByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	select 
+		MEMBER_PROJECT_PK,
+		PROJECT_NAME,
+		PROJECT_TYPE,
+		to_char(APPLY_DATE,'yyyy-MM-dd') APPLY_DATE,
+		COMPLETION,
+		APPROVE_UNIT,   
+		FK_EXPLORE,
+		FK_EXPLORE_ALTER,
+		ALTER_SORT
+	from SC_MEMBER_PROJECT
+	where FK_EXPLORE=#{EXPLORE_PK}
+	and DELETE_FLAG=0
+	and ALTER_SORT='1'
+	<if test=" FK_EXPLORE_ALTER!= null and  FK_EXPLORE_ALTER!='' ">
+  		and FK_EXPLORE_ALTER=#{FK_EXPLORE_ALTER}
+  	</if>
+</select>
+
+  <!--通过科研主键查申请人和成员近年研究课题  -->
+<select id="findTaskListByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	select 
+		MEMBER_PROJECT_PK,
+		PROJECT_NAME,
+		PROJECT_TYPE,
+		to_char(APPLY_DATE,'yyyy-MM-dd') APPLY_DATE,
+		COMPLETION,
+		APPROVE_UNIT,   
+		FK_EXPLORE,
+		FK_EXPLORE_ALTER,
+		ALTER_SORT
+	from SC_MEMBER_PROJECT
+	where FK_EXPLORE=#{EXPLORE_PK}
+	and DELETE_FLAG=0
+	and (ALTER_SORT is null
+  	or ALTER_SORT='2')
+  	<if test=" FK_EXPLORE_ALTER!= null and  FK_EXPLORE_ALTER!='' ">
+  		and FK_EXPLORE_ALTER=#{FK_EXPLORE_ALTER}
+  	</if>
+</select>
+  
+  <!-- 查询预期科研成果表里的alter_sort状态 -->
+  <select id="findResultAlterSortByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	select 
+		MEMBER_EXPECTING_PK,
+		TEACHER_ID,
+		TEACHER_NAME,
+		to_char(STAGE_START_TIME,'yyyy-MM-dd') STAGE_START_TIME,
+		RESULT_FORM,
+		RESULT_STAGE_NAME,
+		FK_EXPLORE,
+		FK_EXPLORE_ALTER,
+		ALTER_SORT,
+		to_char(STAGE_END_TIME,'yyyy-MM-dd') STAGE_END_TIME
+	from SC_MEMBER_EXPECTING
+	where FK_EXPLORE=#{EXPLORE_PK}
+	and DELETE_FLAG=0
+	and ALTER_SORT='1'
+	<if test=" FK_EXPLORE_ALTER!= null and  FK_EXPLORE_ALTER!='' ">
+  		and FK_EXPLORE_ALTER=#{FK_EXPLORE_ALTER}
+  	</if>
+</select>
+  
+    <!--通过科研主键查教科研成员预期研究成果  -->
+<select id="findResultListByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	select 
+		MEMBER_EXPECTING_PK,
+		TEACHER_ID,
+		TEACHER_NAME,
+		to_char(STAGE_START_TIME,'yyyy-MM-dd') STAGE_START_TIME,
+		RESULT_FORM,
+		RESULT_STAGE_NAME,
+		FK_EXPLORE,
+		FK_EXPLORE_ALTER,
+		ALTER_SORT,
+		to_char(STAGE_END_TIME,'yyyy-MM-dd') STAGE_END_TIME
+	from SC_MEMBER_EXPECTING
+	where FK_EXPLORE=#{EXPLORE_PK}
+	and DELETE_FLAG=0
+	and (ALTER_SORT is null
+  	or ALTER_SORT='2')
+  	<if test=" FK_EXPLORE_ALTER!= null and  FK_EXPLORE_ALTER!='' ">
+  		and FK_EXPLORE_ALTER=#{FK_EXPLORE_ALTER}
+  	</if>
+</select>
+  
+  <!--添加教育科研申请  -->  
+  <insert id="insertSiResearch" parameterMap="BaseParameterMap">
+  		insert into  SC_EXPLORE_PETITION
+  			(
+  				EXPLORE_PETITION_PK,
+				PROJECT_TITLE,
+				PROJECT_TYPE,
+				PROJECT_LEVEL,
+				FK_TEACHER,
+				TEACHER_NAME,
+				TEACHER_GENDER,
+				FK_TEACHER_SCHOOL,
+				TEACHER_SCHOOL_NAME,
+				TEACHER_SCHOOL_ADDRESS,
+				TEACHER_SCHOOL_POSTAL,
+				TEACHER_TEL,
+				TEACHER_SCHOOL_TEL,
+				TEACHER_HOME_TEL,
+				TEACHER_JOB,
+				TEACHER_JOB_TITLE,
+				TEACHER_EMAIL,
+				TEACHER_SKILL,
+				TEACHER_IDCARD,
+				PRICE,
+				APPLY_DATE,
+				FINISH_DATE,
+				APPLY_CODE,
+				EXPECT_RESULT,
+				BASIS_THEORY,
+				PLANS,
+				CONDITION,
+				INFORMATION_REVIEW,
+				DESIGN_ARGUMENT,
+				RES_FILE_LINK_PK,
+				FILE_NAME,
+				EXT_NAME,
+				FILE_PATH,
+				FILE_ID,
+				SCHOOL_CHECK_RESULT,
+				AREA_CHECK_RESULT
+  			)
+  		values(
+  				#{UUID},
+  				#{PROJECT_TITLE},
+  				#{PROJECT_TYPE},
+  				#{PROJECT_LEVEL},
+  				#{userInfo.GUID},
+  				#{userInfo.XM},
+  				#{USER_GENDER},
+  				#{userInfo.FK_UNIT},
+  				#{userInfo.FK_UNITNAME},
+  				#{USER_SCHOOL_ADDRESS},
+  				#{USER_POSTCODE,jdbcType=VARCHAR},
+  				#{USER_MOBILE_PHONE,jdbcType=VARCHAR},
+  				#{USER_UNIT_PHONE,jdbcType=VARCHAR},
+  				#{USER_HOME_PHONE,jdbcType=VARCHAR},
+  				#{USER_JOB,jdbcType=VARCHAR},	
+  				#{USER_JOB_TITLE,jdbcType=VARCHAR},
+  				#{USER_EMAIL,jdbcType=VARCHAR},
+  				#{USER_SKILL,jdbcType=VARCHAR},
+  				#{USER_ID_CARD},	
+  				#{PRICE},
+  				to_date(#{APPLY_DATE},'yyyy-MM-dd'),
+  				to_date(#{FINISH_DATE},'yyyy-MM-dd'),
+  				#{APPLY_CODE},
+  				#{EXPECT_RESULT},
+  				#{BASIS_THEORY},
+				#{PLANS},
+				#{CONDITION},
+				#{INFORMATION_REVIEW},
+				#{DESIGN_ARGUMENT},
+				#{RES_FILE_LINK_PK,jdbcType=VARCHAR},
+				#{FILE_NAME,jdbcType=VARCHAR},
+				#{EXT_NAME,jdbcType=VARCHAR},
+				#{FILE_PATH,jdbcType=VARCHAR},
+				#{FILE_ID,jdbcType=VARCHAR},
+  				'0',
+  				'0'
+  		)
+  </insert>
+  
+  <!--再次申请  -->
+    <insert id="reapplySiResearch" parameterMap="BaseParameterMap">
+  		insert into  SC_EXPLORE_PETITION
+  			(
+  				EXPLORE_PETITION_PK,
+				PROJECT_TITLE,
+				PROJECT_TYPE,
+				PROJECT_LEVEL,
+				FK_TEACHER,
+				TEACHER_NAME,
+				TEACHER_GENDER,
+				FK_TEACHER_SCHOOL,
+				TEACHER_SCHOOL_NAME,
+				TEACHER_SCHOOL_ADDRESS,
+				TEACHER_SCHOOL_POSTAL,
+				TEACHER_TEL,
+				TEACHER_SCHOOL_TEL,
+				TEACHER_HOME_TEL,
+				TEACHER_JOB,
+				TEACHER_JOB_TITLE,
+				TEACHER_EMAIL,
+				TEACHER_SKILL,
+				TEACHER_IDCARD,
+				PRICE,
+				APPLY_DATE,
+				FINISH_DATE,
+				APPLY_CODE,
+				EXPECT_RESULT,
+				BASIS_THEORY,
+				PLANS,
+				CONDITION,
+				INFORMATION_REVIEW,
+				DESIGN_ARGUMENT,
+				RES_FILE_LINK_PK,
+				FILE_NAME,
+				EXT_NAME,
+				FILE_PATH,
+				FILE_ID,
+				SCHOOL_CHECK_RESULT,
+				AREA_CHECK_RESULT
+  			)
+  		values(
+  				#{UUID},
+  				#{PROJECT_TITLE},
+  				#{PROJECT_TYPE},
+  				#{PROJECT_LEVEL},
+  				#{userInfo.GUID},
+  				#{userInfo.XM},
+  				#{TEACHER_GENDER},
+  				#{userInfo.FK_UNIT},
+  				#{userInfo.FK_UNITNAME},
+  				#{TEACHER_SCHOOL_ADDRESS                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  },
+  				#{TEACHER_SCHOOL_POSTAL,jdbcType=VARCHAR},
+  				#{TEACHER_TEL,jdbcType=VARCHAR},
+  				#{TEACHER_SCHOOL_TEL,jdbcType=VARCHAR},
+  				#{TEACHER_HOME_TEL,jdbcType=VARCHAR},
+  				#{TEACHER_JOB,jdbcType=VARCHAR},	
+  				#{TEACHER_JOB_TITLE,jdbcType=VARCHAR},
+  				#{TEACHER_EMAIL,jdbcType=VARCHAR},
+  				#{TEACHER_SKILL,jdbcType=VARCHAR},
+  				#{TEACHER_IDCARD},	
+  				#{PRICE},
+  				to_date(#{APPLY_DATE},'yyyy-MM-dd'),
+  				to_date(#{FINISH_DATE},'yyyy-MM-dd'),
+  				#{APPLY_CODE},
+  				#{EXPECT_RESULT},
+  				#{BASIS_THEORY},
+				#{PLANS},
+				#{CONDITION},
+				#{INFORMATION_REVIEW},
+				#{DESIGN_ARGUMENT},
+				#{RES_FILE_LINK_PK,jdbcType=VARCHAR},
+				#{FILE_NAME,jdbcType=VARCHAR},
+				#{EXT_NAME,jdbcType=VARCHAR},
+				#{FILE_PATH,jdbcType=VARCHAR},
+				#{FILE_ID,jdbcType=VARCHAR},
+  				'0',
+  				'0'
+  		)
+  </insert>
+  
+  <!-- 修改科研申请书 -->
+  <update id="updateSiResearch" parameterMap="BaseParameterMap">
+  		update 	SC_EXPLORE_PETITION
+  		set    	PROJECT_TITLE=#{PROJECT_TITLE},
+  				PROJECT_TYPE=#{PROJECT_TYPE},
+  			 	PROJECT_LEVEL=#{PROJECT_LEVEL},
+  			 	TEACHER_SCHOOL_POSTAL=#{TEACHER_SCHOOL_POSTAL,jdbcType=VARCHAR},
+  			 	TEACHER_TEL=#{TEACHER_TEL,jdbcType=VARCHAR},
+  			 	TEACHER_SCHOOL_TEL=#{TEACHER_SCHOOL_TEL,jdbcType=VARCHAR},
+				TEACHER_HOME_TEL=#{TEACHER_HOME_TEL,jdbcType=VARCHAR},
+				TEACHER_JOB=#{TEACHER_JOB,jdbcType=VARCHAR},
+				TEACHER_JOB_TITLE=#{TEACHER_JOB_TITLE,jdbcType=VARCHAR},
+				TEACHER_EMAIL=#{TEACHER_EMAIL,jdbcType=VARCHAR},
+				TEACHER_SKILL=#{TEACHER_SKILL,jdbcType=VARCHAR},
+				PRICE=#{PRICE},
+				APPLY_DATE=to_date(#{APPLY_DATE},'yyyy-MM-dd'),
+				FINISH_DATE=to_date(#{FINISH_DATE},'yyyy-MM-dd'),
+				TOPIC_NAME=#{PROJECT_TITLE},
+				EXPECT_RESULT=#{EXPECT_RESULT},
+				BASIS_THEORY=#{BASIS_THEORY},
+				PLANS=#{PLANS},
+				CONDITION=#{CONDITION},
+				INFORMATION_REVIEW=#{INFORMATION_REVIEW},
+				DESIGN_ARGUMENT=#{DESIGN_ARGUMENT},
+				RES_FILE_LINK_PK=#{RES_FILE_LINK_PK,jdbcType=VARCHAR},
+				FILE_NAME=#{FILE_NAME,jdbcType=VARCHAR},
+				EXT_NAME=#{EXT_NAME,jdbcType=VARCHAR},
+				FILE_PATH=#{FILE_PATH,jdbcType=VARCHAR},
+				FILE_ID=#{FILE_ID,jdbcType=VARCHAR}
+		where  EXPLORE_PETITION_PK=#{EXPLORE_PETITION_PK}
+  
+  </update>
+ 
+  <!-- 科研主键表 -->
+  <insert id="insertExplore" parameterMap="BaseParameterMap">
+  		insert into SC_EXPLORE
+  		(
+  			SC_EXPLORE_PK,
+  			FK_EXPLORE_PETITION,
+			STATUS
+			
+  		)
+  		values(
+  			#{UUID},
+  			#{FK_EXPLORE_PETITION},
+  			0
+  		)
+  </insert>
+  
+  <!-- 科研成员与项目关系表 -->
+  <insert id="insertMember" parameterMap="BaseParameterMap">
+  		insert into SC_MEMBER
+  		(
+  			MEMBER_PK,
+			TEACHER_NAME,
+			FK_TEACHER,
+			GENDER,
+			BORN,
+			JOB_TITLE,
+			SPECIALTY,
+			FK_TEACHER_UNIT,
+			UNIT_NAME,
+			FK_EXPLORE,
+			TEACHER_EDUCATION,
+			TEACHER_DEGREE
+  		)
+  		values(
+  			#{UUID},
+  			#{MEMBER_NAME},
+  			#{MEMBER_USER_PK},
+  			#{MEMBER_GENDER},
+  			#{BORN},
+  			#{JOB_TITLE},
+  			#{SPECIALTY},
+  			#{MEMBER_SCHOOL_PK},
+  			#{MEMBER_SCHOOL_NAME},
+  			#{FK_EXPLORE},
+  			#{TEACHER_EDUCATION},
+  			#{TEACHER_DEGREE}
+  		)
+  </insert>
+  
+  <!--删除成员-->
+   <update id="deleteMember" parameterMap="BaseParameterMap">
+  	update SC_MEMBER
+  	set  DELETE_FLAG=1
+  	where MEMBER_PK=#{MEMBER_PK}
+  	and FK_EXPLORE=#{FK_EXPLORE}
+  </update>
+  
+  <!--删除变更后的成员-->
+   <update id="deleteAlterMember" parameterMap="BaseParameterMap">
+  	update SC_MEMBER
+  	set  DELETE_FLAG=1
+  	where MEMBER_PK=#{MEMBER_PK}
+  	and FK_EXPLORE=#{FK_EXPLORE}
+    and ALTER_SORT='1'
+  </update>
+  
+  <!--  申请人和成员近年研究课题-->
+  <insert id="insertMemberProject" parameterMap="BaseParameterMap">
+  		insert into  SC_MEMBER_PROJECT
+  		(
+  			MEMBER_PROJECT_PK,
+			PROJECT_NAME,
+			PROJECT_TYPE,
+			APPLY_DATE,
+			COMPLETION,
+			APPROVE_UNIT,
+			FK_EXPLORE
+		)
+  		values(
+  			#{UUID},
+  			#{PROJECT_NAME},
+  			#{PROJECT_KIND},
+  			to_date(#{START_DATE},'yyyy-MM-dd'),
+  			#{COMPLETION},
+  			#{APPROVE_UNIT},
+  			#{FK_EXPLORE}
+  		)
+  </insert>
+  <!-- 删除申请人和成员近年研究课题 -->
+  <update id="deleteMemberProject" parameterMap="BaseParameterMap">
+  		update SC_MEMBER_PROJECT
+  	set  DELETE_FLAG=1
+  	where MEMBER_PROJECT_PK=#{MEMBER_PROJECT_PK}
+  	and FK_EXPLORE=#{FK_EXPLORE}
+  </update>
+  
+  <!-- 删除变更后的申请人和成员近年研究课题 -->
+  <update id="deleteAlterTask" parameterMap="BaseParameterMap">
+  		update SC_MEMBER_PROJECT
+  	set  DELETE_FLAG=1
+  	where MEMBER_PROJECT_PK=#{MEMBER_PROJECT_PK}
+  	and FK_EXPLORE=#{FK_EXPLORE}
+  	and ALTER_SORT='1'
+  </update>
+  
+    <!--  教科研成员预期研究成果-->
+  <insert id="insertMemberExpecting" parameterMap="BaseParameterMap">
+  	insert into SC_MEMBER_EXPECTING
+  		(
+  			MEMBER_EXPECTING_PK,
+			TEACHER_ID,
+			TEACHER_NAME,
+			STAGE_START_TIME,
+			RESULT_FORM,
+			RESULT_STAGE_NAME,
+			FK_EXPLORE,
+			STAGE_END_TIME
+
+		)
+  		values(
+  			#{UUID},
+  			#{PEOPLE_PK},
+  			#{PEOPLE_NAME},
+  			to_date(#{STAGE_START_TIME},'yyyy-MM-dd'),
+  			#{RESULT_FORM},
+  			#{RESULT_STAGE_NAME},
+  			#{FK_EXPLORE},
+  			to_date(#{STAGE_END_TIME},'yyyy-MM-dd')		
+  		)
+  </insert>
+ 	<!-- 删除预期成果 -->
+  <update id="deleteMemberExpecting" parameterMap="BaseParameterMap">
+  		update SC_MEMBER_EXPECTING
+  	set  DELETE_FLAG=1
+  	where MEMBER_EXPECTING_PK=#{MEMBER_EXPECTING_PK}
+  	and FK_EXPLORE=#{FK_EXPLORE}  
+  </update>
+  
+<update id="deleteAlterResult" parameterMap="BaseParameterMap">
+  		update SC_MEMBER_EXPECTING
+  	set  DELETE_FLAG=1
+  	where MEMBER_EXPECTING_PK=#{MEMBER_EXPECTING_PK}
+  	and FK_EXPLORE=#{FK_EXPLORE}  
+  	and ALTER_SORT='1'
+  </update>
+  <!--通过ID查询科研项目的状态  -->
+  <select id="findStatusById"  resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  		select 
+  				SC_EXPLORE_PK,
+				PROJECT_NAME,
+				FK_TEACHER,
+				FK_UNIT,
+				APPLY_DATE,
+				STATUS,
+				FK_EXPLORE_PETITION,
+				FK_EXPLORE_REPORT,
+				FK_EXPLORE_PROGRESS,
+				FK_PROJECT_ACHIEVE,
+				FK_EXPLORE_ALTER,
+				FK_EXPLORE_DELAY
+		from 
+			SC_EXPLORE
+		where  SC_EXPLORE_PK=#{SC_EXPLORE_PK}
+  </select>
+  
+    <!-- 修改科研项目的状态 吧  -->
+  <update id="updateExploreStatus" parameterMap="BaseParameterMap">
+  		update SC_EXPLORE
+  		set	STATUS=#{EXPLORE_STATUS}
+  		<if test="FK_EXPLORE_REPORT != null and FK_EXPLORE_REPORT !='' ">
+	  		,
+	  		FK_EXPLORE_REPORT=#{FK_EXPLORE_REPORT}
+	  	</if>
+	  	<if test="FK_EXPLORE_PROGRESS != null and FK_EXPLORE_PROGRESS !='' ">
+	  		,
+	  		FK_EXPLORE_PROGRESS=#{FK_EXPLORE_PROGRESS}
+	  	</if>
+	  	<if test="FK_PROJECT_ACHIEVE != null and FK_PROJECT_ACHIEVE !='' ">
+	  		,
+	  		FK_PROJECT_ACHIEVE=#{FK_PROJECT_ACHIEVE}
+	  	</if>
+	  	<if test="FK_EXPLORE_ALTER != null and FK_EXPLORE_ALTER !='' ">
+	  		,
+	  		FK_EXPLORE_ALTER=#{FK_EXPLORE_ALTER}
+	  	</if>
+	  	<if test="FK_EXPLORE_DELAY != null and FK_EXPLORE_DELAY !='' ">
+	  		,
+	  		FK_EXPLORE_DELAY=#{FK_EXPLORE_DELAY}
+	  	</if>
+  		where SC_EXPLORE_PK=#{SC_EXPLORE_PK}
+  </update>
+
+</mapper>

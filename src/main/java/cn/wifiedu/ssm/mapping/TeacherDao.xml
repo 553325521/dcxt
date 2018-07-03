@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="teacher" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+   <!-- 得到当前年份 -->
+	<select id="findNowYear" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+  	select 
+   		to_char(sysdate,'yyyy') NOWYEAR
+    from dual
+  	</select>
+  	
+     <!-- 得到当前时间 -->
+	<select id="findNowTime" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+  	select 
+   		to_char(sysdate,'yyyy-MM-dd') NOWTIME
+    from dual
+  	</select>
+
+   <!-- 查询所有专家老师-->
+  <select id="findExpertList" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+  		select 
+			USER_PK,
+			USER_SN,
+			FK_UNIT,
+			(select UNIT_NAME from  SC_CORE.SC_UNIT where UNIT_PK=FK_UNIT) UNIT_NAME
+		from SC_CORE.SC_USER
+		where USER_TYPE='6'
+		order by nlssort(USER_SN ,'NLS_SORT=SCHINESE_PINYIN_M')
+  </select>
+
+<!-- 查询专家老师的详细信息 -->
+<select id="findUserInfo" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+	select 
+  		*
+  	from SC_CORE.SC_USER
+  	where USER_PK=#{USER_PK}
+</select>
+
+</mapper>

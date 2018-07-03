@@ -1,0 +1,11 @@
+{
+    "name": "app_top",
+    "viewUrl": "aps/top/template.html",
+    "controllerUrl": "aps/top/controller.js",
+    "config": 
+    {
+           "getUserInfoURL":"json/Api_queryForObject_userInfo.json",
+           "menuListData": "json/Api_queryForList_UserRightMenu.json",
+           "logoutURL":"logout.jsp"
+	}
+}

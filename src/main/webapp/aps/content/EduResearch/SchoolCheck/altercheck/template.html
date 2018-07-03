@@ -1,0 +1,697 @@
+<form class="form-horizontal form-horizontal-condensed" >
+
+<div class="panel panel-default" >
+  <div class="panel-body" style="min-height: 680px;padding: 30px;width: 100%"  >
+	<table align="center"  style="width: 80%">
+		
+		<tr>
+			<td valign="top" >
+				<table class="table-striped table-from-big"  style="width: 100%">
+					<tbody>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+								<h4>松江区教育科学研究项目变更登记表校级审核</h4>
+							</td>
+						</tr>
+
+						<tr>
+							<td class="control-label"  align="right">审核意见：</td>
+							<td  colspan="3" >
+								<textarea rows="5" cols="115" ng-model="form.SCHOOL_CHECK_OPINION"></textarea>
+							</td>
+						</tr>		
+					</tbody>
+					
+					<tr>
+						<td valign="top" style="text-align: center;" colspan="4">
+							<button type="button" class="btn btn-success" ng-click="success();">通过</button>
+					      	&nbsp; 
+					      	<button type="button" class="btn btn-warning" ng-click="fail();">否决</button>
+						</td>
+					</tr>
+					
+					<tbody>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+								<h4>审核详情</h4>
+							</td>
+						</tr>
+						<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+								<h5></h5>
+								<table class="table table-hover table-striped table-bordered ">  
+								  <thead>
+									<tr>
+										  <th column="CHECK_LEVELE" class="sorting" ng-click="order($event.target)">审核级别 </th>
+										  <th column="CHECK_USER_NAME" class="sorting" ng-click="order($event.target)">审核老师 </th>
+										  <th column="CHECK_FLAG" class="sorting" ng-click="order($event.target)">审核结果 </th>
+										  <th column="CHECK_OPINION" class="sorting" ng-click="order($event.target)">审核意见</th>
+										  <th column="CHECK_DATE" class="sorting" ng-click="order($event.target)">审核时间 </th>
+										 
+									</tr>
+								  </thead>
+								  <tbody >		
+									<tr ng-repeat='data in checkInfoList'>
+										<td ng-switch on="data.CHECK_LEVEL">
+								          	<span ng-switch-when="0">申请书未提交</span>
+								          	<span ng-switch-when="1">申请书校级审核</span>
+								          	<span ng-switch-when="2">申请书区级初审</span>
+								          	<span ng-switch-when="3">申请书专家评审</span>
+								          	<span ng-switch-when="4">申请书区级复审</span>
+								          	<span ng-switch-when="5">申请书驳回</span>
+								          	<span ng-switch-when="6">等待提交开题报告</span>
+								          	<span ng-switch-when="7">开题报告校级审核</span>
+								          	<span ng-switch-when="8">开题报告区级审核</span>
+								          	<span ng-switch-when="9">开题报告驳回</span>
+								          	<span ng-switch-when="10">等待提交中期报告</span>
+								          	<span ng-switch-when="11">中期报告校级审核</span>
+								          	<span ng-switch-when="12">中期报告区级审核</span>
+								          	<span ng-switch-when="13">中期报告驳回</span>
+								          	<span ng-switch-when="14">等待提交结题报告</span>
+								          	<span ng-switch-when="15">结题报告校级审核</span>
+								          	<span ng-switch-when="16">结题报告区级审核</span>
+								          	<span ng-switch-when="17">结题报告专家评审</span>
+								          	<span ng-switch-when="18">结题报告教育局审核</span>
+								          	<span ng-switch-when="19">结题报告驳回</span>
+								          	<span ng-switch-when="20">教科研完成</span>
+								          	<span ng-switch-when="21">变更报告等待提交</span>
+								          	<span ng-switch-when="22">变更报告校级审核</span>
+								          	<span ng-switch-when="23">变更报告区级审核</span>
+								          	<span ng-switch-when="24">变更报告驳回</span>
+								          	<span ng-switch-when="25">延期、终止报告等待提交</span>
+								          	<span ng-switch-when="26">延期、终止报告校级审核</span>
+								          	<span ng-switch-when="27">延期、终止报告区级审核</span>
+								          	<span ng-switch-when="28">延期、终止报告驳回</span>
+								          	<span ng-switch-when="29">科研终止</span>
+							            </td> 
+										<td>{{data.CHECK_USER_NAME}}</td>     
+										<td ng-switch on="data.CHECK_FLAG">
+											<span ng-switch-when="0">未审核</span>
+								          	<span ng-switch-when="1">通过</span>
+								          	<span ng-switch-when="2">不通过</span>
+										</td>
+										<td>{{data.CHECK_OPINION}}</td>
+										<td>{{data.CHECK_DATE}}</td>     
+										     
+									</tr>
+								  </tbody>
+								  <tfoot>
+								  </tfoot>
+								</table>
+							</div>
+						</td>
+						</tr>
+					</tbody>
+					
+					<tbody >
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>变更前</h4>
+						</td>
+					</tr>
+					<tr>
+						<td class="control-label"  align="right">项目名称：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.OLD_PROJECT_NAME" disabled="true">
+						</td>
+						<td class="control-label"  align="right">负责人：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.OLD_TEACHER_NAME" disabled="true">
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">工作单位：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.OLD_SCHOOL_NAME" disabled="true">
+						</td>
+						<td class="control-label"  align="right">预期最终成果：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.OLD_EXPECT_RESULT"  disabled="true">
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>变更后</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">项目名称：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.PROJECT_NAME" disabled="true">
+						</td>
+						<td class="control-label"  align="right">负责人：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_NAME" disabled="true">
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">工作单位：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_NAME" disabled="true">
+						</td>
+						<td class="control-label"  align="right">预期最终成果：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.EXPECT_RESULT"  disabled="true">
+						</td>
+					</tr>
+					
+					<tr>	
+						<td class="control-label" align="right" >科研变更内容：</td>
+						<td colspan="3">
+				            <input type="checkbox" name="content" value="1" id="content1" disabled="true"/>负责人&nbsp;&nbsp;
+				            <input type="checkbox" name="content" value="2" id="content2" disabled="true"/>课题&nbsp;&nbsp;
+				            <input type="checkbox" name="content" value="3" id="content3" disabled="true"/>主要成员&nbsp;&nbsp;
+				            <input type="checkbox" name="content" value="4" id="content4" disabled="true"/>研究方案&nbsp;&nbsp;
+					        <input type="checkbox" name="content" value="5" id="content5" disabled="true"/>研究内容&nbsp;&nbsp;
+					        <input type="checkbox" name="content" value="6" id="content6" disabled="true"/>成果形式&nbsp;&nbsp;
+					        <input type="checkbox" name="content" value="7" id="content7" disabled="true"/>其它
+			             </td>
+					</tr>		
+					
+					<tr>
+						<td class="control-label" align="right" >科研变更原因：</td>
+						<td colspan="3">
+				            <input type="checkbox" name="reason" value="1" id="reason1" disabled="true"/>负责人工作调动&nbsp;&nbsp;
+				            <input type="checkbox" name="reason" value="2" id="reason2" disabled="true"/>学校（园）工作调整&nbsp;&nbsp;
+				            <input type="checkbox" name="reason" value="3" id="reason3" disabled="true"/>其它
+			             </td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>一、数据表</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>变更前负责人基本信息</h5>
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">姓名：</td>
+						<td class="form-group has-feedback" >
+						<div id="name">
+							<input class="form-control" type="text" ng-model="form.OLD_TEACHER_NAME "  maxlength="20" disabled="true">
+						</div>
+						</td>
+						<td class="control-label" align="right" >性别：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.OLD_TEACHER_GENDER"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>	
+						<td class="control-label" align="right" >职称：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_TEACHER_JOB_TITLE"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >职务：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_TEACHER_JOB"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>		
+						<td class="control-label" align="right" >研究专长：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.OLD_TEACHER_EMAIL "  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" width="140px">身份证号：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.OLD_TEACHER_IDCARD"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>		
+						<td class="control-label" align="right" >单位电话：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_SCHOOL_TEL"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >家庭电话：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_TEACHER_HOME_TEL "  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>
+							
+						<td class="control-label" align="right" >移动电话：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_TEACHER_TEL"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >电子信箱：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_TEACHER_EMAIL"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+					
+					<tr>		
+						<td class="control-label" align="right" >工作单位：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_SCHOOL_NAME"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >邮政编码：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.OLD_SCHOOL_POSTAL"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+					<tr>		
+						<td class="control-label" align="right" >单位地址：</td>
+						<td class="form-group has-feedback" colspan="3"><input class="form-control" type="text" ng-model="form.OLD_SCHOOL_ADDRESS"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+					
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>变更后负责人基本信息</h5>
+						</td>
+					</tr>
+						
+					<tr>
+						<td class="control-label"  align="right">姓名：</td>
+						<td class="form-group has-feedback" >
+						<div id="name">
+							<input class="form-control" type="text" ng-model="form.TEACHER_NAME"  maxlength="20" disabled="true">
+						</div>
+						</td>
+						<td class="control-label" align="right" >性别：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_GENDER"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>	
+						<td class="control-label" align="right" >职称：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_JOB_TITLE"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >职务：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_JOB"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>		
+						<td class="control-label" align="right" >研究专长：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_SKILL"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" width="140px">身份证号：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_IDCARD"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>		
+						<td class="control-label" align="right" >单位电话：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_TEL"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >家庭电话：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_HOME_TEL"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+					<tr>
+							
+						<td class="control-label" align="right" >移动电话：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_TEL"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >电子信箱：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_EMAIL"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+					
+					<tr>		
+						<td class="control-label" align="right" >工作单位：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_NAME"  maxlength="20" disabled="true">
+						</td>
+						<td class="control-label" align="right" >邮政编码：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_POSTAL"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+					<tr>		
+						<td class="control-label" align="right" >单位地址：</td>
+						<td class="form-group has-feedback" colspan="3"><input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_ADDRESS"  maxlength="20" disabled="true">
+						</td>
+					</tr>
+
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>课题组主要成员（变更前）</h5>
+						</td>
+					</tr>	
+					<tr>
+					<td colspan="4" style="width: 100%">
+						<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="TEACHER_NAME" class="sorting" ng-click="order($event.target)">姓名 </th>
+									  <th column="TEACHER_GENDER" class="sorting" ng-click="order($event.target)">性别 </th>
+									  <th column="TEACHER_EDUCATION" class="sorting" ng-click="order($event.target)">学历 </th>
+									  <th column="TEACHER_DEGREE" class="sorting" ng-click="order($event.target)">学位 </th>
+									  <th column="BORN" class="sorting" ng-click="order($event.target)">出生年月 </th>
+									  <th column="JOB_TITLE" class="sorting" ng-click="order($event.target)">职务 </th>
+									  <th column="SPECIALTY" class="sorting" ng-click="order($event.target)">研究专长 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">工作单位 </th>
+									  </tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in newTeacherList'>
+									<td>{{data.TEACHER_NAME}} <input type="hidden" value="{{data.TEACHER_PK}}"><input type="hidden" value="{{data.MEMBER_PK}}"></td>     
+									<td>{{data.TEACHER_GENDER}}</td>
+									<td>{{data.TEACHER_EDUCATION}}</td>     
+									<td>{{data.TEACHER_DEGREE}}</td>
+									<td>{{data.BORN}}</td>     
+									<td>{{data.JOB_TITLE}}</td>
+									<td>{{data.SPECIALTY}}</td>     
+									<td>{{data.SCHOOL_NAME}}</td>
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+					</td>
+					</tr>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>课题组主要成员（变更后）</h5>
+						</td>
+					</tr>
+	
+					<tr>
+					<td colspan="4" style="width: 100%">
+						<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="TEACHER_NAME" class="sorting" ng-click="order($event.target)">姓名 </th>
+									  <th column="TEACHER_GENDER" class="sorting" ng-click="order($event.target)">性别 </th>
+									  <th column="TEACHER_EDUCATION" class="sorting" ng-click="order($event.target)">学历 </th>
+									  <th column="TEACHER_DEGREE" class="sorting" ng-click="order($event.target)">学位 </th>
+									  <th column="BORN" class="sorting" ng-click="order($event.target)">出生年月 </th>
+									  <th column="JOB_TITLE" class="sorting" ng-click="order($event.target)">职务 </th>
+									  <th column="SPECIALTY" class="sorting" ng-click="order($event.target)">研究专长 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">工作单位 </th>
+									  </tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in alterTeacherList'>
+									<td>{{data.TEACHER_NAME}} <input type="hidden" value="{{data.TEACHER_PK}}"><input type="hidden" value="{{data.MEMBER_PK}}"></td>     
+									<td>{{data.TEACHER_GENDER}}</td>
+									<td>{{data.TEACHER_EDUCATION}}</td>     
+									<td>{{data.TEACHER_DEGREE}}</td>
+									<td>{{data.BORN}}</td>     
+									<td>{{data.JOB_TITLE}}</td>
+									<td>{{data.SPECIALTY}}</td>     
+									<td>{{data.SCHOOL_NAME}}</td>
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+					</td>
+					</tr>
+					
+
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>二、申请人和课题组成员近年取得的与本课题有关的研究成果</h4>
+						</td>
+					</tr>
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>三、申请人和课题组成员近年承担的研究课题</h4>
+						</td>
+					</tr>
+
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>变更前科研课题</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="PROJECT_NAME" class="sorting" ng-click="order($event.target)">课题名称 </th>
+									  <th column="PROJECT_KIND" class="sorting" ng-click="order($event.target)">课题类型 </th>
+									  <th column="START_DATE" class="sorting" ng-click="order($event.target)">立项时间 </th>
+									  <th column="COMPLETION" class="sorting" ng-click="order($event.target)">完成情况 </th>
+									  <th column="APPROVE_UNIT" class="sorting" ng-click="order($event.target)">批准单位 </th>
+									  </tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='task in newTaskList'>
+									<td>{{task.PROJECT_NAME}} <input type="hidden" value="{{task.INDEX}}"></td>     
+									<td>{{task.PROJECT_KIND}}</td>
+									<td>{{task.START_DATE}}</td>     
+									<td>{{task.COMPLETION}}</td>
+									<td>{{task.APPROVE_UNIT}}</td>     
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+						</td>		
+					</tr>
+					
+							<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>变更后科研课题</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="PROJECT_NAME" class="sorting" ng-click="order($event.target)">课题名称 </th>
+									  <th column="PROJECT_KIND" class="sorting" ng-click="order($event.target)">课题类型 </th>
+									  <th column="START_DATE" class="sorting" ng-click="order($event.target)">立项时间 </th>
+									  <th column="COMPLETION" class="sorting" ng-click="order($event.target)">完成情况 </th>
+									  <th column="APPROVE_UNIT" class="sorting" ng-click="order($event.target)">批准单位 </th>
+									  </tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='task in alterTaskList'>
+									<td>{{task.PROJECT_NAME}} <input type="hidden" value="{{task.INDEX}}"></td>     
+									<td>{{task.PROJECT_KIND}}</td>
+									<td>{{task.START_DATE}}</td>     
+									<td>{{task.COMPLETION}}</td>
+									<td>{{task.APPROVE_UNIT}}</td>     
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+						</td>		
+					</tr>
+					
+				</tbody>
+				
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>四、预期研究成果</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>变更前预期成果</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="USER_NAME" class="sorting" ng-click="order($event.target)">承担人 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">研究阶段（起止时间） </th>
+									  <th column="USER_NAME" class="sorting" ng-click="order($event.target)">成果形式 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">阶段成果名称 </th>
+								</tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in newResultList'>
+									<td>{{data.PEOPLE}}<input type="hidden" value="{{data.INDEX}}"></td>     
+									<td>{{data.STAGE_START_TIME}}至{{data.STAGE_END_TIME}}</td>
+									<td>{{data.RESULT_FORM}}</td>     
+									<td>{{data.RESULT_STAGE_NAME}}</td> 
+									</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+
+						</td>
+					
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>变更后预期成果</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="USER_NAME" class="sorting" ng-click="order($event.target)">承担人 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">研究阶段（起止时间） </th>
+									  <th column="USER_NAME" class="sorting" ng-click="order($event.target)">成果形式 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">阶段成果名称 </th>
+								</tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in alterResultList'>
+									<td>{{data.PEOPLE}}<input type="hidden" value="{{data.INDEX}}"></td>     
+									<td>{{data.STAGE_START_TIME}}至{{data.STAGE_END_TIME}}</td>
+									<td>{{data.RESULT_FORM}}</td>     
+									<td>{{data.RESULT_STAGE_NAME}}</td> 
+									</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+
+						</td>
+					
+					</tr>
+					
+				</tbody>
+				
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>五、研究方案（变更后）</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="115" ng-model="form.DESIGN_ARGUMENT" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>
+
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>六、研究方案(匿名)（变更后）</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="115" ng-model="form.PLANS" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>
+				</tbody>
+				
+					<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>七、文献综述（变更后）</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="115" ng-model="form.BASIS_THEORY" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>			
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>八、文献综述(匿名)（变更后）</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="115" ng-model="form.INFORMATION_REVIEW" rows="50" disabled="true">	
+							</textarea>
+						</div>
+						</td>
+					</tr>			
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>九、完成项目的可行性分析（变更后）</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">			
+						<div>
+							<textarea style="border: 1px solid;border-color: black;font-size:15px;  "  cols="115" ng-model="form.CONDITION" rows="50" disabled="true">
+							
+							</textarea>
+						</div>
+						</td>
+					</tr>			
+				</tbody>	
+				</table>
+			</td>
+		</tr>
+		
+	</table>
+
+  </div>
+</div>
+
+
+</form>
+

@@ -1,0 +1,16 @@
+{
+    "name": "SchoolCheck_progressinfo",
+    "viewUrl": "aps/content/EduResearch/SchoolCheck/progressinfo/template.html",
+    "controllerUrl": "aps/content/EduResearch/SchoolCheck/progressinfo/controller.js",
+    "config": 
+    {			"findByIdURL":"json/Open_queryForObject_findProgressById.json",
+    			"findProjectInfoURL":"json/Open_queryForObject_findSiResearchById.json",
+    			"findAchieveListURL":"json/Open_queryForList_findAchieveListByPk.json",
+           		"menu":{
+	            "buttons":
+	            [
+		        	
+				]
+			}
+	}
+}

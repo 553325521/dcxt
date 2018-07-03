@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="schoolCheck" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+ 	<!-- 查询所有需要校级审核教科研申请 -->
+ 	<select id="findCheckList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+ 	select
+	 	e.STATUS,
+		e.SC_EXPLORE_PK,
+	    p. EXPLORE_PETITION_PK,
+		p.PROJECT_TITLE,
+		p.PROJECT_TYPE,
+		p.PROJECT_RESOURCE,
+		p.FK_TEACHER,
+		p.TEACHER_NAME,
+		p.TEACHER_TEL,
+		p.FK_TEACHER_SCHOOL,
+		p.TEACHER_SCHOOL_NAME,
+		p.TEACHER_SCHOOL_TEL,
+		p.TEACHER_SCHOOL_ADDRESS,
+		p.TEACHER_SCHOOL_POSTAL,
+		p.PRICE,
+		to_char(p.APPLY_DATE,'yyyy-MM-dd') APPLY_DATE,
+		to_char(p.FINISH_DATE,'yyyy-MM-dd') FINISH_DATE,
+		p.TOPIC_NAME,
+		p.TEACHER_JOB,
+		p.TEACHER_JOB_TITLE,
+		p.TEACHER_HOME_TEL,
+		p.BASIS_THEORY,
+		p.PLANS,
+		p.CONDITION,
+		p.APPLY_CODE,
+		p.PROJECT_CODE,
+		p.TEACHER_EMAIL,
+		p.INFORMATION_REVIEW,
+		p.DESIGN_ARGUMENT,
+		p.TEACHER_SKILL,
+		p.TEACHER_IDCARD,
+		p.EXPECT_RESULT,
+		p.PROJECT_LEVEL,
+		p.SCHOOL_CHECK_OPINION,
+		p.AREA_CHECK_OPINION,
+		p.SCHOOL_CHECK_RESULT,
+		p.AREA_CHECK_RESULT,
+		p.FINANCE_MONEY,
+		ROUND(TO_NUMBER((p.FINISH_DATE+0)-sysdate)) as DELTA_TIME
+		from SC_EXPLORE e,SC_EXPLORE_PETITION p
+	 where e.FK_EXPLORE_PETITION=p.EXPLORE_PETITION_PK
+	 and e.STATUS!=0
+   	 <if test=" PROJECT_TITLE!= null and  PROJECT_TITLE!='' ">
+  			and PROJECT_TITLE LIKE '%'||#{PROJECT_TITLE}||'%'
+  	 </if>
+  	 <if test=" STATUS!= null and  STATUS!='' ">
+  			and STATUS=#{STATUS}
+  	 </if>
+ </select>
+  
+  <select id="findCheckListSize" parameterMap="BaseParameterMap" resultType="java.lang.Integer">
+ 	select
+  	 	count(*)
+	 from SC_EXPLORE e,SC_EXPLORE_PETITION p
+	 where e.FK_EXPLORE_PETITION=p.EXPLORE_PETITION_PK
+	 and e.STATUS!=0
+   	 <if test=" PROJECT_TITLE!= null and  PROJECT_TITLE!='' ">
+  			and PROJECT_TITLE LIKE '%'||#{PROJECT_TITLE}||'%'
+  	 </if>
+  	 <if test=" STATUS!= null and  STATUS!='' ">
+  			and STATUS=#{STATUS}
+  	 </if>
+  </select>
+  
+ 	    <!--申请书校级审核  -->
+  <update id="schoolCheckApply" parameterMap="BaseParameterMap">
+  	update SC_EXPLORE_PETITION
+	  	set
+	  		PROJECT_TYPE=#{PROJECT_TYPE},
+	  		SCHOOL_CHECK_TIME=sysdate,
+	  		SCHOOL_CHECK_USER=#{userInfo.GUID},
+	  		SCHOOL_CHECK_RESULT=#{SCHOOL_CHECK_RESULT}
+	  		<if test="SCHOOL_CHECK_OPINION != null and SCHOOL_CHECK_OPINION !='' ">
+	  			,
+	  			SCHOOL_CHECK_OPINION=#{SCHOOL_CHECK_OPINION}
+	  		</if>
+	  		<if test="FINANCE_MONEY != null and FINANCE_MONEY !='' ">
+	  			,
+	  			FINANCE_MONEY=#{FINANCE_MONEY}
+	  		</if>
+  	where EXPLORE_PETITION_PK=#{EXPLORE_PETITION_PK}
+  </update>
+  
+  
+   <!--  开题报告校级审核-->
+  	<update id="schoolCheckReport" parameterMap="BaseParameterMap">
+		update SC_EXPLORE_REPORT
+			set 
+				SCHOOL_CHECK_TIME=sysdate,
+		  		SCHOOL_CHECK_USER=#{userInfo.GUID},
+		  		SCHOOL_CHECK_RESULT=#{SCHOOL_CHECK_RESULT}
+		  		<if test="SCHOOL_CHECK_OPINION != null and SCHOOL_CHECK_OPINION !='' ">
+		  			,
+		  			SCHOOL_CHECK_OPINION=#{SCHOOL_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_REPORT_PK=#{EXPLORE_REPORT_PK}		
+	</update>
+	
+	
+	<!--  中期报告校级审核-->
+  	<update id="schoolCheckProgress" parameterMap="BaseParameterMap">
+		update SC_EXPLORE_PROGRESS
+			set 
+				SCHOOL_CHECK_TIME=sysdate,
+		  		SCHOOL_CHECK_USER=#{userInfo.GUID},
+		  		SCHOOL_CHECK_RESULT=#{SCHOOL_CHECK_RESULT}
+		  		<if test="SCHOOL_CHECK_OPINION != null and SCHOOL_CHECK_OPINION !='' ">
+		  			,
+		  			SCHOOL_CHECK_OPINION=#{SCHOOL_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_PROGRESS_PK=#{EXPLORE_PROGRESS_PK}		
+	</update>
+	
+	<!--  结题报告校级审核-->
+  	<update id="schoolCheckAchieve" parameterMap="BaseParameterMap">
+		update SC_EXPLORE_ACHIEVE
+			set 
+				SCHOOL_CHECK_TIME=sysdate,
+		  		SCHOOL_CHECK_USER=#{userInfo.GUID},
+		  		SCHOOL_CHECK_RESULT=#{SCHOOL_CHECK_RESULT}
+		  		<if test="SCHOOL_CHECK_OPINION != null and SCHOOL_CHECK_OPINION !='' ">
+		  			,
+		  			SCHOOL_CHECK_OPINION=#{SCHOOL_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_ACHIEVE_PK=#{EXPLORE_ACHIEVE_PK}		
+	</update>
+	
+	<!--  科研变更报告校级审核 -->
+  	<update id="schoolCheckAlter" parameterMap="BaseParameterMap">
+		update SC_EXPLORE_ALTER
+			set 
+		  		SCHOOL_CHECK_RESULT=#{SCHOOL_CHECK_RESULT}
+		  		<if test="SCHOOL_CHECK_OPINION != null and SCHOOL_CHECK_OPINION !='' ">
+		  			,
+		  			SCHOOL_CHECK_OPINION=#{SCHOOL_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_ALTER_PK=#{EXPLORE_ALTER_PK}		
+	</update>
+	
+	
+	  <!--  科研延期或终止校级审核-->
+  	<update id="schoolCheckDelay" parameterMap="BaseParameterMap">
+		update SC_EXPLORE_DELAY
+			set 
+				SCHOOL_CHECK_TIME=sysdate,
+		  		SCHOOL_CHECK_USER=#{userInfo.GUID},
+		  		SCHOOL_CHECK_RESULT=#{SCHOOL_CHECK_RESULT}
+		  		<if test="SCHOOL_CHECK_OPINION != null and SCHOOL_CHECK_OPINION !='' ">
+		  			,
+		  			SCHOOL_CHECK_OPINION=#{SCHOOL_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_DELAY_PK=#{EXPLORE_DELAY_PK}		
+	</update>
+	<!--审核详情  -->
+ 	<select id="findCheckInfoByPk" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	select 
+		CHECK_PK,
+		CHECK_FLAG,
+		CHECK_OPINION,
+		to_char(CHECK_DATE,'yyyy-MM-dd') CHECK_DATE,
+		CHECK_USER,
+		CHECK_LEVEL,
+		FK_EXPLORE,
+		CHECK_USER_NAME
+	from SC_EXPLORE_CHECK
+	where FK_EXPLORE=#{EXPLORE_PK}
+	ORDER BY CHECK_DATE,CHECK_LEVEL desc
+</select>
+
+</mapper>

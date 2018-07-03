@@ -1,0 +1,84 @@
+
+<form class="form-horizontal form-horizontal-condensed" >
+	<div class="form-group">
+		<label class="col-sm-3 control-label">学校类别:</label> 
+		<div class="col-sm-8">
+		<select not-null="yes" class="form-control" ng-model="form.SCHOOL_TYPE_PK" ng-options="schoolType.SCHOOL_TYPE_PK as schoolType.SCHOOL_NAME for schoolType in schoolTypeList" ng-change="schoolChange()">
+			<option value="">--请选择--</option>
+		</select>
+		
+		
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-3 control-label">学校名称:</label> 
+		<div class="col-sm-8">
+		<select not-null="yes" class="form-control" ng-model="form.UNIT_PK" ng-options="unit.UNIT_PK as unit.UNIT_NAME for unit in unitList" ng-change="teacherChange()">
+			<option value="">--请选择--</option>
+		</select>
+		
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label">教 师 名 称:</label> 
+		<div class="col-sm-8">
+		<select not-null="yes" class="form-control" ng-model="form.USER_PK" ng-options="teacher.USER_PK as teacher.USER_SN for teacher in teacherList" ng-change="teacherInfo()" >
+			<option value="">--请选择--</option>
+		</select>
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label"> &nbsp; 性  别：</label> 
+		<div class="col-sm-8">
+		<input not-null="yes" class="form-control" type="text" ng-model="form.GENDER" disabled="true">
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-3 control-label"> &nbsp; 工 作 单 位：</label> 
+		<div class="col-sm-8">
+		<input not-null="yes" class="form-control" type="text" ng-model="form.SCHOOL_NAME" disabled="true">
+		</div>
+	</div>
+
+
+	<div class="form-group">
+		<label class="col-sm-3 control-label"> &nbsp; 著作者(第一作者)：</label> 
+		<div class="col-sm-8">
+		<input not-null="yes" class="form-control" type="text" ng-model="form.AUTHOR" disabled="true">
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label"> &nbsp; 成 果 名 称：</label> 
+		<div class="col-sm-8">
+		<input not-null="yes" class="form-control" type="text" ng-model="form.HARVEST_NAME" >
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label"> &nbsp; 成 果 形 式：</label> 
+		<div class="col-sm-8">
+		<input not-null="yes" class="form-control" type="text" ng-model="form.HARVEST_TYPE" >
+		</div>
+	</div>
+	
+	<div class="form-group">
+		<label class="col-sm-3 control-label"> &nbsp; 发表刊物或出版单位：</label> 
+		<div class="col-sm-8">
+		<input not-null="yes" class="form-control" type="text" ng-model="form.PUBLISH_ADDRESS" >
+		</div>
+	</div>
+		
+	<div class="form-group">
+		<label class="col-sm-3 control-label"> &nbsp; 出版时间：</label> 
+		<div class="col-sm-8">
+		<input not-null="yes" ng-model="form.PUBLISH_DATE" type="text" class="form-control datepicker" >
+		</div>
+	</div>
+</form>
+
+

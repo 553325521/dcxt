@@ -1,0 +1,19 @@
+{
+    "name": "SchoolCheck_altercheck",
+    "viewUrl": "aps/content/EduResearch/SchoolCheck/altercheck/template.html",
+    "controllerUrl": "aps/content/EduResearch/SchoolCheck/altercheck/controller.js",
+    "config": 
+    {
+    			"findByIdURL":"json/Open_queryForObject_findAlterById.json",
+    			"findMemberAlterSortURL":"json/Open_queryForList_findMemberAlterSortByPk.json",
+    			"findMemberListURL":"json/Open_queryForList_findMemberListByPk.json",
+    			"findTaskAlterSortURL":"json/Open_queryForList_findTaskAlterSortByPk.json",
+    			"findTaskListURL":"json/Open_queryForList_findTaskListByPk.json",
+    			"findResultAlterSortURL":"json/Open_queryForList_findResultAlterSortByPk.json",
+    			"findResultListURL":"json/Open_queryForList_findResultListByPk.json",
+    			"checkURL":"json/Alter_schoolCheck_schoolCheckAlter.json",
+    			"findCheckInfoURL":"json/Open_queryForList_findCheckInfoByPk.json"
+    			
+    			
+	}
+}

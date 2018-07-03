@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="areaFirstCheck" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+	 <!-- 申请书区级初审审核 -->
+	 <update id="areaFirstCheckApply" parameterMap="BaseParameterMap">
+  		update SC_EXPLORE_PETITION
+			set 
+				AREA_CHECK_TIME=sysdate,
+		  		AREA_CHECK_USER=#{userInfo.GUID},
+		  		AREA_CHECK_RESULT=#{AREA_CHECK_RESULT}
+		  		<if test="AREA_CHECK_OPINION != null and AREA_CHECK_OPINION !='' ">
+		  			,
+		  			AREA_CHECK_OPINION=#{AREA_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_PETITION_PK=#{EXPLORE_PETITION_PK} 
+  	</update>
+  	
+  	<!-- 开题报告区级审核 -->
+	 <update id="areaCheckReport" parameterMap="BaseParameterMap">
+  		update SC_EXPLORE_REPORT
+			set 
+				AREA_CHECK_TIME=sysdate,
+		  		AREA_CHECK_USER=#{userInfo.GUID},
+		  		AREA_CHECK_RESULT=#{AREA_CHECK_RESULT}
+		  		<if test="AREA_CHECK_OPINION != null and AREA_CHECK_OPINION !='' ">
+		  			,
+		  			AREA_CHECK_OPINION=#{AREA_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_REPORT_PK=#{EXPLORE_REPORT_PK}	 
+  	</update>
+  	
+  	<!-- 中期报告区级审核 -->
+	 <update id="areaCheckProgress" parameterMap="BaseParameterMap">
+  		update SC_EXPLORE_PROGRESS
+			set 
+				AREA_CHECK_TIME=sysdate,
+		  		AREA_CHECK_USER=#{userInfo.GUID},
+		  		AREA_CHECK_RESULT=#{AREA_CHECK_RESULT}
+		  		<if test="AREA_CHECK_OPINION != null and AREA_CHECK_OPINION !='' ">
+		  			,
+		  			AREA_CHECK_OPINION=#{AREA_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_PROGRESS_PK=#{EXPLORE_PROGRESS_PK}	 
+  	</update>
+  	
+  	
+  	<!-- 结题报告区级审核 -->
+	 <update id="areaCheckAchieve" parameterMap="BaseParameterMap">
+  		update SC_EXPLORE_ACHIEVE
+			set 
+				AREA_CHECK_TIME=sysdate,
+		  		AREA_CHECK_USER=#{userInfo.GUID},
+		  		AREA_CHECK_RESULT=#{AREA_CHECK_RESULT}
+		  		<if test="AREA_CHECK_OPINION != null and AREA_CHECK_OPINION !='' ">
+		  			,
+		  			AREA_CHECK_OPINION=#{AREA_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_ACHIEVE_PK=#{EXPLORE_ACHIEVE_PK}	 
+  	</update>
+  	
+  	<!-- 变更报告区级审核 -->
+	 <update id="areaCheckAlter" parameterMap="BaseParameterMap">
+  		update SC_EXPLORE_ALTER
+			set 
+		  		AREA_CHECK_RESULT=#{AREA_CHECK_RESULT}
+		  		<if test="AREA_CHECK_OPINION != null and AREA_CHECK_OPINION !='' ">
+		  			,
+		  			AREA_CHECK_OPINION=#{AREA_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_ALTER_PK=#{EXPLORE_ALTER_PK}		 
+  	</update>
+  	
+  	<!-- 科研延期或终止区级审核 -->
+	 <update id="areaCheckDelay" parameterMap="BaseParameterMap">
+  		update SC_EXPLORE_DELAY
+			set 
+				AREA_CHECK_TIME=sysdate,
+		  		AREA_CHECK_USER=#{userInfo.GUID},
+		  		AREA_CHECK_RESULT=#{AREA_CHECK_RESULT}
+		  		<if test="AREA_CHECK_OPINION != null and AREA_CHECK_OPINION !='' ">
+		  			,
+		  			AREA_CHECK_OPINION=#{AREA_CHECK_OPINION}
+		  		</if>
+		where EXPLORE_DELAY_PK=#{EXPLORE_DELAY_PK}	 
+  	</update>
+  	
+</mapper>
