@@ -1,0 +1,12 @@
+/.settings
+/src/main/java/cn/wifiedu/ssm/mapping/*.DS_Store
+/*.project
+/*.tern-project
+/src/main/webapp/aps/*.DS_Store
+/src/main/webapp/aps/content/*.DS_Store
+/target/classes
+/target/m2e-jee/web-resources/META-INF
+/target/m2e-wtp/web-resources/META-INF
+/src/main/webapp/assets/*.DS_Store
+/src/main/webapp/assets/img/*.DS_Store
+/*.classpath

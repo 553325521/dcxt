@@ -1,0 +1,362 @@
+<form class="form-horizontal form-horizontal-condensed" >
+
+<div class="panel panel-default" >
+  <div class="panel-body" style="min-height: 680px;padding: 30px;width: 100%"  >
+	<table align="center"  style="width: 80%">
+		
+		<tr>
+			<td valign="top" >
+				<table class="table-striped table-from-big"  style="width: 100%">
+					<tbody>
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+							<span style="color: red;">请上传附件文件(WORD、PPT、PDF)</span>
+							</td>
+						</tr>
+						
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+							<input type="file" name="uploadifyfile" id="uploadifyfile" />
+							</td>
+						</tr>
+						
+						<tr>
+							<td colspan="4" align="center" style="padding-top: 25px;">
+							<span class="uploadfile" style=""></span>&nbsp;<span class="uploadresult" style="color: red; display:none;" >上传成功</span>
+							</td>
+						</tr>
+					</tbody>
+					
+					<tbody >
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> 松江区教育科研项目结题表</h4>
+						</td>
+					</tr>
+					<tr>
+						<td class="control-label"  align="right">申请编号：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.APPLY_CODE"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">项目名称：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.PROJECT_TITLE"  disabled="true" >
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">申报类别：</td>
+						<td class="form-group has-feedback" >
+						<select class="form-control xbclass"  ng-model="form.PROJECT_TYPE" disabled="true">
+							  <option value="">==请选择==</option>
+				              <option value="4">个人</option>
+				              <option value="5">集体</option>
+						</select>
+						</td>
+						<td class="control-label"  align="right">项目级别：</td>
+						<td  class="form-group has-feedback" >
+						<select class="form-control xbclass"  ng-model="form.PROJECT_LEVEL" disabled="true">
+							  <option value="">==请选择==</option>
+				              <option value="1">校级</option>
+				              <option value="2">区级</option>
+				              <option value="3">市级</option>
+						</select>
+						</td>
+						
+					</tr>
+
+					<tr>
+						<td class="control-label"  align="right">负责人：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_NAME"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">工作单位：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_NAME"  disabled="true" >
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">申请经费：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.PRICE"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">预期最终成果：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.EXPECT_RESULT"  disabled="true" >
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label"  align="right">填表日期：</td>
+						<td  class="form-group has-feedback" >
+						<input type="text" class="form-control datepicker csrq"  ng-model="form.APPLY_DATE"  disabled="true" >
+						</td>
+						<td class="control-label"  align="right">预计完成时间：</td>
+						<td  class="form-group has-feedback" >
+						<input type="text" class="form-control datepicker csrq"  ng-model="form.FINISH_DATE" disabled="true" >
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>负责人</h5>
+						</td>
+					</tr>
+					<tr>
+						<td class="control-label"  align="right">姓名：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_NAME" disabled="true">
+						</td>
+						<td class="control-label" align="right" >性别：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.TEACHER_GENDER"  disabled="true">
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label" align="right" >职务：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_JOB"  disabled="true">
+						</td>
+						<td class="control-label" align="right" >研究专长：</td>
+						<td class="form-group has-feedback" ><input class="form-control" type="text" ng-model="form.TEACHER_SKILL"  disabled="true">
+						</td>
+					</tr>
+					<tr>		
+						<td class="control-label" align="right" >工作单位：</td>
+						<td class="form-group has-feedback" colspan="3"><input class="form-control" type="text" ng-model="form.TEACHER_SCHOOL_NAME"  disabled="true">
+						</td>
+					</tr>
+					
+					<tr>		
+						<td class="control-label" align="right" >研究中所承担的工作：</td>
+						<td class="form-group has-feedback" colspan="3"><input class="form-control" type="text" ng-model="form.USER_WORK" not-null="yes">
+						</td>
+					</tr>
+					
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>课题组成员分工</h5>
+						</td>
+					</tr>
+					<tr>
+					<td colspan="4" style="width: 100%">
+						<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="TEACHER_NAME" class="sorting" ng-click="order($event.target)">姓名 </th>
+									  <th column="TEACHER_GENDER" class="sorting" ng-click="order($event.target)">性别 </th>
+									  <th column="JOB_TITLE" class="sorting" ng-click="order($event.target)">职务 </th>
+									  <th column="SPECIALTY" class="sorting" ng-click="order($event.target)">研究专长 </th>
+									  <th column="SCHOOL_NAME" class="sorting" ng-click="order($event.target)">工作单位 </th>
+									  <th column="TEACHER_WORK" class="sorting" ng-click="order($event.target)">研究中所承担的工作 </th>
+								</tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in newTeacherList'>
+									<td>{{data.TEACHER_NAME}}<input type="hidden" value="{{data.MEMBER_PK}}"></td>     
+									<td>{{data.TEACHER_GENDER}}</td>   
+									<td>{{data.JOB_TITLE}}</td>
+									<td>{{data.SPECIALTY}}</td>     
+									<td>{{data.SCHOOL_NAME}}</td>
+									<td>
+										<input  id="work{{data.MEMBER_PK}}" class="form-control" type="text" value="">
+									</td>
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>		
+					</td>
+					</tr>
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h5>最终主成果情况</h5>
+						</td>
+					</tr>
+					
+					<tr>	
+						<td class="control-label" align="right" >成果名称：</td>
+						<td class="form-group has-feedback" >
+							<input class="form-control" type="text"ng-model="form.PUBLISH_TITLE"  maxlength="20" >			
+						</td>
+						<td class="control-label" align="right" >成果形式：</td>
+						<td class="form-group has-feedback" >
+							<select class="form-control xbclass"  ng-model="form.PUBLISH_SORT" >
+								<option value="">--请选择--</option>
+								<option value="1">专著</option>
+								<option value="2">研究报告</option>
+								<option value="3">论文</option>
+								<option value="4">调查报告</option>
+								<option value="5">经验总结</option>
+								<option value="6">实验报告</option>
+								<option value="7">咨询报告</option>
+								<option value="8">其他</option>
+							</select>
+					   </td>	
+					</tr>
+						
+					<tr>
+						<td class="control-label" align="right" >主成果是否发表：</td>
+						<td class="form-group has-feedback" >
+						<select class="form-control xbclass"  ng-model="form.PERIODICALS_FLAG" ng-change=optionChange();>
+								<option value="">--请选择--</option>
+								<option value="1">是</option>
+								<option value="2">否</option>
+						</select>
+						</td>
+						<td class="control-label" align="right" ></td>
+						<td class="form-group has-feedback" >
+						</td>
+					</tr>
+
+					<tr id="publish" style="display:none;">	
+						<td class="control-label" align="right" >期刊或出版社名称：</td>
+						<td class="form-group has-feedback" >
+							<input class="form-control" type="text"ng-model="form.PERIODICALS_NAME" >
+						</td>
+						<td class="control-label" align="right" ></td>
+						<td class="form-group has-feedback" >
+						</td>
+					</tr>		
+					
+					<tr id="appear" style="display:none;">
+						<td class="control-label" align="right" >刊号或书号：</td>
+						<td class="form-group has-feedback" >
+							<input class="form-control" type="text"ng-model="form.PERIODICALS_NUMBER"  >
+						</td>
+						<td class="control-label" align="right" >发表日期：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control datepicker csrq" type="text" ng-model="form.PERIODICALS_DATE"  >
+						</td>
+					</tr>
+					
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>课题终结时递交的材料目录</h4>
+						</td>
+					</tr>
+					<tr>
+						<td class="control-label" align="right" >序号：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.DOCUMENT_SEQUENCE" >
+						</td>
+						<td class="control-label" align="right" >份数：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.DOCUMENT_NUMBER" >
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="control-label" align="right" >文件材料名称：</td>
+						<td class="form-group has-feedback" >
+						<input class="form-control" type="text" ng-model="form.DOCUMENT_NAME" >
+						</td>
+						<td class="control-label" align="right" ></td>
+						<td class="form-group has-feedback" >	
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 20px;"><a ng-click="addFile()"><span class="glyphicon glyphicon-plus-sign"></span> 添加</a></td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>已添加材料目录</h4>
+						</td>
+					</tr>
+					
+					<tr>
+						<td colspan="4" style="width: 100%">
+							<div class="panel-body">
+							<h5></h5>
+							<table class="table table-hover table-striped table-bordered ">  
+							  <thead>
+								<tr>
+									  <th column="DOCUMENT_SEQUENCE" class="sorting" ng-click="order($event.target)">序号 </th>
+									  <th column="DOCUMENT_NUMBER" class="sorting" ng-click="order($event.target)">份数 </th>
+									  <th column="DOCUMENT_NAME" class="sorting" ng-click="order($event.target)">文件材料名称 </th>
+									  <th column="" class="sorting" ng-click="order($event.target)"></th>
+								</tr>
+							  </thead>
+							  <tbody >
+								
+								<tr ng-repeat='data in newFileList'>
+									<td>{{data.DOCUMENT_SEQUENCE}} <input type="hidden" value="{{data.INDEX}}"></td>     
+									<td>{{data.DOCUMENT_NUMBER}}</td>
+									<td>{{data.DOCUMENT_NAME}}</td>        
+									<td><a ng-click="removeFile(data.INDEX)"><span class="glyphicon glyphicon-plus-sign"></span> 移除</a></td>
+								</tr>
+							  </tbody>
+							  <tfoot>
+							  </tfoot>
+							</table>
+						</div>
+						</td>
+					</tr>
+				</tbody>
+
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>研究工作概况</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">	
+						<div id="work_describe" name="work_describe" type="text/plain" style="width:100%;height:480px;">	
+						</div>
+						</td>
+					</tr>
+
+				</tbody>
+				
+				<tbody>
+					<tr>
+						<td colspan="4" align="center" style="padding-top: 25px;">
+							<h4>结题报告</h4>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">
+						<div id="final_report" name="final_report" type="text/plain" style="width:100%;height:480px;">	
+						</div>
+						</td>
+					</tr>
+				</tbody>
+
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" >
+				<hr/>
+			</td>
+		</tr>
+		
+		<tr>
+			<td valign="top" style="text-align: center;">
+				<button type="button" class="btn btn-info" ng-click="save();">保存</button>
+	      		 &nbsp; 
+	      		<button type="button" class="btn btn-default" ng-click="goback();" id="">返回</button>
+			</td>
+		</tr> 
+	</table>
+
+  </div>
+</div>
+
+
+</form>
+
