@@ -10,3 +10,4 @@
 /src/main/webapp/assets/*.DS_Store
 /src/main/webapp/assets/img/*.DS_Store
 /*.classpath
+/target/
