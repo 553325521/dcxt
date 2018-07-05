@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>转盘设置</title>
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no" name="format-detection" />
+    <!-- 引入YDUI样式 -->
+    <link rel="stylesheet" href="../js/ydui/css/ydui.css" />
+    <!-- 引入YDUI自适应解决方案类库 -->
+    <script src="../js/ydui/js/ydui.flexible.js"></script>
+    <style type="text/css">  
+    .cell-right input[type=radio]:checked+.cell-checkbox-icon:after, .cell-right input[type=checkbox]:not(.m-switch):checked+.cell-checkbox-icon:after {
+    color: #68bde6;
+    }
+    .nameInput{text-align: right}
+    .canyu{padding-right :0rem}
+    .topBtnDiv{margin-left: 5%}
+    .topBtnDiv1{margin-left: 36%}
+    .topBtn:after{border-radius:30rem;height: 150%;margin-top:1%}
+    .select-shop{-webkit-flex: 0;flex: 0}
+    .select-shop option{direction: ltr;}
+    .radioIcon{margin-left: .05rem}
+    .m-spinner{margin-left: .2rem}
+    .firstRow:not(:last-child):after{border-bottom: none}
+    .arrow-direction:after{transform: rotate(90deg);}
+    </style>
+</head>
+    
+<body>
+<section class="g-flexview">
+
+    <header class="m-navbar">
+         <div class="navbar-item">
+            <i class="back-ico"></i><span class="navbar-title">转盘设置</span>
+        </div>
+         <div class="navbar-center topBtnDiv1">
+            <a href="javascript:;" class="btn btn-hollow topBtn">中奖记录</a>
+        </div>
+        <div class="navbar-center topBtnDiv">
+            <a href="javascript:;" class="btn btn-hollow topBtn">重置</a>
+        </div>
+   
+    </header>
+    <section class="g-scrollview">
+
+        <div class="m-cell demo-small-pitch">
+            <div class="cell-item">
+                <div class="cell-left">活动名称：</div>
+                <div class="cell-right">
+                    <input type="text" class="cell-input nameInput" placeholder="请输入活动名称" autocomplete="off" />
+                </div>
+            </div>
+            <div class="cell-item">
+                <span class="cell-left">是否开启：</span>
+                <label class="cell-right">
+                    <label class="cell-item">
+                            <span class="cell-left radioText" >是</span>
+                            <label class="cell-right">
+                                <input type="radio" value="man" name="radio1" checked/>
+                                <i class="cell-checkbox-icon radioIcon" ></i>
+                            </label>
+                        </label>
+                        <label class="cell-item">
+                            <span class="cell-left radioText">否</span>
+                            <label class="cell-right">
+                                <input type="radio" value="woman" name="radio1"/>
+                                <i class="cell-checkbox-icon radioIcon"></i>
+                            </label>
+                        </label>
+            </div>
+            <div class="cell-item">
+                <div class="cell-left">参与对象：</div>
+                <div class="cell-right">
+                        <label class="cell-item">
+                            <span class="cell-left radioText">所有粉丝</span>
+                            <label class="cell-right">
+                                <input type="radio" value="man" name="radio" checked/>
+                                <i class="cell-checkbox-icon radioIcon"></i>
+                            </label>
+                        </label>
+                        <label class="cell-item">
+                            <span class="cell-left radioText">仅限会员</span>
+                            <label class="cell-right">
+                                <input type="radio" value="woman" name="radio"/>
+                                <i class="cell-checkbox-icon radioIcon"></i>
+                            </label>
+                        </label>
+                </div>
+            </div>
+             <div class="cell-item">
+                <div class="cell-left">有效期：</div>
+                <div class="cell-right">
+                    <div class="cell-item">
+                        <div class="cell-left" style="margin-right: 10%"><input class="cell-input" type="date" value="2016-07-19" placeholder=""/></div>
+                    </div>
+                    <div class="cell-item">
+                           <span class="cell-right">-</span>
+                    </div>
+                    <div class="cell-item" style="margin-right: 10%">
+                        <div class="cell-right"><input class="cell-input" type="date" value="2016-07-19" placeholder=""/></div>
+                    </div>
+                </div>
+            </div>
+            <div class="cell-item">
+                <div class="cell-left">参与方式：</div>
+                <div class="cell-right">
+                         <label class="cell-item" style="padding-left: 0rem">
+                            <span class="cell-left">每日参与</span>
+                            <label class="cell-right canyu">
+                                <input type="radio" class="way" value="1" name="radio2" checked/>
+                                <i class="cell-checkbox-icon radioIcon"></i>
+                            </label>
+                        </label>
+                        <label class="cell-item">
+                            <span class="cell-left">一次参与</span>
+                            <label class="cell-right canyu">
+                                <input type="radio" class="way" value="2" name="radio2"/>
+                                <i class="cell-checkbox-icon radioIcon"></i>
+                            </label>
+                        </label>
+                        <label class="cell-item">
+                            <span class="cell-left">消费抽奖</span>
+                            <label class="cell-right canyu">
+                                <input type="radio" class="way" value="3" name="radio2"/>
+                                <i class="cell-checkbox-icon radioIcon"></i>
+                            </label>
+                        </label>
+                </div>
+            </div>
+             <div class="cell-item eyeryDayIn">
+                <div class="cell-left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div class="cell-right">
+                    <span class="cell-left">每日免积分参与</span>
+                   <!--  <input type="text" class="cell-input"/> -->
+                    <span class="m-spinner" data-ydui-spinner="{input: '.J_Input', add: '.J_Add', minus: '.J_Del'}"><!-- 添加data-ydui-spinner属性并添加参数即可 -->
+                        <a href="javascript:;" class="J_Del"></a>
+                        <input type="text" class="J_Input" placeholder=""/>
+                        <a href="javascript:;" class="J_Add"></a>
+                    </span>
+                    <span>次</span>
+                </div>
+            </div>
+            <div class="cell-item">
+                 <div class="cell-left">
+                    <span>参与次数用完后，每日扣除</span>
+                    <input type="text" class="cell-input" style="width: 1rem" />
+                    <span>积分，为0不开启</span>
+                </div>
+            </div>
+            <div class="cell-item">
+                <div class="cell-left">
+                    <span>中奖概率</span>
+                    <input type="text" class="cell-input" style="width: 1rem" />
+                </div>
+                <div class="cell-right">
+                     <span>领取期限</span>
+                    <span class="m-spinner" data-ydui-spinner="{input: '.J_Input', add: '.J_Add', minus: '.J_Del'}"><!-- 添加data-ydui-spinner属性并添加参数即可 -->
+                        <a href="javascript:;" class="J_Del"></a>
+                        <input type="text" class="J_Input" placeholder=""/>
+                        <a href="javascript:;" class="J_Add"></a>
+                    </span>
+                    <span>天内</span>
+                </div>
+            </div>
+              <div class="cell-item">
+                <div class="cell-left">适用门店：</div>
+                <div class="cell-right">
+
+                         <label class="cell-right cell-arrow" >
+                            <select class="cell-select select-shop" dir="rtl">
+                                <option value="">请选择适用门店</option>
+                                <option value="">烧烤店</option>
+                                <option value="1">水果店</option>
+                                <option value="2">超市</option>
+                            </select>
+                        </label>                      
+                </div>
+            </div>
+             <div class="cell-item prizeSet">
+                <div class="cell-left">
+                    <label class="cell-left">奖品设置</label>
+                    <label class="cell-right" style="margin-left: 0.2rem;color:#A9A9A9">最多设置6个奖项</label>
+                </div>
+                <div class="cell-right">
+                     <a href="javascript:;"  id="setBtn">
+                        <i class="icon-setting" style="color:#68bde6;font-size: 0.5rem"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+            <div class="cell-item prizeRow firstRow">
+                    <div class="cell-item firstRow">
+                        <div class="cell-left">
+                            类别
+                        </div>
+                        <div class="cell-right cell-arrow arrow-direction" style="margin-left: .5rem">
+                             <select class="cell-select">
+                                <option value="">卡券</option>
+                                <option value="">积分</option>
+                                <option value="1">储值</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="cell-item firstRow">
+                        <div class="cell-left">
+                            奖项名
+                        </div>
+                       <div class="cell-right" style="margin-left: .5rem">
+                            一等奖
+                        </div>
+                        <div class="cell-left">
+                            <a href="javascript:;" class="deleteBtn">
+                                <i class="icon-delete" style="color:#68bde6;font-size: 0.5rem"></i>
+                            </a>
+                        </div>
+                    </div>
+            </div>
+            <div class="cell-item prizeRow">
+                    <div class="cell-left">
+                            奖品名
+                    </div>
+                    <div class="cell-right cell-arrow arrow-direction" style="margin-left: .5rem">
+                             <select class="cell-select">
+                                <option value="">20元代金券</option>
+                                <option value="">30元代金券</option>
+                                <option value="1">40元代金券</option>
+                            </select>
+                    </div>
+                    <div class="cell-left">
+                            实际数 20
+                    </div>
+                    <div class="cell-right" style="margin-left: .5rem">
+                          展示数 100
+                    </div>
+            </div>
+            </div>
+            <div class="m-celltitle" style="color:#333">备注说明</div>
+            <div class="m-cell">
+                <div class="cell-item">
+                    <div class="cell-right">
+                        <textarea class="cell-textarea" placeholder="请输入您的银行卡卡号和密码"></textarea>
+                    </div>
+                </div>
+            </div>
+         <div class="cell-item">
+           <button type="button" class="btn-block btn-primary">保存</button>
+        </div> 
+        </div>
+        
+
+    </section>
+
+</section>
+<!-- 引入jQuery 2.0+ -->
+<script src="../js/ydui/js/jquery.min.js"></script>
+<!-- 引入YDUI脚本 -->
+<script src="../js/ydui/js/ydui.js"></script>
+<script>
+     var setCount = 1;
+    !function ($) {
+      /* var dialog = win.YDUI.dialog;*/
+       $(".deleteBtn").first().bind("click" , function(){
+                removeNode(this);
+        });
+        $(".way").change(
+                function() {
+                var id = $("input[name='radio2']:checked").val();
+                if (id == 1) {
+                    $(".eyeryDayIn").toggle(100);
+                }else{
+                   $(".eyeryDayIn").toggle(100);
+                }
+        });
+        $("#setBtn").click(function(){
+            if(setCount < 6){
+            $(".prizeSet").after(` <div><div class="cell-item prizeRow firstRow">
+                    <div class="cell-item firstRow">
+                        <div class="cell-left">
+                            类别
+                        </div>
+                        <div class="cell-right cell-arrow arrow-direction" style="margin-left: .5rem">
+                             <select class="cell-select">
+                                <option value="">卡券</option>
+                                <option value="">积分</option>
+                                <option value="1">储值</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="cell-item firstRow">
+                        <div class="cell-left">
+                            奖项名
+                        </div>
+                       <div class="cell-right" style="margin-left: .5rem">
+                            一等奖
+                        </div>
+                        <div class="cell-left">
+                            <a href="javascript:;" class="deleteBtn">
+                                <i class="icon-delete" style="color:#68bde6;font-size: 0.5rem"></i>
+                            </a>
+                        </div>
+                    </div>
+            </div>
+            <div class="cell-item prizeRow">
+                    <div class="cell-left">
+                            奖品名
+                    </div>
+                    <div class="cell-right cell-arrow arrow-direction" style="margin-left: .5rem">
+                             <select class="cell-select">
+                                <option value="">20元代金券</option>
+                                <option value="">30元代金券</option>
+                                <option value="1">40元代金券</option>
+                            </select>
+                    </div>
+                    <div class="cell-left">
+                            实际数 20
+                    </div>
+                    <div class="cell-right" style="margin-left: .5rem">
+                          展示数 100
+                    </div>
+            </div></div>`);
+            setCount++;
+             $(".deleteBtn").first().bind("click" , function(){
+                removeNode(this);
+             });
+        }else{
+             YDUI.dialog.toast('只能添加六项','none',500);
+        }
+        })
+       
+    }(jQuery);
+
+    function removeNode(that){
+        console.log(3);
+         $(that).parent().parent().parent().parent().remove();
+         setCount--;
+    }
+</script>
+</body>
+</html>
