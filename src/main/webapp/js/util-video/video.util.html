@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>示例代码</title>
+<script type="text/javascript" src="video.util.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+//初始化参数
+// ip，端口，项目名
+VIDEO.initParam("livev.sjedu.cn","1935","dev");
+
+//传入资源路径，返回符合设备播放的url
+var url = VIDEO.returnURL("ResourceData/MP4/2011/11/16/076a9865941a17b6b2f6fa0a0f2c0d85.mp4");
+
+document.write(url);
+
+</script>
+</body>
+</html>

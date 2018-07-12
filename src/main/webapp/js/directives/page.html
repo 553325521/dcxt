@@ -1,0 +1,40 @@
+<div class="row">
+	<div class="col-lg-5 col-md-7 col-sm-12">
+		<!--div class="dataTables_info" >当前 {{page.first }} - {{page.last }} ，共 {{page.total }} 条</div-->
+		
+		<ul class="pagination pagination-sm" style="float:left;margin-left:0px;">
+ 		<li class="prev {{page.noprev}}"><a style="margin-bottom:1px;" ng-click="paging('U')"><</a></li>
+ 		<li class="ng-scope {{page.noprev}}"><a style="margin-left: 1px;margin-bottom:1px;" ng-click="paging(1)" class="ng-binding">1</a></li>
+ 		<li class="ng-scope {{page.noprev}}"><a style="margin-left: 1px;margin-bottom:1px;" ng-click="paging(2)" class="ng-binding">2</a></li>
+ 		<li class="prev {{page.noprev}}"><a style="border:none;margin-left: 1px;margin-bottom:1px;" >...</a></li>
+ 		
+ 		
+ 		<li ng-repeat="pageIndex in pageArray" ng-class="pageIndex.activeIndex"><a style="margin-left: 1px;margin-bottom:1px;" ng-click="paging(pageIndex.currentIndex)" >{{pageIndex.currentIndex}}</a></li>
+ 		
+ 		<li class="next {{page.nonext}}"><a  style="border:none;margin-left: 1px;margin-bottom:1px;">...</a></li>
+ 		<li class="next {{page.nonext}}"><a  style="margin-bottom:1px;" ng-click="paging('D')">></a></li>
+		</ul>
+		
+	</div>
+	<div class="col-lg-7 col-md-5 col-sm-12">
+		
+		<ul class="pagination pagination-sm" >
+ 		<li><a  ng-click="paging('S')">首页</a></li>
+ 		<li><a  ng-click="paging('E')">尾页</a></li>
+		</ul>
+		
+		
+		<ul class="pagination pagination-sm" >
+ 		<li><a  ng-click="paging('U')">上一页</a></li>
+ 		<li><a  ng-click="paging('D')">下一页</a></li>
+		</ul>
+		
+		
+		
+		<div class="pagination pagination-sm" >
+			<div class="pageshow" >
+			<!-- 第 {{page.currentNum}} 页， -->共 {{page.pages }} 页 {{page.total }} 条数据 &nbsp; 每页 <input type="text" style="width:30px;height:20px;" ng-model="page.number" ng-keydown="enterKeyDownPage($event)" /> 条  
+			 到第 <input type="text" style="width:30px;height:20px;" ng-model="page.current"  ng-keydown="enterKeyDownNum($event)"  /> 页 <a style="text-decoration: none;"><span ng-click="paging('G')" class="label label-info" style="padding: .3em .6em .3em;">确定</span></a> &nbsp;</div>
+		</div>
+	</div>
+</div>

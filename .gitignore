@@ -11,3 +11,9 @@
 /src/main/webapp/assets/img/*.DS_Store
 /*.classpath
 /target/
+/src/main/webapp/js/gritter/*.DS_Store
+/src/main/webapp/js/bootstrap-datetimepicker/*.gitattributes
+/src/main/webapp/js/bootstrap-datetimepicker/*.gitignore
+/src/main/webapp/js/bootstrap-datetimepicker/*.yml
+/src/main/webapp/js/bootstrap-datetimepicker/LICENSE
+/src/main/webapp/js/bootstrap-datetimepicker/*.md

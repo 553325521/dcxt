@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="https://cdn.sjedu.cn/js/jquery/1.11.3/jquery.min.js"></script>
+<link href="https://cdn.sjedu.cn/js/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="jwplayer.js"></script>
+<script type="text/javascript" src="jwplayer.util.js"></script>
+</head>
+
+<script type="text/javascript">
+
+//此方法为自定义显示设置（可选）
+PLAYER.initPlayer({
+	thePlayerId:"jwplayerDiv", //播放器ID 默认为jwplayerDiv
+	defaultAspectratio:"16:9", //比例 默认为16:9
+	playerWidth:"640"  //播放器宽度 默认为640
+});
+	
+//PLAYER.startPlay(titile,path)
+
+</script>
+
+<body style="padding-top: 20%;padding-left: 50%;">
+<a style="font-size: 100px;margin-left: -50px;" href="javascript:PLAYER.startPlay('视频播放','http://rescenter.sjedu.cn/ResCenter/data/ResourceData/MP4/2016/07/11/23ef157a3830ae2146b0c90823ff43e9.mp4')" >
+<span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> </a>
+</body>
+</html>
