@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html ng-app="settingApp">
+<head>
+<title></title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, user-scalable=no">
+<meta name="description"
+	content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+<!-- head 中 -->
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weuix.min.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weui.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weui2.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weui3.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+<style type="text/css">
+.radio-checkbox {
+	width: 15px;
+	height: 15px;
+}
+
+.bom-radio {
+    position: absolute;
+    bottom: .52rem;
+    width: 3rem;
+    height: 1rem;
+    font-size:  0.5rem;
+    color: #FFFFFF;
+    line-height: 1rem;
+    text-align: center;
+    background-color: #A1A1A1;
+    border-radius: .5rem;
+    transform: translateX(-100%);
+}
+
+</style>
+</head>
+<body ontouchstart ng-controller="settingCtrl">
+
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+		<h1 class="weui-header-title"
+			style="margin-left: 0;width: 160px;color: #0D0D0D;font-size: 16px;">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area">
+				<div class="bom-radio" id="attend">重置</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">名称</label>
+			</div>
+			<div class="weui_cell_bd">
+				<input class="weui_input" type="text" placeholder="输入打印机名称"
+					ng-model="form.PRINTER_NAME">
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">密匙</label>
+			</div>
+			<div class="weui_cell_bd">
+				<input class="weui_input" type="text" placeholder="选择打印机ID号"
+					ng-model="form.PRINTER_ID">
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">宽度</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form">
+					<div class="weui-form-li iblock" style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
+							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label for="g1"> <i
+							class="weui-icon-radio" style="margin: 0;"></i>
+							<div class="weui-form-text" style="margin: 0;">
+								<p>58mm</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock" style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
+							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label for="g2"> <i
+							class="weui-icon-radio" style="margin: 0;"></i>
+							<div class="weui-form-text" style="margin: 0;">
+								<p>80mm</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">类型</label>
+			</div>
+			<div class="weui_cell_bd" id="select_level">
+				<span ng-repeat="item in printer_level"><span
+					class="weui_agree_text"> {{item.name}}</span> <input
+					type="checkbox" class="weui_agree_checkbox radio-checkbox"
+					ng-model="item.checked" ng-change="selectLevel(item)"></span>
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">份数</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-count">
+					<a class="weui-count__btn weui-count__decrease" ng-click="fsDoAdd()"></a>
+					<input class="weui-count__number" id="fsQuantity" type="text"
+						value="1" style="width: 1.5rem;" /> <a
+						class="weui-count__btn weui-count__increase" ng-click="fsDoReduce()"></a>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">速度</label>
+			</div>
+			<div class="weui_cell_bd">
+				<input class="weui_input" id="sd_select" type="text" value=""
+					placeholder="选择打印速度">
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">抬头</label>
+			</div>
+			<div class="weui_cell_bd">
+				<input class="weui_input" type="text" placeholder="输入小票抬头文字">
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label">范围(标签)</label>
+			</div>
+			<div class="weui_cell_bd">
+				<input type="radio" name="whbq"
+					class="weui_agree_radio radio-checkbox"><span
+					class="weui_agree_text">全部商品</span> <input type="radio" name="whbq"
+					class="weui_agree_radio radio-checkbox"><span
+					class="weui_agree_text">部分商品</span>
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label"></label>
+			</div>
+			<div class="weui_cell_bd">
+				<span class="weui_agree_text"> 荤菜</span> <input type="checkbox"
+					class="weui_agree_checkbox radio-checkbox"> <span
+					class="weui_agree_text"> 素菜 </span> <input type="checkbox"
+					class="weui_agree_checkbox radio-checkbox"> <span
+					class="weui_agree_text"> 凉菜</span> <input type="checkbox"
+					class="weui_agree_checkbox radio-checkbox"> <span
+					class="weui_agree_text"> 汤类</span> <input type="checkbox"
+					class="weui_agree_checkbox radio-checkbox"> <span
+					class="weui_agree_text"> 酒水</span> <input type="checkbox"
+					class="weui_agree_checkbox radio-checkbox">
+			</div>
+		</div>
+	</div>
+
+	<!-- 底部 -->
+	<div class="weui_cells_tips">先购买打印机，添加打印机时选择生成的ID，然后填写入打印机的id中。</div>
+
+</body>
+<!-- body 最后 -->
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
+<script type="text/javascript" src="setting.js"></script>
+</html>
