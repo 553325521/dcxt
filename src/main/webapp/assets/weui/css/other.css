@@ -1,0 +1,24 @@
+/* 避免手机触摸事件警告 */
+* {
+	touch-action: none;
+}
+/* label 字体大小修改  整体宽度修改 */
+.label {
+	font-size: 15px;
+	width: 80px;
+}
+/* 所有的input 字体大小修改  */
+.label-input {
+	font-size: 15px;
+}
+/* 页面顶部button样式 */
+.bom-radio {
+	position: absolute;
+	width: 3rem;
+	font-size: 0.5rem;
+	color: #4c4c4c;
+	text-align: center;
+	border-radius: .5rem;
+	transform: translateX(-100%);
+	border: 1px solid #c7c7c7;
+}
