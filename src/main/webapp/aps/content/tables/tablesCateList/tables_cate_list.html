@@ -15,17 +15,14 @@
 	href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
 
 	
-	<link rel="stylesheet" type="text/css" href="css/tables_set.css">
+	<link rel="stylesheet" type="text/css" href="../style/css/tables_set.css"> 
 	<script src="/dcxt/assets/weui/js/zepto.min.js"></script>
 </head>
 <body ontouchstart ng-controller="tablesCtrl">
 	<header class="page-header">
 		<a href="#" class="header-left">
-			<i class="back-ico">
-			
-			</i>
+			<i class="back-ico"></i>
 		</a>
-		
 
 		<div class="header-title">
 			<span class="header-title-span">{{pageTitle}}</span>
@@ -33,7 +30,6 @@
 
 		<div class="header-right">
 			<a href="#" class="zdy-button">添加</a>	
-
 		</div>
 
 	</header>
@@ -43,33 +39,25 @@
 		<div class="page_bd">
 			<div class="weui_cells" >
 
-
-
-				<div class="weui_cell slidelefts" ng-repeat="item in tables_area" id="{{item.value}}">
-
-					<div class="weui_cell_bd weui_cell_primary animated" style="transform: translateX(0px);">
-					
-						<span class="weui_cell">
-							<div class="weui_cell_hd">
-								{{index + 1}}
-							</div>
-							<span class="weui_cell_hd weui_cell_primary" style="margin-left: 20px;">
-								{{item.name}}（{{item.num}}桌）
-							</span>
-							<div class="weui_cell_ft {{item.status == 0 ? 'small-red-font' : ''}}">
-								{{item.status == 1 ? '已启用' : '已停用'}}
-							</div>
-						</span>
+				<div class="weui_cell slidelefts" ng-repeat="item in tables_area" id="{{item.id}}">		
+				
+					<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="transform: translateX(0px);">	
+						<div class="weui_cell_bd">
+							<span>{{index + 1}}</span>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+							<span>{{item.name}}（{{item.count}}桌）</span>
+						</div>
+						<div class="weui_cell_bd {{item.status == 0 ? 'small-red-font' : 'small-gray-font'}}" >
+							<span>{{item.status == 1 ? '已启用' : '已停用'}}</span>
+						</div>	
 					</div>
-
-
-
+					
 					<div class="slideleft">
 						<span class="bg-red f-white dels">删除</span>
-                		<span class="switch_stop" style="background:#ccc;color:#fff">{{item.status == 1 ? '停用' : '启用'}}</span>
-                		
-              		</div>	          
-	       
+	                	<span style="background:#ccc;color:#fff" ng-bind="item.status == 1 ? '停用' : '启用'">启用</span>
+              		</div>	      
+
 				</div>
 
 			</div>
@@ -84,6 +72,7 @@
 					</div>
 				</div>
 			</div>
+			
 		</div>	
 	</div>
 
@@ -92,8 +81,8 @@
 	src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
 <script src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
 <script type="text/javascript" src="setting.js"></script>
-<script type="text/javascript" src="js/slideleft2.js"></script>
-<script type="text/javascript" src="js/tables_set.js"></script>
+<script type="text/javascript" src="../style/js/slideleft2.js"></script>
+<script type="text/javascript" src="../style/js/tables_set.js"></script>
 
 	
 

@@ -1,6 +1,6 @@
 window.slideleft = (function($) {
 
-	var listItem = $('.weui_cell_bd'),
+	var listItem = $('.slideleft_cell_bd'),
 		listOpts = $('.slideleft');
 	var onthel = false, // 是否处于最左端
 		isScroll = false, // 列表是否滚动状态
@@ -15,7 +15,7 @@ window.slideleft = (function($) {
 	
 	var handleSlide = (function() {
 
-		$(document).on('touchstart', '.weui_cell_bd', function(e) {
+		$(document).on('touchstart', '.slideleft_cell_bd', function(e) {
 			// 判断有无已经展开的li，如果有，是否是当前的li，如果不是，将展开的li收起
 			if (expandLi) {
 				if (expandLi.parent().index() !== $(this).parent().index()) {
@@ -73,7 +73,7 @@ window.slideleft = (function($) {
 			})
 		})
 
-		$(document).on('touchend', '.weui_cell_bd', function(e) {
+		$(document).on('touchend', '.slideleft_cell_bd', function(e) {
 
 			endX = e.changedTouches[0].pageX;
 			endY = e.changedTouches[0].pageY;
