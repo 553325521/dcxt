@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="/dcxt/assets/weui/css/weui2.css">
 <link rel="stylesheet" href="/dcxt/assets/weui/css/weui3.css">
 <link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/other.css">
 <link rel="stylesheet"
 	href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
 <link rel="stylesheet" href="add_product_type.css"/>
@@ -21,9 +22,11 @@
 		</div>
 		<h1 class="weui-header-title"
 			style="margin-left: 0;width: 160px;color: #0D0D0D;font-size: 16px;">{{pageTitle}}</h1>
-		<div class="weui-header-right">
-				 <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default">重置</a>
-            	<a href="javascript:;" style="margin-top:0px" class="weui_btn weui_btn_mini weui_btn_warn">保存</a>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area">
+				<div class="bom-radio" id="attend1" ng-click="reset()">重置</div>
+				<div class="bom-radio" id="attend2" style="transform: translateX(-210%);" ng-click="doSave()">保存</div>
+			</div>
 		</div>
 	</div>
     <div class="weui_cells weui_cells_form" style="margin-top:0;">
