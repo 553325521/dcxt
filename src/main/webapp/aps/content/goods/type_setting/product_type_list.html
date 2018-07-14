@@ -30,7 +30,8 @@
 		</div>
 	</div>
      <div class="weui_cells">
-         <div class="weui_cell slidelefts"  ng-repeat="item in type_list">
+     	<div>
+         <div class="weui_cell slidelefts" ng-repeat="item in type_list"><!-- ng-repeat="item in type_list" -->
            	 <div class="weui_cell_bd">
                     <span>{{item.order}}</span>
              </div>
@@ -48,7 +49,7 @@
                 <span class="bg-red f-white dels">删除</span>
              </div>
           </div>
-          
+         </div> 
       </div>
    <!-- body 最后 -->
 <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
