@@ -5,13 +5,7 @@
 	<meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 
-	<!-- <link rel="stylesheet" href="../css/weui.min.css">
-	<link rel="stylesheet" href="../css/jquery-weui.css">
-	<link rel="stylesheet" href="../css/weui2.css"> -->
-
-
-
-	<!-- head 中 -->
+	<!-- head -->
 	<link rel="stylesheet" href="/dcxt/assets/weui/css/weuix.min.css">
 	<!--  <link rel="stylesheet" href="/dcxt/assets/weui/css/weui.css">-->
 	<link rel="stylesheet" href="/dcxt/assets/weui/css/weui2.css">
@@ -24,7 +18,7 @@
 	<link rel="stylesheet" type="text/css" href="css/tables_set.css">
 	<script src="/dcxt/assets/weui/js/zepto.min.js"></script>
 </head>
-<body ontouchstart >
+<body ontouchstart ng-controller="tablesCtrl">
 	<header class="page-header">
 		<a href="#" class="header-left">
 			<i class="back-ico">
@@ -34,7 +28,7 @@
 		
 
 		<div class="header-title">
-			<span class="header-title-span">区域分类</span>
+			<span class="header-title-span">{{pageTitle}}</span>
 		</div>
 
 		<div class="header-right">
@@ -47,23 +41,23 @@
 
 	<div class="bd">
 		<div class="page_bd">
-			<div class="weui_cells">
+			<div class="weui_cells" >
 
 
 
-				<div class="weui_cell slidelefts">
+				<div class="weui_cell slidelefts" ng-repeat="item in tables_area" id="{{item.value}}">
 
 					<div class="weui_cell_bd weui_cell_primary animated" style="transform: translateX(0px);">
 					
 						<span class="weui_cell">
 							<div class="weui_cell_hd">
-								1
+								{{index + 1}}
 							</div>
 							<span class="weui_cell_hd weui_cell_primary" style="margin-left: 20px;">
-								大厅（5桌）
+								{{item.name}}（{{item.num}}桌）
 							</span>
-							<div class="weui_cell_ft">
-								已启用
+							<div class="weui_cell_ft {{item.status == 0 ? 'small-red-font' : ''}}">
+								{{item.status == 1 ? '已启用' : '已停用'}}
 							</div>
 						</span>
 					</div>
@@ -72,80 +66,11 @@
 
 					<div class="slideleft">
 						<span class="bg-red f-white dels">删除</span>
-                		<span class="switch_stop" style="background:#ccc;color:#fff">停用</span>
+                		<span class="switch_stop" style="background:#ccc;color:#fff">{{item.status == 1 ? '停用' : '启用'}}</span>
                 		
-              		</div>
-				
-		          
+              		</div>	          
 	       
 				</div>
-
-
-				<div class="weui_cell slidelefts">
-
-					<div class="weui_cell_bd weui_cell_primary animated" style="transform: translateX(0px);">
-					
-						<span class="weui_cell">
-							<div class="weui_cell_hd">
-								1
-							</div>
-							<span class="weui_cell_hd weui_cell_primary" style="margin-left: 20px;">
-								大厅（5桌）
-							</span>
-							<div class="weui_cell_ft">
-								已启用
-							</div>
-						</span>
-					</div>
-
-
-
-					<div class="slideleft">
-						<span class="bg-red f-white dels">删除</span>
-                		<span class="switch_stop" style="background:#ccc;color:#fff">停用</span>
-                		
-              		</div>
-				
-		          
-	       
-				</div>
-
-
-
-
-				<div class="weui_cell slidelefts">
-
-					<div class="weui_cell_bd weui_cell_primary animated" style="transform: translateX(0px);">
-					
-						<span class="weui_cell">
-							<div class="weui_cell_hd">
-								1
-							</div>
-							<span class="weui_cell_hd weui_cell_primary" style="margin-left: 20px;">
-								大厅（5桌）
-							</span>
-							<div class="weui_cell_ft small-red-font" >
-								已停用
-							</div>
-						</span>
-					</div>
-
-					<div class="slideleft">
-						<span class="bg-red f-white dels">删除</span>
-                		<span class="switch_start" style="background:#ccc;color:#fff">停用</span>
-                		
-              		</div>
-
-				</div>
-
-
-
-					
-			
-
-
-
-
 
 			</div>
 
@@ -162,11 +87,12 @@
 		</div>	
 	</div>
 
-
-<script type="text/javascript"
-	src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
+<script src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
 <script type="text/javascript" src="setting.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/slideleft.js"></script>
+<script type="text/javascript" src="js/slideleft2.js"></script>
 <script type="text/javascript" src="js/tables_set.js"></script>
 
 	
