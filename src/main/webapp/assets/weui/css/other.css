@@ -11,11 +11,11 @@
 /* 页面顶部button样式 */
 .bom-radio {
 	position: absolute;
-	width: 2.5rem;
-	font-size: 0.8rem;
+	width: 50px;
+	font-size: 14px;
 	color: #4c4c4c;
 	text-align: center;
-	border-radius: .5rem;
+	border-radius: 25px;
 	transform: translateX(-100%);
 	border: 1px solid #c7c7c7;
 }
@@ -28,7 +28,7 @@
 }
 
 .icon-checkbox-self {
-	margin-top: 3px !important;
+	margin-top: 4px !important;
 	margin-right: 0 !important;
 }
 
