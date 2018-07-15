@@ -11,10 +11,18 @@
 <link rel="stylesheet" href="/dcxt/assets/weui/css/weui2.css">
 <link rel="stylesheet" href="/dcxt/assets/weui/css/weui3.css">
 <link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
-<link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
-<link rel="stylesheet" href="/dcxt/assets/weui/css/other.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/other.css?v=20180715000000">
 <link rel="stylesheet"
 	href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
+<script type="text/javascript" src="/dcxt/assets/weui/js/zepto.min.js"></script>
+<script type="text/javascript" src="/dcxt/assets/weui/js/picker.js"></script>
+<script type="text/javascript" src="/dcxt/assets/weui/js/picker-city.js"></script>
+<script type="text/javascript"
+	src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
+<script type="text/javascript" src="setting.js"></script>
 </head>
 <body ontouchstart ng-controller="settingCtrl">
 
@@ -22,12 +30,10 @@
 		<div class="weui-header-left">
 			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 		</div>
-		<h1 class="weui-header-title"
-			style="margin-left: 0;width: 160px;color: #0D0D0D;font-size: 16px;">{{pageTitle}}</h1>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
-			<div class="button_sp_area">
-				<div class="bom-radio" id="attend1" ng-click="reset()">重置</div>
-				<div class="bom-radio" id="attend2" style="transform: translateX(-210%);" ng-click="doSave()">保存</div>
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
 			</div>
 		</div>
 	</div>
@@ -38,8 +44,8 @@
 				<label class="weui_label label">名称</label>
 			</div>
 			<div class="weui_cell_bd">
-				<input class="weui_input label-input" type="text" placeholder="输入打印机名称"
-					ng-model="form.PRINTER_NAME">
+				<input class="weui_input label-input" type="text"
+					placeholder="输入打印机名称" ng-model="form.PRINTER_NAME">
 			</div>
 		</div>
 		<div class="weui_cell">
@@ -47,8 +53,8 @@
 				<label class="weui_label label">密匙</label>
 			</div>
 			<div class="weui_cell_bd">
-				<input class="weui_input label-input" type="text" placeholder="选择打印机ID号"
-					ng-model="form.PRINTER_ID">
+				<input class="weui_input label-input" type="text"
+					placeholder="选择打印机ID号" ng-model="form.PRINTER_ID">
 			</div>
 		</div>
 		<div class="weui_cell">
@@ -57,20 +63,23 @@
 			</div>
 			<div class="weui_cell_bd">
 				<div class="weui-form">
-					<div class="weui-form-li iblock" style="margin-left: 0;">
+					<div class="weui-form-li iblock li-checkbox-self">
 						<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
 							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-							for="g1"> <i class="weui-icon-radio" style="margin: 0;"></i>
-							<div class="weui-form-text label" style="margin: 0;">
+							for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>58mm</p>
 							</div>
 						</label>
 					</div>
-					<div class="weui-form-li iblock" style="margin-left: 0;">
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: 10px;">
 						<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
 							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-							for="g2"> <i class="weui-icon-radio" style="margin: 0;"></i>
-							<div class="weui-form-text label" style="margin: 0;">
+							for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>80mm</p>
 							</div>
 						</label>
@@ -84,14 +93,15 @@
 			</div>
 			<div class="weui_cell_bd">
 				<div class="weui-form">
-					<div class="weui-form-li iblock" style="margin-left: 0;"
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: {{$index == 0 ? 0 : 10}}px;"
 						ng-repeat="item in printer_level">
 						<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
 							value="{{item.value}}" type="checkbox" ng-model="item.checked"
 							ng-change="selectLevel(item)"> <label
-							for="h{{$index + 1}}"> <i class="weui-icon-checkbox"
-							style="margin: 0;"></i>
-							<div class="weui-form-text label" style="margin: 0;">
+							for="h{{$index + 1}}"> <i
+							class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>{{item.name}}</p>
 							</div>
 						</label>
@@ -104,7 +114,8 @@
 				<label class="weui_label label">份数</label>
 			</div>
 			<div class="weui_cell_bd">
-				<input class="weui_input label-input" id="fs_select" type="text" value="">
+				<input class="weui_input label-input" id="fs_select" type="text"
+					value="">
 				<!-- <div class="weui-count">
 					<a class="weui-count__btn weui-count__decrease"
 						ng-click="fsDoReduce()"></a> <input class="weui-count__number"
@@ -120,7 +131,8 @@
 				<label class="weui_label label">速度</label>
 			</div>
 			<div class="weui-cell_bd weui_cell_primary">
-				<input class="weui_input label-input" id="sd_select" type="text" value="">
+				<input class="weui_input label-input" id="sd_select" type="text"
+					value="">
 				<!-- <div class="weui_cell_select" style="width: 100%;">
 				<div class="weui_cell_bd weui_cell_primary">
 					<select class="weui_select" name="select1"
@@ -136,8 +148,8 @@
 				<label class="weui_label label">抬头</label>
 			</div>
 			<div class="weui_cell_bd">
-				<input class="weui_input label-input" type="text" placeholder="输入小票抬头文字"
-					ng-model="form.PRINTER_BILL_HEAD">
+				<input class="weui_input label-input" type="text"
+					placeholder="输入小票抬头文字" ng-model="form.PRINTER_BILL_HEAD">
 			</div>
 		</div>
 		<div class="weui_cell">
@@ -148,20 +160,24 @@
 
 				<div class="weui_cell_bd weui_cell_primary">
 					<div class="weui-form">
-						<div class="weui-form-li iblock" style="margin-left: 0;">
+						<div class="weui-form-li iblock li-checkbox-self"
+							style="margin-left: 0;">
 							<input class="weui-form-checkbox" name="f4" id="g3" type="radio"
 								value="all" ng-model="form.PRINTER_PRODUCT_RANGE"> <label
-								for="g3"> <i class="weui-icon-radio" style="margin: 0;"></i>
-								<div class="weui-form-text label" style="margin: 0;">
+								for="g3"> <i class="weui-icon-radio icon-checkbox-self"
+								style="margin: 0;"></i>
+								<div class="weui-form-text label-input" style="margin: 0;">
 									<p>全部商品</p>
 								</div>
 							</label>
 						</div>
-						<div class="weui-form-li iblock" style="margin-left: 0;">
+						<div class="weui-form-li iblock li-checkbox-self"
+							style="margin-left: 10px;">
 							<input class="weui-form-checkbox" name="f4" id="g4" type="radio"
 								value="part" ng-model="form.PRINTER_PRODUCT_RANGE"> <label
-								for="g4"> <i class="weui-icon-radio" style="margin: 0;"></i>
-								<div class="weui-form-text label" style="margin: 0;">
+								for="g4"> <i class="weui-icon-radio icon-checkbox-self"
+								style="margin: 0;"></i>
+								<div class="weui-form-text label-input" style="margin: 0;">
 									<p>部分商品</p>
 								</div>
 							</label>
@@ -177,15 +193,16 @@
 			</div>
 			<div class="weui_cell_bd">
 				<div class="weui-form">
-					<div class="weui-form-li iblock" style="margin-left: 0;"
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: {{$index == 0 ? 0 : 10}}px;"
 						ng-repeat="item in printer_dishes_list">
 						<input class="weui-form-checkbox" name="f3" id="s{{$index + 1}}"
 							ng-model="item.checked" value="{{item.value}}" type="checkbox"
 							ng-change="selectDishes(item)"
 							ng-checked="noCheckArr.indexOf(item.value)==-1"> <label
-							for="s{{$index + 1}}"> <i class="weui-icon-checkbox"
-							style="margin: 0;"></i>
-							<div class="weui-form-text label" style="margin: 0;">
+							for="s{{$index + 1}}"> <i
+							class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>{{item.title}}</p>
 							</div>
 						</label>
@@ -197,17 +214,6 @@
 
 	<!-- 底部 -->
 	<div class="weui_cells_tips">先购买打印机，添加打印机时选择生成的ID，然后填写入打印机的id中。</div>
-
+	<script type="text/javascript" src="/dcxt/assets/weui/js/other.js"></script>
 </body>
-<!-- body 最后 -->
-<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
-<script
-	src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/zepto.min.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/picker.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/picker-city.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/other.js"></script>
-<script type="text/javascript"
-	src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
-<script type="text/javascript" src="setting.js"></script>
 </html>
