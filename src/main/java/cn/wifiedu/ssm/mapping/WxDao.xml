@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Wxcore" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+ 
+  <!-- 保存token  -->
+  <insert id="saveAccessToken" parameterMap="BaseParameterMap">
+  		INSERT INTO WX_TOKEN
+  		(
+  			ACCESS_TOKEN,
+  			EXPIRES_IN,
+  			CREATE_TIME
+  		)
+  		VALUES
+  		(
+  			#{TOKEN},
+  			'7200',
+  			NOW()
+  		)
+  </insert>
+ 
+ <select id="getAccessToken" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+ 		SELECT 
+ 			ACCESS_TOKEN
+ 		FROM WX_TOKEN
+ 		ORDER BY ID DESC
+ 		LIMIT 0,1
+ </select>
+  	
+  
+  
+</mapper>

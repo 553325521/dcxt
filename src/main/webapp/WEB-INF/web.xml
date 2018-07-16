@@ -44,4 +44,7 @@
   <session-config>
     <session-timeout>15</session-timeout>
   </session-config>
+  <listener>  
+   		<listener-class>cn.wifiedu.ssm.task.WxStartListener</listener-class>  
+  </listener>
 </web-app>
