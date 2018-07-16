@@ -27,11 +27,11 @@
 		<div class="weui-header-left">
 			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 		</div>
-		<h1 class="weui-header-title"
-			style="margin-left: 0;width: 160px;color: #0D0D0D;font-size: 16px;">{{pageTitle}}</h1>
-		<div class="weui-header-right">
-			<a href="add_product_type.html" style="margin-top:0px"
-				class="bom-radio">添加</a>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
 		</div>
 	</div>
 	<div class="weui_cells ">
@@ -62,8 +62,9 @@
 		src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
 	<script type="text/javascript"
 		src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
-	<script type="text/javascript" src="zepto.min.js"></script>
-	<script type="text/javascript" src="slideleft2.js"></script>
+	<script type="text/javascript" src="/dcxt/assets/weui/js/zepto.min.js"></script>
+	<script type="text/javascript" src="/dcxt/assets/weui/js/slideleft2.js"></script>
 	<script type="text/javascript" src="product_type_list.js"></script>
+	<script type="text/javascript" src="/dcxt/assets/weui/js/other.js"></script>
 </body>
 </html>

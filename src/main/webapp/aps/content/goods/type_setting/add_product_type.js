@@ -1,4 +1,6 @@
-$(function() {})
+$(function() {
+	comboboxInit();
+})
 	/*Array.prototype.indexOf = function(val) {
 		for (var i = 0; i < this.length; i++) {
 			if (this[i] == val)
@@ -74,3 +76,17 @@ $(function() {})
 			console.info("aa");
 		}
   });
+
+function comboboxInit() {	
+	$("#fs_select").picker({
+		title : "选择分类",
+		toolbarCloseText : '确定',
+		cols : [
+			{
+				textAlign : 'center',
+				values : [ '热菜', '凉菜', '汤类' ],
+				displayValues : [ '热菜', '凉菜', '汤类' ]
+			}
+		]
+	});
+}

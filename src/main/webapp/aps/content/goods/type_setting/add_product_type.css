@@ -14,3 +14,6 @@
 .order_cell:before{
 	border:0;
 }
+.typeLabel{
+	width:75px;
+}
