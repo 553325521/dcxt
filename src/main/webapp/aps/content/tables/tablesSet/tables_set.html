@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html ng-app="tablesSetApp">
+<head>
+	<title>智慧云点单</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+
+	<!-- head -->
+	<link rel="stylesheet" href="/dcxt/assets/weui/css/weuix.min.css">
+	<!--  <link rel="stylesheet" href="/dcxt/assets/weui/css/weui.css">-->
+	<link rel="stylesheet" href="/dcxt/assets/weui/css/weui2.css">
+	<link rel="stylesheet" href="/dcxt/assets/weui/css/weui3.css">
+	<link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
+	<link rel="stylesheet" href="/dcxt/assets/weui/css/other.css?v=20180715000000">
+	<link rel="stylesheet"
+	href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+
+	
+	<link rel="stylesheet" type="text/css" href="../style/css/tables_set.css"> 
+	<script src="/dcxt/assets/weui/js/zepto.min.js"></script>
+	<script type="text/javascript" src="/dcxt/assets/weui/js/picker.js"></script>
+<script type="text/javascript" src="/dcxt/assets/weui/js/picker-city.js"></script>
+</head>
+<body ontouchstart ng-controller="tablesSetCtrl">
+	<header class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+
+		<h1 class="weui-header-title weui-header-self">
+			{{pageTitle}}
+		</h1>
+ 
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
+		</div>
+
+	</header>
+
+
+
+	
+	<div class="weui_cells" >
+
+		<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label">餐位名称</label>
+				</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<input class="weui_input label-input" type="text"
+					placeholder="输入餐位名称" ng-model="form.PRINTER_NAME">
+			</div>
+		</div>
+
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">排序序号</label>
+			</div>
+			<div class="weui-cell_bd weui_cell_primary">
+				<input class="weui_input label-input" id="pxxh_select" type="text"
+					value="">
+				<!-- <div class="weui_cell_select" style="width: 100%;">
+				<div class="weui_cell_bd weui_cell_primary">
+					<select class="weui_select" name="select1"
+						style="padding-left: 0;width: 100%;" ng-model="form.RPINTER_SPEED">
+						<option ng-repeat="item in printer_speed" value="{{item.value}}">{{item.title}}</option>
+					</select>
+				</div>
+			</div> -->
+			</div>
+		</div>
+
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">选择区域</label>
+			</div>
+			<div class="weui-cell_bd weui_cell_primary">
+				<input class="weui_input label-input" id="qy_select" type="text"
+					value="">
+				<!-- <div class="weui_cell_select" style="width: 100%;">
+				<div class="weui_cell_bd weui_cell_primary">
+					<select class="weui_select" name="select1"
+						style="padding-left: 0;width: 100%;" ng-model="form.RPINTER_SPEED">
+						<option ng-repeat="item in printer_speed" value="{{item.value}}">{{item.title}}</option>
+					</select>
+				</div>
+			</div> -->
+			</div>
+			
+		</div>
+
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label">是否启用</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<div class="weui-form">
+						<div class="weui-form-li iblock li-checkbox-self">
+							<input class="weui-form-checkbox" name="f2" id="g1" value="是"
+								type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> 
+								<label for="g1"> 
+									<i class="weui-icon-radio icon-checkbox-self"
+											style="margin: 0;">
+									</i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>是</p>
+									</div>
+							</label>
+						</div>
+						<div class="weui-form-li iblock li-checkbox-self"
+							style="margin-left: 10px;">
+							<input class="weui-form-checkbox" name="f2" id="g2" value="否"
+								type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> 
+								<label for="g2"> 
+									<i class="weui-icon-radio icon-checkbox-self"
+										style="margin: 0;">	
+									</i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>否</p>
+									</div>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label">餐位人数</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input label-input" id="rs_select" type="text"
+						value="">
+					<!-- <div class="weui_cell_select" style="width: 100%;">
+					<div class="weui_cell_bd weui_cell_primary">
+						<select class="weui_select" name="select1"
+							style="padding-left: 0;width: 100%;" ng-model="form.RPINTER_SPEED">
+							<option ng-repeat="item in printer_speed" value="{{item.value}}">{{item.title}}</option>
+						</select>
+					</div>
+				</div> -->
+				</div>
+			</div>
+
+
+
+
+
+
+			<div class="weui_cell" style="flex-wrap:wrap;">	
+				<div class="weui_cell_hd">
+					<label class="weui_label label weui_cell_primary">分类备注</label>	
+				</div>
+
+					
+
+
+			
+			<div class="weui-form" style="margin: 0 -16px;">
+				<div class="weui-form-li">
+					<textarea class="weui-form-area" placeholder="请输入备注" name="f6" rows="5" cols="60"></textarea>
+				</div>
+			</div>
+</div>
+
+
+	</div>
+
+		
+	
+
+<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+<script
+	src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
+<script src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
+<script type="text/javascript" src="setting.js"></script>
+<script type="text/javascript" src="../style/js/slideleft2.js"></script>
+<script type="text/javascript" src="../style/js/tables_set.js"></script>
+
+	
+
+</body>
+</html>
