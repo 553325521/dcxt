@@ -1,0 +1,10 @@
+{
+    "name": "testTemp",
+    "viewUrl": "aps/content/testTemp/template.html",
+    "controllerUrl": "aps/content/testTemp/controller.js",
+    "config": 
+    {
+            "findURL": "json/Open_queryForList_findTempTestList.json",
+            "saveURL": "json/Open_insert_inserTempTestList.json"
+	}
+}

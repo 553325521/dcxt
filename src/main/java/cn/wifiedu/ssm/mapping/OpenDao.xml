@@ -19,8 +19,28 @@
     from sc_prop
   </select>
   
+   <select id="findTempTestList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+    select 
+   		*
+    from temp_test
+  </select>
  
-  	
+   <insert id="inserTempTestList" parameterMap="BaseParameterMap">
+   	insert into temp_test
+   	(
+   		name,
+   		sex,
+   		age,
+   		address
+   	)
+   	values
+   	(
+   		#{name},
+   		#{sex},
+   		#{age},
+   		#{address}
+   	)
+   </insert>
   
   
 </mapper>
