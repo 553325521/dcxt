@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="List_App">
+<head>
+<title>商品分类列表</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, user-scalable=no">
+
+<meta name="description"
+	content="Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
+">
+<!-- head 中 -->
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weuix.min.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weui.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weui2.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/weui3.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
+<link rel="stylesheet" href="/dcxt/assets/weui/css/other.css">
+<link rel="stylesheet"
+	href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
+</head>
+<body ontouchstart ng-controller="List_Ctrl"
+	style="background-color:#FFFFFF">
+	<div class="weui-header">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" style="transform: translateX(-210%);" id="attend2" ng-click="doSave()">购买</div>
+				<div class="bom-radio" id="attend2" ng-click="doAdd()">添加</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cells ">
+		<div class="weui_cell slidelefts" ng-repeat="item in type_list">
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd">
+				<div class="weui_cell_bd list_bd">
+					<p class="label-input" ng-bind="$index + 1"></p>
+				</div>
+				<div class="weui_cell_bd list_bd ">
+					<p class="label-input" ng-bind="item.PRINTER_NAME"></p>
+				</div>
+				<div class="weui_cell_bd list_bd ">
+					<p class="label-input" ng-bind="item.PRINTER_LEVEL"></p>
+				</div>
+				<div class="weui_cell_bd list_bd ">
+					<p class="label-input" ng-bind="item.PRINTER_PAGE_WIDTH"></p>
+				</div>
+				<div class="weui_cell_bd list_bd ">
+					<p class="label-input">{{item.PRINTER_PAGE_NUMS}}份</p>
+				</div>
+				<div class="weui_cell_bd list_bd ">
+					<p class="label-input" ng-bind="item.PRINTER_NAME"></p>
+				</div>
+			</div>
+			<div class="slideleft">
+				<span style="background:#ccc;color:#fff">取消关注</span> <span
+					class="bg-red f-white dels" ng-click>删除</span>
+			</div>
+		</div>
+	</div>
+	<!-- body 最后 -->
+	<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+	<script
+		src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
+	<script type="text/javascript" src="/dcxt/assets/weui/js/zepto.min.js"></script>
+	<script type="text/javascript" src="/dcxt/assets/weui/js/slideleft2.js"></script>
+	<script type="text/javascript" src="controller.js"></script>
+	<script type="text/javascript" src="/dcxt/assets/weui/js/other.js"></script>
+</body>
+</html>

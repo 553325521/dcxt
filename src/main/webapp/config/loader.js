@@ -39,9 +39,6 @@
 			uploadify : "js/jquery.uploadify-v2.1.4/jquery.uploadify.v2.1.4.min",
 			swfobject : "js/jquery.uploadify-v2.1.4/swfobject",
 			uploadauto : "js/uploadauto",
-
-			zepto : "js/weui/zepto.min",
-			picker : "js/weui/picker",
 		},
 		shim : {
 			highchartsGridLight : {

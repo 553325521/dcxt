@@ -13,7 +13,7 @@
 %>
 
 <!DOCTYPE html>
-<html lang="zh-CN" class="ios hairline" style="font-size: 42.75px;">
+<html lang="zh-CN" class="ios hairline">
 <head>
 <meta charset="utf-8">
 <meta
@@ -46,7 +46,10 @@
 		</div>
 	</div>
 </body>
-
+<script type="text/javascript"
+	src="<%=basePath%>js/weui/zepto.min.js"></script>
+<script type="text/javascript"
+	src="<%=basePath%>js/weui/picker.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>js/angular/1.2.0/angular.min.js"></script>
 <script type="text/javascript"
@@ -56,5 +59,5 @@
 	src="<%=basePath%>js/require/require.min.js"></script>
 <script type="text/javascript" src="<%=basePath%>config/app.js"></script>
 <script type="text/javascript"
-	src="<%=basePath%>assets/weui/js/other.js"></script>
+	src="<%=basePath%>js/other.js"></script>
 </html>

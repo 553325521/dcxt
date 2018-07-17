@@ -13,7 +13,7 @@ Array.prototype.remove = function(val) {
 };
 
 (function() {
-	define(['zepto', 'picker'], function() {
+	define([], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
