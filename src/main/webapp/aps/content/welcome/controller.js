@@ -12,9 +12,9 @@
 				//初始化 form 表单
 				scope.form = {};
 
-				scope.toHref = function() {
+				scope.toHref = function(path) {
 					var m2 = {
-						"url" : "aps/content/SystemSetup/BasicSetting/config.json",
+						"url" : "aps/content/" + path + "/config.json",
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
