@@ -1,0 +1,46 @@
+
+	<header class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+
+		<h1 class="weui-header-title weui-header-self">
+			{{pageTitle}}
+		</h1>
+ 
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2">添加</div>
+			</div>
+		</div>
+	</header>
+
+
+	<div class="bd">
+		<div class="page__bd">
+			<div class="weui_cells">
+				<div class="weui_cell slidelefts"  ng-repeat="item in tables_list" id="{{item.id}}">
+					<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="transform: translateX(0px);">
+						<div class="weui_cell_bd ">
+							{{$index+1}}
+						</div>
+							
+						<div class="weui_cell_bd weui_cell_primary">
+							{{item.num}}号
+						</div>
+						<div class="weui_cell_bd {{item.status == 1 ? 'small-gray-font':'small-red-font'}}" dir="rtl">
+							{{item.status == 1 ? '已启用':'已停用'}}
+						</div>
+						<div class="weui_cell_bd" dir="rtl" style="width: 100px;">
+							{{item.count}}人/桌
+						</div>					
+					</div>
+
+		           	<div class="slideleft">
+						<span class="bg-red f-white dels" id="delete-table-list">删除</span>
+                		<span class="switch_stop" ng-bind="item.status == 1 ? '停用' : '启用'" style="background:#ccc;color:#fff">停用</span>
+              		</div>
+				</div>
+			</div>
+		</div>
+	</div>

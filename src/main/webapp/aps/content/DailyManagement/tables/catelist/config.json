@@ -1,0 +1,8 @@
+{
+	"name": "tables_cate_list",
+	"viewUrl": "aps/content/DailyManagement/tables/catelist/template.html",
+	"controllerUrl": "aps/content/DailyManagement/tables/catelist/controller.js",
+	"config": {
+		"pageTitle": "区域分类"
+	}
+}

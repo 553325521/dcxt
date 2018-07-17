@@ -1,10 +1,10 @@
-$(function() {})
 
 
-
-var settingApp = angular.module('tablesListApp', []);
-
-settingApp.controller('tablesListCtrl', function($scope, $http, $interval) {
+(function() {
+	define([], function() {
+		return [
+			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
+			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
 
 	scope = $scope;
 
@@ -52,7 +52,11 @@ settingApp.controller('tablesListCtrl', function($scope, $http, $interval) {
 		},
 	];
 
+			}
+			];
+	});
 
 
+}).call(this);
 
-})
+$(function() {})
