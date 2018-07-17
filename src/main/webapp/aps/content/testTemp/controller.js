@@ -4,7 +4,7 @@
             '$scope','httpService','config','params','$routeParams','eventBusService','controllerName','loggingService', 
             function($scope,$httpService,config,params,$routeParams,eventBusService,controllerName,loggingService) {
             	$scope.form = {};
-            	
+            	$scope.form.name = "!";
 /*            	$scope.save = function(){
             		var m2 = {
         				  "url":"aps/content/testTemp/config.json",
@@ -20,6 +20,7 @@
 	                		loggingService.info(data.data);
 	                	}else{
 	                		init();
+	                		$scope.$apply();
 	                	}
 	
 	                 }).error(function(data) {
@@ -32,7 +33,7 @@
 	                	if(data.code != '0000'){
 	                		loggingService.info(data.data);
 	                	}else{
-	                		$scope.userList = data.data;
+	                		$scope.dataList = data.data;
 	                		$scope.$apply();
 	                	}
 	                 }).error(function(data) {

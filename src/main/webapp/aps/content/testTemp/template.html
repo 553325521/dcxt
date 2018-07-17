@@ -1,6 +1,6 @@
-<div ng-repeat="data in dataList">
+<h1 ng-repeat="data in dataList">
 	{{data.name}}
-</div>
+</h1>
 
-<input type="text" ng-modal="form.name">
-<a href="" ng-click="save()"></a>
+<input type="text" ng-model="form.name" >
+<a href="" ng-click="save()">保存</a>

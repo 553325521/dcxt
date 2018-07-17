@@ -21,7 +21,10 @@
   
    <select id="findTempTestList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
     select 
-   		*
+   		name,
+   		sex,
+   		age,
+   		address
     from temp_test
   </select>
  
