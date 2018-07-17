@@ -16,19 +16,28 @@
 <html lang="zh-CN" class="ios hairline" style="font-size: 42.75px;">
 <head>
 <meta charset="utf-8">
-<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
+<meta
+	content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"
+	name="viewport">
 <meta content="yes" name="apple-mobile-web-app-capable">
 <meta content="black" name="apple-mobile-web-app-status-bar-style">
 <meta content="telephone=no" name="format-detection">
 <title>点餐系统</title>
 <base href="<%=basePath%>" />
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="js/ydui/css/ydui.css">
-<script src="js/ydui/js/jquery.min.js"> </script>
-<script src="js/ydui/js/ydui.js"> </script>
-
+<link rel="stylesheet" href="<%=basePath%>assets/weui/css/weuix.min.css">
+<link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui.css">
+<link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui2.css">
+<link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui3.css">
+<link rel="stylesheet" href="<%=basePath%>assets/weui/css/icon.css">
+<link rel="stylesheet"
+	href="<%=basePath%>assets/weui/css/other.css?v=20180715000000">
+<link rel="stylesheet"
+	href="<%=basePath%>assets/weui/css/jquery-weui.min.css">
+<script src="<%=basePath%>js/jquery/1.11.3/jquery.min.js"></script>
+<script src="<%=basePath%>assets/weui/js/jquery-weui.min.js"></script>
 </head>
-<body id="appBody" ng-app="app" >
+<body id="appBody" ng-app="app">
 	<div class="ng-view">
 		<div
 			style="text-align: center;margin-left: auto;margin-right: auto;margin-top: 200px;">
@@ -38,10 +47,14 @@
 	</div>
 </body>
 
-<script type="text/javascript" src="<%=basePath%>/js/angular/1.2.0/angular.min.js"></script>
-<script type="text/javascript" src="<%=basePath%>/js/angular/1.2.0/angular-route.min.js"></script>
-<script type="text/javascript" src="<%=basePath%>/js/util.js?v=5.1"></script>
-<script data-main="config/loader.js?v=7" src="<%=basePath%>/js/require/require.min.js"></script>
-<script type="text/javascript" src="<%=basePath%>/config/app.js"></script>
-
+<script type="text/javascript"
+	src="<%=basePath%>js/angular/1.2.0/angular.min.js"></script>
+<script type="text/javascript"
+	src="<%=basePath%>js/angular/1.2.0/angular-route.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>js/util.js?v=5.1"></script>
+<script data-main="config/loader.js?v=7"
+	src="<%=basePath%>js/require/require.min.js"></script>
+<script type="text/javascript" src="<%=basePath%>config/app.js"></script>
+<script type="text/javascript"
+	src="<%=basePath%>assets/weui/js/other.js"></script>
 </html>

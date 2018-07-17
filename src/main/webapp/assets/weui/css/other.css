@@ -1,6 +1,5 @@
-
 /* label 字体大小修改  整体宽度修改 */
-.label{
+.label {
 	font-size: 14px;
 	width: 75px;
 }
@@ -34,4 +33,8 @@
 
 .li-checkbox-self {
 	margin: 0;
+}
+
+.list_bd {
+	float: left;
 }

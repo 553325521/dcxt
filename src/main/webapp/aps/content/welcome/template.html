@@ -1,165 +1,189 @@
-<style>
-	input::-webkit-input-placeholder{color:#a9a9a9}input::-moz-placeholder{color:#a9a9a9}input:-moz-placeholder{color:#a9a9a9}input:-ms-input-placeholder{color:#a9a9a9}.cell-right input[type=radio]:checked+.cell-checkbox-icon:after{color:#68bde6;content:'\e601'}.cell-right input[type=checkbox]:not(.m-switch):checked+.cell-checkbox-icon:after{color:#68bde6;content:'\2611 '}.cell-right input[type=checkbox]:not(.m-switch)+.cell-checkbox-icon:after{content:'\2610';color:#d9d9d9}.cell-right input[type=radio]+.cell-checkbox-icon:after{font-family:YDUI-INLAY;font-size:.39rem}.btn-primary{background-color:#68bde6}.gray-font{color:#a9a9a9}.{font-family:"Microsoft YaHei"}.line-jiange{margin:.1rem}.line-jiange span{white-space:nowrap}.btn-hollow:after{font-size:#.2rem}.btn{height:.5rem;line-height:.45rem;padding:0 .11rem;font-size:.1rem}span{margin-left:10px}i{margin-left:3px}.btn-primary:active{background-color:#0192dc}.cell-select{-webkit-flex:0;-ms-flex:1;flex:0;color:#a9a9a9;margin-left:-.08rem}.cell-select option{direction:ltr}.select-left{padding-left:1rem}.btn,.m-spinner>input{font-size:.26rem;text-align:center;border-radius:30rem}.btn-hollow:after{width:210%;border-radius:30rem;left:-5%}
-</style>
-<header class="m-navbar">
-			<a href="#" class="navbar-item">
-			<i class="back-ico"></i>
-			</a>
-			<div class="navbar-center">
-				<span class="navbar-title">打印机设置</span>  
+
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	<div class="weui-header-right" style="top: 0;">
+		<div class="button_sp_area" style="padding: 12px 0;">
+			<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+		</div>
+	</div>
+</div>
+
+<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">名称</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				placeholder="输入打印机名称" ng-model="form.PRINTER_NAME">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">密匙</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				placeholder="选择打印机ID号" ng-model="form.PRINTER_ID">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">宽度</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self">
+					<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
+						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+						style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>58mm</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: 10px;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
+						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+						style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>80mm</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">类型</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
+					ng-repeat="item in printer_level">
+					<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
+						value="{{item.value}}" type="checkbox" ng-model="item.checked"
+						ng-change="selectLevel(item)"> <label
+						for="h{{$index + 1}}"> <i
+						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>{{item.name}}</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">份数</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" id="fs_select" type="text"
+				value="" ng-model="form.PRINTER_PAGE_NUMS">
+			<!-- <div class="weui-count">
+					<a class="weui-count__btn weui-count__decrease"
+						ng-click="fsDoReduce()"></a> <input class="weui-count__number"
+						 type="number"
+						style="width: 1.5rem;" pattern="[0-9]*" ng-blur="fsReduceNum()" />
+					<a class="weui-count__btn weui-count__increase"
+						ng-click="fsDoAdd()"></a>
+				</div> -->
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">速度</label>
+		</div>
+		<div class="weui-cell_bd weui_cell_primary">
+			<input class="weui_input label-input" id="sd_select" type="text"
+				value="" ng-model="form.RPINTER_SPEED">
+			<!-- <div class="weui_cell_select" style="width: 100%;">
+				<div class="weui_cell_bd weui_cell_primary">
+					<select class="weui_select" name="select1"
+						style="padding-left: 0;width: 100%;" ng-model="form.RPINTER_SPEED">
+						<option ng-repeat="item in printer_speed" value="{{item.value}}">{{item.title}}</option>
+					</select>
+				</div>
+			</div> -->
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">抬头</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				placeholder="输入小票抬头文字" ng-model="form.PRINTER_BILL_HEAD">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">范围(标签)</label>
+		</div>
+		<div class="weui_cell_bd">
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f4" id="g3" type="radio"
+							value="all" ng-model="form.PRINTER_PRODUCT_RANGE"> <label
+							for="g3"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>全部商品</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="f4" id="g4" type="radio"
+							value="part" ng-model="form.PRINTER_PRODUCT_RANGE"> <label
+							for="g4"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>部分商品</p>
+							</div>
+						</label>
+					</div>
+				</div>
 			</div>
 
-				<div class="navbar-item">
-				<button class="btn btn-hollow" type="submit" value="重置">重置</button>
-				</div>
-		</header>
-		<div class="m-cell">
-		<form>
-			<div class="cell-item">
-				<div class="cell-left">名称</div>
-				<div class="cell-right">
-				<input style="text-align:right;" type="text" class="cell-input" 
-				placeholder="输入打印机名称" placeholder-color="#A9A9A9" autocomplete="off" /></div>
-			</div>
-			<div class="cell-item">
-				<div class="cell-left">密钥</div>
-				<div class="cell-right cell-arrow">
-					
-					<select dir="rtl" class="cell-select select-left" >
-                        <option value="">选择打印机ID号</option>
-                        <option value="1">2587954</option>
-                        <option value="2">1547852</option>
-                        <option value="3">6547214</option>
-                    </select>
-					
-				</div>
-			</div>
-			<div class="cell-item">
-				<div class="cell-left">宽度</div>
-				<div class="cell-right">
-				
-				<label>
-                  <span>58mm</span>
-					   <input type="radio" value="1" name="kuandu" checked>
-                    <i class="cell-checkbox-icon"></i>
-                </label>
-				<label >
-                  <span>80mm</span>
-					   <input type="radio" value="2" name="kuandu" >
-                    <i class="cell-checkbox-icon"></i>
-                </label>
-					
-					
-				</div>
-			</div>
-			<div class="cell-item">
-				<div class="cell-left">类型</div>
-				<div class="cell-right">
-				<label>
-					<span>结算联</span>
-					   <input type="radio" value="1" name="radio" checked="">
-                    <i class="cell-checkbox-icon"></i>
-				</label>
-				<label>
-					<span>对账联</span>
-					   <input type="radio" value="2" name="radio" checked="">
-                    <i class="cell-checkbox-icon"></i>
-				</label>
-				<label>
-					<span>备物联</span>
-					   <input type="radio" value="3" name="radio" checked="">
-                    <i class="cell-checkbox-icon"></i>
-				</label>
-				
-				</div>
-			</div>
-			<div class="cell-item">
-				<div class="cell-left">份数</div>
-					<div class="cell-right">
-					<span class="m-spinner" data-ydui-spinner="{input: '.J_Input', add: '.J_Add', minus: '.J_Del', longpress: false}">
-					<a href="javascript:;" class="J_Del"></a>
-					<input type="text" class="J_Input" placeholder="">
-					<a href="javascript:;" class="J_Add"></a>
-					</span>
-				</div>
-			</div>
-			<div class="cell-item">
-				<div class="cell-left">速度</div>
-				<div class="cell-right cell-arrow">		
-					<select  dir="rtl" class="cell-select select-left" >
-                        <option value="0">低速</option>
-                        <option value="1">中速</option>
-                        <option value="2">高速</option>
-                    </select>				
-				</div>
-			</div>
-			<div class="cell-item">
-				<div class="cell-left">抬头</div>
-				<div class="cell-right">
-					<input style="text-align:right;" type="text" class="cell-input" 
-				placeholder="输入小票抬头文字" placeholder-color="#A9A9A9" autocomplete="off" />
-				
-				</div>
-			</div>
-			<div class="cell-item">
-				<div class="cell-left">范围（标签）</div>
-				<div class="cell-right">
-				<label>
-					<span>全部商品</span>
-					   <input type="radio" class="show-toggle" value="1" name="shangpin" checked="">
-                    <i class="cell-checkbox-icon"></i>
-				</label>
-				<label>
-					<span>部分商品</span>
-					   <input type="radio" class="show-toggle" value="2" name="shangpin" checked="">
-                    <i class="cell-checkbox-icon"></i>
-				</label>
-				</div>
-			</div>
-			
-		
-			
-			<div  class="cell-item eyeryDayIn">
-				<div class="cell-right line-jiange">
-					
-					<label>					
-					<span>荤菜</span>
-					   <input type="checkbox"  value="1" name="caipin" checked>
-                    <i class="cell-checkbox-icon"></i>
-					</label>		
-					<label>		
-					<span>素菜</span>
-					   <input type="checkbox" value="2" name="caipin" >
-                    <i class="cell-checkbox-icon"></i>
-					</label>		
-					<label>		
-					<span>凉菜</span>
-					   <input type="checkbox" value="3" name="caipin" checked>
-                    <i class="cell-checkbox-icon"></i>
-					</label>
-					<label>		
-					<span>汤类</span>
-					   <input type="checkbox" value="4" name="caipin" checked>
-                    <i class="cell-checkbox-icon"></i>
-					</label>
-					<label>		
-					<span>酒水</span>
-					   <input type="checkbox" value="5" name="caipin" >
-                    <i class="cell-checkbox-icon"></i>
-					</label>
-					
-					
-					</div>
-			</div>
-			
-			
-			<div style="padding:0.2rem" class="cell-item">
-				<div class="gray-font">
-				先购买打印机，添加打印机时选择生成的ID，然后填写入打印机的id中。</div>
-			</div>
-			<button type="button" class="btn-block btn-primary">保存</button>	
-		</form>	
 		</div>
-		
-		
-		</section>
+	</div>
+	<div class="weui_cell" ng-show="form.KIND_OF_DISHES">
+		<div class="weui_cell_hd">
+			<label class="weui_label label"></label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
+					ng-repeat="item in printer_dishes_list">
+					<input class="weui-form-checkbox" name="f3" id="s{{$index + 1}}"
+						ng-model="item.checked" value="{{item.value}}" type="checkbox"
+						ng-change="selectDishes(item)"
+						ng-checked="noCheckArr.indexOf(item.value)==-1"> <label
+						for="s{{$index + 1}}"> <i
+						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>{{item.title}}</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 底部 -->
+<div class="weui_cells_tips">先购买打印机，添加打印机时选择生成的ID，然后填写入打印机的id中。</div>
+

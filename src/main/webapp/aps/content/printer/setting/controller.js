@@ -13,39 +13,11 @@ Array.prototype.remove = function(val) {
 };
 
 (function() {
-	define([], function() {
+	define(['zepto', 'picker'], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
-				
-				function comboboxInit() {
-					$("#fs_select").picker({
-						title : "选择份数",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '1', '2', '3' ],
-								displayValues : [ '1', '2', '3' ]
-							}
-						]
-					});
 
-					$("#sd_select").picker({
-						title : "选择速度",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '低速', '中速', '高速' ],
-								displayValues : [ '低速', '中速', '高速' ]
-							}
-						]
-					});
-				}
-				
-				comboboxInit()
-				
 				scope = $scope;
 
 				scope.noCheckArr = [ 1, 2, 3, 4, 5 ];
@@ -218,3 +190,33 @@ Array.prototype.remove = function(val) {
 	});
 }).call(this);
 
+$(function() {
+	
+	function comboboxInit() {
+		$("#fs_select").picker({
+			title : "选择份数",
+			toolbarCloseText : '确定',
+			cols : [
+				{
+					textAlign : 'center',
+					values : [ '1', '2', '3' ],
+					displayValues : [ '1', '2', '3' ]
+				}
+			]
+		});
+
+		$("#sd_select").picker({
+			title : "选择速度",
+			toolbarCloseText : '确定',
+			cols : [
+				{
+					textAlign : 'center',
+					values : [ '低速', '中速', '高速' ],
+					displayValues : [ '低速', '中速', '高速' ]
+				}
+			]
+		});
+	}
+	
+	comboboxInit()
+})
