@@ -2,6 +2,7 @@
 .label {
 	font-size: 14px;
 	width: 75px;
+	text-align: center;
 }
 /* 所有的input 字体大小修改  */
 .label-input {
@@ -17,6 +18,11 @@
 	border-radius: 25px;
 	transform: translateX(-100%);
 	border: 1px solid #c7c7c7;
+}
+
+.bom-radio-big {
+	width: 80px;
+	border-radius: 40px;
 }
 
 .weui-header-self {

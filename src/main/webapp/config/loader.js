@@ -39,6 +39,8 @@
 			uploadify : "js/jquery.uploadify-v2.1.4/jquery.uploadify.v2.1.4.min",
 			swfobject : "js/jquery.uploadify-v2.1.4/swfobject",
 			uploadauto : "js/uploadauto",
+			
+			jqueryweui : "js/weui/jquery-weui.min",
 		},
 		shim : {
 			highchartsGridLight : {

@@ -25,17 +25,13 @@
 <title>点餐系统</title>
 <base href="<%=basePath%>" />
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="<%=basePath%>assets/weui/css/weuix.min.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui2.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui3.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/icon.css">
 <link rel="stylesheet"
 	href="<%=basePath%>assets/weui/css/other.css?v=20180715000000">
-<link rel="stylesheet"
-	href="<%=basePath%>assets/weui/css/jquery-weui.min.css">
 <script src="<%=basePath%>js/jquery/1.11.3/jquery.min.js"></script>
-<script src="<%=basePath%>assets/weui/js/jquery-weui.min.js"></script>
 </head>
 <body id="appBody" ng-app="app">
 	<div class="ng-view">
@@ -47,10 +43,6 @@
 	</div>
 </body>
 <script type="text/javascript"
-	src="<%=basePath%>js/weui/zepto.min.js"></script>
-<script type="text/javascript"
-	src="<%=basePath%>js/weui/picker.js"></script>
-<script type="text/javascript"
 	src="<%=basePath%>js/angular/1.2.0/angular.min.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>js/angular/1.2.0/angular-route.min.js"></script>
@@ -58,6 +50,5 @@
 <script data-main="config/loader.js?v=7"
 	src="<%=basePath%>js/require/require.min.js"></script>
 <script type="text/javascript" src="<%=basePath%>config/app.js"></script>
-<script type="text/javascript"
-	src="<%=basePath%>js/other.js"></script>
+<script type="text/javascript" src="<%=basePath%>js/other.js"></script>
 </html>
