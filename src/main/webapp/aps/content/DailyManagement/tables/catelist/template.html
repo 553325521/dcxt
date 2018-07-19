@@ -3,28 +3,25 @@
 			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 		</div>
 
-		<h1 class="weui-header-title weui-header-self">
-			{{pageTitle}}
-		</h1>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
  
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
-				<div class="bom-radio" id="attend2">添加</div>
+				<div class="bom-radio" id="attend2" ng-click="toHref('DailyManagement/tables/catesetting')">添加</div>
 			</div>
 		</div>
 	</header>
 
-
-	<div class="weui_cells" >
+	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;">
 		<div class="weui_cell slidelefts" ng-repeat="item in tables_area | orderBy:'pxxh'" id="{{item.id}}">		
-			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="transform: translateX(0px);">	
-				<div class="weui_cell_bd">
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="display:flex;transform: translateX(0px);">	
+				<div class="weui_cell_bd" style="margin-right:10px;">
 					<span>{{$index + 1}}</span>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
 					<span>{{item.name}}（{{item.count}}桌）</span>
 				</div>
-				<div class="weui_cell_bd {{item.status == 0 ? 'small-red-font' : 'small-gray-font'}}" >
+				<div class="weui_cell_bd tablessetting-small-font {{item.status == 0 ? 'tablessetting-red-font' : 'tablessetting-gray-font'}}" >
 					<span>{{item.status == 1 ? '已启用' : '已停用'}}</span>
 				</div>	
 			</div>
@@ -34,15 +31,15 @@
 	        	<span style="background:#ccc;color:#fff" ng-bind="item.status == 1 ? '停用' : '启用'">启用</span>
        		</div>	      
 		</div>
-	</div>
-
-	<div class="weui_cells">
+		
+		
 		<div class="weui_cell">
-			<div class="weui_cell_bd" >
-				<div dir="rtl">
-					<span style="color:#B2B2B2;font-size: 0.1em;" >
+			<div class="weui_cell_bd weui_cell_primary" dir="rtl">
+					<span style="color:#B2B2B2;font-size: 11px;" >
 						向左边滑动修改或删除，有餐桌的分类不能删除</span>
-				</div>
 			</div>
 		</div>
+		
 	</div>
+
+		

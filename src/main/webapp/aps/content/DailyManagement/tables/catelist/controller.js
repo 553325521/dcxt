@@ -43,6 +43,37 @@
 						pxxh : 4
 					}
 				];
+				
+			
+				
+				scope.toHref = function(path) {
+					var m2 = {
+						"url" : "aps/content/" + path + "/config.json",
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
+
+				var init = function() {
+					$httpService.post(config.findURL, $scope.form).success(function(data) {
+						if (data.code != '0000') {
+							loggingService.info(data.data);
+						} else {
+							$scope.userList = data.data;
+							$scope.$apply();
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+				
+				
+				
+				
+				
+				
+				
 			}
 		];
 	});
