@@ -4,7 +4,7 @@
     "controllerUrl": "aps/content/testTemp/controller.js",
     "config": 
     {
-            "findURL": "json/Open_queryForList_findTempTestList.json",
-            "saveURL": "json/Open_insert_inserTempTestList.json"
+            "findURL": "json/Function_queryForList_findTopFunctions.json",
+            "saveURL": "json/Function_insert_addFunction.json"
 	}
 }

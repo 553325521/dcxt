@@ -1,0 +1,9 @@
+{
+	"name": "Basic_setting",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/platform/add/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/add/controller.js",
+	"config": {
+		"pageTitle": "菜单设置",
+		"saveURL":"json/Function_insert_addFuntion.json"
+	}
+}

@@ -26,13 +26,20 @@
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
-							$scope.userList = data.data;
+							$.each(data.data.functionList, function(index, value) {
+								value.FUNCTION_ICON = realurl + "/assets/weui/images/" + value.FUNCTION_ICON + ".png"
+							})
+
+							$scope.functionList = data.data.functionList;
+							console.info($scope.functionList)
 							$scope.$apply();
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
 				}
+
+				init()
 			}
 		];
 	});

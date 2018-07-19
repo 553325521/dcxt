@@ -7,11 +7,8 @@
 				scope = $scope;
 
 				// 定义页面标题
-				$scope.pageTitle = config.pageTitle
+				scope.pageTitle = config.pageTitle
 
-				//初始化 form 表单
-				scope.form = {};
-				
 				scope.toHref = function(path) {
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json",
@@ -20,6 +17,7 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
+
 			}
 		];
 	});

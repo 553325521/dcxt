@@ -1,0 +1,66 @@
+
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting/platform')">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	<div class="weui-header-right" style="top: 0;">
+		<div class="button_sp_area" style="padding: 12px 0;">
+			<div class="bom-radio" ng-click="doSave()">保存</div>
+		</div>
+	</div>
+</div>
+
+<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">菜单名称</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				ng-model="form.MENU_NAME">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">菜单级别</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text" id="cdjb_select">
+		</div>
+	</div>
+	<div class="weui_cell" id="cdpx1">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">菜单排序</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text" id="cdpx_select1">
+		</div>
+	</div>
+	<div class="weui_cell" id="cdpx2">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">菜单排序</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text" id="cdpx_select2">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">功能类型</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text" id="gnlx_select">
+		</div>
+	</div>
+	<div class="weui_cell" id="ljdz">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">链接地址</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				ng-model="form.MENU_LINK">
+		</div>
+	</div>
+</div>

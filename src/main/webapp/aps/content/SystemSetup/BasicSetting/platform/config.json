@@ -1,0 +1,8 @@
+{
+	"name": "Platform_index",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/platform/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/controller.js",
+	"config": {
+		"pageTitle": "公众平台设置"
+	}
+}
