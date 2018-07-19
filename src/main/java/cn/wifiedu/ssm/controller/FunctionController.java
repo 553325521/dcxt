@@ -104,7 +104,7 @@ public class FunctionController extends BaseController {
 			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
 			if (reMap != null) {
 				map.put("FUNCTION_SORT", Integer.valueOf(reMap.get("FUNCTION_SORT").toString()) + 1);
-				map.put("FUNCTION_ICON", "");
+				map.put("FUNCTION_ICON", "icon_nav_button");
 				map.put("CREATE_BY", "admin");
 				map.put("CREATE_TIME", StringDeal.getStringDate());
 				map.put("FUNCTION_SWITCH", "on");
