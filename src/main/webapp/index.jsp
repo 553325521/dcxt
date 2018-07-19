@@ -11,7 +11,6 @@
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 			+ path + "/";
 %>
-
 <!DOCTYPE html>
 <html lang="zh-CN" class="ios hairline">
 <head>
@@ -30,10 +29,12 @@
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui2.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui3.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/icon.css">
+<link rel="stylesheet" href="<%=basePath%>assets/weui/css/font-awesome.min.css">
 <link rel="stylesheet"
 	href="<%=basePath%>assets/weui/css/jquery-weui.min.css">
 <link rel="stylesheet"
 	href="<%=basePath%>assets/weui/css/other.css?v=20180715000000">
+<script src="<%=basePath%>js/weui/zepto.min.js"></script>
 <script src="<%=basePath%>js/jquery/1.11.3/jquery.min.js"></script>
 </head>
 <body id="appBody" ng-app="app">
