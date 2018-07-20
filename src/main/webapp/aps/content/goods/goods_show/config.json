@@ -1,0 +1,8 @@
+{
+	"name": "Goods_show",
+	"viewUrl": "aps/content/goods/goods_show/template.html",
+	"controllerUrl": "aps/content/goods/goods_show/controller.js",
+	"config": {
+
+	}
+}

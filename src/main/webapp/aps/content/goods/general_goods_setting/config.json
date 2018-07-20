@@ -1,0 +1,8 @@
+{
+	"name": "general_goods_setting",
+	"viewUrl": "aps/content/goods/general_goods_setting/template.html",
+	"controllerUrl": "aps/content/goods/general_goods_setting/controller.js",
+	"config": {
+
+	}
+}

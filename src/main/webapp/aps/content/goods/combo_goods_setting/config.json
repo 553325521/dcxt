@@ -1,0 +1,8 @@
+{
+	"name": "combo_goods_setting",
+	"viewUrl": "aps/content/goods/combo_goods_setting/template.html",
+	"controllerUrl": "aps/content/goods/combo_goods_setting/controller.js",
+	"config": {
+
+	}
+}

@@ -1,0 +1,260 @@
+<<style>
+.cancelBorder:before{
+	width:0;
+}
+</style>
+   <div class="weui-header" style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area">
+				<div class="bom-radio" id="attend2">保存</div>
+			</div>
+		</div>
+	</div>
+	 <div class="weui_cells weui_cells_form" style="margin-top:0">
+	 		 <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label label">商品名称</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input label-input" type="text"  placeholder="请输入商品名称"/>
+                </div>
+            </div>
+            <div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">是否启用</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+						<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
+							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+							for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>启用</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: 10%;">
+						<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
+							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+							for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>禁用</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		 <div class="weui_cell" style="width:48%;float:left;margin-left:0;">
+                <div class="weui_cell_hd"><label class="weui_label label">商品编码</label></div>
+                <div class="weui_cell_bd">
+                    <input class="weui_input label-input" type="text"  placeholder="请输入商品编码"/>
+                </div>
+         </div>
+         <div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label" style="color:#04be02">分类</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<input class="weui_input label-input" id="fs_select" type="text"
+					value=""  ng-model = "form.SELECTTYPE">
+			</div>
+		</div>
+		<div class="weui_cell" style="width:30%;float:left;margin-left:0;">
+			<div class="weui_cell_hd">
+				<label class="weui_label label" style="color:#04be02">单位</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<input class="weui_input label-input" id="unit_select" type="text"
+					value=""  ng-model = "form.SELECTUNIT">
+			</div>
+		</div>
+		 <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label label">序号</label></div>
+                <div class="weui_cell_bd">
+                    <input class="weui_input label-input" type="text"  placeholder="请输入排序序号"/>
+                </div>
+         </div>
+          <div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">类型</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f3" id="g3" value="1"
+							type="radio" ng-model="form.IS_START"> 
+							<label for="g3"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>常规</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="f3" id="g4" value="0"
+							type="radio"> 
+							<label for="g4"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>套餐</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
+			 <div class="weui_cell_hd"><label class="weui_label label">原价</label></div>
+             <div class="weui_cell_bd">
+                    <input class="weui_input label-input" style="float:left" type="text"  placeholder="请输入原价"/>
+             </div>
+             <div class="weui_cell_bd"><span class="label-input">元</span></div>
+		</div>
+		 <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label label">特价</label></div>
+                <div class="weui_cell_bd">
+                    <input class="weui_input label-input" type="text"  placeholder="请输入特价"/>
+                </div>
+                 <div class="weui_cell_bd"><span class="label-input">元</span></div>
+         </div>
+         <div class="weui_cell " style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label">规格</label></div>
+		</div>
+		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-right:2%;padding:0">
+                <div class="weui_cell_hd"><label class="weui_label label">价格增减</label></div>
+                <div class="weui_cell_bd" style="margin-left:20%">
+                	<i class="icon-plus-sign" style="color:#04be02"></i>
+                </div>
+         </div>
+        <div class="weui_cell" style="width:46%;height:44px;float:left;margin-left:6%;padding-right:0">
+			<div class="weui_cell_bd" style="width:20%">
+				<input class="weui_input label-input" id="size_select" type="text"
+					value=""  ng-model = "form.SELECTSIZE">
+			</div>
+			<div class="weui_cell_bd">
+				<span class="icon icon-74"></span>
+			</div>
+		</div>
+		 <div class="weui_cell cancelBorder" style="height:44px;">
+                <div class="weui_cell_hd"><label class="weui_label label">+10.00</label></div>
+                <div class="weui_cell_bd" style="margin-left:20%">
+                	<i class="icon-trash" style="color:#04be02"></i>
+                </div>
+         </div>
+          <div class="weui_cell" style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label">做法</label></div>
+		</div>
+		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-right:2%;padding:0">
+                <div class="weui_cell_hd"><label class="weui_label label">做法选择</label></div>
+                <div class="weui_cell_bd" style="margin-left:20%">
+                	<i class="icon-plus-sign" style="color:#04be02"></i>
+                </div>
+         </div>
+          <div class="weui_cell" style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label">口味</label></div>
+		</div>
+		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-top:4%;margin-right:2%;padding:0">
+                <div class="weui_cell_hd"><label class="weui_label label">口味选择</label></div>
+                <div class="weui_cell_bd" style="margin-left:20%">
+                	<i class="icon-plus-sign" style="color:#04be02"></i>
+                </div>
+         </div>
+         <div class="weui_cell" style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label">商品备注</label></div>
+		</div>
+		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-top:4%;margin-right:2%;padding:0">
+                <div class="weui_cell_bd" style="margin-left:60%">
+                	<i class="icon-plus-sign" style="color:#04be02"></i>
+                </div>
+         </div>
+         <div class="weui_cell cancelBorder">
+         	<div class="button_sp_area">
+				<div class="bom-radio"  style="margin-left:2%">少加盐</div>
+				<div class="bom-radio" style="margin-left:20%">多放冰</div>
+			</div>
+         </div>
+          <div class="weui_cell" style="top:20px">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">显示范围</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;"
+						ng-repeat="item in show_area">
+						<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
+							value="{{item.value}}" type="checkbox"  ng-model="item.checked"> 
+							<label for="h{{$index + 1}}"> <i class="weui-icon-checkbox icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0">
+								<p>{{item.name}}</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		 <div class="weui_cell" style="top:20px">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">图片</label>
+			</div>
+			 <div class="weui_cell_bd weui_cell_primary">
+                    <div class="weui_uploader">
+                        <div class="weui_uploader_hd weui_cell">
+                            <div class="weui_cell_ft"></div>
+                        </div>
+                        <div class="weui_uploader_bd">
+                            <ul class="weui_uploader_files" id='img'>
+                             
+                            </ul>
+                            <div class="weui_uploader_input_wrp">
+                                <input class="weui_uploader_input" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" id="headimgurl" />
+                                <input  type="hidden"  id="headimgurl1" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="weui_cell_bd weui_cell_primary">
+                    <div class="weui_uploader">
+                        <div class="weui_uploader_hd weui_cell">
+                            <div class="weui_cell_ft"></div>
+                        </div>
+                        <div class="weui_uploader_bd">
+                            <ul class="weui_uploader_files" id='img'>
+                             
+                            </ul>
+                            <div class="weui_uploader_input_wrp">
+                                <input class="weui_uploader_input" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" id="headimgurl" />
+                                <input  type="hidden"  id="headimgurl1" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="weui_cell_bd weui_cell_primary">
+                    <div class="weui_uploader">
+                        <div class="weui_uploader_hd weui_cell">
+                            <div class="weui_cell_ft"></div>
+                        </div>
+                        <div class="weui_uploader_bd">
+                            <ul class="weui_uploader_files" id='img'>
+                             
+                            </ul>
+                            <div class="weui_uploader_input_wrp">
+                                <input class="weui_uploader_input" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" id="headimgurl" />
+                                <input  type="hidden"  id="headimgurl1" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+		</div>
+		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;width:95%;height:44px;margin-left:2%;margin-top:4%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label">商品介绍</label></div>
+		</div>
+		 <div class="weui_cell cancelBorder" style="top:20px;margin-bottom:20px;">
+		 	<p style="font-size:14px;">&nbsp;&nbsp;说明:原价必填，特价可填，如特价已填，该商品为特价商品，不享受任何折扣优惠。</p>
+		 </div>
+	 </div>
