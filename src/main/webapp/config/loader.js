@@ -38,11 +38,9 @@
 			uploadify : "js/jquery.uploadify-v2.1.4/jquery.uploadify.v2.1.4.min",
 			swfobject : "js/jquery.uploadify-v2.1.4/swfobject",
 			uploadauto : "js/uploadauto",
-<<<<<<< HEAD
-			zepto : "assets/js/zepto.min",
-=======
 
->>>>>>> 8483eccde127202c10edb53cd765d98ecde8c1d2
+			zepto : "assets/js/zepto.min",
+
 			jqueryweui : "js/weui/jquery-weui.min",
 			slideleft : 'js/weui/slideleft2',
 		},
@@ -86,7 +84,6 @@
 		}
 	});
 
-<<<<<<< HEAD
 
 	require(['zepto'], function() {
 		if (!window.console) {
@@ -129,6 +126,5 @@
 		}
 	});
 
-=======
->>>>>>> 8483eccde127202c10edb53cd765d98ecde8c1d2
+
 })(this);
