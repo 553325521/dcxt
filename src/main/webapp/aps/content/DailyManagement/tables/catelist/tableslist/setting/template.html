@@ -1,6 +1,6 @@
 
-	<header class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left">
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('DailyManagement/tables/catelist/tableslist')">
 			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 		</div>
 
@@ -13,7 +13,7 @@
 				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
 			</div>
 		</div>
-	</header>
+	</div>
 
 
 
@@ -96,7 +96,7 @@
 					<label class="weui_label label tablessetting-label">餐位人数</label>
 				</div>
 				<div class="weui-cell_bd weui_cell_primary">
-					<input class="weui_input tablessetting-weui_hd_self label-input" id="rs_select" type="text" ng-model="form.TABLES_PNUM"
+					<input class="weui_input tablessetting-weui_hd_self label-input" id="rs_select" type="text" ng-model="form.TABLES_NUM"
 						placeholder="输入餐位人数" value="">
 					
 				</div>
@@ -112,8 +112,8 @@
 			
 			<div class="weui_cell">
                 <div class="weui_cell_bd weui_cell_primary">
-                    <textarea style="padding:0 12px;" id="textarea" class="weui_textarea" placeholder="请输入备注（选填）" rows="3" ng-model="form.TABELS_DESC"></textarea>
-                    <div class="weui_textarea_counter"><span id="count">0</span>/<span id="count_max">20</span></div>
+                    <textarea style="padding:0 12px;" id="textarea" class="weui_textarea" placeholder="请输入备注（选填）" rows="3" ng-model="form.TABLES_DESC"></textarea>
+                    <div class="weui_textarea_counter"><span id="count">{{font_count}}</span>/<span id="count_max">20</span></div>
                 </div>
             </div>
 			

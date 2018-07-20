@@ -1,8 +1,0 @@
-{
-	"name": "tables_setting",
-	"viewUrl": "aps/content/DailyManagement/tables/setting/template.html",
-	"controllerUrl": "aps/content/DailyManagement/tables/setting/controller.js",
-	"config": {
-		"pageTitle": "餐桌设置"
-	}
-}

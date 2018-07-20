@@ -1,26 +1,26 @@
 
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left">
+		<div href="#" class="weui-header-left" ng-click="toHref('DailyManagement/tables/catelist')">
 			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 		</div>
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
-				<div class="bom-radio" id="attend2">添加</div>
+				<div class="bom-radio" id="attend2" ng-click="addOrChange()">添加</div>
 			</div>
 		</div>
 	</div>
 
 		
 	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;">
-		<div class="weui_cell slidelefts"  ng-repeat="item in tables_list | orderBy:'pxxh'" id="{{item.id}}">
+		<div class="weui_cell slidelefts"  ng-repeat="item in tables_list | orderBy:'pxxh'">
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="display:flex;;transform: translateX(0px);">
 				<div class="weui_cell_bd " style="margin-right:10px;">
 					{{$index+1}}
 				</div>
 							
 				<div class="weui_cell_bd weui_cell_primary">
-					{{item.num}}号
+					{{item.name}}
 				</div>
 				<div class="weui_cell_bd tablessetting-small-font {{item.status == 1 ? 'tablessetting-gray-font':'tablessetting-red-font'}}" dir="rtl">
 					{{item.status == 1 ? '已启用':'已停用'}}
@@ -31,8 +31,8 @@
 			</div>
 
 		     <div class="slideleft">
-				<span class="bg-red f-white dels" id="delete-table-list">删除</span>
-                <span class="switch_stop" ng-bind="item.status == 1 ? '停用' : '启用'" style="background:#ccc;color:#fff">停用</span>
+                <span class="switch_stop" style="background:#ccc;color:#fff" ng-click="addOrChange($index)">修改</span>
+                <span class="bg-red f-white dels" id="delete-table-list" ng-click="tablesDelete($index)">删除</span>
              </div>
 		</div>
 	</div>			
