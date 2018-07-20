@@ -11,12 +11,12 @@ window.slideleft = (function($) {
 		moveX = 0, // listItem 移动的距离
 		expandLi = null; // 是否存在展开的list
 
-	var slideMaxWid = listOpts.width();
-	
-	var handleSlide = (function() {
+	var slideMaxWid = 142;
+    // var slideMaxWid = listOpts.width();	var handleSlide = (function() {
 
 		$(document).on('touchstart', '.slideleft_cell_bd', function(e) {
 			// 判断有无已经展开的li，如果有，是否是当前的li，如果不是，将展开的li收起
+			console.info(e)
 			if (expandLi) {
 				if (expandLi.parent().index() !== $(this).parent().index()) {
 					// 判断当前list是左滑还是上下滑

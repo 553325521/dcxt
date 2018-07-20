@@ -12,9 +12,9 @@
 				//初始化 form 表单
 				scope.form = {};
 
-				scope.toHref = function(path) {
+				scope.toHref = function(path, fid) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json",
+						"url" : "aps/content/" + path + "/config.json?fid=" + fid,
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
@@ -31,7 +31,6 @@
 							})
 
 							$scope.functionList = data.data.functionList;
-							console.info($scope.functionList)
 							$scope.$apply();
 						}
 					}).error(function(data) {
