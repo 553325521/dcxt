@@ -3,6 +3,7 @@
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/controller.js",
 	"config": {
-		"pageTitle": "基础设置"
+		"pageTitle": "基础设置",
+		"findURL": "json/Function_queryForList_loadFunctionListByUserRole.json"
 	}
 }

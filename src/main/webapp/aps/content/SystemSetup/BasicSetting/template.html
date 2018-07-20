@@ -1,7 +1,7 @@
 
 <div class="weui-header" style="background-color:#FFFFFF">
-	<div class="weui-header-left">
-		<a class="icon icon-109" style="color: #0D0D0D !important;"  href="toHref('welcome');"></a>
+	<div class="weui-header-left" ng-click="toHref('welcome');">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 	</div>
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 	<div class="weui-header-right" style="top: 0;">
@@ -12,11 +12,13 @@
 </div>
 <div class="weui_cells weui_cells_form" style="margin-top: 0;">
 	<div class="weui_grids grids-small">
-		<a href="javascript:;" class="grid" ng-click="toHref('SystemSetup/BasicSetting/platform')">
+		<a href="javascript:;" class="grid"
+			ng-click="toHref('{{item.FUNCTION_URL}}')"
+			ng-repeat="item in functionList">
 			<div class="weui_grid_icon">
-				<img src="/dcxt/assets/weui/images/icon_nav_button.png" alt="">
+				<img src="{{item.FUNCTION_ICON}}" alt="">
 			</div>
-			<p class="weui_grid_label">公众平台</p>
+			<p class="weui_grid_label" ng-bind="item.FUNCTION_NAME">基础设置</p>
 		</a>
 	</div>
 </div>

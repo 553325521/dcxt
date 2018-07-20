@@ -3,44 +3,48 @@
 		baseUrl : './',
 		urlArgs : "v=7",
 		paths : {
-			jquery : 'https://cdn.sjedu.cn/js/jquery/1.11.3/jquery.min',
-			jqueryUi : 'https://cdn.sjedu.cn/js/jqueryUi/js/jquery-ui-1.9.2.custom.min',
-			jqueryUiZh : 'https://cdn.sjedu.cn/js/jqueryUi/jqueryUi_ZH',
-			jqueryForm : 'https://cdn.sjedu.cn/js/jqueryForm/jquery.form',
+			jquery : 'js/jquery/1.11.3/jquery.min',
+			jqueryUi : 'js/jqueryUi/js/jquery-ui-1.9.2.custom.min',
+			jqueryUiZh : 'js/jqueryUi/jqueryUi_ZH',
+			jqueryForm : 'js/jqueryForm/jquery.form',
 
-			bootstrap : 'https://cdn.sjedu.cn/js/bootstrap/3.3.4/js/bootstrap.min',
+			bootstrap : 'js/bootstrap/3.3.4/js/bootstrap.min',
 
-			jztree : 'https://cdn.sjedu.cn/js/zTree/js/jquery.ztree.all-3.5.min',
-			smartMenu : 'https://cdn.sjedu.cn/js/jquerySmartMenu/js/jquery-smartMenu-min',
-			jqueryUpload : 'https://cdn.sjedu.cn/js/jqueryUpload/jquery.upload',
+			jztree : 'js/zTree/js/jquery.ztree.all-3.5.min',
+			smartMenu : 'js/jquerySmartMenu/js/jquery-smartMenu-min',
+			jqueryUpload : 'js/jqueryUpload/jquery.upload',
 
-			ueditorConfig : 'https://cdn.sjedu.cn/js/ueditor/ueditor.config',
-			ueditorMin : 'https://cdn.sjedu.cn/js/ueditor/ueditor',
-			ueditorLang : 'https://cdn.sjedu.cn/js/ueditor/lang/zh-cn/zh-cn',
+			ueditorConfig : 'js/ueditor/ueditor.config',
+			ueditorMin : 'js/ueditor/ueditor',
+			ueditorLang : 'js/ueditor/lang/zh-cn/zh-cn',
 
 			jwplayer : "js/jwplayer/jwplayer",
 			flexpaper : "js/FlexPaper/flexpaper_flash",
 
-			highcharts : 'https://cdn.sjedu.cn/js/highcharts/highcharts',
-			highchartsGridLight : 'https://cdn.sjedu.cn/js/highcharts/themes/grid-light',
-			highchartsMore : 'https://cdn.sjedu.cn/js/highcharts/highcharts-more',
-			highcharts3D : 'https://cdn.sjedu.cn/js/highcharts/highcharts-3d',
+			highcharts : 'js/highcharts/highcharts',
+			highchartsGridLight : 'js/highcharts/themes/grid-light',
+			highchartsMore : 'js/highcharts/highcharts-more',
+			highcharts3D : 'js/highcharts/highcharts-3d',
 
-			date : 'https://cdn.sjedu.cn/js/bootstrap-daterangepicker/date',
-			daterangepicker : 'https://cdn.sjedu.cn/js/bootstrap-daterangepicker/daterangepicker',
-			bootstrapDatetimepicker : 'https://cdn.sjedu.cn/js/bootstrap-datetimepicker/js/bootstrap-datetimepicker',
-			bootstrapDatetimepickerZhCn : 'https://cdn.sjedu.cn/js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN',
+			date : 'js/bootstrap-daterangepicker/date',
+			daterangepicker : 'js/bootstrap-daterangepicker/daterangepicker',
+			bootstrapDatetimepicker : 'js/bootstrap-datetimepicker/js/bootstrap-datetimepicker',
+			bootstrapDatetimepickerZhCn : 'js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN',
 
-			pageController : 'https://cdn.sjedu.cn/js/page',
-			validateController : 'https://cdn.sjedu.cn/js/validate',
+			//validateController : 'js/validate',
 
 			ZeroClipboard : "js/ueditor/third-party/zeroclipboard/ZeroClipboard",
 			upload : "assets/js/upload",
 			uploadify : "js/jquery.uploadify-v2.1.4/jquery.uploadify.v2.1.4.min",
 			swfobject : "js/jquery.uploadify-v2.1.4/swfobject",
 			uploadauto : "js/uploadauto",
+<<<<<<< HEAD
 			zepto : "assets/js/zepto.min",
+=======
+
+>>>>>>> 8483eccde127202c10edb53cd765d98ecde8c1d2
 			jqueryweui : "js/weui/jquery-weui.min",
+			slideleft : 'js/weui/slideleft2',
 		},
 		shim : {
 			highchartsGridLight : {
@@ -82,6 +86,7 @@
 		}
 	});
 
+<<<<<<< HEAD
 
 	require(['zepto'], function() {
 		if (!window.console) {
@@ -124,4 +129,6 @@
 		}
 	});
 
+=======
+>>>>>>> 8483eccde127202c10edb53cd765d98ecde8c1d2
 })(this);

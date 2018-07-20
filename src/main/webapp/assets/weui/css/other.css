@@ -44,3 +44,77 @@
 .list_bd {
 	float: left;
 }
+
+
+
+
+
+
+/**	lupishan	**/
+
+.tablessetting-weui_hd_self{
+	padding-left:20px;
+}
+
+.tablessetting-weui_select:after{
+	content: " ";
+    display: inline-block;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    height: 6px;
+    width: 6px;
+    border-width: 2px 2px 0 0;
+    border-color: #c7c7cc;
+    border-style: solid;
+    position: relative;
+    top: -2px;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    margin-top: -4px;
+
+}
+
+
+.tablessetting-label {
+	
+	width: auto;
+	min-width:75px;
+	
+}
+
+.tablessetting-font-style {
+	color:#363636;
+	font-size: 15px;
+	font-family: arial,sans-serif;
+}
+
+.tablessetting-small-font{	
+	display: flex;
+    justify-content:center;
+    align-items:Center;
+	font-size: 13px;
+}
+
+
+.tablessetting-red-font{
+	color:#EF4F4F;
+}
+
+
+.tablessetting-gray-font{
+	color:#999;
+}
+
+
+.tablessetting-font-style .weui_cell_bd .weui_cell_bd{
+	padding : 11px 10px;
+}
+
+.tablessetting-font-style .slideleft span {
+	    padding: 0 24px;
+	   
+	}
+
+
+/** end **/
