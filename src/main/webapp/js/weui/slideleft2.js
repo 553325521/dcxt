@@ -11,12 +11,15 @@ window.slideleft = (function($) {
 		moveX = 0, // listItem 移动的距离
 		expandLi = null; // 是否存在展开的list
 
-	var slideMaxWid = 142;
-    // var slideMaxWid = listOpts.width();	var handleSlide = (function() {
+	var slideMaxWid = listOpts.width();
+	
+	var handleSlide = (function() {
 
 		$(document).on('touchstart', '.slideleft_cell_bd', function(e) {
 			// 判断有无已经展开的li，如果有，是否是当前的li，如果不是，将展开的li收起
-			console.info(e)
+			// 由于angular 后加载 dom在初始化的时候不存在 所以在绑定的事件里面 重新获取一遍
+			listOpts = $('.slideleft');
+			slideMaxWid = listOpts.width();
 			if (expandLi) {
 				if (expandLi.parent().index() !== $(this).parent().index()) {
 					// 判断当前list是左滑还是上下滑
@@ -78,7 +81,10 @@ window.slideleft = (function($) {
 			endX = e.changedTouches[0].pageX;
 			endY = e.changedTouches[0].pageY;
 			var X = endX - initX;
-
+			
+			listOpts = $('.slideleft');
+			slideMaxWid = listOpts.width();
+			
 			$(this).addClass('animated');
 			//Slide to right or the distance of slide to left less than 20;
 			if (X > -20 || onthel || isScroll) {
