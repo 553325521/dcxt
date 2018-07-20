@@ -3,8 +3,7 @@
         return [
             '$scope','$location','httpService','config','params','$routeParams','eventBusService','controllerName','loggingService', 
             function($scope,$location,$httpService,config,params,$routeParams,eventBusService,controllerName,loggingService) {
-            	
-            	
+
             	//初始化中间模块
             	if($location.search()[config.contentName]){
                     $scope.appPartSrc = $location.search()[config.contentName];
@@ -68,27 +67,13 @@
 	              		  $scope.appPartModalSrc = "";
 	      	          }
             	});
-            	
-            	//接收弹出窗口加载事件
-            	eventBusService.subscribe(controllerName, 'appPart.load.modal.alert', function(event, alertModel) {
-            		
-	            		$('#mainModalAlert .mainModalLabelAlertTitle').html(alertModel.title);
-	            		$('#mainModalAlert .mainModalAlertContent').html(alertModel.content);
-	            		$('#mainModalAlert').modal('show');
-	            	
-            	});
-            	
+
+          
             	//模态窗口下的按钮点击事件
             	$scope.clickButton = function(btn) {
 	                eventBusService.publish(controllerName,btn.buttonLink, btn);
 	            };
-	            
-	            $scope.closeAlert = function() {
-	            	$('#mainModalAlert').modal('hide');
-	            };
-	            
-	            
-            	
+
             }
         ];
     });

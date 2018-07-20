@@ -39,7 +39,7 @@
 			uploadify : "js/jquery.uploadify-v2.1.4/jquery.uploadify.v2.1.4.min",
 			swfobject : "js/jquery.uploadify-v2.1.4/swfobject",
 			uploadauto : "js/uploadauto",
-			
+			zepto : "assets/js/zepto.min",
 			jqueryweui : "js/weui/jquery-weui.min",
 		},
 		shim : {
@@ -83,7 +83,7 @@
 	});
 
 
-	require([ 'bootstrap', 'pageController', 'validateController' ], function() {
+	require(['zepto'], function() {
 		if (!window.console) {
 			console = (function() {
 				var instance = null;

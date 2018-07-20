@@ -1,9 +1,8 @@
 (function() {
-	define([ 'jqueryweui' ], function() {
+	define([ ], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
-
 				scope = $scope;
 
 				// 定义页面标题
@@ -25,11 +24,7 @@
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
-							eventBusService.publish(controllerName, 'appPart.load.modal.alert', {
-								"title" : "操作提示",
-								"content" : "添加成功！"
-							});
-							scope.form = {}
+							$.alert("添加成功","提示");
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
@@ -104,8 +99,8 @@
 
 				}
 
-				init()
-
+				init();
+				
 			}
 		];
 	});
