@@ -1,0 +1,128 @@
+<style>
+	.customermanagement_navbar div{
+		border-left:1px solid #F0F0F0;
+		padding: 9px 0;
+		display:flex;
+		justify-content: center;
+        font-size: 15px;
+	}
+	
+	.weui_search_bar {
+    	padding: 6px 6px;
+	}
+	
+	.weui_search_outer:after {
+	    border: 0px solid #e6e6ea;
+	}
+	
+	.weui_search_outer:after {
+   
+    	border-radius: 0px;
+   
+	}
+	
+	*{
+		font-size:15px;
+	}
+	
+	
+</style>
+
+<div class="weui_navbar customermanagement_navbar" style="margin-left:-1px; position: static;">
+	<div class="weui_navbar_item  tab-blue">
+                    客户管理
+	</div>
+	<div class="weui_navbar_item">
+                    提成记录
+	</div>
+	<div class="weui_navbar_item">
+                    交易记录
+	</div>
+	<div class="weui_navbar_item" >
+                    代理信息
+	</div>
+</div>
+
+
+
+ <div class="searchbar_wrap" style="display:flex;background-color:#fff;"> 
+	<div class="weui_search_bar" style="background-color:#fff; width:100%;min-height:40px;">
+		<form class="weui_search_outer" style="border-radius: 0;border:0;width:75%;">
+			<div class="weui_search_inner" style="display: flex;align-items: center;padding-left:37px;">
+				<i class="weui_icon_search"></i>
+				
+				<span style='height:60%;width:1px;background-color:#f3f3f3; position: absolute;left: 30px;'></span>
+				<input type="search" class="weui_search_input tablessetting-small-font" id="weui_search_input" placeholder="输入会员名或商铺名搜索" required="" >
+				<a href="javascript:" class="weui_icon_clear"></a>
+			</div>
+			<!-- <label for="weui_search_input" class="weui_search_text" style="display: none;">
+				<i class="weui_icon_search"></i>
+				<span>关键字</span>
+			</label> -->
+		</form>
+		<a href="javascript:" class="weui_search_cancel">取消</a>
+		
+		<div class="" style="text-align:center;width:25%;height:auto;display:flex;align-items: center;justify-content: center;">
+				<div class="bom-radio" id="attend2" ng-click="addOrChange('')" style="transform: translateX(0);width:auto;padding: 0 13px;">
+					<span  style="font-size:12px;">
+						添加用户
+					</span>
+				
+				</div>
+		</div>
+ 	</div>
+</div>
+
+
+
+<div class="weui_cells tablessetting-font-style" style="margin-top:0px;">
+		<div class="weui_cell slidelefts" ng-repeat="item in tables_area_list | orderBy:'pxxh'" >		
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="padding:2px 15px; display:flex;transform: translateX(0px);" ng-click="toHref('DailyManagement/tables/catelist/tableslist','{{item.id}}')">	
+				<div class="weui_cell_bd" style="margin-right:10px;">
+					<div >
+						<span>用户名1</span>
+					</div>
+					
+					<div >
+						<span>268天</span>
+					</div>
+					
+					
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<div >
+						<span>某某某餐厅</span>
+					</div>
+					
+					<div >
+						<span>王家军</span>
+					</div>
+				</div>
+				<div class="weui_cell_bd " dir="rtl">
+					<div >
+						<span>大店版</span>
+					</div>
+					<div >
+						<span>13883107775</span>
+					</div>
+				</div>	
+			</div>
+					
+			<div class="slideleft">
+	        	<span style="background:#d2d2d2;color:#fff" ng-click="addOrChange($index + '1')">编辑</span>
+	        	<span style="background:#FF832E;color:#fff" ng-click="addOrChange($index + '2')">商户认领</span>
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="addOrChange($index + '3')">购买服务</span>
+       		</div>	      
+		</div>
+		
+		
+		<div class="weui_cell">
+			<div class="weui_cell_bd weui_cell_primary" dir="rtl">
+					<span style="color:#B2B2B2;font-size: 11px;" >
+						提示:向左边滑动操作商铺</span>
+			</div>
+		</div>
+		
+	</div>
+
+
