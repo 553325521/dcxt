@@ -29,7 +29,8 @@
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui2.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui3.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/icon.css">
-<link rel="stylesheet" href="<%=basePath%>assets/weui/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="<%=basePath%>assets/weui/css/font-awesome.min.css">
 <link rel="stylesheet"
 	href="<%=basePath%>assets/weui/css/jquery-weui.min.css">
 <link rel="stylesheet"
@@ -45,9 +46,6 @@
 			如果您等待时间过长，<a href="javascript:window.location.reload()">请点击这里</a>
 		</div>
 	</div>
-
-<script type="text/javascript" src="<%=basePath%>assets/js/zepto.min.js"></script>
-<script type="text/javascript" src="<%=basePath%>js/weui/jquery-weui.min.js"></script>
 </body>
 
 <script type="text/javascript"
