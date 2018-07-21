@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="userTagDao">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+	<!--查询用户标签列表 -->
+	<select id="loadUserTagList" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT USER_TAG_ID, USER_TAG_NAME FROM SC_USER_TAG ORDER
+		BY USER_TAG_ID
+	</select>
+
+	<!--查询用户标签数量 -->
+	<select id="loadUserTagCount" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT count(USER_TAG_ID) as USER_TAG_COUNT FROM SC_USER_TAG
+	</select>
+
+	<insert id="insertUserTag" parameterMap="BaseParameterMap">
+		insert into SC_USER_TAG
+		(
+		USER_TAG_ID,
+		USER_TAG_NAME,
+		CREATE_BY,
+		CREATE_TIME
+		)
+		values
+		(
+		#{UUID},
+		#{USER_TAG_NAME},
+		#{CREATE_BY},
+		#{CREATE_TIME}
+		)
+	</insert>
+
+</mapper>

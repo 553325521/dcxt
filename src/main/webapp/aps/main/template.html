@@ -1,7 +1,22 @@
 
 <div class="container">
-<div class="contentDiv "  app-part src="appPartSrc"  random="true" ></div>
+	<div class="contentDiv " app-part src="appPartSrc" random="true"></div>
 
+</div>
+<div id="mainModal">
+	<div class="weui_mask"></div>
+	<div class="weui-custom-pop">
+		<div class="weui-custom-hd">{{modal.title }}</div>
+		<div class="weui-custom-bd">
+			<p>{{modal.text}}</p>
+		</div>
+		<div class="weui-custom-ft">
+			<a ng-repeat='btn in buttonsData' ng-click="clickButton(btn)">
+				{{btn.buttonName }} </a>
+			<!-- <a href="javascript:hidemark();">取消</a> <a
+				href="javascript:;">确定</a> -->
+		</div>
+	</div>
 </div>
 
 <!-- Modal -->

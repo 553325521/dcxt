@@ -1,0 +1,24 @@
+
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting/userTag');">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	<div class="weui-header-right" style="top: 0;">
+		<div class="button_sp_area" style="padding: 12px 0;">
+			<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+		</div>
+	</div>
+</div>
+<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">标签名称</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				ng-model="form.USER_TAG_NAME">
+		</div>
+	</div>
+</div>

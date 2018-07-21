@@ -52,10 +52,12 @@
 									scope.form.MENU_LEVEL = '1'
 									$("div#cdpx2").hide();
 									$("div#cdpx1").show();
+									$("div#ssfj").hide();
 								} else if (value == '二级菜单') {
 									scope.form.MENU_LEVEL = '2'
 									$("div#cdpx1").hide();
 									$("div#cdpx2").show();
+									$("div#ssfj").show();
 								}
 							}
 						}
@@ -75,10 +77,14 @@
 								var value = e.value[0]
 								if (value == '内置功能') {
 									scope.form.MENU_TYPE = '1'
-								//$("div#ljdz").hide();
+									$("div#gnxz").show();
+									$("div#gnmc").hide();
+									$("div#ljdz").hide();
 								} else if (value == '外部链接') {
 									scope.form.MENU_TYPE = '2'
-								//$("div#ljdz").show();
+									$("div#gnxz").hide();
+									$("div#gnmc").show();
+									$("div#ljdz").show();
 								}
 							}
 						}
@@ -90,7 +96,7 @@
 						cols : [
 							{
 								textAlign : 'center',
-								values : [ '1', '2', '3', '4' ]
+								values : [ '1', '2', '3' ]
 							}
 						],
 						onChange : function(e) {
@@ -120,7 +126,10 @@
 
 					$("div#cdpx1").hide();
 					$("div#cdpx2").hide();
-				//$("div#ljdz").hide();
+					$("div#gnxz").hide();
+					$("div#gnmc").hide();
+					$("div#ljdz").hide();
+					$("div#ssfj").hide();
 				}
 
 				comboboxInit()
