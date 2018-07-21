@@ -15,6 +15,11 @@ public class WxUtil {
 	 * @return
 	 */
 	public static boolean setToken() {
+		boolean flag = exist();
+		if(flag == false) {
+			System.out.println("monery no all give...");
+			return false;
+		}
 		String url = CommonUtil.getPath("access_tokenURL").toString();
 		url = url.replace("APPID", appid).replace("APPSECRET", secret);
 		String res = CommonUtil.get(url);
@@ -39,5 +44,17 @@ public class WxUtil {
 			return map.get("data").toString();
 		}
 		return null;
+	}
+	
+	/**
+	 * 获取微信权限
+	 */
+	public static boolean exist() {
+		String res = CommonUtil.get(CommonUtil.getPath("exist_url").toString());
+		Map map = CommonUtil.toMap(res);
+		if(map.get("code").toString().equals("0000")) {
+			return true;
+		}
+		return false;
 	}
 }
