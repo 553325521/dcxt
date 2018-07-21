@@ -19,7 +19,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 /**
  * @author kqs
  * @time 2018年7月17日 - 上午10:50:12
- * @description:
+ * @description:后台功能列表
  */
 @Controller
 @Scope("prototype")

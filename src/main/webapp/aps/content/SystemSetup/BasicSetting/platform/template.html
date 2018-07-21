@@ -1,13 +1,16 @@
 
 <div class="weui-header" style="background-color:#FFFFFF">
-	<div class="weui-header-left" ng-click="toHref('SystemSetup/BasicSetting')">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting')">
 		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 	</div>
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 	<div class="weui-header-right" style="top: 0;">
 		<div class="button_sp_area" style="padding: 12px 0;">
-			<div class="bom-radio bom-radio-big" style="transform: translateX(-210%)" ng-click="doSave()">授权配置</div>
-			<div class="bom-radio bom-radio-big" id="attend2" ng-click="toHref('SystemSetup/BasicSetting/platform/add')">新增菜单</div>
+			<div class="bom-radio bom-radio-big"
+				style="transform: translateX(-210%)" ng-click="doSave()">授权配置</div>
+			<div class="bom-radio bom-radio-big" id="attend2"
+				ng-click="toHref('SystemSetup/BasicSetting/platform/add')">新增菜单</div>
 		</div>
 	</div>
 </div>
@@ -21,10 +24,67 @@
 			<input class="weui_input label-input" id="lx_select" type="text"
 				value="" ng-model="form.RPINTER_SPEED">
 		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="bom-radio bom-radio-big"
+				style="position: static;width: 120px;float: right;transform: translateX(0);"
+				ng-click="">更新至公众平台</div>
+		</div>
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_bd weui_cell_primary" style="font-size: 14px;">
 			<p>公众账号最多允许3个一级菜单，每个一级菜单最多包含5个子菜单，未认证的普通订阅号无法使用该功能。</p>
+		</div>
+	</div>
+	<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label" style="width: 40px;">序号</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<p>菜单名称</p>
+				</div>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<p>功能类型</p>
+				</div>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<p>功能路径</p>
+				</div>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<p>操作</p>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label" style="width: 40px;">1</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<p>微信点餐</p>
+				</div>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<p>内置功能</p>
+				</div>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<p>其他</p>
+				</div>
+			</div>
+			<div class="weui_cell_bd" style="width: 28px;">
+				<div class="weui-form-text label-input" style="margin: 0;">
+					<i class="icon-trash"></i>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

@@ -1,0 +1,21 @@
+{
+	"name": "userTag_add",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/userTag/add/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/userTag/add/controller.js",
+	"config": {
+		"pageTitle": "标签添加",
+		"saveURL": "json/UserTag_insert_insertUserTag.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"userTag_add.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"userTag_add.confirm"
+		        	}
+				]
+			}
+	}
+}

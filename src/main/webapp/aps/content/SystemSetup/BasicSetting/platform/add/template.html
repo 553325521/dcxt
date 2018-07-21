@@ -15,19 +15,27 @@
 <div class="weui_cells weui_cells_form" style="margin-top: 0;">
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
+			<label class="weui_label label">菜单级别</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text" id="cdjb_select">
+		</div>
+	</div>
+	<div class="weui_cell" id="ssfj">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">所属一级</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text" id="ssfj_select">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
 			<label class="weui_label label">菜单名称</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text"
 				ng-model="form.MENU_NAME">
-		</div>
-	</div>
-	<div class="weui_cell">
-		<div class="weui_cell_hd">
-			<label class="weui_label label">菜单级别</label>
-		</div>
-		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" id="cdjb_select">
 		</div>
 	</div>
 	<div class="weui_cell" id="cdpx1">
@@ -52,6 +60,24 @@
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text" id="gnlx_select">
+		</div>
+	</div>
+	<div class="weui_cell" id="gnmc">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">功能名称</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				ng-model="form.MENU_LINK">
+		</div>
+	</div>
+	<div class="weui_cell" id="gnxz">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">功能选择</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				id="gnxz_select">
 		</div>
 	</div>
 	<div class="weui_cell" id="ljdz">

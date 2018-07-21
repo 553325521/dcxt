@@ -1,0 +1,9 @@
+{
+	"name": "usertTag_list",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/userTag/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/userTag/controller.js",
+	"config": {
+		"pageTitle": "标签列表",
+		"findURL": "json/UserTag_queryForList_loadUserTagList.json"
+	}
+}
