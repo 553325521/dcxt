@@ -12,11 +12,13 @@
 				//初始化 form 表单
 				scope.form = {};
 
-				scope.form.fid = params.fid
+				scope.form.USER_TAG_NAME = params.tagName;
+
+				scope.form.USER_TAG_ID = params.tagId;
 
 				scope.toHref = function(path) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json?fid=" + scope.form.fid,
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
@@ -26,20 +28,20 @@
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 
-					$httpService.post(config.saveURL, $scope.form).success(function(data) {
+					$httpService.post(config.updateURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
 							var m2 = {
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : data.data,
-								"toUrl" : "aps/content/SystemSetup/BasicSetting/userTag/config.json?fid=" + scope.form.fid
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/userTag/config.json?fid=" + params.fid
 							}
 						} else {
 							var m2 = {
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : data.data,
-								"toUrl" : "aps/content/SystemSetup/BasicSetting/userTag/config.json?fid=" + scope.form.fid
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/userTag/config.json?fid=" + params.fid
 							}
 						}
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
@@ -57,19 +59,20 @@
 				});
 
 				scope.doSave = function() {
-					var $form = $("#addTagForm");
+					var $form = $("#updateTagForm");
 					$form.form();
 					$form.validate(function(error) {
 						if (!error) {
 							var m2 = {
-								"url" : "aps/content/SystemSetup/BasicSetting/userTag/add/config.json",
+								"url" : "aps/content/SystemSetup/BasicSetting/userTag/update/config.json",
 								"title" : "提示",
 								"contentName" : "modal",
-								"text" : "是否确定保存?"
+								"text" : "是否确定保存",
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/userTag/config.json"
 							}
 							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 						}
-					})
+					});
 				}
 
 			}

@@ -1,0 +1,21 @@
+{
+	"name": "userTag_update",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/userTag/update/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/userTag/update/controller.js",
+	"config": {
+		"pageTitle": "标签编辑",
+		"updateURL": "json/UserTag_update_updateUserTag.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"userTag_update.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"userTag_update.confirm"
+		        	}
+				]
+			}
+	}
+}
