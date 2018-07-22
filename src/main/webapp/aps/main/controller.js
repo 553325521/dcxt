@@ -35,53 +35,56 @@
 					}
 				});
 
-				//接收模态窗口加载事件
-				eventBusService.subscribe(controllerName, 'appPart.load.modal', function(event, m2) {
-					if (m2.contentName === config.modalName) {
-						if ($scope.appPartModalSrc != m2.url) {
-							eventBusService.publish(controllerName, 'appPart.terminate', {
-								appPartSrc : $scope.appPartModalSrc
-							});
+				// 弹窗默认事件
+				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					if (btn.url == undefined) {
+						if (btn.toUrl != undefined) {
+							var m2 = {
+								"url" : btn.toUrl,
+								"size" : "modal-lg",
+								"contentName" : "content"
+							}
+							eventBusService.publish(controllerName, 'appPart.load.content', m2);
 						}
+					}
+					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+						contentName : "modal"
+					});
+				});
 
+				// alert 确认弹窗事件
+				eventBusService.subscribe(controllerName, 'appPart.load.modal', function(event, m2) {
+
+					if (m2.contentName === config.modalName) {
 						$scope.modal = m2;
+						if (m2.url == undefined) {
+							m2.url = "aps/main/config.json";
+						}
 						$httpService.post(m2.url, {}).success(function(data) {
+							if (m2.url == "aps/main/config.json") {
+								data.config.menu.buttons[0].toUrl = m2.toUrl
+							}
 							$scope.buttonsData = data.config.menu.buttons;
+							$('#mainModal').show();
+							$('#mainModal .weui_mask').addClass('weui_mask_visible');
+							$('#mainModal .weui-custom-pop').addClass('weui-dialog-visible');
+							$scope.$apply();
 						}).error(function(data) {
-//							eventBusService.publish(controllerName, 'appPart.load.modal.alert', {
-//								"title" : "操作提示",
-//								"content" : "打开窗口出错"
-//							});
+							eventBusService.publish(controllerName, 'appPart.load.modal', {
+								"title" : "操作提示",
+								"content" : "打开窗口出错"
+							});
 						});
-						$('#mainModal').show();
-						$('.weui_mask').addClass('weui_mask_visible');
-						$('.weui-custom-pop').addClass('weui-dialog-visible');
-//						var maxHeight = $(window).height() - 160 + 'px';
-//						$('#mainModal .modal-body').css({
-//							"height" : "auto"
-//						});
-//						if ("modal-big" == m2.size) {
-//							maxHeight = $(window).height() - 123 + 'px';
-//							$('#mainModal .modal-body').css({
-//								"height" : maxHeight
-//							});
-//						}
-//						$('#mainModal .modal-body').css({
-//							"max-height" : maxHeight
-//						});
-						$scope.appPartModalSrc = m2.url;
-						$scope.$apply();
 					}
 				});
 
-				//接收模态窗口关闭事件
+				// alert 确认弹窗事件关闭事件
 				eventBusService.subscribe(controllerName, 'appPart.load.modal.close', function(event, m2) {
 					if (m2.contentName === config.modalName) {
 						$('#mainModal').hide();
 						$('#mainModal .weui_mask').removeClass('weui_mask_visible');
 						$('#mainModal .weui-custom-pop').removeClass('weui-dialog-visible');
 						$scope.modal = {};
-						$scope.appPartModalSrc = "";
 					}
 				});
 

@@ -86,10 +86,70 @@ public class UserTagController extends BaseController {
 				map.put("CREATE_TIME", StringDeal.getStringDate());
 				map.put("sqlMapId", "insertUserTag");
 				String result = openService.insert(map);
-				output("0000", result);
+				if (result != null) {
+					output("0000", "添加成功!");
+					return;
+				}
 			}
+			output("9999", " 系统异常   ");
+			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
+			return;
+		}
+	}
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年7月22日 - 上午10:10:39
+	 * @description:删除用户标签
+	 */
+	@RequestMapping("/UserTag_update_updateUserTag")
+	public void updateUserTag(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("UPDATE_BY", "admin");
+			map.put("UPDATE_TIME", StringDeal.getStringDate());
+			map.put("sqlMapId", "updateUserTag");
+			if (openService.delete(map)) {
+				output("0000", " 操作成功   ");
+				return;
+			}
+			output("9999", " 操作失败 ");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+			return;
+		}
+	}
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年7月22日 - 上午10:10:39
+	 * @description:删除用户标签
+	 */
+	@RequestMapping("/UserTag_remove_removeUserTag")
+	public void removeUserTag(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "removeUserTag");
+			if (openService.delete(map)) {
+				output("0000", " 删除成功 ");
+				return;
+			}
+			output("9999", " 删除失败 ");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+			return;
 		}
 	}
 }

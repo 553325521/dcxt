@@ -1,11 +1,19 @@
 {
-    "name": "app_main",
-    "viewUrl": "aps/main/template.html",
-    "controllerUrl": "aps/main/controller.js",
-    "config": 
-    {
-            "contentName": "content",
-            "modalName":"modal",
-            "defaultAppPartSrc":"aps/content/welcome/config.json"
+	"name": "app_main",
+	"viewUrl": "aps/main/template.html",
+	"controllerUrl": "aps/main/controller.js",
+	"config": {
+		"contentName": "content",
+		"modalName": "modal",
+		"defaultAppPartSrc": "aps/content/welcome/config.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"app_main.confirm",
+		            	"toUrl" : ""
+		        	}
+				]
+			}
 	}
 }
