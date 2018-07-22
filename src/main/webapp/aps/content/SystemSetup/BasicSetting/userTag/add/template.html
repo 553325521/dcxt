@@ -11,14 +11,15 @@
 		</div>
 	</div>
 </div>
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+<div class="weui_cells weui_cells_form" style="margin-top: 0;" id="addTagForm">
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">标签名称</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text"
-				ng-model="form.USER_TAG_NAME">
+				ng-model="form.USER_TAG_NAME" required emptyTips="请输入标签名称"
+				notMatchTips="请输入正确标签名称" pattern="^[\s\S]*.*[^\s][\s\S]*$">
 		</div>
 	</div>
 </div>

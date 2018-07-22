@@ -7,15 +7,17 @@
 	<select id="loadUserTagList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT USER_TAG_ID, USER_TAG_NAME FROM SC_USER_TAG ORDER
-		BY USER_TAG_ID
+		BY CREATE_TIME
 	</select>
 
 	<!--查询用户标签数量 -->
 	<select id="loadUserTagCount" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		SELECT count(USER_TAG_ID) as USER_TAG_COUNT FROM SC_USER_TAG
+		SELECT count(USER_TAG_ID) as USER_TAG_COUNT FROM
+		SC_USER_TAG
 	</select>
 
+	<!--插入新的用户标签 -->
 	<insert id="insertUserTag" parameterMap="BaseParameterMap">
 		insert into SC_USER_TAG
 		(
@@ -33,4 +35,15 @@
 		)
 	</insert>
 
+	<update id="updateUserTag" parameterMap="BaseParameterMap">
+		update SC_USER_TAG set
+		USER_TAG_NAME = #{USER_TAG_NAME}, UPDATE_BY = #{UPDATE_BY},
+		UPDATE_TIME = #{UPDATE_TIME} WHERE USER_TAG_ID = #{USER_TAG_ID}
+	</update>
+
+	<!-- 删除用户标签 -->
+	<delete id="removeUserTag" parameterMap="BaseParameterMap">
+		DELETE FROM SC_USER_TAG
+		WHERE USER_TAG_ID = #{USER_TAG_ID}
+	</delete>
 </mapper>
