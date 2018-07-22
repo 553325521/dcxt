@@ -1,9 +1,22 @@
 {
-	"name": "usertTag_list",
+	"name": "userTag_list",
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/userTag/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/userTag/controller.js",
 	"config": {
 		"pageTitle": "标签列表",
-		"findURL": "json/UserTag_queryForList_loadUserTagList.json"
+		"findURL": "json/UserTag_queryForList_loadUserTagList.json",
+		"removeUrl":"json/UserTag_remove_removeUserTag.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"userTag_list.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"userTag_list.confirm"
+		        	}
+				]
+			}
 	}
 }
