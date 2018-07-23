@@ -1,0 +1,71 @@
+
+	<div class="weui-header"  style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cells " style="margin-top:0">
+		<div class="weui_cell" style="margin-top:10px">
+          <div class="weui_cell_hd"><label class="weui_label label">商铺名称</label></div>
+            <div class="weui_cell_bd">
+            <input class="weui_input label-input" type="text" ng-model="form.SHOPNAME"  placeholder="">
+          </div>
+        </div>
+        <div class="weui_cell" style="margin-top:10px">
+          <div class="weui_cell_hd"><label class="weui_label label">联系人</label></div>
+            <div class="weui_cell_bd">
+            <input class="weui_input label-input" type="text" ng-model="form.SHOPNAME"  placeholder="">
+          </div>
+        </div>
+        <div class="weui_cell" style="margin-top:10px">
+          <div class="weui_cell_hd"><label class="weui_label label">联系电话</label></div>
+            <div class="weui_cell_bd">
+            <input class="weui_input label-input" type="text" ng-model="form.SHOPNAME"  placeholder="">
+          </div>
+        </div>
+         <div class="weui_cell" style="margin-top:10px">
+          <div class="weui_cell_hd"><label class="weui_label label">商铺类型</label></div>
+            <div class="weui_cell_bd" style="width:60px;margin-left:10%">
+           		<div class="weui_cell_bd">
+				<input class="weui_input label-input" style="border:0" id="fs_select" type="text"
+					value="" ng-model="form.SHOP_TYPE_FIRSET">
+				</div>
+          	</div>
+          	<div class="weui_cell_bd">
+					<span class="icon icon-74"></span>
+			</div>
+          	<div class="weui_cell_bd" style="width:30px;margin-left:25%">
+           		<div class="weui_cell_bd">
+				<input class="weui_input label-input" id="fs_select1" type="text"
+					value="" ng-model="form.SHOP_TYPE_SECOND">
+				</div>
+          	</div>
+          	<div class="weui_cell_bd">
+					<span class="icon icon-74"></span>
+			</div>
+        </div>
+          <div class="weui_cell" style="margin-top:10px">
+          <div class="weui_cell_hd"><label class="weui_label label">商铺区域</label></div>
+           <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input label-input" type="text" value="" id='ssx'/>
+           </div>
+        </div>
+        <div class="weui_cell" style="margin-top:10px">
+          <div class="weui_cell_hd"><label class="weui_label label">详细地址</label></div>
+            <div class="weui_cell_bd">
+            <input class="weui_input label-input" type="text" ng-model="form.SHOPNAME"  placeholder="输入详细地址/门牌号">
+          </div>
+        </div>
+         <div class="weui_cell" style="margin-top:10px">
+          <div class="weui_cell_hd"><label class="weui_label label">版本类型</label></div>
+            <div class="weui_cell_bd">
+            <input class="weui_input label-input" type="text" ng-model="form.SHOPNAME"  placeholder="小店版/中店版/大店版">
+          </div>
+        </div>
+	</div>

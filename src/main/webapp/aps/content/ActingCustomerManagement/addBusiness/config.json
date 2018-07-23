@@ -1,0 +1,8 @@
+{
+	"name": "addAccount",
+	"viewUrl": "aps/content/ActingCustomerManagement/addBusiness/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/addBusiness/controller.js",
+	"config": {
+
+	}
+}

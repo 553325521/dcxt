@@ -1,0 +1,59 @@
+<style>
+.cancelBorder:before{
+	width:0;
+}
+</style>
+	<div class="weui-header"  style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;right:105px">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" style="width:80px"  ng-click="doSave()">提现记录</div>
+			</div>
+		</div>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" style="width:80px"  ng-click="doSave()">账号管理</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cells " style="margin-top:0">
+		<div class="weui_cell" style="margin-top:10px;padding-bottom:0">
+          	<div class="weui_cell" style="padding-right:0">
+          		<label class="weui_label label">提现微信:</label>
+          	</div>
+            <div class="weui_cell_bd weui_cell_primary">
+           		<label class="weui_label" style="font-size:14px">{{WeChatNumber}}</label>
+           	</div>
+         </div>
+         <div class="weui_cell cancelBorder" style="padding-top:0">
+          	<div class="weui_cell" style="padding-right:0">
+          		<label class="weui_label label">微信姓名:</label>
+          	</div>
+            <div class="weui_cell_bd weui_cell_primary">
+           		<label class="weui_label" style="font-size:14px">{{WeChatName}}</label>
+           	</div>
+         </div>
+       	<div class="weui_cell">
+       		<div class="weui-pay">
+			        <div class="weui-pay-inner">
+			            <h1 class="weui-pay-title">提现金额(元)</h1>
+			            <div class="weui-pay-input"> <strong class="weui-pay-strong" style="font-size:40px;top:4px">￥</strong>
+			                <input type="number" name="money" class="weui-pay-inputs" style="padding-left: 48px;"  placeholder="请输入金额"></div>
+			            <div class="weui-pay-intro" style="float:left;margin-right:24%;font-size:16px">
+			            	可提余额:{{balance}}元
+			            </div>
+			            <div style="margin-top:12px" ng-click = "cashAll()">全部提现</div>
+			        </div>
+			        <div class="weui-pay-btn" style="margin-top:50px">
+			            <a href="javascript:;" class="weui_btn weui_btn_primary">确认提现</a>
+			        </div>
+			         <div style="margin-top:150px">
+			            <p class="weui-pay-intro" style="font-size:14px">提现到代理商的个人微信，请先添加提现账号</p>
+			            <p class="weui-pay-intro" style="font-size:14px">提现的微信请先实名认证</p>
+			        </div>
+			</div>
+       	</div>
+	</div>
