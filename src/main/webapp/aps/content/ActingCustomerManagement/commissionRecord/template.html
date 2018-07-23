@@ -1,0 +1,101 @@
+<style>
+	.customermanagement_navbar div{
+		border-left:1px solid #F0F0F0;
+		padding: 9px 0;
+		display:flex;
+		justify-content: center;
+        font-size: 16px;
+	}
+	
+	.weui_search_bar {
+    	padding: 6px 6px;
+	}
+	
+	.weui_search_outer:after {
+	    border: 0px solid #e6e6ea;
+	}
+	
+	.weui_search_outer:after {
+   
+    	border-radius: 0px;
+   
+	}
+	.weui_cell:active{
+		background-color:#ececec
+	}
+	
+</style>
+<div style="position: fixed;height:45px;z-index:100;width:100%;">
+	<div class="weui_navbar customermanagement_navbar" style="margin-left:-1px;height:45px;">
+		<div class="weui_navbar_item" ng-click="toHref('ActingCustomerManagement')">
+	                    客户管理
+		</div>
+		<div class="weui_navbar_item tab-blue">
+	                    提成记录
+		</div>
+		<div class="weui_navbar_item" ng-click="toHref('ActingCustomerManagement/tradingRecord')">
+	                    交易记录
+		</div>
+		<div class="weui_navbar_item" ng-click="toHref('ActingCustomerManagement/agentInformation')">
+	                    代理信息
+		</div>
+	</div>
+</div>
+
+<div style="position:absolute;top:44px;width:100%;">
+	 <div class="searchbar_wrap" style="display:flex;background-color:#fff;"> 
+		<div class="weui_search_bar" style="background-color:#fff; height:40px;width:100%;">
+			<form class="weui_search_outer" style="border-radius: 0;border:0;">
+				<div class="weui_search_inner location-center" style="padding-left:37px;">
+					<i class="weui_icon_search"></i>
+					<span style='height:60%;width:1px;background-color:#f3f3f3; position: absolute;left: 30px;'></span>
+					<input type="search" class="weui_search_input tablessetting-small-font" id="weui_search_input" placeholder="输入关键字搜索" required 
+						ng-model="input_value" >
+					<a href="javascript:" class="weui_icon_clear"></a>
+				</div>
+			</form>
+			
+	 	</div>
+	</div>
+
+
+	<div class="weui_cells tablessetting-font-style  dcxt-font-overflow" style="margin-top:0px;">
+		<div class="weui_cell" ng-repeat="item in tables_area_list | filter:input_value" style="padding:0;">		
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd" style="padding:2px 15px; display:flex;transform: translateX(0px);">	
+				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
+					<div >
+						<span>{{item.id}}</span>
+					</div>
+					
+					<div >
+						<span>{{item.1}}</span>
+					</div>
+					
+					
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<div >
+						<span>{{item.2}}</span>
+					</div>
+					
+					<div >
+						<span>{{item.3}}</span>
+					</div>
+				</div>
+				<div class="weui_cell_bd " dir="rtl">
+					<div >
+						<span>{{item.4}}</span>
+					</div>
+					<div >
+						<span>{{item.5}}</span>
+					</div>
+				</div>	
+			</div>
+					
+		</div>
+		
+		
+		
+	</div>
+</div>
+

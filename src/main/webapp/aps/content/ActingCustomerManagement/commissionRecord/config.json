@@ -1,0 +1,8 @@
+{
+	"name": "shopclaim",
+	"viewUrl": "aps/content/ActingCustomerManagement/commissionRecord/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/commissionRecord/controller.js",
+	"config": {
+
+	}
+}

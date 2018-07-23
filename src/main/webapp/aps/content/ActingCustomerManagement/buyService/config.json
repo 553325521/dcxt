@@ -1,0 +1,8 @@
+{
+	"name": "shopclaim",
+	"viewUrl": "aps/content/ActingCustomerManagement/buyService/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/buyService/controller.js",
+	"config": {
+		"pageTitle": "购买服务"
+	}
+}
