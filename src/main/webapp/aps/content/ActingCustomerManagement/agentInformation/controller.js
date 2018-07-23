@@ -58,11 +58,6 @@
 					}
 					
 					
-					//测试，可以删
-					
-					scope.addOrChange = function(a){
-						console.info(a);
-					}
 			
 					comboboxInit();
 					

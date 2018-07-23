@@ -4,7 +4,7 @@
 		padding: 9px 0;
 		display:flex;
 		justify-content: center;
-        font-size: 16px;
+        font-size: 15px;
 	}
 	
 	.weui_search_bar {
@@ -63,7 +63,7 @@
 			</form>
 			
 			<div class="location-center" style="text-align:center;width:25%;height:auto;">
-					<div class="bom-radio" id="attend2" ng-click="toHref('','')" style="transform: translateX(0);width:auto;padding: 0 13px;">
+					<div class="bom-radio" id="attend2" ng-click="toHref('ActingCustomerManagement/addBusiness','')" style="transform: translateX(0);width:auto;padding: 0 13px;">
 						<span  style="font-size:12px;">
 							添加用户
 						</span>
@@ -108,8 +108,8 @@
 			</div>
 					
 			<div class="slideleft">
-	        	<span style="background:#d2d2d2;color:#fff" ng-click="toHref('','item.id')">编辑</span>
-	        	<span style="background:#FF832E;color:#fff" ng-click="toHref('','item.id')">商户认领</span>
+	        	<span style="background:#d2d2d2;color:#fff" ng-click="toHref('ActingCustomerManagement/addBusiness','item.id')">编辑</span>
+	        	<span style="background:#FF832E;color:#fff" ng-click="toHref('ActingCustomerManagement/shopclaim','item.id')">商户认领</span>
 	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="toHref('ActingCustomerManagement/buyService','item.id')">购买服务</span>
        		</div>	      
 		</div>

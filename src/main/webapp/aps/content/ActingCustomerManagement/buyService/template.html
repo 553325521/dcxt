@@ -1,23 +1,44 @@
 <style>
-	.weui-payselect-on {
-   	 border-color: #CFE7EE;
-     color: #09ba07;
+	
+	.dcxt-shopselects{
+		background-color:#fff;
+		margin-top:0;
+		margin-bottom:10px;
+		padding-top:12px;
 	}
 	
-	.weui-payselect-a {
-	    display: block;
-	    border: 1px solid #DADADA;
-	    color: #dadada;
-	    height: auto;
-	    line-height: auto;
-	    text-align: center;
-	    font-size: 16px;
-	    font-weight:normal;
+	.dcxt-shopselect{
+		margin:10px 20px;
+		padding:7px 10px;
+		border:1px solid;
+		border-color: #A5A5A5;
+		border-radius:5px;
+		display：flex;
+		color:#A5A5A5;
+		margin-bottom:20px;
+		font-size:12px;
+	}
+	.dcxt-shopselect-on {
+   	 	border-color: #83D3E3;
+     	color: #888;
+	}
+	.weui_cell {
+    padding: 14px 15px;
+	}
+	.dcxt-red-right{
+		color:#D52D21;
+		text-align:right;
+	}
+	.dcxt-explain-font{
+		margin-left:7px;
+		font-size:12px;
+		color:#757575;
+		width:auto;
 	}
 </style>
 
 
-<div class="weui-header" style="background-color:#FFFFFF">
+<div class="weui-header" style="background-color:#FFF">
 	<div href="#" class="weui-header-left">
 		<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="toHref('ActingCustomerManagement')"></a>
 	</div>
@@ -25,31 +46,82 @@
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
  	
 </div>
-
-
-<div class="weui_cells" style="background-color:#fff;margin-top:0;">
-	<ul class="weui-payselect-ul" style="margin-top: 10px;">
-            <li class="weui-payselect-li" style="width:100%;padding:10px 20px;">
-                <div href="javascript:;" class="weui-payselect-a weui-payselect-on" style="border-radius:5px;">
-                	<div style="color:#A5A5A5;height:19px;">
-                		<span class="">小店版</span>
-                		<span>20/月</span>
-                	</div>
-                	
-                	<div style="color:#A5A5A5;height:19px;">
-                		适合1-2个操作员的小型商铺，每日订单50单，商品数量80个
-                	
-                	</div>
-	               
-                
-                </div>
-            </li>
-            
-          
-            
-            
-        </ul>
-
+<div class="weui_cells dcxt-shopselects">
+	<div class="dcxt-shopselect dcxt-shopselect-on">
+		<div class="location-center">
+            <span class="weui_cell_primary">小店版</span>
+        	<span>20/月</span>
+        </div>
+        <div style="margin-top:10px;">
+            	适合1-2个操作员的小型商铺，每日订单50单，商品数量80个
+        </div>
+	</div>
+	<div class="dcxt-shopselect">
+		<div class="location-center">
+            <span class="weui_cell_primary">中店版</span>
+        	<span>50/月</span>
+        </div>
+        <div style="margin-top:10px;">
+            	适合3-10个操作员的中型商铺，每日订单200单，商品数量不限
+        </div>
+	</div>
+	<div class="dcxt-shopselect">
+		<div class="location-center">
+            <span class="weui_cell_primary">大店版</span>
+        	<span>100/月</span>
+        </div>
+        <div style="margin-top:10px;">
+            	适合10个以上操作员的大型商铺，每日订单不限，商品数量不限
+        </div>
+	</div>
+	<div class="weui_cell tablessetting-weui_select" style="margin-top:-1px;">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">购买期限</label>
+		</div>
+		<div class="weui-cell_bd  weui_cell_primary" dir="rtl" style="margin-right:18px;">
+			<input class="weui_input tablessetting-weui_hd_self label-input" id="buying_select" type="text"
+						value="" ng-model="form.BS_BUYINGPERIOD">
+		</div>
+	</div>            
+     <div class="weui_cell" style="margin-top:-1px;">
+		<div class="weui_cell_hd  weui_cell_primary"  style="display:flex;align-items: flex-end;">
+			<label class="weui_label label tablessetting-label">
+			服务价格
+			
+			<label class="label dcxt-explain-font">大店版(100/月)x1年</label>
+			</label>
+		</div>
+		<div class="weui-cell_bd dcxt-red-right">
+			￥1000.00
+		</div>
+		
+	</div>     
+    <div class="weui_cell" style="margin-top:-1px;">
+		<div class="weui_cell_hd  weui_cell_primary"  style="display:flex;align-items: flex-end;">
+			<label class="weui_label label tablessetting-label">
+			优惠金额
+			
+			<label class="label dcxt-explain-font">购买1年打8折</label>
+			</label>
+		</div>
+		<div class="weui-cell_bd dcxt-red-right">
+			-￥200.00
+		</div>
+	</div>     
+    <div class="weui_cell" style="margin-top:-1px;">
+		<div class="weui_cell_hd  weui_cell_primary">
+			<label class="weui_label label tablessetting-label">
+			应付金额
+			</label>
+		</div>
+		<div class="weui-cell_bd dcxt-red-right dcxt-red-right">
+			￥800.00
+		</div>
+	</div>     
+	<div  class="weui_cell" style="padding:30px 20px 20px 20px;">
+      	<a style="width:100%;" class="weui_btn bg-blue">确认支付</a>
+	</div>
+     
 
 </div>
 

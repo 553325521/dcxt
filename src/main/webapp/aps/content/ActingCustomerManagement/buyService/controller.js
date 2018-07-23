@@ -1,6 +1,6 @@
 
 	(function() {
-		define(['slideleft'], function() {
+		define(['jqueryweui'], function() {
 			return [
 				'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 				function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
@@ -9,42 +9,27 @@
 					
 					scope.pageTitle = config.pageTitle;
 					
+					scope.form = {}
 					
-					// 餐桌区域数据源
-					scope.tables_area_list = [
-						{
-							id : '用户名1',
-							1 : '268天',
-							2 : '某某某餐厅',	//	5人/一桌
-							3 : '王家军',   //	1代表已启用 	0代表已停用
-							4 : '大店版',	//排序序号
-							5 : 13883107775,
-						},
-						{
-							id : '用户名1',
-							1 : '268天',
-							2 : '某某某餐厅',	//	5人/一桌
-							3 : '王家军',   //	1代表已启用 	0代表已停用
-							4 : '大店版',	//排序序号
-							5 : 13883107775,
-						},
-						{
-							id : '用户名1',
-							1 : '268天',
-							2 : '某某某餐厅',	//	5人/一桌
-							3 : '王家军',   //	1代表已启用 	0代表已停用
-							4 : '大店版',	//排序序号
-							5 : 13883107775,
-						},
-						{
-							id : '用户名1',
-							1 : '268天',
-							2 : '某某某餐厅',	//	5人/一桌
-							3 : '王家军',   //	1代表已启用 	0代表已停用
-							4 : '大店版',	//排序序号
-							5 : 13883107775,
+					
+					// 购买期限数据源，单位/月 
+					buying_select = ['1','2','3','6','12','24','60','120'];
+					
+					buying_select_transform = []
+					
+					angular.forEach(buying_select,function(data,index,array){
+						if(data % 12 == 0){
+							buying_select_transform.push(data/12 + '年');
+						}else{
+							buying_select_transform.push(data + '月')
 						}
-					];
+						
+					});
+					
+					
+					scope.form.BS_BUYINGPERIOD = buying_select_transform[0];
+					
+					
 					
 					
 					
@@ -64,22 +49,40 @@
 						console.info(a);
 					}
 			
+					
+					
 					comboboxInit();
 					
-					function comboboxInit(){
-						
-						$(".weui-payselect-li").on('click',function(){
-							$(this).children().addClass("weui-payselect-on");
-							$(this).siblings().children().removeClass("weui-payselect-on");
-							return false;
-						})
-					  
-					
-					}
 				}
 			];
 		});
 	}).call(this);
+	
+	
+	function comboboxInit(){
+		
+	
+		$("#buying_select").picker({
+			title : "购买期限",
+			toolbarCloseText : '确定',
+			cols : [
+				{
+					textAlign : 'center',
+					values : buying_select_transform,
+					displayValues : buying_select_transform
+				}
+			]
+		});
+		
+		$(".dcxt-shopselect").on('click',function(){
+			$(this).addClass("dcxt-shopselect-on");
+			$(this).siblings().removeClass("dcxt-shopselect-on");
+			return false;
+		})
+		
+		
+	}
+
 
 	$(function() {
 		

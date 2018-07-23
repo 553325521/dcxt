@@ -22,6 +22,17 @@
 				
 				$("#fs_select1").val(scope.shop_type_second[1]);
 				
+				
+				//跳转链接
+				scope.toHref = function(path) {
+					var m2 = {
+						"url" : "aps/content/" + path + "/config.json",
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
+				
 				function comboboxInit() {	
 					$("#fs_select").picker({
 						title : "选择类型",
