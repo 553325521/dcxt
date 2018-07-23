@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -22,12 +24,41 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.alibaba.fastjson.JSON;
+import com.thoughtworks.xstream.XStream;
+
+import cn.wifiedu.ssm.vo.MessageVo;
 
 public class CommonUtil {
+	
+	public static Map<String, Object> xmlToMap(HttpServletRequest request) throws IOException,DocumentException{
+		Map<String, Object> map = new HashMap<String, Object>();
+		SAXReader reader = new SAXReader();
+		
+		InputStream is = request.getInputStream();
+		Document doc = reader.read(is);
+		Element root = doc.getRootElement();
+		List<Element> list = root.elements();
+		for(Element e : list) {
+			map.put(e.getName(), e.getText());
+		}
+		
+		is.close();
+		return map;
+	}
+	
+	public static String objectToXml(MessageVo msg) {
+		XStream xs = new XStream();
+		xs.alias("xml", msg.getClass());
+		return xs.toXML(msg);
+	}
 	
 	/**
 	 *HTTP GET请求

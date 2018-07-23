@@ -1,0 +1,8 @@
+{
+	"name": "presentRecord",
+	"viewUrl": "aps/content/ActingCustomerManagement/presentRecord/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/presentRecord/controller.js",
+	"config": {
+
+	}
+}

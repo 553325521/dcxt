@@ -1,9 +1,12 @@
 package cn.wifiedu.ssm.controller;
 
-import java.util.HashMap;
+import java.io.PrintWriter;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
@@ -34,6 +37,35 @@ public class WxController extends BaseController {
 
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
+	}
+	
+	/**
+	 * 获取微信推送到服务器事件
+	 */
+	@RequestMapping("/portal")
+	public void getUserInfo(HttpServletRequest request, HttpServletResponse reponse ) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			logger.info(map+"");
+			
+			PrintWriter out = reponse.getWriter();
+			
+			if(map.containsKey("openid")) {
+				map.put("OPENID", map.get("openid").toString());
+				map.put("sqlMapId", "checkUserExits");
+				List<Map<String, Object>> checkUserList = openService.queryForList(map);
+				if(checkUserList.size() == 0) {
+					map.put("sqlMapId", "insertUserInitOpenId");
+					openService.insert(map);
+				}
+			}
+			
+			out.println("");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/**

@@ -1,0 +1,32 @@
+
+   <div class="weui-header" style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	</div>
+	<div class="weui_cells " style="margin-top:0">
+		<div style="background:#eee;">
+			<p style="margin-left:3%">{{yearMonth}}<span style="margin-left:50%">共计:{{total}}</span></p>
+		</div>
+		<div class="weui_cell" ng-repeat="item in record_list">
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui_cell_bd " style="width:15%;float:left;margin-left:2%;">
+					<span class="label">{{item.monthDay}}</span>
+				</div>
+				<div class="weui_cell_bd " style="width:15%;float:left;margin-left:2%;">
+					<span class="label">{{item.time}}</span>
+				</div>
+				<div class="weui_cell_bd " style="width:20%;float:left;margin-left:2%;">
+					<span class="label">{{item.type}}</span>
+				</div>
+				<div class="weui_cell_bd " style="float:left;margin-left:2%;">
+					<span class="label">{{item.money}}</span>
+				</div>
+				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
+					<span class="label">{{item.state}}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+   <!-- body 最后 -->
