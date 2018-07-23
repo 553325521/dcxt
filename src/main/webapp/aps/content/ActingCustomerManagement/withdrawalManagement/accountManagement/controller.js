@@ -8,6 +8,15 @@
 				// 定义页面标题
 				scope.pageTitle = '账号管理';	
 				
+				scope.toHref = function(path) {
+					var m2 = {
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
+				
 				scope.account_list = [{
 					wxNumber:'134@qq.com',
 					wxName:'善待好人',

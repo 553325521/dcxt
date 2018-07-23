@@ -1,0 +1,8 @@
+{
+	"name": "accountManagement",
+	"viewUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/accountManagement/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/accountManagement/controller.js",
+	"config": {
+
+	}
+}
