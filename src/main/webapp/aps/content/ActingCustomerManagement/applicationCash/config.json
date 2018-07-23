@@ -1,8 +1,0 @@
-{
-	"name": "addAccount",
-	"viewUrl": "aps/content/ActingCustomerManagement/applicationCash/template.html",
-	"controllerUrl": "aps/content/ActingCustomerManagement/applicationCash/controller.js",
-	"config": {
-
-	}
-}

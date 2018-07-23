@@ -1,8 +1,0 @@
-{
-	"name": "accountManagement",
-	"viewUrl": "aps/content/ActingCustomerManagement/accountManagement/template.html",
-	"controllerUrl": "aps/content/ActingCustomerManagement/accountManagement/controller.js",
-	"config": {
-
-	}
-}

@@ -1,0 +1,8 @@
+{
+	"name": "addAccount",
+	"viewUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/accountManagement/addAccount/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/accountManagement/addAccount/controller.js",
+	"config": {
+
+	}
+}
