@@ -28,7 +28,7 @@
 		)
 		values
 		(
-		#{UUID},
+		#{USER_TAG_ID},
 		#{USER_TAG_NAME},
 		#{CREATE_BY},
 		#{CREATE_TIME}

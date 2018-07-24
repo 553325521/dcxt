@@ -25,7 +25,6 @@
 
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
-
 					$httpService.post(config.saveURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
 							var m2 = {
