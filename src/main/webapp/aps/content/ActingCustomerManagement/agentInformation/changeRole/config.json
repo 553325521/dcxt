@@ -1,0 +1,16 @@
+{
+	"name": "addAccount",
+	"viewUrl": "aps/content/ActingCustomerManagement/agentInformation/changeRole/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/agentInformation/changeRole/controller.js",
+	"config": {
+		"menu":{
+			"buttons":[{
+				"buttonName":"取消",
+				"buttonLink":"addAccount.close"
+			},{
+				"buttonName":"确定",
+				"buttonLink":"addAccount.confirm"
+			}]
+		}
+	}
+}

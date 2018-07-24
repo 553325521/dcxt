@@ -1,0 +1,30 @@
+	<style>
+		.weui_btn{
+			    border-radius:60px;
+		}
+		.weui_btn:after{
+			 border-radius:60px;
+		}
+	</style>
+	<div class="weui-header"  style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="toHref('ActingCustomerManagement/agentInformation')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
+		</div>
+	</div>
+	<div style="background-color:#FFFFFF">
+		<div style="width:60%;margin-left: 20%;padding-top: 20%;">
+			 <a href="javascript:;" class="weui_btn bg-blue">当前角色:管理员</a>
+		</div>
+		<div style="width:60%;margin-left: 20%;padding-top: 35%;">
+			<a href="javascript:;" class="weui_btn weui_btn_default">我要变成:代理商</a>
+		</div>
+		<div style="width:60%;margin-left: 20%;padding-top: 35%;padding-bottom:40%">
+			<a href="javascript:;" class="weui_btn weui_btn_default">我要变成:顾客</a>
+		</div>
+	</div>

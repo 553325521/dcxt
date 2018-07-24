@@ -57,7 +57,6 @@
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
 					}
 					
-					
 			
 					comboboxInit();
 					
