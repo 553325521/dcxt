@@ -4,6 +4,35 @@
   <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
   <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
   
+  
+  <update id="updateScUserTag" parameterMap="BaseParameterMap">
+  		UPDATE SC_USER SET
+  			FK_USER_TAG = #{ROLE_PK}
+  		WHERE USER_WX = #{OPENID}
+  </update>
+  <select id="checkUserWx"  resultMap="BaseResultMap" parameterMap="BaseParameterMap"> 
+           SELECT 
+            USER_PK GUID,
+		    USER_PK,
+		    USER_NAME,
+		    USER_EMAIL,
+		    USER_PHONE,
+		    USER_CARD,
+		    USER_PWD,
+		    USER_TYPE,
+		    USER_STATUS,
+		    FK_UNIT,
+		    USER_WX,
+		    USER_SN,
+		    USER_BG,
+		    USER_MN,
+		    ID_NUMBER,
+		    XJFH,
+		    OTHER_TYPE,
+		    IFNULL(FK_USER_TAG,'NULL')FK_USER_TAG
+            FROM SC_USER
+           WHERE USER_WX = #{OPENID}
+    </select>
  <insert id="insertUserInitOpenId" parameterMap="BaseParameterMap">
  	INSERT INTO SC_USER
  	(
