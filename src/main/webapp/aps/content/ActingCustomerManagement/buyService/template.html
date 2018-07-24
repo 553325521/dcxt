@@ -44,44 +44,28 @@
 		<a class="icon icon-109" ng-click="toHref('ActingCustomerManagement')"></a>
 	</div>
 
-	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	<h1 class="weui-header-title weui-header-self" ng-bind="pageTitle"></h1>
  	
 </div>
-<div class="weui_cells dcxt-shopselects">
-	<div class="dcxt-shopselect dcxt-shopselect-on">
+<div class="weui_cells dcxt-shopselects" ng-show="pageShow">
+	<div class="dcxt-shopselect {{$index == 0 ? 'dcxt-shopselect-on':''}}" ng-model="item" ng-repeat="item in service_type" data-value="{{$index}}">
 		<div class="location-center">
-            <span class="weui_cell_primary">小店版</span>
-        	<span>20/月</span>
+            <span class="weui_cell_primary" ng-bind="item.SERVICE_TYPE"></span>
+        	<span>{{item.SERVICE_PRICE}}/月</span>
         </div>
         <div style="margin-top:10px;">
-            	适合1-2个操作员的小型商铺，每日订单50单，商品数量80个
+            	{{item.SERVICE_DESC}}
         </div>
 	</div>
-	<div class="dcxt-shopselect">
-		<div class="location-center">
-            <span class="weui_cell_primary">中店版</span>
-        	<span>50/月</span>
-        </div>
-        <div style="margin-top:10px;">
-            	适合3-10个操作员的中型商铺，每日订单200单，商品数量不限
-        </div>
-	</div>
-	<div class="dcxt-shopselect">
-		<div class="location-center">
-            <span class="weui_cell_primary">大店版</span>
-        	<span>100/月</span>
-        </div>
-        <div style="margin-top:10px;">
-            	适合10个以上操作员的大型商铺，每日订单不限，商品数量不限
-        </div>
-	</div>
+	
+	
 	<div class="weui_cell tablessetting-weui_select" style="margin-top:-1px;">
 		<div class="weui_cell_hd">
 			<label class="weui_label label tablessetting-label">购买期限</label>
 		</div>
 		<div class="weui-cell_bd  weui_cell_primary" dir="rtl" style="margin-right:18px;">
 			<input class="weui_input tablessetting-weui_hd_self label-input" id="buying_select" type="text"
-						value="" ng-model="form.BS_BUYINGPERIOD">
+					 value="" ng-model="buy_time">
 		</div>
 	</div>            
      <div class="weui_cell" style="margin-top:-1px;">
@@ -89,26 +73,29 @@
 			<label class="weui_label label tablessetting-label">
 			服务价格
 			
-			<label class="label dcxt-explain-font">大店版(100/月)x1年</label>
+			<label class="label dcxt-explain-font">{{current_service.SERVICE_TYPE}}({{current_service.SERVICE_PRICE}}/月)x{{form.BS_BUYINGPERIOD}}</label>
 			</label>
 		</div>
 		<div class="weui-cell_bd dcxt-red-right">
-			￥1000.00
+			￥{{total_money_before}}.00
 		</div>
 		
 	</div>     
-    <div class="weui_cell" style="margin-top:-1px;">
+	
+	 <div class="weui_cell" style="margin-top:-1px;" ng-show="discounts_show">
 		<div class="weui_cell_hd  weui_cell_primary"  style="display:flex;align-items: flex-end;">
 			<label class="weui_label label tablessetting-label">
 			优惠金额
 			
-			<label class="label dcxt-explain-font">购买1年打8折</label>
+			<label class="label dcxt-explain-font">购买{{form.BS_BUYINGPERIOD}}减{{discounts_month}}月</label>
 			</label>
 		</div>
 		<div class="weui-cell_bd dcxt-red-right">
-			-￥200.00
+			-￥{{discounts_money}}.00
 		</div>
 	</div>     
+	
+   
     <div class="weui_cell" style="margin-top:-1px;">
 		<div class="weui_cell_hd  weui_cell_primary">
 			<label class="weui_label label tablessetting-label">
@@ -116,7 +103,7 @@
 			</label>
 		</div>
 		<div class="weui-cell_bd dcxt-red-right dcxt-red-right">
-			￥800.00
+			￥{{form.TRANSACTION_MONEY}}.00
 		</div>
 	</div>     
 	<div  class="weui_cell" style="padding:30px 20px 20px 20px;">
@@ -126,5 +113,8 @@
 
 </div>
 
-
+<div class="weui-loadmore" ng-hide="pageShow">
+	<i class="weui-loading"></i>
+	<span class="weui-loadmore-tips">正在加载</span>
+</div>
 

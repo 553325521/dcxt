@@ -1,9 +1,11 @@
 {
 	"name": "buy_service",
-	"viewUrl": "aps/content/ActingCustomerManagement/buyService/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/buyService/controller.js",
+	"viewUrl": "aps/content/ActingCustomerManagement/buyService/template.html",
 	"config": {
 		"pageTitle": "购买服务",
+		"findUrl": "json/ServiceType_queryForList_findServiceTypeList",
+		"saveUrl":"json/TransactionRecord_insert_insertTransactionRecord",
 		"menu":{	
 	            "buttons":[
 		        	{
