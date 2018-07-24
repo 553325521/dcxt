@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="serviceType" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+ <insert id="insertServiceType" parameterMap="BaseParameterMap">
+ 	INSERT INTO SC_USER
+ 	(
+ 		SERVICE_PK,
+ 		SERVICE_TYPE,
+ 		SERVICE_PRICE,
+ 		SERVICE_DESC,
+ 		CREATE_BY,
+ 		CREATE_TIME
+ 	)
+ 	VALUES
+ 	(
+ 		#{UUID},
+ 		#{SERVICE_TYPE},
+ 		#{SERVICE_PRICE},
+ 		#{SERVICE_DESC},
+ 		'system',
+ 		NOW()
+ 	)
+ </insert>
+ 
+ 
+ <select id="findServiceTypeList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+ 	SELECT SERVICE_PK,SERVICE_TYPE,SERVICE_PRICE,SERVICE_DESC
+ 	FROM SC_SERVICE_TYPE
+ 	ORDER BY CAST(SERVICE_PRICE AS SIGNED integer);
+ </select>
+ 
+
+  
+  
+</mapper>

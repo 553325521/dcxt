@@ -1,8 +1,20 @@
 {
-	"name": "shopclaim",
+	"name": "buy_service",
 	"viewUrl": "aps/content/ActingCustomerManagement/buyService/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/buyService/controller.js",
 	"config": {
-		"pageTitle": "购买服务"
+		"pageTitle": "购买服务",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"buy_service.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"buy_service.confirm"
+		        	}
+				]
+			}
 	}
 }

@@ -35,12 +35,13 @@
 		color:#757575;
 		width:auto;
 	}
+	
 </style>
 
 
 <div class="weui-header" style="background-color:#FFF">
 	<div href="#" class="weui-header-left">
-		<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="toHref('ActingCustomerManagement')"></a>
+		<a class="icon icon-109" ng-click="toHref('ActingCustomerManagement')"></a>
 	</div>
 
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
@@ -119,7 +120,7 @@
 		</div>
 	</div>     
 	<div  class="weui_cell" style="padding:30px 20px 20px 20px;">
-      	<a style="width:100%;" class="weui_btn bg-blue">确认支付</a>
+      	<a style="width:100%;" class="weui_btn bg-blue" ng-click="confirmPayment()">确认支付</a>
 	</div>
      
 
