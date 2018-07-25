@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSON;
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.util.SessionUtil;
+import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.WxUtil;
@@ -50,6 +51,115 @@ public class WxController extends BaseController {
 		this.openService = openService;
 	}
 	
+	@RequestMapping("/Qrcode_testQrcode_data")
+	public void testQrcode(HttpServletRequest request, HttpServletResponse reponse) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			logger.info(map+"");
+			//String url = "http://localhost:8088/dcxt/json/Qrcode_qrauth_data.json";
+			String url = CommonUtil.getPath("project_url").replace("DATA", "Qrcode_testQrcodeJieShou_data");
+			logger.info("myUrl:"+url);
+			CommonUtil.qrCode(session, map, reponse, url);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@RequestMapping("/Qrcode_testQrcodeJieShou_data")
+	public void testQrcodeJieShou() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			logger.info(map+"");
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 处理参数
+	 * 带参跳转回参数URL
+	 */
+	@RequestMapping("/Qrcode_qrCommonAuth_data")
+	public void qrCommonAuth() {
+		try {
+			String code = request.getParameter("code");
+			if(null != code && !"".equals(code)){
+				String openId = getOpenIdByCode(code);
+				System.out.println("WeChart openId : "+openId);
+				
+				String state = request.getParameter("state");
+				System.out.println("WeChart params : "+state);
+				
+				Map<String, Object> map = getParameterMap();
+				map.put("OPENID", openId);
+				map.put("sqlMapId", "checkUserWx");
+				
+				List<Map<String, Object>> checkList = openService.queryForList(map);
+				logger.info("checkList: "+checkList);
+				
+				String allParams = "openId=" + openId;
+				String redirectUrl = "";
+				if(checkList.size() == 1) {
+					String params1 [] = state.split("-");
+					for(int i=0; i<params1.length; i++) {
+						String params2 [] = params1[i].split("_");
+						if(!params2[0].equals("rEdIrEcTuRi")) {
+							allParams = allParams + "&" + params2[0] + "=" + params2[1];
+						}else {
+							for(int j=1; j<params2.length; j++) {
+								redirectUrl = redirectUrl + "_" + params2[j];
+							}
+							redirectUrl = redirectUrl.substring(1,redirectUrl.length());
+						}
+					}
+					String result = redirectUrl + "?" + allParams ;
+					logger.info("result: "+result);
+					response.sendRedirect(result);
+				}else if (checkList.size() == 0) {
+					//如果用户没绑定微信，跳转到登陆页
+					logger.info(openId + "_user_no_wx");
+					request.getSession().removeAttribute("userInfo");
+					session.removeAttribute("userInfo");
+					request.getSession().setAttribute("openid", map.get("OPENID").toString());
+					session.setAttribute("openid", map.get("OPENID").toString());
+					response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json", "")+"/qrcode_error.jsp");
+				}else {
+					output("error");
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * 二维码统一跳到此处
+	 * 获取扫码人openId
+	 */
+	@RequestMapping("/Qrcode_qrCommon_data")
+	public void qrCommon() {
+		try {
+			if(null != request.getParameter("redirect_qrcode")){
+				String url = CommonUtil.getPath("Auth-wx-qrcode-url");
+				url = url.replace("STATE", request.getParameter("params")).replace("REDIRECT_URI", URLEncoder.encode(CommonUtil.getPath("project_url").replace("DATA", "Qrcode_qrCommonAuth_data"),"UTF-8"));
+				System.out.println("qrcodeURL:"+url);
+				response.sendRedirect(url);
+			}else{
+				output("无效二维码");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public String getOpenIdByCode(String code){
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL");
 		url = url.replace("CODE", code);
@@ -62,6 +172,9 @@ public class WxController extends BaseController {
 		System.out.println(openId);
 		return openId;
 	}
+	
+	
+	
 	
 	/**
 	 * 用户扫码后跳转到updateUserRole方法
