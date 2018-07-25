@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="transactionRecord" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+  
+  
+ <insert id="insertTransactionRecord" parameterMap="BaseParameterMap">
+ 	INSERT INTO SC_TRANSACTION_RECORD
+ 	(
+ 		TRANSACTION_PK,
+ 		SHOP_FK,
+ 		USER_FK,
+ 		SERVICE_FK,
+ 		TRANSACTION_MONEY,
+ 		BUY_TIME,
+ 		TRANSACTION_TYPE,
+ 		CREATE_BY,
+ 		CREATE_TIME
+ 	)
+ 	VALUES
+ 	(
+ 		#{UUID},
+ 		#{SHOP_FK},
+ 		#{USER_FK},
+ 		#{SERVICE_FK},
+ 		#{TRANSACTION_MONEY},
+ 		#{BUY_TIME},
+ 		#{TRANSACTION_TYPE},
+ 		#{CREATE_BY},
+ 		NOW()
+ 	)
+ </insert>
+ 
+ 
+
+  
+  
+</mapper>

@@ -3,6 +3,16 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/addBusiness/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/addBusiness/controller.js",
 	"config": {
-
+		"addURL":"json/Shop_save_data.json",
+		"findVersionURL":"json/ServiceType_queryForList_findServiceTypeList.json",
+		"menu":{
+			"buttons":[{
+				"buttonName":"取消",
+				"buttonLink":"addAccount.close"
+			},{
+				"buttonName":"确定",
+				"buttonLink":"addAccount.confirm"
+			}]
+		}
 	}
 }
