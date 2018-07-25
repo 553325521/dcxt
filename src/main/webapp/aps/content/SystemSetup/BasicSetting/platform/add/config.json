@@ -4,6 +4,7 @@
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/add/controller.js",
 	"config": {
 		"pageTitle": "菜单设置",
-		"saveURL":"json/Function_insert_addFuntion.json"
+		"saveURL":"json/Menu_insert_addMenu.json",
+		"findURL":"json/Menu_queryForList_loadTopMenusByAppId.json"
 	}
 }

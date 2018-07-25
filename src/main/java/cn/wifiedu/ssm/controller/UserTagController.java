@@ -159,14 +159,47 @@ public class UserTagController extends BaseController {
 	public void updateUserTag(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
-			map.put("UPDATE_BY", "admin");
-			map.put("UPDATE_TIME", StringDeal.getStringDate());
-			map.put("sqlMapId", "updateUserTag");
-			if (openService.delete(map)) {
-				output("0000", " 操作成功   ");
+			if (map.containsKey("USER_TAG_ID") && !"".equals(map.get("USER_TAG_ID"))) {
+				String token = WxUtil.getToken();
+				if (token != null) {
+					String url = CommonUtil.getPath("userTagUpdate").toString();
+					url = url.replace("ACCESS_TOKEN", token);
+					Map p = new HashMap();
+					Map pp = new HashMap();
+					pp.put("name", map.get("USER_TAG_NAME"));
+					pp.put("id", map.get("USER_TAG_ID"));
+					p.put("tag", pp);
+					String resMsg = CommonUtil.posts(url, JSON.toJSONString(p), "utf-8");
+					if (resMsg != null) {
+						JSONObject obj = JSON.parseObject(resMsg);
+						String errcode = obj.get("errcode").toString();
+						String errMsg = "";
+						if (WxConstants.ERRORCODE_1.equals(errcode)) {
+							errMsg = WxConstants.ERRORCODE_1_MSG;
+						} else if (WxConstants.ERRORCODE_45058.equals(errcode)) {
+							errMsg = WxConstants.ERRORCODE_45058_MSG;
+						} else if (WxConstants.ERRORCODE_45157.equals(errcode)) {
+							errMsg = WxConstants.ERRORCODE_45157_MSG;
+						} else if (WxConstants.ERRORCODE_45158.equals(errcode)) {
+							errMsg = WxConstants.ERRORCODE_45158_MSG;
+						} else if (WxConstants.ERRORCODE_0.equals(errcode)) {
+							map.put("UPDATE_BY", "admin");
+							map.put("UPDATE_TIME", StringDeal.getStringDate());
+							map.put("sqlMapId", "updateUserTag");
+							openService.update(map);
+							output("0000", " 操作成功   ");
+							return;
+						}
+						output("9999", errMsg);
+						return;
+					}
+					output("9999", "系统异常");
+					return;
+				}
+				output("9999", " 获取微信token失败 ");
 				return;
 			}
-			output("9999", " 操作失败 ");
+			output("9999", " 系统异常参数为空 ");
 			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);

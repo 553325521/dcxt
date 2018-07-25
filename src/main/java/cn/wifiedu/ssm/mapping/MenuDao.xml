@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="menuDao">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+	<!--查询一级菜单 -->
+	<select id="loadTopMenusByAppId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
+		MENU_LINK
+		FROM SC_MENU
+		<where>
+			AND MENU_FATHER_PK IS NULL
+			<if test="FK_APP != null">
+				AND FK_APP = #{FK_APP}
+			</if>
+		</where>
+		ORDER BY CONVERT(MENU_SORT, SIGNED)
+	</select>
+
+</mapper>

@@ -1,5 +1,5 @@
 (function() {
-	define([ ], function() {
+	define([ 'jqueryweui' ], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
@@ -24,7 +24,7 @@
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
-							$.alert("添加成功","提示");
+							$.alert("添加成功", "提示");
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
@@ -100,7 +100,7 @@
 				}
 
 				init();
-				
+
 			}
 		];
 	});

@@ -10,7 +10,7 @@
 				scope.pageTitle = config.pageTitle
 
 				scope.form = {}
-
+				
 				scope.toHref = function(path) {
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json",
@@ -35,29 +35,50 @@
 					});
 				}
 
-				var comboboxInit = function() {
+				var init = function() {
+					$httpService.post(config.findURL, {}).success(function(data) {
+						if (data.code != '0000') {
+							loggingService.info(data.data);
+						} else {
+							var values = []
+							values.push('新建一级菜单')
+							if (data.data.length > 0) {
+								for (var index in data.data) {
+									var obj = data.data[index]
+									if (obj.MENU_NAME != undefined) {
+										values.push(obj.MENU_NAME)
+									}
+								}
+								scope.MenuList = data.data
+							}
+							comboboxInit(values)
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+
+				init()
+
+				var comboboxInit = function(values) {
 					$("#cdjb_select").picker({
 						title : "选择菜单级别",
 						toolbarCloseText : '确定',
 						cols : [
 							{
 								textAlign : 'center',
-								values : [ '一级菜单', '二级菜单' ]
+								values : values
 							}
 						],
 						onChange : function(e) {
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
-								if (value == '一级菜单') {
-									scope.form.MENU_LEVEL = '1'
-									$("div#cdpx2").hide();
-									$("div#cdpx1").show();
-									$("div#ssfj").hide();
-								} else if (value == '二级菜单') {
-									scope.form.MENU_LEVEL = '2'
-									$("div#cdpx1").hide();
-									$("div#cdpx2").show();
-									$("div#ssfj").show();
+								if (value != '新建一级菜单') {
+									$.each(scope.MenuList, function(index, value) {
+										if (value.MENU_NAME == value) {
+											scope.form.MENU_FATHER_PK = value.MENU_PK
+										}
+									})
 								}
 							}
 						}
@@ -78,61 +99,19 @@
 								if (value == '内置功能') {
 									scope.form.MENU_TYPE = '1'
 									$("div#gnxz").show();
-									$("div#gnmc").hide();
 									$("div#ljdz").hide();
 								} else if (value == '外部链接') {
 									scope.form.MENU_TYPE = '2'
 									$("div#gnxz").hide();
-									$("div#gnmc").show();
 									$("div#ljdz").show();
 								}
 							}
 						}
 					});
 
-					$("#cdpx_select1").picker({
-						title : "选择菜单排序",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '1', '2', '3' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								scope.form.MENU_SORT = value
-							}
-						}
-					});
-
-					$("#cdpx_select2").picker({
-						title : "选择菜单排序",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '1', '2', '3', '4', '5' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								scope.form.MENU_SORT = value
-							}
-						}
-					});
-
-					$("div#cdpx1").hide();
-					$("div#cdpx2").hide();
 					$("div#gnxz").hide();
-					$("div#gnmc").hide();
 					$("div#ljdz").hide();
-					$("div#ssfj").hide();
 				}
-
-				comboboxInit()
 
 			}
 		];

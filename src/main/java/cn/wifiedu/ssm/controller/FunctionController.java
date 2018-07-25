@@ -119,26 +119,4 @@ public class FunctionController extends BaseController {
 		}
 	}
 
-	/**
-	 * 
-	 * @author kqs
-	 * @param @param
-	 *            request
-	 * @param @param
-	 *            session
-	 * @return void
-	 * @date 2018年7月18日 - 上午11:32:19
-	 * @description:新增菜单
-	 */
-	@RequestMapping("/Function_insert_addMenu")
-	public void insert(HttpServletRequest request, HttpSession session) {
-		try {
-			Map<String, Object> map = getParameterMap();
-			map.put("sqlMapId", "insertMenu");
-			String result = openService.insert(map);
-			output("0000", map);
-		} catch (Exception e) {
-			output("9999", " Exception ", e);
-		}
-	}
 }
