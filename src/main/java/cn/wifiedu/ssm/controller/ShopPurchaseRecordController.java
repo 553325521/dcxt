@@ -27,7 +27,7 @@ package cn.wifiedu.ssm.controller;
 		 */
 		@Controller
 		@Scope("prototype")
-		public class TransactionRecordController extends BaseController {
+		public class ShopPurchaseRecordController extends BaseController {
 
 			private static Logger logger = Logger.getLogger(UserTagController.class);
 
@@ -53,11 +53,11 @@ package cn.wifiedu.ssm.controller;
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/TransactionRecord_insert_insertTransactionRecord")
+			@RequestMapping("/ShopPurchaseRecord_insert_insertShopPurchaseRecord")
 			public void addTransactionRecord(HttpServletRequest request,HttpSession seesion){
 				try {
 					Map<String, Object> map = getParameterMap();
-					map.put("sqlMapId", "insertTransactionRecord");
+					map.put("sqlMapId", "insertShopPurchaseRecord");
 					map.put("CREATE_BY", "admin");
 					String result = openService.insert(map);
 					if (result != null) {

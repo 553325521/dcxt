@@ -1,5 +1,5 @@
 {
-	"name": "shopclaim",
+	"name": "agentInformation",
 	"viewUrl": "aps/content/ActingCustomerManagement/agentInformation/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/agentInformation/controller.js",
 	"config": {

@@ -41,7 +41,7 @@
 
 <div class="weui-header" style="background-color:#FFF">
 	<div href="#" class="weui-header-left">
-		<a class="icon icon-109" ng-click="toHref('ActingCustomerManagement')"></a>
+		<a class="icon icon-109" ng-click="toHref('{{fromUrl}}')"></a>
 	</div>
 
 	<h1 class="weui-header-title weui-header-self" ng-bind="pageTitle"></h1>
@@ -73,7 +73,7 @@
 			<label class="weui_label label tablessetting-label">
 			服务价格
 			
-			<label class="label dcxt-explain-font">{{current_service.SERVICE_TYPE}}({{current_service.SERVICE_PRICE}}/月)x{{form.BS_BUYINGPERIOD}}</label>
+			<label class="label dcxt-explain-font">{{current_service.SERVICE_TYPE}}({{current_service.SERVICE_PRICE}}/月)x{{buy_time}}</label>
 			</label>
 		</div>
 		<div class="weui-cell_bd dcxt-red-right">

@@ -6,10 +6,10 @@
 				function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
 					scope = $scope;
 					scope.pageShow = "False"
-					
-					scope.pageTitle = config.pageTitle;
-					
 					scope.form = {}
+					scope.pageTitle = config.pageTitle;
+					scope.fromUrl = params.fromUrl;
+					scope.form.SHOP_FK = params.shopid;
 					
 					//页面初始化
 					var init = function() {
@@ -43,7 +43,6 @@
 					
 					init();
 					
-					
 					// 购买期限数据源
 					buying_select = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','1年','2年','3年','4年','5年'];
 					//购买期数对应月数的字典
@@ -62,13 +61,9 @@
 					
 					//当前选择的服务版本
 					scope.current_service = []
-					
-					
 					//以版本类型为key的map字典
 					service_type_dictionaries = [];
-					
-					
-					//平台优惠月数
+					//平台优惠策略
 					service_discounts_table = {
 							"1年" : {
 								"discounts_month" : "2",		//优惠月份
@@ -86,8 +81,6 @@
 								"discounts_month" : "15",
 							} 
 					}
-					
-				
 					
 					//初始化当前购买时间
 					scope.buy_time = buying_select[0];
@@ -117,30 +110,20 @@
 							//获取优惠之后的总价格
 							scope.form.TRANSACTION_MONEY = scope.total_money_before;
 						}
-
 						scope.discounts_show = scope.discounts_money == 0 ? "False":"True";
-						
-						
-						
 						scope.$apply();
-						
-					
-						
 					}
-					
-					
 					
 					//支付按钮
 					scope.confirmPayment = function(){
-						
 						console.info(scope.form)
-								var m2 = {
-									"url" : "aps/content/ActingCustomerManagement/buyService/config.json",
-									"title" : "提示",
-									"contentName" : "modal",
-									"text" : "是否支付?"
-								}
-								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						var m2 = {
+							"url" : "aps/content/ActingCustomerManagement/buyService/config.json",
+							"title" : "提示",
+							"contentName" : "modal",
+							"text" : "是否支付?"
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 					}
 					
 					
@@ -153,7 +136,6 @@
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
 					}
 					
-					
 					// 弹窗确认事件
 					eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 						$httpService.post(config.saveUrl, $scope.form).success(function(data) {
@@ -162,7 +144,6 @@
 									"title" : "提示",
 									"contentName" : "modal",
 									"text" : data.data
-									
 								}
 							} else {
 								var m2 = {
@@ -179,7 +160,6 @@
 
 					});
 					
-					
 					// 弹窗取消事件
 					eventBusService.subscribe(controllerName, controllerName + '.close', function(event, btn) {
 						eventBusService.publish(controllerName, 'appPart.load.modal.close', {
@@ -188,8 +168,6 @@
 					});
 					
 					function comboboxInit(){
-						
-						
 						$("#buying_select").picker({
 							title : "购买期限",
 							toolbarCloseText : '确定',
@@ -213,20 +191,10 @@
 						document.getElementById("buying_select").onchange = function(event) {
 							scope.refreshPage()
 						};
-
-						
-						
 					}
-					
 				}
 			];
 		});
 	}).call(this);
 	
-	
-	
-
-
-	$(function() {
-		
-	})
+$(function() {})

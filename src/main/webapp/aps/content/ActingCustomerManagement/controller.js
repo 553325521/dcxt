@@ -87,10 +87,9 @@
 					];
 					
 					
-					
-					scope.toHref = function(path,cid) {
+					scope.toHref = function(path,shopid) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?cid=" + cid,
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&shopid=" + shopid,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}

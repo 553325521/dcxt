@@ -1,5 +1,5 @@
 {
-	"name": "shopclaim",
+	"name": "tradingRecord",
 	"viewUrl": "aps/content/ActingCustomerManagement/tradingRecord/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/tradingRecord/controller.js",
 	"config": {
