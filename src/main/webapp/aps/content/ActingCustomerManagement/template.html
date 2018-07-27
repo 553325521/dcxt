@@ -79,37 +79,37 @@
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="padding:2px 15px; display:flex;transform: translateX(0px);")" ng-click="toHref('ActingCustomerManagement/addBusiness','item.id')">	
 				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
 					<div >
-						<span>{{item.id}}</span>
+						<span>{{item.USER_SN}}</span>
 					</div>
 					
 					<div >
-						<span>{{item.1}}</span>
+						<span>{{item.DAYS}}</span>
 					</div>
 					
 					
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
 					<div >
-						<span>{{item.2}}</span>
+						<span>{{item.SHOP_NAME}}</span>
 					</div>
 					
 					<div >
-						<span>{{item.3}}</span>
+						<span>{{item.USER_NAME}}</span>
 					</div>
 				</div>
 				<div class="weui_cell_bd " dir="rtl">
 					<div >
-						<span>{{item.4}}</span>
+						<span>{{item.SERVICE_TYPE}}</span>
 					</div>
 					<div >
-						<span>{{item.5}}</span>
+						<span>{{item.SHOP_TEL}}</span>
 					</div>
 				</div>	
 			</div>
 					
 			<div class="slideleft">
-	        	<span style="background:#FF832E;color:#fff" ng-click="toHref('ActingCustomerManagement/shopclaim','{{item.id}}')">商户认领</span>
-	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="toHref('ActingCustomerManagement/buyService','{{item.id}}')">购买服务</span>
+	        	<span style="background:#FF832E;color:#fff" ng-click="toHref('ActingCustomerManagement/shopclaim','{{item.SHOP_ID}}')">商户认领</span>
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="toHref('ActingCustomerManagement/buyService','{{item.SHOP_ID}}')">购买服务</span>
        		</div>	      
 		</div>
 		

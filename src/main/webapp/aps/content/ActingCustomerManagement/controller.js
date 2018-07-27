@@ -9,9 +9,22 @@
 					
 					scope.input_value = ''
 					
+					scope.customer_information_list = [];
 					
+					function initCuntomerInformation(){
+						$httpService.post(config.showAgentShopInfoURL, $scope.form).success(function(data) {
+							if (data.code == '0000') {
+								scope.customer_information_list = data.data;
+								console.info(scope.customer_information_list);
+								scope.$apply();
+							} 
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
+					}
+					initCuntomerInformation();
 					// 餐桌区域数据源
-					scope.customer_information_list = [
+				/*	scope.customer_information_list = [
 						{
 							id : '用户名1',
 							1 : '268天',
@@ -84,7 +97,7 @@
 							4 : '大店版',	//排序序号
 							5 : 13883107775,
 						}
-					];
+					];*/
 					
 					
 					scope.toHref = function(path,shopid) {

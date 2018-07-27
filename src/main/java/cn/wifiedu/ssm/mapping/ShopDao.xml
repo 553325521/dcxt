@@ -26,4 +26,31 @@
 			#{SIZE}
 	)
 	</insert>
+	<!-- 查询当前登录代理商的商铺信息 -->
+	 <select id="findAgentShopInfo" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+ 			select shopInfo.*,u1.USER_NAME,u1.USER_SN from 
+ 				(select ssi.*,sst.SERVICE_TYPE from sc_shop_info ssi 
+ 					INNER JOIN sc_service_type  sst on ssi.SERVICETYPE_FK = sst.SERVICE_PK where ssi.SHOP_ID IN 
+					(SELECT us.FK_SHOP  FROM sc_user_shop us where us.FK_USER_WX = #{USER_WX})) AS shopInfo 
+					INNER JOIN (select u.USER_NAME,u.USER_SN,sus.FK_SHOP  from 
+						(SELECT su.USER_PK,su.USER_NAME,su.USER_SN  from sc_user su 
+							inner join (select sur.FK_USER from sc_user_role sur where  sur.FK_ROLE = (select ssr.ROLE_PK from sc_sys_role ssr where ssr.ROLE_NAME = '店长')) as userInfo on 
+							su.USER_PK = userInfo.FK_USER) as u 
+							INNER JOIN sc_user_shop sus on u.USER_PK = sus.FK_USER_WX) as u1 on shopInfo.SHOP_ID = u1.FK_SHOP;
+ 			
+ 	</select>
+ 	
+ 	<!-- 根据shopId查询商铺信息 -->
+ 	 <select id="SelectByPrimaryKey" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+ 	 		select * from SC_SHOP_INFO where SHOP_ID = #{SHOP_FK} 
+ 	 </select>
+ 	 
+ 	 <!-- 更新商铺的过期时间 -->
+	<update id="UpdateOverDate" parameterMap="BaseParameterMap">
+		update SC_SHOP_INFO
+			set 
+				OVER_DATA = #{OVER_DATA}
+		where SHOP_ID = #{SHOP_FK} 
+	</update> 	 
+ 	
 </mapper>
