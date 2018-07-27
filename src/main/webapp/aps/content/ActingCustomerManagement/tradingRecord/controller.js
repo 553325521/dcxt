@@ -10,7 +10,7 @@
 					scope.input_value = ''
 					
 					
-					// 餐桌区域数据源
+					/*// 餐桌区域数据源
 					scope.tables_area_list = [
 						{
 							id : '代付',
@@ -60,12 +60,21 @@
 							4 : '小店版',	
 							5 : '2016-05-01',
 						}
-					];
+					];*/
+					scope.trading_Record_List = [];
 					
-					
-					
-					
-					
+					function initTradingRecord(){
+						$httpService.post(config.fingTradingRecordURL, $scope.form).success(function(data) {
+							if (data.code == '0000') {
+								scope.trading_Record_List = data.data;
+								console.info(scope.trading_Record_List);
+								scope.$apply();
+							} 
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
+					}
+					initTradingRecord();
 					
 					scope.toHref = function(path) {
 						var m2 = {

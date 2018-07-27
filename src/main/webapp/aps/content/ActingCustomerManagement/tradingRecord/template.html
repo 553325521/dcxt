@@ -61,34 +61,39 @@
 
 
 	<div class="weui_cells tablessetting-font-style  dcxt-font-overflow" style="margin-top:0px;">
-		<div class="weui_cell" ng-repeat="item in tables_area_list | filter:input_value" style="padding:0;">		
+		<div class="weui_cell" ng-repeat="item in trading_Record_List | filter:input_value" style="padding:0;">		
 			<div class="weui_cell_bd weui_cell_primary animated " style="padding:2px 15px; display:flex;transform: translateX(0px);">	
 				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
-					<div >
-						<span>{{item.id}}</span>
+					<div ng-switch on = "{{item.TRADE_TYPE}}">
+						<span ng-switch-when = "0">代付</span>
+						<span ng-switch-when = "1">提成</span>
+						<span ng-switch-when = "2">提现</span>
+						<span ng-switch-when = "3">充值</span>
 					</div>
 					
-					<div >
-						<span>{{item.1}}</span>
+					<div ng-switch on = "{{item.TRADE_TYPE}}">
+						<span ng-switch-when = "0">支出</span>
+						<span ng-switch-when = "1">收入</span>
+						<span ng-switch-when = "2">支出</span>
+						<span ng-switch-when = "3">收入</span>
 					</div>
 					
 					
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<div >
-						<span>{{item.2}}</span>
+					<div>
+						<span>{{item.SHOP_FK==0?"总店":item.SHOP_NAME}}</span>
 					</div>
-					
 					<div >
-						<span>{{item.3}}</span>
+						<span>{{item.TRADE_MONEY}}</span>
 					</div>
 				</div>
 				<div class="weui_cell_bd " dir="rtl">
 					<div >
-						<span>{{item.4}}</span>
+						<span>{{item.SHOP_FK==0?"总店":item.SERVICE_TYPE}}</span>
 					</div>
 					<div >
-						<span>{{item.5}}</span>
+						<span>{{item.TRADE_TIME}}</span>
 					</div>
 				</div>	
 			</div>

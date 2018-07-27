@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="tradingRecord" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
+	<!-- 查询当前登录代理商的交易记录 -->
+	 <select id="fingTradingRecord" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+ 			select str1.*,sst1.* from 
+ 			(select * from sc_transaction_record str where str.USER_FK = #{USER_WX}) as str1 
+ 			left join 
+ 			(select ssi.SHOP_ID,ssi.SHOP_NAME,sst.SERVICE_TYPE from sc_shop_info ssi inner join sc_service_type sst on ssi.SERVICETYPE_FK = sst.SERVICE_PK) sst1 
+ 			on str1.SHOP_FK = sst1.SHOP_ID;
+ 	</select>
+</mapper>
