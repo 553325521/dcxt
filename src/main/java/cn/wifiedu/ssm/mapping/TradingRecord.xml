@@ -11,4 +11,30 @@
  			(select ssi.SHOP_ID,ssi.SHOP_NAME,sst.SERVICE_TYPE from sc_shop_info ssi inner join sc_service_type sst on ssi.SERVICETYPE_FK = sst.SERVICE_PK) sst1 
  			on str1.SHOP_FK = sst1.SHOP_ID;
  	</select>
+ 	
+ 	<insert id="insertTradingRecord" parameterMap="BaseParameterMap">
+ 		INSERT INTO SC_TRANSACTION_RECORD 
+ 		(
+ 			TRADE_PK,
+ 			USER_FK, 
+ 			SHOP_FK,
+ 			TRADE_TIME,
+ 			TRADE_MONEY,
+ 			TRADE_TYPE, 
+ 			CREATE_BY, 
+ 			CREATE_TIME
+ 		) 
+ 		VALUES
+ 		(
+ 			#{UUID},
+ 			#{USER_ID},
+ 			#{SHOP_ID},
+ 			NOW(),
+ 			#{TRADE_MONEY},
+ 			#{TRADE_TYPE},
+ 			#{CREATE_BY},
+ 			NOW()
+ 		)
+ 	
+ 	</insert>
 </mapper>

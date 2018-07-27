@@ -9,7 +9,12 @@
 					scope.form = {}
 					scope.pageTitle = config.pageTitle;
 					scope.fromUrl = params.fromUrl;
-					scope.form.SHOP_FK = params.shopid;
+					scope.form.SHOP_ID = params.shopid;
+					scope.form.TRANSACTION_TYPE = 1;//初始化交易类型 
+					if(scope.fromUrl == "ActingCustomerManagement"){
+						scope.form.TRANSACTION_TYPE = 0;
+					}
+					
 					
 					//页面初始化
 					var init = function() {
@@ -27,7 +32,7 @@
 								//当前选择的服务类型
 								scope.current_service = scope.service_type[0];
 								//form表单初始化服务类型值
-								scope.form.SERVICE_FK = scope.current_service.SERVICE_PK;
+								scope.form.SERVICE_ID = scope.current_service.SERVICE_PK;
 								//初始化获取优惠之前的总价格
 								scope.total_money_before = scope.service_type[0].SERVICE_PRICE;
 								//初始化优惠栏显示不显示
@@ -47,17 +52,6 @@
 					buying_select = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','1年','2年','3年','4年','5年'];
 					//购买期数对应月数的字典
 					buying_month = {"1月":1,"2月":2,"3月":3,"4月":4,"5月":5,"6月":6,"7月":7,"8月":8,"9月":9,"1年":12,"2年":24,"3年":36,"4年":48,"5年":60}
-					//转换以后的数据源，自动转换年和月
-//					buying_select_transform = []
-					/*//转换年和月
-					angular.forEach(buying_select,function(data,index,array){
-						if(data % 12 == 0){
-							buying_select_transform.push(data/12 + '年');
-						}else{
-							buying_select_transform.push(data + '月')
-						}
-						
-					});*/
 					
 					//当前选择的服务版本
 					scope.current_service = []
@@ -88,9 +82,10 @@
 //					
 					comboboxInit();
 					
+					//数据更新了 开始刷新
 					scope.refreshPage = function(){
 						//获取当前服务类型id
-						scope.form.SERVICE_FK = scope.current_service.SERVICE_PK;
+						scope.form.SERVICE_ID = scope.current_service.SERVICE_PK;
 						//获取当前选择的购买期数
 						scope.buy_time = $("#buying_select").val();
 						//转换当前选择的购买期数为月数

@@ -20,7 +20,7 @@
  		#{SERVICE_TYPE},
  		#{SERVICE_PRICE},
  		#{SERVICE_DESC},
- 		'system',
+ 		#{CREATE_BY},
  		NOW()
  	)
  </insert>
@@ -32,7 +32,7 @@
  	ORDER BY CAST(SERVICE_PRICE AS SIGNED integer);
  </select>
  
-
-  
-  
+ <select id="findServicePriceById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  	SELECT SERVICE_PRICE FROM SC_SERVICE_TYPE WHERE SERVICE_PK = #{SERVICE_PK};
+  </select>
 </mapper>

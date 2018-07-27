@@ -1,19 +1,27 @@
 package cn.wifiedu.ssm.controller;
 
 
-	import java.util.List;
+	import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 	import java.util.Map;
 
 	import javax.annotation.Resource;
-	import javax.servlet.http.HttpServletRequest;
+import javax.json.Json;
+import javax.servlet.http.HttpServletRequest;
 	import javax.servlet.http.HttpSession;
 
 	import org.apache.log4j.Logger;
-	import org.springframework.context.annotation.Scope;
+import org.apache.log4j.chainsaw.Main;
+import org.springframework.context.annotation.Scope;
 	import org.springframework.stereotype.Controller;
-	import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-	import cn.wifiedu.core.controller.BaseController;
+import com.alibaba.fastjson.JSON;
+
+import cn.wifiedu.core.controller.BaseController;
 	import cn.wifiedu.core.service.OpenService;
 	import cn.wifiedu.ssm.util.StringDeal;
 
@@ -41,6 +49,9 @@ package cn.wifiedu.ssm.controller;
 			public void setOpenService(OpenService openService) {
 			this.openService = openService;
 			}
+			
+			//优惠策略
+			Map discountsMap = JSON.parseObject("{\"12\" : 2,\"24\" : 5 ,\"36\" :  9 ,\"48\" : 12,\"60\" : 15}");
 
 			/**
 			 * 
@@ -53,14 +64,109 @@ package cn.wifiedu.ssm.controller;
 			 * @return void 
 			 *
 			 */
+			
 			@RequestMapping("/ShopPurchaseRecord_insert_insertShopPurchaseRecord")
 			public void addTransactionRecord(HttpServletRequest request,HttpSession seesion){
 				try {
 					Map<String, Object> map = getParameterMap();
-					map.put("sqlMapId", "insertShopPurchaseRecord");
+					
+					
+					map.put("sqlMapId", "findServicePriceById");
+					map.put("SERVICE_PK",map.get("SERVICE_ID"));
+					//购买的时长
+					Integer buyTime = Integer.parseInt((String)map.get("BUY_TIME"));
+					Map serviceMap = (Map)openService.queryForObject(map);
+					if (serviceMap == null || buyTime <= 0){
+						output("9999", " 购买失败！   ");
+						return;
+					}
+					//从数据库获取该服务的单价
+					Integer servicePrice = Integer.parseInt((String)serviceMap.get("SERVICE_PRICE"));
+					//查看是否享有优惠
+					Integer afterTime = buyTime;
+					if(discountsMap.containsKey(buyTime.toString())){
+						afterTime =  buyTime - (Integer)discountsMap.get(buyTime.toString());
+					}
+					//计算所需金额
+					Integer needMoney = afterTime * servicePrice;
+					//判断所需金额是否等于缴纳金额
+					if(needMoney != Integer.parseInt((String)map.get("TRANSACTION_MONEY"))){
+						output("9999", " 数据异常！   ");
+						return;
+					}
+					//检验完毕，开始插入流程
+					//先获取当前过期时间
+					map.put("sqlMapId", "SelectByPrimaryKey");
+					String shopId = (String) map.get("SHOP_ID");
+					map.put("SHOP_FK",shopId);
+					//从数据库获取当前店铺信息
+					Map shopMap = (Map)openService.queryForObject(map);
+					//格式化日期
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					String overDateStr = (String)shopMap.get("OVER_DATA");
+					
+					Date overDate = null;
+					if(overDateStr == null){//如果为空，说明还没购买过服务
+						overDate = new Date();
+					}
+					//解析日期字符串
+					overDate = sdf.parse(overDateStr);
+			        if (overDate.before(new Date())){
+			        	//如果过期时间在今天之前，说明早过期了，不必进行在原来的时间基础上计算
+			        	overDate = new Date();
+			        }
+			        //开始日期计算
+			        GregorianCalendar gc=new GregorianCalendar(); 
+			        gc.setTime(overDate); 
+			        gc.add(2,buyTime); 
+					String buyAfterData = sdf.format(gc.getTime());
+					
+					map.put("sqlMapId","UpdateOverDate");
+					map.put("OVER_DATA",buyAfterData);
+					
+					boolean buyResult = openService.update(map);
+					
+					if(!buyResult){
+						output("9999", " 购买失败！   ");
+						return;
+					}
+					
+					//店铺过期时间更新成功，开始插入购买服务表
+					map.put("sqlMapId","insertShopPurchaseRecord");
+					map.put("OVER_DATA",buyAfterData);
+					map.put("USER_FK","admin");
+					map.put("SERVICE_FK", map.get("SERVICE_PK"));
 					map.put("CREATE_BY", "admin");
-					String result = openService.insert(map);
-					if (result != null) {
+					
+					String insertResult = openService.insert(map);
+					
+					if(insertResult == null){
+						output("9999", " 购买失败！   ");
+						return;
+					}
+					
+					
+					//插入购买记录成功，开始插入提成记录表
+					//获取一下是代付还是续费
+					String TRANSACTION_TYPE = (String) map.get("TRANSACTION_TYPE");
+					
+					map.clear();
+					
+					map.put("sqlMapId","insertTradingRecord");
+					//USER_ID还没有
+					map.put("TRADE_MONEY", needMoney);
+					
+					String TRADE_TYPE = "11";//续费提成
+					if("0".equals(TRANSACTION_TYPE)){
+						TRADE_TYPE = "10";//代付提成
+					}
+					map.put("SHOP_ID",shopId);
+					map.put("TRADE_TYPE", TRADE_TYPE);
+					map.put("CREATE_BY", "admin");
+					
+					String insert = openService.insert(map);
+					
+					if (insert != null) {
 						output("0000", "支付成功!");
 						return;
 					}
@@ -71,7 +177,6 @@ package cn.wifiedu.ssm.controller;
 					return;
 				}
 			}
-			
 			
 			
 		/*	*//**

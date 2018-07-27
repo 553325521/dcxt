@@ -14,7 +14,7 @@
 			SHOP_TYPE,
 			SHOP_AREA,
 			SHOP_ADDRESS,
-			SHOP_VERSION
+			SERVICETYPE_FK
 			)
 	values(
 			#{UUID},
