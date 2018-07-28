@@ -4,6 +4,6 @@
 	"controllerUrl": "aps/content/ActingCustomerManagement/controller.js",
 	"config": {
 		"currentUrl":"ActingCustomerManagement"	,
-		"showAgentShopInfoURL":"json/showAgentShopInfo.json"	
+		"showAgentShopInfoURL":"json/Shop_select_findAgentShopInfo.java.json"	
 	}
 }

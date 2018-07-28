@@ -15,7 +15,6 @@
 						$httpService.post(config.showAgentShopInfoURL, $scope.form).success(function(data) {
 							if (data.code == '0000') {
 								scope.customer_information_list = data.data;
-								console.info(scope.customer_information_list);
 								scope.$apply();
 							} 
 						}).error(function(data) {

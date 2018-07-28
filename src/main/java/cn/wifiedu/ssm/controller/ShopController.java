@@ -42,8 +42,9 @@ public class ShopController extends BaseController {
 	/**
 	 * 添加商户
 	 * @author wangjinglong
+	 * 
 	 */
-	@RequestMapping(value="/Shop_save_data",method = RequestMethod.POST)
+	@RequestMapping(value="/Shop_insert_insertShop",method = RequestMethod.POST)
 	public void saveShopData() {
 		try {
 			Map<String, Object> map = getParameterMap();
@@ -63,7 +64,7 @@ public class ShopController extends BaseController {
 	 * 显示当前登录代理商下的商铺信息
 	 * @author wangjinglong
 	 */
-	@RequestMapping(value="/showAgentShopInfo",method = RequestMethod.POST)
+	@RequestMapping(value="/Shop_select_findAgentShopInfo",method = RequestMethod.POST)
 	public void showAgentShopInfo() {
 		try {
 			Map<String, Object> map = getParameterMap();

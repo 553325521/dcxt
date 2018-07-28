@@ -67,7 +67,6 @@
 						$httpService.post(config.fingTradingRecordURL, $scope.form).success(function(data) {
 							if (data.code == '0000') {
 								scope.trading_Record_List = data.data;
-								console.info(scope.trading_Record_List);
 								scope.$apply();
 							} 
 						}).error(function(data) {

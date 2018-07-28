@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -43,7 +44,7 @@ public class TradingRecordController extends BaseController {
 	 * 显示当前登录代理商下的交易记录
 	 * @author wangjinglong
 	 */
-	@RequestMapping(value="/fingTradingRecord",method = RequestMethod.POST)
+	@RequestMapping(value="/TradingRecord_select_fingTradingRecord",method = RequestMethod.POST)
 	public void fingTradingRecord() {
 		try {
 			Map<String, Object> map = getParameterMap();

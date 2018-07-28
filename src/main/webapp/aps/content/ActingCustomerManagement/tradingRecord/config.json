@@ -3,6 +3,6 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/tradingRecord/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/tradingRecord/controller.js",
 	"config": {
-		"fingTradingRecordURL":"json/fingTradingRecord.json"
+		"fingTradingRecordURL":"json/TradingRecord_select_fingTradingRecord.json"
 	}
 }

@@ -90,7 +90,9 @@
 				
 				scope.form.SHOP_TYPE_FIRSET = scope.shop_type_first[0];
 				
-				scope.form.SHOP_TYPE_SECOND = scope.shop_type_second[0];
+				scope.form.SHOP_TYPE_SECOND = scope.shop_type_second[1];
+				
+				$("#fs_select1").val(scope.shop_type_second[1]);
 				
 				function comboboxInit() {	
 					$("#fs_select").picker({

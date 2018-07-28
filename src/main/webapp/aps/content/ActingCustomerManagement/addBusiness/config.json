@@ -3,7 +3,7 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/addBusiness/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/addBusiness/controller.js",
 	"config": {
-		"addURL":"json/Shop_save_data.json",
+		"addURL":"json/Shop_insert_insertShop.json",
 		"findVersionURL":"json/ServiceType_queryForList_findServiceTypeList.json",
 		"menu":{
 			"buttons":[{
