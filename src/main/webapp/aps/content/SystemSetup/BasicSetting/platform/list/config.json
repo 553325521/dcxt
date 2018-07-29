@@ -1,0 +1,9 @@
+{
+	"name": "Platform_list",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/platform/list/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/list/controller.js",
+	"config": {
+		"pageTitle": "授权列表",
+		"findURL": "json/App_queryForList_findAppList.json"
+	}
+}

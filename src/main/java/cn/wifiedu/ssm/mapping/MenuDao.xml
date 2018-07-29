@@ -3,19 +3,91 @@
 <mapper namespace="menuDao">
 	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
-	<!--查询一级菜单 -->
+	<!--根据AppId查询一级菜单 -->
 	<select id="loadTopMenusByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
-		MENU_LINK
+		MENU_LINK, MENU_SORT, MENU_FATHER_PK
 		FROM SC_MENU
 		<where>
 			AND MENU_FATHER_PK IS NULL
-			<if test="FK_APP != null">
-				AND FK_APP = #{FK_APP}
-			</if>
+			AND FK_APP = #{FK_APP}
+			AND MENU_PLAT =
+			#{MENU_PLAT}
 		</where>
 		ORDER BY CONVERT(MENU_SORT, SIGNED)
 	</select>
+
+	<!--根据AppId 和 父id 查询二级菜单 -->
+	<select id="loadSonMenusByAppId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
+		MENU_LINK, MENU_SORT, MENU_FATHER_PK
+		FROM SC_MENU
+		<where>
+			AND MENU_FATHER_PK = #{MENU_FATHER_PK}
+			AND FK_APP = #{FK_APP}
+			AND MENU_PLAT =
+			#{MENU_PLAT}
+		</where>
+		ORDER BY CONVERT(MENU_SORT, SIGNED)
+	</select>
+
+	<select id="loadAllMenusByAppId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
+		MENU_LINK, MENU_SORT, MENU_FATHER_PK
+		FROM SC_MENU
+		<where>
+			AND FK_APP = #{FK_APP}
+			AND MENU_PLAT = #{MENU_PLAT}
+		</where>
+		ORDER BY CONVERT(MENU_SORT, SIGNED), MENU_FATHER_PK
+	</select>
+
+	<select id="loadCountByFMenuId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT count(MENU_PK) as nums
+		FROM SC_MENU
+		<where>
+			<if test="MENU_FATHER_PK != null">
+				AND MENU_FATHER_PK = #{MENU_FATHER_PK}
+			</if>
+			AND FK_APP = #{FK_APP}
+		</where>
+	</select>
+
+	<insert id="insertMenu" parameterMap="BaseParameterMap">
+		insert into SC_MENU
+		(
+		MENU_PK,
+		MENU_NAME,
+		MENU_SORT,
+		MENU_TYPE,
+		MENU_LINK,
+		MENU_PLAT,
+		CREATE_BY,
+		CREATE_TIME,
+		FK_APP,
+		<if test="MENU_FATHER_PK != null">
+			MENU_FATHER_PK
+		</if>
+		)
+		values
+		(
+		#{UUID},
+		#{MENU_NAME},
+		#{MENU_SORT},
+		#{MENU_TYPE},
+		#{MENU_LINK},
+		#{MENU_PLAT},
+		#{CREATE_BY},
+		#{CREATE_TIME},
+		#{FK_APP},
+		<if test="MENU_FATHER_PK != null">
+			#{MENU_FATHER_PK}
+		</if>
+		)
+	</insert>
 
 </mapper>

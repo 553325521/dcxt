@@ -11,32 +11,69 @@
 
 				scope.form = {}
 				
+				scope.form.MENU_PLAT = params.plattype;
+				
+				scope.form.FK_APP = params.AppId;
+				
 				scope.toHref = function(path) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json",
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid + "&AppId=" + params.AppId + "&plattype=" + params.plattype,
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
-
-				scope.doSave = function() {
-					$httpService.post(config.saveURL, scope.form).success(function(data) {
+				
+				// 弹窗确认事件
+				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					$httpService.post(config.saveURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
-							loggingService.info(data.data);
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data,
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/platform/config.json?fid=" + params.fid + "&AppId=" + params.AppId + "&plattype=" + params.plattype
+							}
 						} else {
-							eventBusService.publish(controllerName, 'appPart.load.modal.alert', {
-								"title" : "操作提示",
-								"content" : "添加成功！"
-							});
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data,
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/platform/config.json?fid=" + params.fid + "&AppId=" + params.AppId + "&plattype=" + params.plattype
+							}
 						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
+
+				});
+
+				// 弹窗取消事件
+				eventBusService.subscribe(controllerName, controllerName + '.close', function(event, btn) {
+					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+						contentName : "modal"
+					});
+				});
+				
+				scope.doSave = function() {
+					var $form = $("#menuAddForm");
+					$form.form();
+					$form.validate(function(error) {
+						if (!error) {
+							var m2 = {
+								"url" : "aps/content/SystemSetup/BasicSetting/platform/add/config.json",
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : "是否确定保存?"
+							}
+							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						}
+					})
 				}
 
 				var init = function() {
-					$httpService.post(config.findURL, {}).success(function(data) {
+					$httpService.post(config.findURL, scope.form).success(function(data) {
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
@@ -52,6 +89,7 @@
 								scope.MenuList = data.data
 							}
 							comboboxInit(values)
+							
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
@@ -74,9 +112,9 @@
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
 								if (value != '新建一级菜单') {
-									$.each(scope.MenuList, function(index, value) {
-										if (value.MENU_NAME == value) {
-											scope.form.MENU_FATHER_PK = value.MENU_PK
+									$.each(scope.MenuList, function(index, val) {
+										if (val.MENU_NAME == value) {
+											scope.form.MENU_FATHER_PK = val.MENU_PK
 										}
 									})
 								}
@@ -97,11 +135,11 @@
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
 								if (value == '内置功能') {
-									scope.form.MENU_TYPE = '1'
+									scope.form.MENU_TYPE = value
 									$("div#gnxz").show();
 									$("div#ljdz").hide();
 								} else if (value == '外部链接') {
-									scope.form.MENU_TYPE = '2'
+									scope.form.MENU_TYPE = value
 									$("div#gnxz").hide();
 									$("div#ljdz").show();
 								}

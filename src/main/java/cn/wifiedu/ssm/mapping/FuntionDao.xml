@@ -82,25 +82,4 @@
 		)
 	</insert>
 
-	<insert id="insertMenu" parameterMap="BaseParameterMap">
-		insert into SC_SYS_MENU
-		(
-		MENU_PK,
-		MENU_NAME,
-		MENU_LEVEL,
-		MENU_SORT,
-		MENU_TYPE,
-		MENU_LINK
-		)
-		values
-		(
-		#{UUID},
-		#{MENU_NAME},
-		#{MENU_LEVEL},
-		#{MENU_SORT},
-		#{MENU_TYPE},
-		#{MENU_LINK}
-		)
-	</insert>
-
 </mapper>

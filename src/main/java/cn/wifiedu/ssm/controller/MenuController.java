@@ -1,5 +1,6 @@
 package cn.wifiedu.ssm.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,38 @@ public class MenuController extends BaseController {
 	/**
 	 * 
 	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年7月24日 - 下午11:30:48
+	 * @description:查询所有的菜单根据微信appid
+	 */
+	@RequestMapping("/Menu_queryForList_loadAllMenusByAppId")
+	public void loadAllMenusByAppId(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "loadTopMenusByAppId");
+			List<Map<String, Object>> reMap = new ArrayList<Map<String, Object>>();
+			List<Map<String, Object>> fatherMap = openService.queryForList(map);
+			for (Map<String, Object> fMap : fatherMap) {
+				reMap.add(fMap);
+				String MENU_PK = fMap.get("MENU_PK").toString();
+				map.put("sqlMapId", "loadSonMenusByAppId");
+				map.put("MENU_FATHER_PK", MENU_PK);
+				List<Map<String, Object>> sonMap = openService.queryForList(map);
+				if (sonMap != null && !sonMap.isEmpty()) {
+					reMap.addAll(sonMap);
+				}
+			}
+			output("0000", reMap);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
 	 * @param @param
 	 *            request
 	 * @param @param
@@ -75,14 +108,20 @@ public class MenuController extends BaseController {
 	public void insert(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "loadCountByFMenuId");
 			map.put("FK_APP", "wx6041a1eff32d3c5e");
-			map.put("sqlMapId", "insertMenu");
-			map.put("CREATE_BY", "admin");
-			map.put("CREATE_TIME", StringDeal.getStringDate());
-			String result = openService.insert(map);
-			if (result != null) {
-				output("0000", map);
-				return;
+			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
+			if (reMap != null && reMap.containsKey("nums")) {
+				int nums = Integer.valueOf(reMap.get("nums").toString());
+				map.put("sqlMapId", "insertMenu");
+				map.put("MENU_SORT", nums + 1);
+				map.put("CREATE_BY", "admin");
+				map.put("CREATE_TIME", StringDeal.getStringDate());
+				String result = openService.insert(map);
+				if (result != null) {
+					output("0000", "添加成功");
+					return;
+				}
 			}
 			output("9999", " 添加失败  ");
 			return;
@@ -96,7 +135,7 @@ public class MenuController extends BaseController {
 		try {
 			Map<String, Object> map = getParameterMap();
 			String url = CommonUtil.getPath("wxAuthURL").toString();
-			
+
 			output("0000", map);
 		} catch (Exception e) {
 			output("9999", " Exception ", e);

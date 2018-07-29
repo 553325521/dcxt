@@ -12,13 +12,15 @@
 	</div>
 </div>
 
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+<div class="weui_cells weui_cells_form" style="margin-top: 0;"
+	id="menuAddForm">
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">菜单分类</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" id="cdjb_select">
+			<input class="weui_input label-input" type="text" id="cdjb_select"
+				required emptyTips="请选择菜单分类">
 		</div>
 	</div>
 	<div class="weui_cell">
@@ -27,7 +29,8 @@
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text"
-				ng-model="form.MENU_NAME">
+				ng-model="form.MENU_NAME" required emptyTips="请输入菜单名称"
+				notMatchTips="请输入正确菜单名称" pattern="^[\s\S]*.*[^\s][\s\S]*$">
 		</div>
 	</div>
 	<!-- <div class="weui_cell" id="cdpx1">
@@ -51,7 +54,8 @@
 			<label class="weui_label label">功能类型</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" id="gnlx_select">
+			<input class="weui_input label-input" type="text" id="gnlx_select"
+				required emptyTips="请选择功能类型">
 		</div>
 	</div>
 	<div class="weui_cell" id="gnxz">
@@ -59,8 +63,7 @@
 			<label class="weui_label label">功能选择</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text"
-				id="gnxz_select">
+			<input class="weui_input label-input" type="text" id="gnxz_select">
 		</div>
 	</div>
 	<div class="weui_cell" id="ljdz">
@@ -69,7 +72,8 @@
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text"
-				ng-model="form.MENU_LINK">
+				ng-model="form.MENU_LINK" required emptyTips="请输入链接地址"
+				notMatchTips="请输入正确链接地址" pattern="^[\s\S]*.*[^\s][\s\S]*$">
 		</div>
 	</div>
 </div>

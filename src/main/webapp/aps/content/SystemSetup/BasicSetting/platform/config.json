@@ -4,6 +4,8 @@
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/controller.js",
 	"config": {
 		"pageTitle": "公众平台设置",
-		"findURL": "json/Dictionary_queryForList_findPlatformTypeList.json"
+		"findDictionaryURL": "json/Dictionary_queryForList_findPlatformTypeList.json",
+		"findMenuURL": "json/Menu_queryForList_loadTopMenusByAppId.json",
+		"findAllMenuURL": "json/Menu_queryForList_loadAllMenusByAppId.json"
 	}
 }

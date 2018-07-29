@@ -1,8 +1,0 @@
-{
-	"name": "Printer_setting",
-	"viewUrl": "aps/content/printer/setting/template.html",
-	"controllerUrl": "aps/content/printer/setting/controller.js",
-	"config": {
-		
-	}
-}

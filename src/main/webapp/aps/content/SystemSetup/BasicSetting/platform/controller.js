@@ -11,9 +11,13 @@
 				
 				scope.form = {}
 				
+				$scope.form.MENU_FATHER_PK = 'all'
+				
+				scope.form.FK_APP = params.AppId
+					
 				scope.toHref = function(path) {
 					if (path == 'SystemSetup/BasicSetting/platform/add') {
-						if (scope.form.PLATFORM_TYPE == undefined || scope.form.PLATFORM_TYPE == '') {
+						if (scope.form.MENU_PLAT == undefined || scope.form.MENU_PLAT == '') {
 							var modal = {
 								"title" : "提示",
 								"contentName" : "modal",
@@ -23,17 +27,16 @@
 							return;
 						} else {
 							var model = {
-								"url" : "aps/content/" + path + "/config.json?fid=" + params.fid + "&plattype=" + scope.form.PLATFORM_TYPE,
+								"url" : "aps/content/" + path + "/config.json?fid=" + params.fid + "&AppId=" + params.AppId + "&plattype=" + scope.form.MENU_PLAT,
 								"size" : "modal-lg",
 								"contentName" : "content"
 							}
-							console.info(model.url)
 							eventBusService.publish(controllerName, 'appPart.load.content', model);
 							return;
 						}
 					}
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid + "&AppId=" + params.AppId,
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
@@ -53,14 +56,25 @@
 						onChange : function(e) {
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
-								scope.form.PLATFORM_TYPE = value
+								scope.form.MENU_PLAT = value
+								
+								$httpService.post(config.findAllMenuURL, $scope.form).success(function(data) {
+									if (data.code != '0000') {
+										loggingService.info(data.data);
+									} else {
+										scope.itemList = data.data
+										scope.$apply()
+									}
+								}).error(function(data) {
+									loggingService.info('获取测试信息出错');
+								});
 							}
 						}
 					});
 				}
 
 				var init = function() {
-					$httpService.post(config.findURL, $scope.form).success(function(data) {
+					$httpService.post(config.findDictionaryURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
@@ -71,6 +85,25 @@
 								}
 							}
 							comboboxInit(values)
+							
+							if (params.plattype != undefined) {
+								
+								scope.form.MENU_PLAT = params.plattype
+								
+								$("#lx_select").val(params.plattype);
+								
+								$httpService.post(config.findAllMenuURL, $scope.form).success(function(data) {
+									if (data.code != '0000') {
+										loggingService.info(data.data);
+									} else {
+										scope.itemList = data.data
+										scope.$apply()
+									}
+								}).error(function(data) {
+									loggingService.info('获取测试信息出错');
+								});
+								
+							}
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');

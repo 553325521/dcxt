@@ -1,0 +1,25 @@
+
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting')">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	<div class="weui-header-right" style="top: 0;">
+		<div class="button_sp_area" style="padding: 12px 0;">
+			<div class="bom-radio bom-radio-big" ng-click="toHref()">授权配置</div>
+		</div>
+	</div>
+</div>
+
+<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+	<div class="weui_cell weui_cell_primary" ng-repeat="item in tagList"
+		ng-click="toAdd('SystemSetup/BasicSetting/platform', $index)">
+		<div class="weui_cell_hd">
+			<p class="label-input" ng-bind="$index + 1"></p>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<p class="label-input" ng-bind="item.APP_NAME"></p>
+		</div>
+	</div>
+</div>

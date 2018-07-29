@@ -8,7 +8,7 @@
 
 				// 定义页面标题
 				$scope.pageTitle = config.pageTitle
-
+				
 				//初始化 form 表单
 				scope.form = {};
 
