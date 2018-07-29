@@ -27,7 +27,16 @@
 						checked: false
 					}
 				];
-
+				
+				scope.toHref = function(path,shopid) {
+					var m2 = {
+						"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&shopid=" + shopid,
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
+				
 				//初始化form表单
 				scope.form = {};
 				

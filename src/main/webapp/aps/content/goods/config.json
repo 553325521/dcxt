@@ -1,0 +1,8 @@
+{
+	"name": "type_list",
+	"viewUrl": "aps/content/goods/template.html",
+	"controllerUrl": "aps/content/goods/controller.js",
+	"config": {
+
+	}
+}

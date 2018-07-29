@@ -24,13 +24,12 @@
 <title>点餐系统</title>
 <base href="<%=basePath%>" />
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="<%=basePath%>assets/weui/css/font-awesome.min.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weuix.min.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui2.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/weui3.css">
 <link rel="stylesheet" href="<%=basePath%>assets/weui/css/icon.css">
-<link rel="stylesheet"
-	href="<%=basePath%>assets/weui/css/font-awesome.min.css">
 <link rel="stylesheet"
 	href="<%=basePath%>assets/weui/css/jquery-weui.min.css">
 <link rel="stylesheet"

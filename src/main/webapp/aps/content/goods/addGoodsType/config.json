@@ -1,0 +1,8 @@
+{
+	"name": "type_setting_add",
+	"viewUrl": "aps/content/goods/addGoodsType/template.html",
+	"controllerUrl": "aps/content/goods/addGoodsType/controller.js",
+	"config": {
+
+	}
+}

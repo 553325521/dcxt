@@ -14,6 +14,15 @@
 					
 					scope.selectSize = ['大份','小份'];
 					
+					scope.toHref = function(path,shopid) {
+						var m2 = {
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&shopid=" + shopid,
+							"size" : "modal-lg",
+							"contentName" : "content"
+						}
+						eventBusService.publish(controllerName, 'appPart.load.content', m2);
+					}
+					
 					scope.show_area = [
 						{
 							value : 1,
