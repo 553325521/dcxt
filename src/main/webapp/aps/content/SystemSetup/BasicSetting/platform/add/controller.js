@@ -94,6 +94,48 @@
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
+					
+					$httpService.post(config.findAllFunctionURL, scope.form).success(function(data) {
+						if (data.code != '0000') {
+							loggingService.info(data.data);
+						} else {
+							var values = []
+							if (data.data.length > 0) {
+								for (var index in data.data) {
+									var obj = data.data[index]
+									if (obj.FUNCTION_NAME != undefined) {
+										values.push(obj.FUNCTION_NAME)
+									}
+								}
+								scope.FunList = data.data
+							}
+							
+							$("#gnxz_select").picker({
+								title : "请选择功能",
+								toolbarCloseText : '确定',
+								cols : [
+									{
+										textAlign : 'center',
+										values : values
+									}
+								],
+								onChange : function(e) {
+									if (e != undefined && e.value[0] != undefined) {
+										var value = e.value[0]
+										$.each(scope.FunList, function(index, val) {
+											if (val.FUNCTION_NAME == value) {
+												scope.form.MENU_LINK = val.FUNCTION_URL
+											}
+										})
+									}
+								}
+							});
+							
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+					
 				}
 
 				init()
@@ -146,7 +188,7 @@
 							}
 						}
 					});
-
+					
 					$("div#gnxz").hide();
 					$("div#ljdz").hide();
 				}

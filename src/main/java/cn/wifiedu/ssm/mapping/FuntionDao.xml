@@ -34,6 +34,15 @@
 		FUNCTION_SWITCH='on' ORDER BY CONVERT(FUNCTION_SORT, SIGNED)
 	</select>
 
+	<select id="findAllFunctionURL" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT FUNCTION_PK, FUNCTION_NAME, FUNCTION_URL,
+		FUNCTION_ICON, FUNCTION_SORT
+		FROM SC_FUNCTION
+		WHERE
+		FUNCTION_SWITCH='on' ORDER BY CONVERT(FUNCTION_SORT, SIGNED)
+	</select>
+
 	<!--查询功能数量 -->
 	<select id="loadCountByPid" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">

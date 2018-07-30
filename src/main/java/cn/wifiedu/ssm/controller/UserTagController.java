@@ -169,6 +169,7 @@ public class UserTagController extends BaseController {
 					pp.put("name", map.get("USER_TAG_NAME"));
 					pp.put("id", map.get("USER_TAG_ID"));
 					p.put("tag", pp);
+					System.out.println(JSON.toJSONString(p));
 					String resMsg = CommonUtil.posts(url, JSON.toJSONString(p), "utf-8");
 					if (resMsg != null) {
 						JSONObject obj = JSON.parseObject(resMsg);

@@ -8,13 +8,13 @@
 
 				// 定义页面标题
 				scope.pageTitle = config.pageTitle
-				
+
 				scope.form = {}
-				
+
 				$scope.form.MENU_FATHER_PK = 'all'
-				
+
 				scope.form.FK_APP = params.AppId
-					
+
 				scope.toHref = function(path) {
 					if (path == 'SystemSetup/BasicSetting/platform/add') {
 						if (scope.form.MENU_PLAT == undefined || scope.form.MENU_PLAT == '') {
@@ -43,6 +43,31 @@
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
 
+				scope.updateToWxPlat = function() {
+					if (scope.form.MENU_PLAT == undefined || scope.form.MENU_PLAT == '') {
+						var modal = {
+							"title" : "提示",
+							"contentName" : "modal",
+							"text" : '请先选择平台类型'
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', modal);
+						return;
+					}
+
+					$httpService.post(config.updateWxMenuForTagIdURL, $scope.form).success(function(data) {
+						var modal = {
+							"title" : "提示",
+							"contentName" : "modal",
+							"text" : data.data
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', modal);
+						return;
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+
+				}
+
 				var comboboxInit = function(values) {
 					$("#lx_select").picker({
 						title : "选择平台类型",
@@ -57,7 +82,7 @@
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
 								scope.form.MENU_PLAT = value
-								
+
 								$httpService.post(config.findAllMenuURL, $scope.form).success(function(data) {
 									if (data.code != '0000') {
 										loggingService.info(data.data);
@@ -85,13 +110,13 @@
 								}
 							}
 							comboboxInit(values)
-							
+
 							if (params.plattype != undefined) {
-								
+
 								scope.form.MENU_PLAT = params.plattype
-								
+
 								$("#lx_select").val(params.plattype);
-								
+
 								$httpService.post(config.findAllMenuURL, $scope.form).success(function(data) {
 									if (data.code != '0000') {
 										loggingService.info(data.data);
@@ -102,7 +127,7 @@
 								}).error(function(data) {
 									loggingService.info('获取测试信息出错');
 								});
-								
+
 							}
 						}
 					}).error(function(data) {

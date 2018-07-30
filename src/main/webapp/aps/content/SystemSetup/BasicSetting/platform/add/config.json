@@ -6,6 +6,7 @@
 		"pageTitle": "菜单设置",
 		"saveURL":"json/Menu_insert_addMenu.json",
 		"findURL":"json/Menu_queryForList_loadTopMenusByAppId.json",
+		"findAllFunctionURL": "json/Function_queryForList_findAllFunctionURL.json",
 		"menu":{	
 	            "buttons":[
 		        	{

@@ -68,26 +68,47 @@
 		MENU_PLAT,
 		CREATE_BY,
 		CREATE_TIME,
-		FK_APP,
 		<if test="MENU_FATHER_PK != null">
-			MENU_FATHER_PK
+			MENU_FATHER_PK,
 		</if>
+		FK_APP
 		)
 		values
 		(
 		#{UUID},
 		#{MENU_NAME},
-		#{MENU_SORT},
+		#{MENU_SORT, jdbcType=VARCHAR},
 		#{MENU_TYPE},
 		#{MENU_LINK},
 		#{MENU_PLAT},
 		#{CREATE_BY},
 		#{CREATE_TIME},
-		#{FK_APP},
 		<if test="MENU_FATHER_PK != null">
-			#{MENU_FATHER_PK}
+			#{MENU_FATHER_PK},
 		</if>
+		#{FK_APP}
 		)
 	</insert>
-
+	
+	<insert id="insertMenuApp" parameterMap="BaseParameterMap">
+		insert into SC_APP_MENU
+		(
+		APP_MENU_PK,
+		FK_APP,
+		FK_MENU_WX,
+		MENU_PLAT,
+		CREATE_BY,
+		CREATE_TIME
+		)
+		values
+		(
+		#{UUID},
+		#{FK_APP},
+		#{FK_MENU_WX},
+		#{MENU_PLAT},
+		#{CREATE_BY},
+		#{CREATE_TIME}
+		)
+	</insert>
+	
 </mapper>

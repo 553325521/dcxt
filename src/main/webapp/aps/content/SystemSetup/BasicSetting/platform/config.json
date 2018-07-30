@@ -6,6 +6,7 @@
 		"pageTitle": "公众平台设置",
 		"findDictionaryURL": "json/Dictionary_queryForList_findPlatformTypeList.json",
 		"findMenuURL": "json/Menu_queryForList_loadTopMenusByAppId.json",
-		"findAllMenuURL": "json/Menu_queryForList_loadAllMenusByAppId.json"
+		"findAllMenuURL": "json/Menu_queryForList_loadAllMenusByAppId.json",
+		"updateWxMenuForTagIdURL": "json/Menu_update_updateWxMenuForTagId.json"
 	}
 }

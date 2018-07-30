@@ -8,11 +8,14 @@
 
 				// 定义页面标题
 				$scope.pageTitle = '后台系统'
-
+					
+				scope.isShow = false	
+				
 				//初始化 form 表单
 				scope.form = {};
 
 				scope.toHref = function(path, fid) {
+					console.info(path)
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json?fid=" + fid,
 						"size" : "modal-lg",
@@ -22,20 +25,27 @@
 				}
 
 				var init = function() {
-					$httpService.post(config.findURL, $scope.form).success(function(data) {
-						if (data.code != '0000') {
-							loggingService.info(data.data);
-						} else {
-							$.each(data.data.functionList, function(index, value) {
-								value.FUNCTION_ICON = realurl + "/assets/weui/images/" + value.FUNCTION_ICON + ".png"
-							})
+					
+					if ($routeParams.LOCALPATH != undefined && $routeParams.LOCALPATH != null) {
+						scope.toHref($routeParams.LOCALPATH);
+						return;
+					} else {
+						scope.isShow = true
+						$httpService.post(config.findURL, $scope.form).success(function(data) {
+							if (data.code != '0000') {
+								loggingService.info(data.data);
+							} else {
+								$.each(data.data.functionList, function(index, value) {
+									value.FUNCTION_ICON = realurl + "/assets/weui/images/" + value.FUNCTION_ICON + ".png"
+								})
 
-							$scope.functionList = data.data.functionList;
-							$scope.$apply();
-						}
-					}).error(function(data) {
-						loggingService.info('获取测试信息出错');
-					});
+								$scope.functionList = data.data.functionList;
+								$scope.$apply();
+							}
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
+					}
 				}
 
 				init()

@@ -119,4 +119,16 @@ public class FunctionController extends BaseController {
 		}
 	}
 
+	@RequestMapping("/Function_queryForList_findAllFunctionURL")
+	public void findAllFunctionURL(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "findAllFunctionURL");
+			List<Map<String, Object>> reList = openService.queryForList(map);
+			output("0000", reList);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+
 }

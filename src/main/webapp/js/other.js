@@ -18,7 +18,7 @@ var str1 = urlstr.replace(/https?:\/\//g, "");
 var reg = /[^\/]*\/[^\/]*/g;
 var str2 = reg.exec(str1) + "";
 var appname = str2.replace(/[^\/]*\//g, "");
-if (appname == "dcxt") {
+if (appname == "dcxt" || appname == "weixin") {
 	var realurl = httpurl + '/' + appname;
 } else {
 	var realurl = httpurl;
