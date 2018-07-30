@@ -52,7 +52,7 @@
 	 						trrr.SHOP_FK = si.SHOP_ID) AS trrrr LEFT JOIN sc_service_type AS st on trrrr.SERVICETYPE_FK = st.SERVICE_PK) AS trs LEFT JOIN (
 	 						SELECT u.USER_NAME,usursr.FK_SHOP FROM (
 	 						select usur.FK_USER,usur.FK_SHOP FROM (SELECT us.FK_USER, FK_ROLE,FK_SHOP FROM sc_user_shop AS us INNER JOIN sc_user_role AS ur ON us.FK_USER = ur.FK_USER ) as usur INNER JOIN (
-	 						SELECT ROLE_PK FROM sc_sys_role WHERE ROLE_NAME="管理员") as sr on sr.ROLE_PK = usur.FK_ROLE
+	 						SELECT ROLE_PK FROM sc_sys_role WHERE ROLE_NAME="店长") as sr on sr.ROLE_PK = usur.FK_ROLE
 	 						) AS usursr INNER JOIN SC_USER AS u ON u.USER_PK = usursr.FK_USER) as un ON un.FK_SHOP = trs.SHOP_FK;
  	
  	</select>
