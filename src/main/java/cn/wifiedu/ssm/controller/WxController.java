@@ -60,7 +60,7 @@ public class WxController extends BaseController {
 			// "http://localhost:8088/dcxt/json/Qrcode_qrauth_data.json";
 			String url = CommonUtil.getPath("project_url").replace("DATA", "Qrcode_testQrcodeJieShou_data");
 			logger.info("myUrl:" + url);
-			CommonUtil.qrCode(session, map, reponse, url);
+			CommonUtil.qrCode(session, map, url);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

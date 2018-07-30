@@ -1,19 +1,14 @@
 package cn.wifiedu.ssm.util;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Base64.Encoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +18,6 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
@@ -51,58 +45,70 @@ import com.thoughtworks.xstream.XStream;
 
 import cn.wifiedu.core.util.SessionUtil;
 import cn.wifiedu.ssm.vo.MessageVo;
+import sun.misc.BASE64Encoder;
 
 public class CommonUtil {
 
 	/**
 	 * 
-	 * @param session 直接用controller里的session
-	 * @param map 参数放在此map里
-	 * @param response 直接用controller里的response
-	 * @param url 完整路径 http://m.dd.com/json/xxx_xxx_xxx.json
+	 * @param session
+	 *            直接用controller里的session
+	 * @param map
+	 *            参数放在此map里
+	 * @param url
+	 *            完整路径 http://m.dd.com/json/xxx_xxx_xxx.json
 	 */
-	public static void qrCode(HttpSession session, Map<String, Object> map, HttpServletResponse response,String url) {
+	public static String qrCode(HttpSession session, Map<String, Object> map, String url) {
 		try {
 			String redirect_qrcode = session.getId();
 			HttpSession webSession = SessionUtil.getSession(redirect_qrcode);
-			if(null == webSession){
+			if (null == webSession) {
 				SessionUtil.addSession(session);
 			}
-			
+
 			String params = "";
-			if(map != null) {
+			if (map != null) {
 				for (Map.Entry<String, Object> entry : map.entrySet()) {
-					   String key = entry.getKey().toString();
-					   if(!key.equals("OperatingSystem") && !key.equals("userInfo") && !key.equals("AccessIp") && !key.equals("token") && !key.equals("Browser")) {
-						   String value = "NULL";
-						   if(entry.getValue() != null) {
-							  value = entry.getValue().toString();
-						   }
-						   params = key+"_"+value + "-" + params;
-					   }
+					String key = entry.getKey().toString();
+					if (!key.equals("OperatingSystem") && !key.equals("userInfo") && !key.equals("AccessIp")
+							&& !key.equals("token") && !key.equals("Browser")) {
+						String value = "NULL";
+						if (entry.getValue() != null) {
+							value = entry.getValue().toString();
+						}
+						params = key + "_" + value + "-" + params;
+					}
 				}
-				params = params.substring(0, params.length()-1);
-				params = params + "-" + "rEdIrEcTuRi_" + URLEncoder.encode(url,"UTF-8");
-			}else {
+				params = params.substring(0, params.length() - 1);
+				params = params + "-" + "rEdIrEcTuRi_" + URLEncoder.encode(url, "UTF-8");
+			} else {
 				params = "0";
 			}
 
-			BufferedImage image = QRCode.genBarcode(CommonUtil.getPath("project_url").replace("DATA", "Qrcode_qrCommon_data")+"?redirect_qrcode="+redirect_qrcode+"&params="+params,200, 200);
-			response.setContentType("image/png");  
-			response.setHeader("pragma", "no-cache");
-			response.setHeader("cache-control", "no-cache");
-			response.reset();
-			ImageIO.write(image, "png", response.getOutputStream());
+			BufferedImage image = QRCode
+					.genBarcode(CommonUtil.getPath("project_url").replace("DATA", "Qrcode_qrCommon_data")
+							+ "?redirect_qrcode=" + redirect_qrcode + "&params=" + params, 200, 200);
+
+			ByteArrayOutputStream os = new ByteArrayOutputStream();// 新建流。
+
+			ImageIO.write(image, "png", os);
+
+			byte b[] = os.toByteArray();// 从流中获取数据数组。
+
+			String base64Url = new BASE64Encoder().encode(b);
+
+			return base64Url;
+
 		} catch (WriterException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}  
-		
+		}
+
+		return null;
+
 	}
-	
+
 	public static Map<String, Object> xmlToMap(HttpServletRequest request) throws IOException, DocumentException {
 		Map<String, Object> map = new HashMap<String, Object>();
 		SAXReader reader = new SAXReader();
