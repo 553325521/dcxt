@@ -66,16 +66,16 @@
 				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
 					<div ng-switch on = "{{item.TRADE_TYPE}}">
 						<span ng-switch-when = "0">代付</span>
-						<span ng-switch-when = "1">提成</span>
+						<!-- <span ng-switch-when = "1">提成</span> -->
 						<span ng-switch-when = "2">提现</span>
 						<span ng-switch-when = "3">充值</span>
+						<span ng-switch-default>提成</span>
 					</div>
 					
 					<div ng-switch on = "{{item.TRADE_TYPE}}">
 						<span ng-switch-when = "0">支出</span>
-						<span ng-switch-when = "1">收入</span>
 						<span ng-switch-when = "2">支出</span>
-						<span ng-switch-when = "3">收入</span>
+						<span ng-switch-default>收入</span>
 					</div>
 					
 					
@@ -84,8 +84,10 @@
 					<div>
 						<span>{{item.SHOP_FK==0?"总店":item.SHOP_NAME}}</span>
 					</div>
-					<div >
-						<span>{{item.TRADE_MONEY}}</span>
+					<div ng-switch on = "{{item.TRADE_TYPE}}">
+						<span ng-switch-when = "0">-{{item.TRADE_MONEY}}.00</span>
+						<span ng-switch-when = "2">-{{item.TRADE_MONEY}}.00</span>
+						<span ng-switch-default>+{{item.TRADE_MONEY}}.00</span>
 					</div>
 				</div>
 				<div class="weui_cell_bd " dir="rtl">
