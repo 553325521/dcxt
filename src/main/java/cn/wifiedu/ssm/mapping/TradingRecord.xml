@@ -21,6 +21,7 @@
  			TRADE_TIME,
  			TRADE_MONEY,
  			TRADE_TYPE, 
+ 			SHOP_PURCHASE_FK,
  			CREATE_BY, 
  			CREATE_TIME
  		) 
@@ -32,9 +33,27 @@
  			NOW(),
  			#{TRADE_MONEY},
  			#{TRADE_TYPE},
+ 			#{SHOP_PURCHASE_ID},
  			#{CREATE_BY},
  			NOW()
  		)
  	
  	</insert>
+ 	
+ 	<!-- 根据代理商id查提成记录 -->
+ 	<select id="findCommissionRecordList" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+ 	SELECT trs.CREATE_TIME,trs.TRADE_MONEY, trs.TRADE_TYPE, trs.TRANSACTION_MONEY,trs.SHOP_NAME,trs.SERVICE_TYPE,un.USER_NAME FROM (
+	 		SELECT trrrr.SHOP_FK, trrrr.CREATE_TIME, trrrr.TRADE_MONEY, trrrr.TRADE_TYPE, trrrr.TRANSACTION_MONEY, trrrr.SHOP_NAME, st.SERVICE_TYPE FROM (
+	 			SELECT trrr.*, si.SHOP_NAME, si.SERVICETYPE_FK FROM (
+	 				SELECT trr.SHOP_FK, trr.CREATE_TIME, trr.TRADE_MONEY, trr.TRADE_TYPE, spr.TRANSACTION_MONEY FROM (
+	 					SELECT tr.SHOP_FK, tr.CREATE_TIME, tr.TRADE_MONEY, tr.TRADE_TYPE, tr.SHOP_PURCHASE_FK FROM 
+	 						sc_transaction_record  tr WHERE tr.USER_FK = #{USER_ID} AND tr.TRADE_TYPE like "1_") as trr LEFT JOIN 
+	 						sc_shop_purchase_record as spr ON trr.SHOP_PURCHASE_FK = spr.TRANSACTION_PK) as trrr LEFT JOIN sc_shop_info AS si ON 
+	 						trrr.SHOP_FK = si.SHOP_ID) AS trrrr LEFT JOIN sc_service_type AS st on trrrr.SERVICETYPE_FK = st.SERVICE_PK) AS trs LEFT JOIN (
+	 						SELECT u.USER_NAME,usursr.FK_SHOP FROM (
+	 						select usur.FK_USER,usur.FK_SHOP FROM (SELECT us.FK_USER, FK_ROLE,FK_SHOP FROM sc_user_shop AS us INNER JOIN sc_user_role AS ur ON us.FK_USER = ur.FK_USER ) as usur INNER JOIN (
+	 						SELECT ROLE_PK FROM sc_sys_role WHERE ROLE_NAME="管理员") as sr on sr.ROLE_PK = usur.FK_ROLE
+	 						) AS usursr INNER JOIN SC_USER AS u ON u.USER_PK = usursr.FK_USER) as un ON un.FK_SHOP = trs.SHOP_FK;
+ 	
+ 	</select>
 </mapper>

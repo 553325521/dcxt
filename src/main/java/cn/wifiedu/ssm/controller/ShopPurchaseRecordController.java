@@ -16,14 +16,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.chainsaw.Main;
 import org.springframework.context.annotation.Scope;
 	import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
 
 import cn.wifiedu.core.controller.BaseController;
 	import cn.wifiedu.core.service.OpenService;
-	import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.StringDeal;
 
 		/**
 		 * 
@@ -41,6 +46,9 @@ import cn.wifiedu.core.controller.BaseController;
 
 			@Resource
 			OpenService openService;
+			
+			@Resource
+			PlatformTransactionManager transactionManager;
 
 			public OpenService getOpenService() {
 				return openService;
@@ -64,9 +72,12 @@ import cn.wifiedu.core.controller.BaseController;
 			 * @return void 
 			 *
 			 */
-			
 			@RequestMapping("/ShopPurchaseRecord_insert_insertShopPurchaseRecord")
 			public void addTransactionRecord(HttpServletRequest request,HttpSession seesion){
+				DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+			    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+			    TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+		
 				try {
 					Map<String, Object> map = getParameterMap();
 					
@@ -94,6 +105,15 @@ import cn.wifiedu.core.controller.BaseController;
 						output("9999", " 数据异常！   ");
 						return;
 					}
+					//判断余额够不够，够得话直接付款，不够的话微信支付
+					//TODO
+					
+					//微信生成订单
+					
+					
+					
+					
+					
 					//检验完毕，开始插入流程
 					//先获取当前过期时间
 					map.put("sqlMapId", "SelectByPrimaryKey");
@@ -127,9 +147,9 @@ import cn.wifiedu.core.controller.BaseController;
 					boolean buyResult = openService.update(map);
 					
 					if(!buyResult){
-						output("9999", " 购买失败！   ");
-						return;
+						throw new Exception("系统异常");
 					}
+					
 					
 					//店铺过期时间更新成功，开始插入购买服务表
 					map.put("sqlMapId","insertShopPurchaseRecord");
@@ -138,42 +158,64 @@ import cn.wifiedu.core.controller.BaseController;
 					map.put("SERVICE_FK", map.get("SERVICE_PK"));
 					map.put("CREATE_BY", "admin");
 					
-					String insertResult = openService.insert(map);
+					String shopPurchaseId = openService.insert(map);
 					
-					if(insertResult == null){
-						output("9999", " 购买失败！   ");
-						return;
+					if(shopPurchaseId == null){
+						throw new Exception("系统异常");
 					}
+					
 					
 					
 					//插入购买记录成功，开始插入提成记录表
 					//获取一下是代付还是续费
 					String TRANSACTION_TYPE = (String) map.get("TRANSACTION_TYPE");
-					
+					//先清除一下map，感觉里边的数据太乱了，避免重复
 					map.clear();
 					
-					map.put("sqlMapId","insertTradingRecord");
-					//USER_ID还没有
-					map.put("TRADE_MONEY", needMoney);
-					
-					String TRADE_TYPE = "11";//续费提成
-					if("0".equals(TRANSACTION_TYPE)){
-						TRADE_TYPE = "10";//代付提成
-					}
+					//插入记录表之前先查询代理商的userid
 					map.put("SHOP_ID",shopId);
+					//先判断当前登录是不是代理商，是的话就直接获取userid
+					
+					String agentUserId = "";
+					if("1".equals(TRANSACTION_TYPE)){
+						//是代理商，直接
+						map.put("sqlMapId","selectAgentIdByShopId");
+						Map agentUserIdMap = (Map) openService.queryForObject(map);
+						agentUserId = (String) agentUserIdMap.get("FK_USER");
+					}else{
+						map.put("sqlMapId","selectAgentIdByShopId");
+						Map agentUserIdMap = (Map) openService.queryForObject(map);
+						agentUserId = (String) agentUserIdMap.get("FK_USER");
+					}
+					
+					
+					
+					
+					//正式开始插入提成记录表
+					map.put("sqlMapId","insertTradingRecord");
+					map.put("USER_ID", agentUserId);
+					map.put("SHOP_PURCHASE_ID", shopPurchaseId);
+					
+					Integer commissionMoney =  (int)(needMoney * 0.3);//TODO 还没处理提成比例,暂时是写死的
+					map.put("TRADE_MONEY", commissionMoney);
+					
+					//交易类型，10 代付提成  11续费提成
+					String TRADE_TYPE = "0".equals(TRANSACTION_TYPE) ? "10" : "11";
+					
 					map.put("TRADE_TYPE", TRADE_TYPE);
 					map.put("CREATE_BY", "admin");
 					
 					String insert = openService.insert(map);
-					
+
 					if (insert != null) {
 						output("0000", "支付成功!");
+						transactionManager.commit(status);
 						return;
 					}
-					output("9999", " 系统异常   ");
-					return;
+					throw new Exception("系统异常");
 				} catch (Exception e) {
 					output("9999", " Exception ", e);
+					transactionManager.rollback(status);
 					return;
 				}
 			}

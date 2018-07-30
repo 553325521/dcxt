@@ -1,12 +1,12 @@
 
 	(function() {
-		define(['jqueryweui'], function() {
+		define(['jqueryweui','jweixin'], function() {
 			return [
 				'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 				function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
 					scope = $scope;
-					scope.pageShow = "False"
-					scope.form = {}
+					scope.pageShow = "False";
+					scope.form = {};
 					scope.pageTitle = config.pageTitle;
 					scope.fromUrl = params.fromUrl;
 					scope.form.SHOP_ID = params.shopid;
@@ -14,7 +14,6 @@
 					if(scope.fromUrl == "ActingCustomerManagement"){
 						scope.form.TRANSACTION_TYPE = 0;
 					}
-					
 					
 					//页面初始化
 					var init = function() {
@@ -24,7 +23,7 @@
 							} else {
 								//服务类型
 								scope.service_type = data.data;
-								scope.pageShow = "True"
+								scope.pageShow = "True";
 								//转换以版本类型为key的map字典
 								angular.forEach(scope.service_type,function(data,index,array){
 									service_type_dictionaries[data.SERVICE_TYPE] = data;
@@ -54,7 +53,7 @@
 					buying_month = {"1月":1,"2月":2,"3月":3,"4月":4,"5月":5,"6月":6,"7月":7,"8月":8,"9月":9,"1年":12,"2年":24,"3年":36,"4年":48,"5年":60}
 					
 					//当前选择的服务版本
-					scope.current_service = []
+					scope.current_service = [];
 					//以版本类型为key的map字典
 					service_type_dictionaries = [];
 					//平台优惠策略
@@ -121,7 +120,6 @@
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 					}
 					
-					
 					scope.toHref = function(path) {
 						var m2 = {
 							"url" : "aps/content/" + path + "/config.json",
@@ -134,20 +132,36 @@
 					// 弹窗确认事件
 					eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 						$httpService.post(config.saveUrl, $scope.form).success(function(data) {
-							if (data.code != '0000') {
+							if (data.code == '0000') {
 								var m2 = {
-									"title" : "提示",
-									"contentName" : "modal",
-									"text" : data.data
-								}
-							} else {
+										"title" : "提示",
+										"contentName" : "modal",
+										"text" : data.data,
+										"toUrl" : "aps/content/ActingCustomerManagement/config.json"
+									}
+							} else if(data.code == '1111'){
+								//发起微信支付
+//								console.info(data)
+//								
+//								if (typeof WeixinJSBridge == "undefined"){
+//									   if( document.addEventListener ){
+//									       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+//									   }else if (document.attachEvent){
+//									       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+//									       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+//									   }
+//									}else{
+//									   onBridgeReady();
+//									}
+								
+							}else{
 								var m2 = {
-									"title" : "提示",
-									"contentName" : "modal",
-									"text" : data.data,
-									"toUrl" : "aps/content/ActingCustomerManagement/config.json"
-								}
+										"title" : "提示",
+										"contentName" : "modal",
+										"text" : data.data
+									}
 							}
+							
 							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
@@ -180,12 +194,36 @@
 							$(this).siblings().removeClass("dcxt-shopselect-on");
 							scope.current_service =  scope.service_type[$(this)[0].dataset.value];
 							//页面数据变化，刷新数据
-							scope.refreshPage()
+							scope.refreshPage();
 						})
 						
 						document.getElementById("buying_select").onchange = function(event) {
-							scope.refreshPage()
+							scope.refreshPage();
 						};
+						
+						//微信支付操作
+//						function onBridgeReady(){
+//							   WeixinJSBridge.invoke(
+//							      'getBrandWCPayRequest', {
+//							         "appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入     
+//							         "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
+//							         "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
+//							         "package":"prepay_id=u802345jgfjsdfgsdg888",     
+//							         "signType":"MD5",         //微信签名方式：     
+//							         "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
+//							      },
+//							      function(res){
+//							      if(res.err_msg == "get_brand_wcpay_request:ok" ){
+//							      // 使用以上方式判断前端返回,微信团队郑重提示：
+//							            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+//							      } 
+//							   }); 
+//							}
+//							
+						
+						
+						
+					
 					}
 				}
 			];

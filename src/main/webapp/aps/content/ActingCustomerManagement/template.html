@@ -74,10 +74,10 @@
 	</div>
 
 
-	<div class="weui_cells tablessetting-font-style dcxt-font-overflow" style="margin-top:0px;">
+	<div class="weui_cells tablessetting-font-style dcxt-font-overflow" style="margin-top:0px;" ng-show="pageShow">
 		<div class="weui_cell slidelefts" ng-repeat="item in customer_information_list | filter:input_value">		
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="padding:2px 15px; display:flex;transform: translateX(0px);")" ng-click="toHref('ActingCustomerManagement/addBusiness','item.id')">	
-				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
+				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;max-width:28%;">
 					<div >
 						<span>{{item.USER_SN}}</span>
 					</div>
@@ -122,5 +122,11 @@
 		</div>
 		
 	</div>
+	
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+			
 </div>
 

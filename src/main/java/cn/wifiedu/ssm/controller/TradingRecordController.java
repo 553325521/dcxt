@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -57,5 +59,33 @@ public class TradingRecordController extends BaseController {
 			e.printStackTrace();
 			output("9999","查询失败");
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @date 2018年7月30日 下午9:09:58 
+	 * @author lps
+	 * 
+	 * @Description: 根据代理商id查询提成记录
+	 * @param request
+	 * @param seesion 
+	 * @return void 
+	 *
+	 */
+	@RequestMapping("/TradingRecord_query_findCommissionRecordList")
+	public void findCommissionRecordList(HttpServletRequest request,HttpSession seesion){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("USER_ID","4b8cea73b03a4ddfacf8fbaf7a31028d");
+			map.put("sqlMapId", "findCommissionRecordList");
+			List<Map<String, Object>> reMap  = openService.queryForList(map);
+			output("0000",reMap);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			output("9999","查询失败");
+		}
+		
 	}
 }

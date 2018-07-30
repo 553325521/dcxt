@@ -3,6 +3,6 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/commissionRecord/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/commissionRecord/controller.js",
 	"config": {
-
+		"findURL" : "json/TradingRecord_query_findCommissionRecordList.json"
 	}
 }

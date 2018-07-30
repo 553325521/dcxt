@@ -1,6 +1,14 @@
+<style>
+	.slidelefts .weui_cell_bd:active{
+		background-color:#ececec;
+	}
+	.slidelefts .weui_cell_bd{
+		background-color: inherit;
+	}
+</style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left">
-			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+		<div href="#" class="weui-header-left" ng-click="toHref('welcome','')">
+			<a class="icon icon-109" ></a>
 		</div>
 
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>

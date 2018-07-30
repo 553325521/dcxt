@@ -60,7 +60,7 @@
 	</div>
 
 
-	<div class="weui_cells tablessetting-font-style  dcxt-font-overflow" style="margin-top:0px;">
+	<div class="weui_cells tablessetting-font-style  dcxt-font-overflow" style="margin-top:0px;" ng-show="pageShow">
 		<div class="weui_cell" ng-repeat="item in trading_Record_List | filter:input_value" style="padding:0;">		
 			<div class="weui_cell_bd weui_cell_primary animated " style="padding:2px 15px; display:flex;transform: translateX(0px);">	
 				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
@@ -75,6 +75,7 @@
 					<div ng-switch on = "{{item.TRADE_TYPE}}">
 						<span ng-switch-when = "0">支出</span>
 						<span ng-switch-when = "2">支出</span>
+						<span ng-switch-when = "3">收入</span>
 						<span ng-switch-default>收入</span>
 					</div>
 					
@@ -95,15 +96,19 @@
 						<span>{{item.SHOP_FK==0?"总店":item.SERVICE_TYPE}}</span>
 					</div>
 					<div >
-						<span>{{item.TRADE_TIME}}</span>
+						<span>{{item.TRADE_TIME | limitTo:10}}</span>
 					</div>
 				</div>	
 			</div>
 					
 		</div>
-		
-		
+	
 		
 	</div>
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+			
 </div>
 

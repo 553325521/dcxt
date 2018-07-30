@@ -141,5 +141,8 @@
 	color:#888;
 }
 	
+.dcxt_active:active{
+	background-color:#ececec;
+}
 
 /** end **/

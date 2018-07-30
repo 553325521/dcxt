@@ -42,7 +42,7 @@
 	</div>
 </div>
 
-<div style="position:absolute;top:44px;width:100%;">
+<div style="position:absolute;top:44px;width:100%;" >
 	 <div class="searchbar_wrap" style="display:flex;background-color:#fff;"> 
 		<div class="weui_search_bar" style="background-color:#fff; height:40px;width:100%;">
 			<form class="weui_search_outer" style="border-radius: 0;border:0;">
@@ -59,35 +59,34 @@
 	</div>
 
 
-	<div class="weui_cells tablessetting-font-style  dcxt-font-overflow" style="margin-top:0px;">
-		<div class="weui_cell" ng-repeat="item in tables_area_list | filter:input_value" style="padding:0;">		
+	<div class="weui_cells tablessetting-font-style  dcxt-font-overflow" style="margin-top:0px;" ng-show="pageShow">
+		<div class="weui_cell" ng-repeat="item in commission_record_list | filter:input_value" style="padding:0;">		
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd" style="padding:2px 15px; display:flex;transform: translateX(0px);">	
 				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
 					<div >
-						<span>{{item.id}}</span>
+						<span>{{item.USER_NAME}}</span>
 					</div>
 					
-					<div >
-						<span>{{item.1}}</span>
+					<div>
+						<span>{{item.TRADE_TYPE == 10  ? '代付' : '续费'}}{{item.TRANSACTION_MONEY}}.00</span>
 					</div>
-					
 					
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
 					<div >
-						<span>{{item.2}}</span>
+						<span>{{item.SHOP_NAME}}</span>
 					</div>
 					
 					<div >
-						<span>{{item.3}}</span>
+						<span>提成	{{item.TRADE_MONEY}}.00</span>
 					</div>
 				</div>
 				<div class="weui_cell_bd " dir="rtl">
 					<div >
-						<span>{{item.4}}</span>
+						<span>{{item.SERVICE_TYPE}}</span>
 					</div>
 					<div >
-						<span>{{item.5}}</span>
+						<span>{{item.CREATE_TIME | limitTo:10}}</span>
 					</div>
 				</div>	
 			</div>
@@ -96,6 +95,10 @@
 		
 		
 		
+	</div>
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
 	</div>
 </div>
 
