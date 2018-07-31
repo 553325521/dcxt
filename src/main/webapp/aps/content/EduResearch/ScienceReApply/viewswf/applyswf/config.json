@@ -1,9 +1,0 @@
-{
-    "name": "viewswf_applyswf",
-    "viewUrl": "aps/content/EduResearch/ScienceReApply/viewswf/applyswf/template.html",
-    "controllerUrl": "aps/content/EduResearch/ScienceReApply/viewswf/applyswf/controller.js",
-    "config": 
-    {
-           
-	}
-}
