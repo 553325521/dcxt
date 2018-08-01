@@ -1,0 +1,55 @@
+<style>
+	.slidelefts .weui_cell_bd:active{
+		background-color:#ececec;
+	}
+	.slidelefts .weui_cell_bd{
+		background-color: inherit;
+	}
+</style>
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('welcome','')">
+			<a class="icon icon-109" ></a>
+		</div>
+
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+ 
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="addOrChange('')">添加</div>
+				<div class="bom-radio" id="attend2" ng-click="addOrChange('')">添加</div>
+				<div class="bom-radio" id="attend2" ng-click="addOrChange('')">添加</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;">
+		<div class="weui_cell slidelefts" ng-repeat="item in tables_area_list | orderBy:'pxxh'" >		
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="display:flex;transform: translateX(0px);" ng-click="toHref('DailyManagement/tables/catelist/tableslist','{{item.id}}')">	
+				<div class="weui_cell_bd" style="margin-right:10px;">
+					<span>{{$index + 1}}</span>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<span>{{item.name}}</span><br/>
+					<font size="0.5" color="#CCCCCC">所有人员/限星期/折扣/全部商品/单时段</font>
+				</div>
+				<div class="weui_cell_bd tablessetting-small-font {{item.status == 0 ? 'tablessetting-red-font' : 'tablessetting-gray-font'}}" >
+					<span>{{item.status == 1 ? '开启' : '关闭'}}</span>
+				</div>	
+			</div>
+			<div class="slideleft">
+	        	<span style="background:#ccc;color:#fff" ng-click="addOrChange($index)">修改</span>
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="tablesDelete($index)">删除</span>
+       		</div>	  
+		</div>
+		
+		
+		<div class="weui_cell">
+			<div class="weui_cell_bd weui_cell_primary" dir="rtl">
+					<span style="color:#B2B2B2;font-size: 11px;" >
+						优惠买单在有效期和有效时段不冲突的情况下可以开启多个</span>
+			</div>
+		</div>
+		
+	</div>
+
+		

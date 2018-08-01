@@ -1,0 +1,8 @@
+{
+	"name": "advnce_favourablePay_edit",
+	"viewUrl": "aps/content/advnceSet/BasicSetting/favourablePay/edit/template.html",
+	"controllerUrl": "aps/content/advnceSet/BasicSetting/favourablePay/edit/controller.js",
+	"config": {
+		"pageTitle": "优惠买单"
+	}
+}
