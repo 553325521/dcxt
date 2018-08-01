@@ -208,14 +208,14 @@ import cn.wifiedu.ssm.util.StringDeal;
 					String insert = openService.insert(map);
 
 					if (insert != null) {
-						output("0000", "支付成功!");
 						transactionManager.commit(status);
+						output("0000", "支付成功!");
 						return;
 					}
 					throw new Exception("系统异常");
 				} catch (Exception e) {
-					output("9999", " Exception ", e);
 					transactionManager.rollback(status);
+					output("9999", " Exception ", e);
 					return;
 				}
 			}
