@@ -70,14 +70,20 @@ public class FunctionController extends BaseController {
 	 *            session
 	 * @return void
 	 * @date 2018年7月17日 - 上午10:57:23
-	 * @description: 根据用户权限查询对应列表
+	 * @description: 根据用户权限查询对应列表  		2018年8月2日21:43:45 修改 lps //查询该用户在该店铺对应权限的菜单列表
 	 */
 	@RequestMapping("/Function_queryForList_loadFunctionListByUserRole")
 	public void loadFunctionListByUserRole(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
-			map.put("sqlMapId", "loadFunctionListByUserRole");
-			List<Map<String, Object>> reList = openService.queryForList(map);
+			
+			map.put("sqlMapId","selectFunctionByUserAndShop");
+			//下边两个从session获取
+			map.put("SHOP_ID", "30f1bbd3cbbe45d5b34cb8991ca5a886");
+			map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
+			
+			List<Map<String,Object>> reList = openService.queryForList(map);
+			
 			map.put("functionList", reList);
 			output("0000", map);
 		} catch (Exception e) {

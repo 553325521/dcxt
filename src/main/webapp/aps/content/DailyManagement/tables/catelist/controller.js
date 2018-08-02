@@ -9,7 +9,7 @@
 				scope.pageShow = "False";
 
 				// 定义页面标题
-				scope.pageTitle = '区域分类'
+				scope.pageTitle = config.pageTitle;
 
 				// 餐桌区域数据源
 				scope.tables_area_list = [];

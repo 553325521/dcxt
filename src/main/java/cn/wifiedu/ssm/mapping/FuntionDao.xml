@@ -12,12 +12,10 @@
 		FROM SC_FUNCTION
 		<where>
 			<if test="fid != null">
-				AND FUNCTION_PK_PID = #{fid}
+				AND FUNCTION_PK_PID IN #{flist}
 			</if>
-			<if test="fid == null">
-				AND FUNCTION_PK_PID IS
-				NULL
-			</if>
+			AND FUNCTION_PK_PID IS
+			NULL
 			AND FUNCTION_SWITCH='on'
 		</where>
 		ORDER BY CONVERT(FUNCTION_SORT, SIGNED)

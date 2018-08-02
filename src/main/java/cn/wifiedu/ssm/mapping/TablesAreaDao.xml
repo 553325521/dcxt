@@ -102,9 +102,9 @@
 		;
 	</update>
 	
-	<select id="findTablesAreaCount" parameterMap="BaseParameterMap"  resultMap="BaseResultMap">
+	<select id="findTablesAreaCountByShopId" parameterMap="BaseParameterMap"  resultMap="BaseResultMap">
 	
-		SELECT COUNT(TABLES_AREA_PXXH) AS area_count FROM sc_tables_area;
+		SELECT COUNT(TABLES_AREA_PXXH) AS area_count FROM sc_tables_area WHERE SHOP_FK = #{SHOP_ID};
 	
 	</select>
 	
