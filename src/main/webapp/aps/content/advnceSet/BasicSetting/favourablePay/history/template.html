@@ -1,0 +1,104 @@
+<style>
+	.customermanagement_navbar div{
+		border-left:1px solid #F0F0F0;
+		padding: 9px 0;
+		display:flex;
+		justify-content: center;
+        font-size: 15px;
+	}
+	
+	.weui_search_bar {
+    	padding: 6px 6px;
+	}
+	
+	.weui_search_outer:after {
+	    border: 0px solid #e6e6ea;
+	}
+	
+	.weui_search_outer:after {
+   
+    	border-radius: 0px;
+   
+	}
+	
+	.weui_cell:active{
+		background-color:#ececec
+	}
+	
+</style>
+
+<div style="position:absolute;top:0px;width:100%;">
+	 <div class="searchbar_wrap" style="display:flex;background-color:#fff;"> 
+		<div class="weui_search_bar" style="background-color:#fff; height:40px;width:100%;">
+			<form class="weui_search_outer" style="border-radius: 0;border:0;">
+				<div class="weui_search_inner location-center" style="padding-left:37px;">
+					<i class="weui_icon_search"></i>
+					<span style='height:60%;width:1px;background-color:#f3f3f3; position: absolute;left: 30px;'></span>
+					<input type="search" class="weui_search_input tablessetting-small-font" id="weui_search_input" placeholder="输入关键字搜索" required 
+						ng-model="input_value" >
+					<a href="javascript:" class="weui_icon_clear"></a>
+				</div>
+			</form>
+			<div class="location-center" style="text-align:center;width:25%;height:auto;">
+					<div class="bom-radio" id="attend2" ng-click="toHref('ActingCustomerManagement/addBusiness','')" style="transform: translateX(0);width:auto;padding: 0 13px;">
+						<span  style="font-size:12px;">
+							搜索
+						</span>
+					</div>
+			</div>
+	 	</div>
+	</div>
+
+
+	<div class="weui_cells tablessetting-font-style  dcxt-font-overflow" style="margin-top:0px;" ng-show="pageShow">
+		<div class="weui_cell" ng-repeat="item in trading_Record_List | filter:input_value" style="padding:0;">		
+			<div class="weui_cell_bd weui_cell_primary animated " style="padding:2px 15px; display:flex;transform: translateX(0px);">	
+				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;">
+					<div ng-switch on = "{{item.TRADE_TYPE}}">
+						<span ng-switch-when = "0">12789077689</span>
+						<!-- <span ng-switch-when = "1">提成</span> -->
+						<span ng-switch-when = "2">12789077689</span>
+						<span ng-switch-when = "3">12789077689</span>
+						<span ng-switch-default>12789077689</span>
+					</div>
+					
+					<div ng-switch on = "{{item.TRADE_TYPE}}">
+						<span ng-switch-when = "0">应付128.58</span>
+						<span ng-switch-when = "2">应付128.58</span>
+						<span ng-switch-when = "3">应付128.58</span>
+						<span ng-switch-default>应付128.58</span>
+					</div>
+					
+					
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<div>
+						<span>2018-05-13<!-- {{item.SHOP_FK==0?"总店":item.SHOP_NAME}} --></span>
+					</div>
+					<div ng-switch on = "{{item.TRADE_TYPE}}">
+						<!-- <span ng-switch-when = "0">-{{item.TRADE_MONEY}}.00</span>
+						<span ng-switch-when = "2">-{{item.TRADE_MONEY}}.00</span> -->
+						<span ng-switch-default>优惠1.35</span>
+					</div>
+				</div>
+				<div class="weui_cell_bd " dir="rtl">
+					<div >
+						<span>随机减</span>
+					</div>
+					<div >
+						<span>实付127.23</span>
+					</div>
+				</div>	
+			</div>
+					
+		</div>
+	
+		
+	</div>
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+			
+</div>
+

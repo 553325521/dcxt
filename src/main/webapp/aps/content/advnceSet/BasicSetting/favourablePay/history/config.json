@@ -1,0 +1,9 @@
+{
+	"name": "advnce_favourablePay_history",
+	"viewUrl": "aps/content/advnceSet/BasicSetting/favourablePay/history/template.html",
+	"controllerUrl": "aps/content/advnceSet/BasicSetting/favourablePay/history/controller.js",
+	"config": {
+		"pageTitle": "优惠买单记录",
+		"fingTradingRecordURL":"json/TradingRecord_select_fingTradingRecord.json"
+	}
+}
