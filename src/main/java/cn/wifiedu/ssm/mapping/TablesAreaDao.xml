@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="tablesArea" >
+  	<resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+ 	<parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+	<select id="selectTablesArea" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			TABLES_AREA_PK, TABLES_AREA_NAME, TABLES_AREA_NUM, TABLES_AREA_STATUS, TABLES_AREA_PXXH, TABLES_AREA_DESC
+		FROM
+			sc_tables_area
+		WHERE
+			SHOP_FK = #{SHOP_ID} ORDER BY CAST(TABLES_AREA_PXXH AS SIGNED integer);
+	</select>
+	
+	<!-- 根绝区域id删除指定区域 -->
+	<delete id="removeTablesAreaById" parameterMap="BaseParameterMap">
+		DELETE FROM 
+			sc_tables_area 
+		WHERE
+			TABLES_AREA_PK = #{TABLES_AREA_ID}
+	</delete>
+	  
+	<select id="findTablesAreaById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			TABLES_AREA_PK, TABLES_AREA_NAME, TABLES_AREA_NUM, TABLES_AREA_STATUS, TABLES_AREA_PXXH, TABLES_AREA_DESC
+		FROM
+			sc_tables_area
+		WHERE
+			TABLES_AREA_PK = #{TABLES_AREA_ID}
+	</select>
+	  
+	<insert id="insertTablesArea" parameterMap="BaseParameterMap">
+		INSERT INTO sc_tables_area
+		(
+			TABLES_AREA_PK,
+			SHOP_FK,
+			TABLES_AREA_NAME,
+			TABLES_AREA_NUM,
+			TABLES_AREA_STATUS,
+			TABLES_AREA_PXXH,
+			TABLES_AREA_DESC,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		VALUES
+		(
+			#{UUID},
+			#{SHOP_ID},
+			#{TABLES_AREA_NAME},
+			#{TABLES_AREA_NUM},
+			#{TABLES_AREA_STATUS},
+			#{TABLES_AREA_PXXH},
+			#{TABLES_AREA_DESC},
+			NOW(),
+			#{CREATE_BY}
+		)
+	
+	</insert>
+	
+	<!-- 根绝ID修改指定区域 -->
+	<update id="updateTablesAreaById" parameterMap="BaseParameterMap">
+		UPDATE sc_tables_area SET TABLES_AREA_NAME = #{TABLES_AREA_NAME}, 
+			TABLES_AREA_NUM = #{TABLES_AREA_NUM}, TABLES_AREA_STATUS = #{TABLES_AREA_STATUS},
+			TABLES_AREA_PXXH = #{TABLES_AREA_PXXH},
+			TABLES_AREA_DESC = #{TABLES_AREA_DESC},
+			UPDATE_TIME = NOW(),
+			UPDATE_BY = #{UPDATE_BY}
+		WHERE 
+			TABLES_AREA_PK = #{TABLES_AREA_ID}
+	</update>
+	
+	<update id="updateTablesAreaPxxhAddById" parameterMap="BaseParameterMap">
+		UPDATE 
+			sc_tables_area 
+		SET 
+			TABLES_AREA_PXXH = CAST(TABLES_AREA_PXXH AS SIGNED integer) + 1 
+		WHERE 
+			SHOP_FK = #{SHOP_ID} 
+		AND 
+			CAST(TABLES_AREA_PXXH AS SIGNED integer) >= CAST(#{SMALL_TABLES_AREA_PXXH} AS SIGNED integer)
+		<if test="BIG_TABLES_AREA_PXXH != null and BIG_TABLES_AREA_PXXH != ''">
+			AND 
+				CAST(TABLES_AREA_PXXH AS SIGNED integer) &lt; CAST(#{BIG_TABLES_AREA_PXXH} AS SIGNED integer)
+		</if>
+		;
+	</update>
+	
+	<update id="updateTablesAreaPxxhSubById" parameterMap="BaseParameterMap">
+		UPDATE 
+			sc_tables_area 
+		SET 
+			TABLES_AREA_PXXH = CAST(TABLES_AREA_PXXH AS SIGNED integer) - 1 
+		WHERE 
+			SHOP_FK = #{SHOP_ID} 
+		AND 
+			CAST(TABLES_AREA_PXXH AS SIGNED integer) > CAST(#{SMALL_TABLES_AREA_PXXH} AS SIGNED integer)
+		<if test="BIG_TABLES_AREA_PXXH != null and BIG_TABLES_AREA_PXXH != ''">
+			AND 
+				 CAST(TABLES_AREA_PXXH AS SIGNED integer) &lt;= CAST(#{BIG_TABLES_AREA_PXXH} AS SIGNED integer);
+		</if>
+		;
+	</update>
+	
+	<select id="findTablesAreaCount" parameterMap="BaseParameterMap"  resultMap="BaseResultMap">
+	
+		SELECT COUNT(TABLES_AREA_PXXH) AS area_count FROM sc_tables_area;
+	
+	</select>
+	
+	
+</mapper>

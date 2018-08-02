@@ -3,6 +3,20 @@
 	"viewUrl": "aps/content/DailyManagement/tables/catelist/template.html",
 	"controllerUrl": "aps/content/DailyManagement/tables/catelist/controller.js",
 	"config": {
-		"pageTitle": "区域分类"
+		"pageTitle": "区域分类",
+		"findURL":"json/TablesArea_query_findTablesAreaList.json",
+		"removeURL":"json/TablesArea_delete_removeTablesAreaById.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"tables_cate_list.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"tables_cate_list.confirm"
+		        	}
+				]
+			}
 	}
 }
