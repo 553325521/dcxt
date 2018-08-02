@@ -7,7 +7,8 @@
 	<select id="loadTopMenusByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
-		MENU_LINK, MENU_SORT, MENU_FATHER_PK
+		MENU_LINK, MENU_SORT,
+		MENU_FATHER_PK
 		FROM SC_MENU
 		<where>
 			AND MENU_FATHER_PK IS NULL
@@ -22,7 +23,8 @@
 	<select id="loadSonMenusByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
-		MENU_LINK, MENU_SORT, MENU_FATHER_PK
+		MENU_LINK, MENU_SORT,
+		MENU_FATHER_PK
 		FROM SC_MENU
 		<where>
 			AND MENU_FATHER_PK = #{MENU_FATHER_PK}
@@ -36,7 +38,8 @@
 	<select id="loadAllMenusByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
-		MENU_LINK, MENU_SORT, MENU_FATHER_PK
+		MENU_LINK, MENU_SORT,
+		MENU_FATHER_PK
 		FROM SC_MENU
 		<where>
 			AND FK_APP = #{FK_APP}
@@ -54,6 +57,7 @@
 				AND MENU_FATHER_PK = #{MENU_FATHER_PK}
 			</if>
 			AND FK_APP = #{FK_APP}
+			AND MENU_PLAT = #{MENU_PLAT}
 		</where>
 	</select>
 
@@ -89,7 +93,7 @@
 		#{FK_APP}
 		)
 	</insert>
-	
+
 	<insert id="insertMenuApp" parameterMap="BaseParameterMap">
 		insert into SC_APP_MENU
 		(
@@ -110,5 +114,44 @@
 		#{CREATE_TIME}
 		)
 	</insert>
-	
+
+	<select id="findMenuIdByAppId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT FK_MENU_WX
+		FROM SC_APP_MENU
+		<where>
+			AND MENU_PLAT = #{MENU_PLAT}
+			AND FK_APP = #{FK_APP}
+		</where>
+	</select>
+
+	<select id="deleteMenuApp" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		delete
+		FROM SC_APP_MENU
+		<where>
+			AND MENU_PLAT = #{MENU_PLAT}
+			AND FK_APP = #{FK_APP}
+		</where>
+	</select>
+
+	<insert id="insertTicket" parameterMap="BaseParameterMap">
+		insert into SC_TICKET
+		(
+		TICKET_CODE,
+		INSERT_TIME
+		)
+		values
+		(
+		#{TICKET_CODE},
+		#{INSERT_TIME}
+		)
+	</insert>
+
+	<select id="getNewTicket" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT TICKET_CODE FROM SC_TICKET ORDER BY INSERT_TIME
+		DESC LIMIT 1
+	</select>
+
 </mapper>

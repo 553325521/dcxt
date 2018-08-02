@@ -1,0 +1,9 @@
+{
+	"name": "Platform_index",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/platform/page/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/page/controller.js",
+	"config": {
+		"pageTitle": "授权设备",
+		"findAuthorizedCodeURL": "json/getPlatFormAuthorizedCode.json"
+	}
+}

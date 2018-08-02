@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -18,7 +17,6 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -43,7 +41,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.zxing.WriterException;
 import com.thoughtworks.xstream.XStream;
 
-import cn.wifiedu.core.util.SessionUtil;
 import cn.wifiedu.ssm.vo.MessageVo;
 import sun.misc.BASE64Encoder;
 
@@ -51,43 +48,13 @@ public class CommonUtil {
 
 	/**
 	 * 
-	 * @param session
-	 *            直接用controller里的session
-	 * @param map
-	 *            参数放在此map里
 	 * @param url
 	 *            完整路径 http://m.dd.com/json/xxx_xxx_xxx.json
 	 */
-	public static String qrCode(HttpSession session, Map<String, Object> map, String url) {
+	public static String qrCode(String url) {
 		try {
-			String redirect_qrcode = session.getId();
-			HttpSession webSession = SessionUtil.getSession(redirect_qrcode);
-			if (null == webSession) {
-				SessionUtil.addSession(session);
-			}
 
-			String params = "";
-			if (map != null) {
-				for (Map.Entry<String, Object> entry : map.entrySet()) {
-					String key = entry.getKey().toString();
-					if (!key.equals("OperatingSystem") && !key.equals("userInfo") && !key.equals("AccessIp")
-							&& !key.equals("token") && !key.equals("Browser")) {
-						String value = "NULL";
-						if (entry.getValue() != null) {
-							value = entry.getValue().toString();
-						}
-						params = key + "_" + value + "-" + params;
-					}
-				}
-				params = params.substring(0, params.length() - 1);
-				params = params + "-" + "rEdIrEcTuRi_" + URLEncoder.encode(url, "UTF-8");
-			} else {
-				params = "0";
-			}
-
-			BufferedImage image = QRCode
-					.genBarcode(CommonUtil.getPath("project_url").replace("DATA", "Qrcode_qrCommon_data")
-							+ "?redirect_qrcode=" + redirect_qrcode + "&params=" + params, 200, 200);
+			BufferedImage image = QRCode.genBarcode(url, 200, 200);
 
 			ByteArrayOutputStream os = new ByteArrayOutputStream();// 新建流。
 

@@ -12,6 +12,10 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
@@ -45,6 +49,9 @@ public class MenuController extends BaseController {
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
+
+	@Resource
+	PlatformTransactionManager transactionManager;
 
 	/**
 	 * 
@@ -137,6 +144,11 @@ public class MenuController extends BaseController {
 
 	@RequestMapping("/Menu_update_updateWxMenuForTagId")
 	public void updateWxMenuForTagId(HttpServletRequest request, HttpSession session) {
+
+		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+		definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = transactionManager.getTransaction(definition);
+
 		try {
 			Map<String, Object> map = getParameterMap();
 			if (map.containsKey("MENU_PLAT")) {
@@ -161,6 +173,16 @@ public class MenuController extends BaseController {
 								output("9999", " 获取对应微信标签信息失败 ");
 								return;
 							}
+							// 删除个性化套餐
+							if (delMenuById(map) <= 0) {
+								throw new RuntimeException();
+							}
+						} else {
+							// 删除 自定义套餐 
+							// 存在问题 删除自定义的时候 会删除个性化套餐
+//							if (delMenuForWx(map) <= 0) {
+//								throw new RuntimeException();
+//							}
 						}
 						// 获取所有的菜单
 						map.put("sqlMapId", "loadTopMenusByAppId");
@@ -168,6 +190,8 @@ public class MenuController extends BaseController {
 
 						if (!fatherMap.isEmpty()) {
 							this.insertAppMenu(map, fatherMap, tagId);
+							// 提交所有事务
+							transactionManager.commit(status);
 							return;
 						} else {
 							output("9999", " 该菜单为空不可更新! ");
@@ -184,6 +208,7 @@ public class MenuController extends BaseController {
 			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
+			transactionManager.rollback(status);
 		}
 	}
 
@@ -216,8 +241,8 @@ public class MenuController extends BaseController {
 						Map<String, Object> smap = new HashMap<>();
 						String stype = "view";
 						smap.put("type", stype);
-						smap.put("url",
-								CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data") + "?params=" + sMap.get("MENU_LINK").toString());
+						smap.put("url", CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data")
+								+ "?params=" + sMap.get("MENU_LINK").toString());
 						smap.put("name", sMap.get("MENU_NAME"));
 						sonMapList.add(smap);
 					}
@@ -228,8 +253,8 @@ public class MenuController extends BaseController {
 				}
 				fmap.put("name", fMap.get("MENU_NAME"));
 				if ("view".equals(ftype)) {
-					fmap.put("url",
-							CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data") + "?params=" + fMap.get("MENU_LINK").toString());
+					fmap.put("url", CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data")
+							+ "?params=" + fMap.get("MENU_LINK").toString());
 				}
 				postMap2ToBtn.add(fmap);
 			}
@@ -282,22 +307,44 @@ public class MenuController extends BaseController {
 		}
 	}
 
-	@RequestMapping("/Menu_insert_test")
-	public void test(HttpServletRequest request, HttpSession session) {
-		try {
-			Map<String, Object> map = getParameterMap();
+	/**
+	 * 
+	 * @author kqs
+	 * @param map
+	 * @return
+	 * @return int
+	 * @date 2018年7月31日 - 上午9:55:51
+	 * @description:删除个性化菜单
+	 */
+	public int delMenuById(Map<String, Object> map) {
 
-			// String url = CommonUtil.getPath("menuWxGetList").toString();
-			// String token = WxUtil.getToken();
-			// url = url.replace("ACCESS_TOKEN", token);
-			// String res = CommonUtil.get(url);
-			String url = CommonUtil.getPath("deleteconditionalURL").toString();
-			String token = WxUtil.getToken();
-			url = url.replace("ACCESS_TOKEN", token);
-			String res = CommonUtil.posts(url, "{\"menuid\":\"430245209\"}", "utf-8");
-			output("0000", res);
+		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+		definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus status = transactionManager.getTransaction(definition);
+
+		try {
+			map.put("sqlMapId", "findMenuIdByAppId");
+			Map<String, Object> obj = (Map<String, Object>) openService.queryForObject(map);
+			String postStr = "{\"menuid\":\"" + obj.get("FK_MENU_WX") + "\"}";
+			map.put("sqlMapId", "deleteMenuApp");
+			if (openService.delete(map)) {
+				String url = CommonUtil.getPath("deleteconditionalURL").toString();
+				String token = WxUtil.getToken();
+				url = url.replace("ACCESS_TOKEN", token);
+				String res = CommonUtil.posts(url, postStr, "utf-8");
+				if (res != null) {
+					JSONObject resObj = JSON.parseObject(res);
+					if ("0".equals(resObj.get("errcode"))) {
+						transactionManager.commit(status);
+						return 1;
+					}
+				}
+				throw new RuntimeException();
+			}
 		} catch (Exception e) {
-			output("9999", " Exception ", e);
+			e.printStackTrace();
+			transactionManager.rollback(status);
 		}
+		return 0;
 	}
 }
