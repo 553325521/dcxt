@@ -1,10 +1,11 @@
 {
-	"name": "userTag_add",
+	"name": "staff_add",
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/staff/add/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/staff/add/controller.js",
 	"config": {
-		"pageTitle": "标签添加",
-		"saveURL": "json/UserTag_insert_insertUserTag.json",
+		"pageTitle": "员工添加",
+		"getCodeURL" : "json/Staff_add_getCodeToRes.json",
+		"saveURL": "json/Staff_add_addStaff.json",
 		"menu":{	
 	            "buttons":[
 		        	{

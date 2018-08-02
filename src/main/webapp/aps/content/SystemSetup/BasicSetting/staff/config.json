@@ -1,19 +1,19 @@
 {
-	"name": "userTag_add",
+	"name": "staff_add",
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/staff/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/staff/controller.js",
 	"config": {
-		"pageTitle": "标签添加",
-		"saveURL": "json/UserTag_insert_insertUserTag.json",
+		"pageTitle": "员工列表",
+		"saveURL": "json/Staff_queryForList_findStaffList.json",
 		"menu":{	
 	            "buttons":[
 		        	{
 		            	"buttonName":"取消",
-		            	"buttonLink":"userTag_add.close"
+		            	"buttonLink":"staff_add.close"
 		        	},
 		        	{
 		            	"buttonName":"确定",
-		            	"buttonLink":"userTag_add.confirm"
+		            	"buttonLink":"staff_add.confirm"
 		        	}
 				]
 			}

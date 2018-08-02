@@ -13,7 +13,7 @@ Array.prototype.remove = function(val) {
 };
 
 (function() {
-	define([], function() {
+	define([ 'jqueryweui' ], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
@@ -185,38 +185,36 @@ Array.prototype.remove = function(val) {
 
 					scope.form.PRINTER_PRODUCT_RANGE = undefined
 				}
+
+				function comboboxInit() {
+					$("#fs_select").picker({
+						title : "选择份数",
+						toolbarCloseText : '确定',
+						cols : [
+							{
+								textAlign : 'center',
+								values : [ '1', '2', '3' ],
+								displayValues : [ '1', '2', '3' ]
+							}
+						]
+					});
+
+					$("#sd_select").picker({
+						title : "选择速度",
+						toolbarCloseText : '确定',
+						cols : [
+							{
+								textAlign : 'center',
+								values : [ '低速', '中速', '高速' ],
+								displayValues : [ '低速', '中速', '高速' ]
+							}
+						]
+					});
+				}
+
+				comboboxInit()
+
 			}
 		];
 	});
 }).call(this);
-
-$(function() {
-	
-	function comboboxInit() {
-		$("#fs_select").picker({
-			title : "选择份数",
-			toolbarCloseText : '确定',
-			cols : [
-				{
-					textAlign : 'center',
-					values : [ '1', '2', '3' ],
-					displayValues : [ '1', '2', '3' ]
-				}
-			]
-		});
-
-		$("#sd_select").picker({
-			title : "选择速度",
-			toolbarCloseText : '确定',
-			cols : [
-				{
-					textAlign : 'center',
-					values : [ '低速', '中速', '高速' ],
-					displayValues : [ '低速', '中速', '高速' ]
-				}
-			]
-		});
-	}
-	
-	comboboxInit()
-})

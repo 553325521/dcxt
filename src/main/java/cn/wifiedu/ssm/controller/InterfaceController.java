@@ -1,11 +1,13 @@
 package cn.wifiedu.ssm.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -26,6 +28,7 @@ import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.qq.weixin.AesException;
 import cn.wifiedu.ssm.util.qq.weixin.WXBizMsgCrypt;
@@ -271,9 +274,14 @@ public class InterfaceController extends BaseController {
 
 			url = url.replace("componentAppid", component_appid)
 					.replace("preAuthCode", getComponentPreAuthCode(session))
-					.replace("redirectUri", CommonUtil.getPath("pathUrl").toString() + "json/getRes");
+					.replace("redirectUri", CommonUtil.getPath("project_url").toString().replace("DATA", "getRes"));
 
-			output("0000", CommonUtil.qrCode(url));
+			BufferedImage image = QRCode.genBarcode(url, 200, 200);
+			response.setContentType("image/png");
+			response.setHeader("pragma", "no-cache");
+			response.setHeader("cache-control", "no-cache");
+			response.reset();
+			ImageIO.write(image, "png", response.getOutputStream());
 
 		} catch (Exception e) {
 			e.printStackTrace();

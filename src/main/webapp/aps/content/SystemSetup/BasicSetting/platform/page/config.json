@@ -1,5 +1,5 @@
 {
-	"name": "Platform_index",
+	"name": "Platform_page",
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/platform/page/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/page/controller.js",
 	"config": {

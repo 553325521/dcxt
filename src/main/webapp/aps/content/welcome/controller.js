@@ -15,7 +15,6 @@
 				scope.form = {};
 
 				scope.toHref = function(path, fid) {
-					console.info(path)
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json?fid=" + fid,
 						"size" : "modal-lg",
