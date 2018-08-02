@@ -27,7 +27,8 @@
 				WHERE 
 					FK_USER = #{USER_ID} 
 				AND 
-					FK_SHOP = #{SHOP_ID}));
+					FK_SHOP = #{SHOP_ID})) AND FUNCTION_SWITCH='on' 
+				ORDER BY CONVERT(FUNCTION_SORT, SIGNED);
 	</select>
 	
 	
