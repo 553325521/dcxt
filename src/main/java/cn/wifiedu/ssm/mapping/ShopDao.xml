@@ -34,7 +34,7 @@
 					(SELECT us.FK_SHOP  FROM sc_user_shop us where us.FK_USER = #{USER_WX})) AS shopInfo 
 					INNER JOIN (select u.USER_NAME,u.USER_SN,sus.FK_SHOP  from 
 						(SELECT su.USER_PK,su.USER_NAME,su.USER_SN  from sc_user su 
-							inner join (select sur.FK_USER from sc_user_role sur where  sur.FK_ROLE = (select ssr.ROLE_PK from sc_sys_role ssr where ssr.ROLE_NAME = '店长')) as userInfo on 
+							inner join (select sur.FK_USER from sc_user_shop sur where  sur.FK_ROLE = (select ssr.ROLE_PK from sc_sys_role ssr where ssr.ROLE_NAME = '店长')) as userInfo on 
 							su.USER_PK = userInfo.FK_USER) as u 
 							INNER JOIN sc_user_shop sus on u.USER_PK = sus.FK_USER) as u1 on shopInfo.SHOP_ID = u1.FK_SHOP;
  			

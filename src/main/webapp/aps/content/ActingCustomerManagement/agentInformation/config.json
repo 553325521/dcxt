@@ -3,6 +3,6 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/agentInformation/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/agentInformation/controller.js",
 	"config": {
-
+		"findURL" : "json/AgentInfo_query_findAgentInfoById.json"
 	}
 }

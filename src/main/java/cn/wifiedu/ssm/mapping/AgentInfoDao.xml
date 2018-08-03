@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="agentInfo" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+	<select id="selectAgentInfoById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT u.USER_NAME, u.USER_PHONE, u.USER_SN, u.USER_BALANCE, ai.AGENT_PK, ai.COMPANY_NAME, ai.BUSINESS_LICENSE, ai.COMPANY_ADDRESS, ai.AUTH_STATUS, ai.AGENT_LEVEL, ai.AGENT_AREA
+		FROM sc_agent_info ai, sc_user u WHERE u.USER_PK = ai.USER_FK AND u.USER_PK = #{USER_ID};
+	</select>
+
+
+</mapper>

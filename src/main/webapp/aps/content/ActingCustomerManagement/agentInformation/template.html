@@ -48,7 +48,7 @@
 </div>
 
 <div style="position:absolute;top:44px;width:100%;">
-	<div class="weui_cells dcxt_weui_cells" style="margin-top:0;">
+	<div class="weui_cells dcxt_weui_cells" style="margin-top:0;" ng-cloak>
 		
 		
 		<div class="weui_cell">
@@ -56,7 +56,7 @@
 					<label class="weui_label label tablessetting-label">姓名</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">王家军 ( 先生 )</label>
+					<label class="tablessetting-gray-font">{{agent_info.USER_NAME}} ( 先生 )</label>
 				</div>	
 		</div>
 		
@@ -65,7 +65,7 @@
 					<label class="weui_label label tablessetting-label">联系电话</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">023-49402100</label>
+					<label class="tablessetting-gray-font" ng-bind="agent_info.USER_PHONE"></label>
 				</div>	
 		</div>
 		
@@ -74,7 +74,7 @@
 					<label class="weui_label label tablessetting-label">公司名称</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">重庆览拓网络科技有限公司</label>
+					<label class="tablessetting-gray-font" ng-bind="agent_info.COMPANY_NAME"></label>
 				</div>	
 		</div>
 		
@@ -83,7 +83,7 @@
 					<label class="weui_label label tablessetting-label">营业执照</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">91554445541155414</label>
+					<label class="tablessetting-gray-font" ng-bind="agent_info.BUSINESS_LICENSE"></label>
 				</div>	
 		</div>
 		
@@ -92,7 +92,7 @@
 					<label class="weui_label label tablessetting-label">公司地址</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">重庆市永川人民南路88号</label>
+					<label class="tablessetting-gray-font" ng-bind="agent_info.COMPANY_ADDRESS"></label>
 				</div>	
 		</div>
 		
@@ -100,8 +100,9 @@
 			<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">认证状态</label>
 				</div>
-				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">已完成认证</label>
+				<div class="weui_cell_bd weui_cell_primary dcxt-right-label" ng-switch="agent_info.AUTH_STATUS">
+					<label class="tablessetting-red-font" ng-switch-when="0">未完成认证</label>
+					<label class="tablessetting-gray-font" ng-switch-when="1">已完成认证</label>
 				</div>	
 		</div>
 		
@@ -110,7 +111,9 @@
 					<label class="weui_label label tablessetting-label">现有余额</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">268 ( </label><a ng-click="toHref('ActingCustomerManagement/withdrawalManagement')" style="color:#D24F48;">提现</a><label class="tablessetting-gray-font"> )</label>
+					<label class="tablessetting-gray-font">{{agent_info.USER_BALANCE}} ( </label>
+					<a ng-click="toHref('ActingCustomerManagement/withdrawalManagement')" style="color:#D24F48;">提现</a>
+					<label class="tablessetting-gray-font"> )</label>
 				</div>	
 		</div>
 		
@@ -119,7 +122,13 @@
 					<label class="weui_label label tablessetting-label">代理级别</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">普通代理</label>
+					<label class="tablessetting-gray-font" ng-switch="agent_info.AGENT_LEVEL">
+						<span ng-switch-when = "1">普通代理</span>
+						<span ng-switch-when = "2">银牌代理</span>
+						<span ng-switch-when = "3">银牌代理</span>
+						<span ng-switch-when = "4">金牌代理</span>
+						<span ng-switch-when = "5">钻石代理</span>
+					</label>
 				</div>	
 		</div>
 		
@@ -128,7 +137,7 @@
 					<label class="weui_label label tablessetting-label">代理区域</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">重庆市、四川省</label>
+					<label class="tablessetting-gray-font" ng-bind="agent_info.AGENT_AREA"></label>
 				</div>	
 		</div>
 		

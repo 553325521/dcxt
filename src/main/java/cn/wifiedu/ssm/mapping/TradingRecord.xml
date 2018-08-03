@@ -53,6 +53,6 @@
 	 						SELECT u.USER_PK,u.USER_NAME,usursr.FK_SHOP FROM (
 	 						select usur.FK_USER,usur.FK_SHOP FROM sc_user_shop as usur INNER JOIN (
 	 						SELECT ROLE_PK FROM sc_sys_role WHERE ROLE_NAME="店长") as sr on sr.ROLE_PK = usur.FK_ROLE
-	 						) AS usursr INNER JOIN SC_USER AS u ON u.USER_PK = usursr.FK_USER) as un ON un.FK_SHOP = trs.SHOP_FK;
+	 						) AS usursr INNER JOIN SC_USER AS u ON u.USER_PK = usursr.FK_USER) as un ON un.FK_SHOP = trs.SHOP_FK ORDER BY CREATE_TIME DESC;
  	</select>
 </mapper>

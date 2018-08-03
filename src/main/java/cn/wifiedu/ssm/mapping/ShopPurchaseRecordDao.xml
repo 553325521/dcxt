@@ -37,10 +37,8 @@
  
 <select id="selectAgentIdByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 	SELECT res.FK_USER FROM (
-		SELECT us.FK_USER,us.FK_SHOP from sc_user_shop us WHERE us.FK_USER IN (
-			SELECT ur.FK_USER from sc_user_role ur, sc_sys_role sr WHERE ur.FK_ROLE = sr.ROLE_PK AND sr.ROLE_NAME = "代理商"
-		)
-	) res WHERE res.FK_SHOP = #{SHOP_ID};  
+		SELECT  us.FK_USER,us.FK_SHOP from sc_user_shop us, sc_sys_role sr WHERE sr.ROLE_NAME = "代理商" AND sr.ROLE_PK = us.FK_ROLE
+		) res WHERE res.FK_SHOP = #{SHOP_ID};  
 
 </select>
   
