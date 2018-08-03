@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="shopRoleFunction" >
+  	<resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+ 	<parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+  <!-- 根据用户、店铺 来查询所具有的功能 -->
+	<select id="selectFunctionByUserAndShop" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		
+	SELECT 
+		FUNCTION_PK, FUNCTION_NAME, FUNCTION_URL,FUNCTION_ICON,FUNCTION_SORT
+	FROM 
+		SC_FUNCTION 
+	WHERE FUNCTION_PK IN (
+		SELECT 
+			FK_FUNCTION 
+		FROM 
+			sc_shop_role_function 
+		WHERE 
+			FK_SHOP =  #{SHOP_ID} 
+		AND 
+			FK_ROLE = (
+				SELECT 
+					FK_ROLE 
+				FROM 
+					sc_user_shop 
+				WHERE 
+					FK_USER = #{USER_ID} 
+				AND 
+					FK_SHOP = #{SHOP_ID})) AND FUNCTION_SWITCH='on' 
+				ORDER BY CONVERT(FUNCTION_SORT, SIGNED);
+	</select>
+	
+	
+	
+</mapper>

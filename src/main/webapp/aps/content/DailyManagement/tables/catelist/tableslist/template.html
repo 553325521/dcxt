@@ -13,33 +13,32 @@
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
-				<div class="bom-radio" id="attend2" ng-click="addOrChange()">添加</div>
+				<div class="bom-radio" id="attend2" ng-click="toHref('DailyManagement/tables/catelist/tableslist/setting', '')">添加</div>
 			</div>
 		</div>
 	</div>
-
 		
 	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;">
-		<div class="weui_cell slidelefts"  ng-repeat="item in tables_list | orderBy:'pxxh'">
+		<div class="weui_cell slidelefts"  ng-repeat="item in tables_list">
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="display:flex;;transform: translateX(0px);">
 				<div class="weui_cell_bd " style="margin-right:10px;">
 					{{$index+1}}
 				</div>
 							
 				<div class="weui_cell_bd weui_cell_primary">
-					{{item.name}}
+					{{item.TABLES_NAME}}
 				</div>
-				<div class="weui_cell_bd tablessetting-small-font {{item.status == 1 ? 'tablessetting-gray-font':'tablessetting-red-font'}}" dir="rtl">
-					{{item.status == 1 ? '已启用':'已停用'}}
+				<div class="weui_cell_bd tablessetting-small-font {{item.TABLES_STATUS == 1 ? 'tablessetting-gray-font':'tablessetting-red-font'}}" dir="rtl">
+					{{item.TABLES_STATUS == 1 ? '已启用':'已停用'}}
 				</div>
 				<div class="weui_cell_bd" dir="rtl" style="width: 22%;">
-					{{item.count}}人/桌
+					{{item.TABLES_NUM}}人/桌
 				</div>					
 			</div>
 
 		     <div class="slideleft">
-                <span class="switch_stop" style="background:#ccc;color:#fff" ng-click="addOrChange($index)">修改</span>
-                <span class="bg-red f-white dels" id="delete-table-list" ng-click="tablesDelete($index)">删除</span>
+                <span class="switch_stop" style="background:#ccc;color:#fff" ng-click="toHref('DailyManagement/tables/catelist/tableslist/setting',item.TABLES_PK)">修改</span>
+                <span class="bg-red f-white dels" id="delete-table-list" ng-click="tablesDelete(item.TABLES_PK)">删除</span>
              </div>
 		</div>
 	</div>			

@@ -40,7 +40,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 		 */
 		@Controller
 		@Scope("prototype")
-		public class TablesAreaController extends BaseController {
+		public class TablesController extends BaseController {
 
 			private static final String Map = null;
 
@@ -62,19 +62,19 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 * @date 2018年8月1日 上午12:25:36 
 			 * @author lps
 			 * 
-			 * @Description: 查询店铺区域列表
+			 * @Description: 查询店铺某区域桌位列表
 			 * @param request
 			 * @param seesion 
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/TablesArea_query_findTablesAreaList")
-			public void findTablesAreaList(HttpServletRequest request,HttpSession seesion){
+			@RequestMapping("/Tables_query_findTablesListByAreaId")
+			public void findTablesList(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
-					map.put("sqlMapId", "selectTablesArea");
-					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
+					map.put("sqlMapId", "selectTablesByAreaId");
+					map.put("TABLES_AREA_FK", map.get("area_id"));
 					
 					List<Map<String, Object>> reMap = openService.queryForList(map);
 					output("0000", reMap);
@@ -91,36 +91,37 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 * @date 2018年8月1日 上午12:41:31 
 			 * @author lps
 			 * 
-			 * @Description: 根据区域id删除指定区域
+			 * @Description: 根据区域id删除指定桌位
 			 * @param request
 			 * @param seesion 
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/TablesArea_delete_removeTablesAreaById")
-			public void removeTablesAreaById(HttpServletRequest request,HttpSession seesion){
+			@RequestMapping("/Tables_delete_removeTablesById")
+			public void removeTablesById(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
 					//先查询区域总数量
-					map.put("sqlMapId", "findTablesAreaCountByShopId");
-					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
+					map.put("sqlMapId", "findTablesCountByAreaId");
+					map.put("TABLES_AREA_ID", map.get("area_id"));
 					
 					Map reMap = (Map)openService.queryForObject(map);
-					long areaCount = (long) reMap.get("area_count");
+					long areaCount = (long) reMap.get("tables_count");
 					
 					//再获取当前区域的排序序号
-					map.put("TABLES_AREA_ID", map.get("area_id"));
-					map.put("sqlMapId", "findTablesAreaById");
+					map.put("TABLES_ID", map.get("tables_id"));
+					map.put("sqlMapId", "findTablesById");
 					
 					reMap = (Map)openService.queryForObject(map);
-					Integer bef_pxxh = Integer.parseInt((String)reMap.get("TABLES_AREA_PXXH"));
+					Integer bef_pxxh = Integer.parseInt((String)reMap.get("TABLES_PXXH"));
 					
 					//判断当前是不是最后一个数据
 					if(areaCount != bef_pxxh){
 						//如果不等于，进行排序序号重置
-						map.put("sqlMapId", "updateTablesAreaPxxhSubById");
-						map.put("SMALL_TABLES_AREA_PXXH", bef_pxxh);
+						map.put("sqlMapId", "updateTablesPxxhSubById");
+						map.put("SMALL_TABLES_PXXH", bef_pxxh);
+						map.put("TABLES_AREA_ID", map.get("TABLES_AREA_FK"));
 						
 						boolean update = openService.update(map);
 						
@@ -130,7 +131,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 						}
 					}
 					//开始删除
-					map.put("sqlMapId", "removeTablesAreaById");
+					map.put("sqlMapId", "removeTablesById");
 					
 					boolean b = openService.delete(map);
 					if(b){
@@ -158,13 +159,13 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/TablesArea_query_findTablesAreaById")
-			public void findTablesAreaById(HttpServletRequest request,HttpSession seesion){
+			@RequestMapping("/Tables_query_findTablesById")
+			public void findTablesById(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
-					map.put("sqlMapId", "findTablesAreaById");
-					map.put("TABLES_AREA_ID", map.get("area_id"));
+					map.put("sqlMapId", "findTablesById");
+					map.put("TABLES_ID", map.get("area_id"));
 					
 					Object object = openService.queryForObject(map);
 					if(object != null){
@@ -191,13 +192,13 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/TablesArea_save_saveTablesArea")
+			@RequestMapping("/Tables_save_saveTables")
 			public void saveTablesArea(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
-					map.put("sqlMapId", "insertTablesArea");
-					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
+					map.put("sqlMapId", "insertTables");
+					map.put("TABLES_AREA_ID", map.get("TABLES_AREA_FK"));
 					map.put("CREATE_BY", "admin");
 					String insert = openService.insert(map);
 					if(insert != null){
@@ -214,29 +215,29 @@ import cn.wifiedu.ssm.util.StringDeal;
 			
 			
 			
-			@RequestMapping("/TablesArea_update_updateTablesAreaById")
+			@RequestMapping("/Tables_update_updateTablesById")
 			public void updateTablesArea(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
 					//先查询当前区域的排序序号
-					map.put("sqlMapId", "findTablesAreaById");
-					map.put("TABLES_AREA_ID", map.get("TABLES_AREA_PK"));
+					map.put("sqlMapId", "findTablesById");
+					map.put("TABLES_ID", map.get("TABLES_PK"));
 					Map reMap = (Map)openService.queryForObject(map);
-					Integer bef_pxxh = Integer.parseInt((String)reMap.get("TABLES_AREA_PXXH"));
-					Integer after_pxxh = Integer.parseInt((String)map.get("TABLES_AREA_PXXH"));
+					Integer bef_pxxh = Integer.parseInt((String)reMap.get("TABLES_PXXH"));
+					Integer after_pxxh = Integer.parseInt((String)map.get("TABLES_PXXH"));
 					
 					if(bef_pxxh != after_pxxh){
 						if(bef_pxxh > after_pxxh){
-							map.put("sqlMapId", "updateTablesAreaPxxhAddById");
-							map.put("SMALL_TABLES_AREA_PXXH", after_pxxh);
-							map.put("BIG_TABLES_AREA_PXXH", bef_pxxh);
+							map.put("sqlMapId", "updateTablesPxxhAddById");
+							map.put("SMALL_TABLES_PXXH", after_pxxh);
+							map.put("BIG_TABLES_PXXH", bef_pxxh);
 						}else if(bef_pxxh < after_pxxh){
-							map.put("SMALL_TABLES_AREA_PXXH", bef_pxxh);
-							map.put("BIG_TABLES_AREA_PXXH", after_pxxh);
-							map.put("sqlMapId", "updateTablesAreaPxxhSubById");
+							map.put("SMALL_TABLES_PXXH", bef_pxxh);
+							map.put("BIG_TABLES_PXXH", after_pxxh);
+							map.put("sqlMapId", "updateTablesPxxhSubById");
 						}
-						map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
+						map.put("TABLES_AREA_ID", map.get("TABLES_AREA_FK"));
 						boolean b = openService.update(map);
 						
 						if(!b){
@@ -246,11 +247,11 @@ import cn.wifiedu.ssm.util.StringDeal;
 					
 					}
 					
-					map.put("sqlMapId", "updateTablesAreaById");
+					map.put("sqlMapId", "updateTablesById");
 
 					
-					map.put("sqlMapId", "updateTablesAreaById");
-					map.put("TABLES_AREA_ID", map.get("TABLES_AREA_PK"));
+					map.put("sqlMapId", "updateTablesById");
+					map.put("TABLES_ID", map.get("TABLES_PK"));
 					map.put("UPDATE_BY", "admin");
 					boolean update = openService.update(map);
 					if(update){

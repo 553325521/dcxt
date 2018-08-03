@@ -31,7 +31,6 @@
 							if (data.code != '0000') {
 								loggingService.info(data.data);
 							} else {
-								console.info(data.data)
 								scope.commission_record_list = data.data;
 								scope.pageShow = "True";//页面加载完毕，显示页面，取消加载中动画
 								scope.$apply();
