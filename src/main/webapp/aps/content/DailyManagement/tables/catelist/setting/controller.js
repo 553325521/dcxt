@@ -24,7 +24,6 @@
 				catesetting_pxxh = Array(Number(params.area_num)).fill().map((v,i) => i+1);//填充排序列表 1-n
 				
 				//发送post请求
-				
 				$httpService.post(config.findURL,params).success(function(data) {
 					if (data.code != '0000') {
 						loggingService.info(data.data);
@@ -65,10 +64,10 @@
 			eventBusService.publish(controllerName, 'appPart.load.content', m2);
 		}
 		
+		var $form = $("#form");
+		$form.form();
 		//保存
 		scope.doSave = function(){
-			var $form = $("#form");
-			$form.form();
 			$form.validate(function(error) {
 				if (!error) {
 					//获取排序序号

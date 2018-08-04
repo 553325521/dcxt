@@ -31,7 +31,6 @@
 				init();
 				
 				scope.toHref = function(path,area_id) {
-					console.info(scope.tables_area_list.length)
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json?area_id="+area_id+"&area_num="+scope.tables_area_list.length,
 						"size" : "modal-lg",

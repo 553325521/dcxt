@@ -4,35 +4,43 @@
   <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
   <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
   
- <insert id="insertServiceType" parameterMap="BaseParameterMap">
- 	INSERT INTO SC_USER
- 	(
- 		SERVICE_PK,
- 		SERVICE_TYPE,
- 		SERVICE_PRICE,
- 		SERVICE_DESC,
- 		CREATE_BY,
- 		CREATE_TIME
- 	)
- 	VALUES
- 	(
- 		#{UUID},
- 		#{SERVICE_TYPE},
- 		#{SERVICE_PRICE},
- 		#{SERVICE_DESC},
- 		#{CREATE_BY},
- 		NOW()
- 	)
- </insert>
+  	<!-- 添加店铺服务类型 -->
+	<insert id="insertServiceType" parameterMap="BaseParameterMap">
+	 	INSERT INTO SC_USER
+	 	(
+	 		SERVICE_PK,
+	 		SERVICE_TYPE,
+	 		SERVICE_PRICE,
+	 		SERVICE_DESC,
+	 		CREATE_BY,
+	 		CREATE_TIME
+	 	)
+	 	VALUES
+	 	(
+	 		#{UUID},
+	 		#{SERVICE_TYPE},
+	 		#{SERVICE_PRICE},
+	 		#{SERVICE_DESC},
+	 		#{CREATE_BY},
+	 		NOW()
+	 	)
+	</insert>
  
+ 	<!-- 查找所有的服务类型 -->
+	<select id="findServiceTypeList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+	 	SELECT SERVICE_PK,SERVICE_TYPE,SERVICE_PRICE,SERVICE_DESC
+	 	FROM SC_SERVICE_TYPE
+	 	ORDER BY CAST(SERVICE_PRICE AS SIGNED integer);
+ 	</select>
  
- <select id="findServiceTypeList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
- 	SELECT SERVICE_PK,SERVICE_TYPE,SERVICE_PRICE,SERVICE_DESC
- 	FROM SC_SERVICE_TYPE
- 	ORDER BY CAST(SERVICE_PRICE AS SIGNED integer);
- </select>
- 
- <select id="findServicePriceById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
-  	SELECT SERVICE_PRICE FROM SC_SERVICE_TYPE WHERE SERVICE_PK = #{SERVICE_PK};
-  </select>
+ 	<!-- 根据服务类型ID查询该服务类型的价格 -->
+ 	<select id="findServicePriceById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  		SELECT SERVICE_PRICE FROM SC_SERVICE_TYPE WHERE SERVICE_PK = #{SERVICE_PK};
+  	</select>
+  
+ 	<!-- 根据服务类型名称查询该服务的ID -->
+ 	<select id="findServiceTypeIdByName" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+  		SELECT SERVICE_PK FROM SC_SERVICE_TYPE WHERE SERVICE_TYPE = #{SERVICE_TYPE};
+  	</select>
+  
 </mapper>

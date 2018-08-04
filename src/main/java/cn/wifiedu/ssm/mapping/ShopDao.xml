@@ -14,16 +14,21 @@
 			SHOP_TYPE,
 			SHOP_AREA,
 			SHOP_ADDRESS,
-			SERVICETYPE_FK
+			SERVICETYPE_FK,
+			CREATE_TIME,
+			CREATE_BY
 			)
 	values(
 			#{UUID},
-			#{SHOPNAME},
-			#{PHONE},
-			#{SHOPTYPE},
-			#{SHOPAREA},
-			#{ADDRESS},
-			#{SIZE}
+			#{SHOP_NAME},
+			#{SHOP_TEL},
+			#{SHOP_TYPE},
+			#{SHOP_AREA},
+			#{SHOP_ADDRESS},
+			#{SERVICETYPE_FK},
+			NOW(),
+			#{CREATE_BY}
+			
 	)
 	</insert>
 	<!-- 查询当前登录代理商的商铺信息 -->
@@ -42,7 +47,7 @@
  	
  	<!-- 根据shopId查询商铺信息 -->
  	 <select id="SelectByPrimaryKey" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
- 	 		select * from SC_SHOP_INFO where SHOP_ID = #{SHOP_FK} 
+ 	 		select si.*, st.SERVICE_TYPE from SC_SHOP_INFO si, sc_service_type st where SHOP_ID = #{SHOP_FK}  AND si.SERVICETYPE_FK = st.SERVICE_PK;
  	 </select>
  	 
  	 <!-- 更新商铺的过期时间 -->
@@ -51,6 +56,13 @@
 			set 
 				OVER_DATA = #{OVER_DATA}
 		where SHOP_ID = #{SHOP_FK} 
-	</update> 	 
+	</update> 
+	
+	<!-- 更新店铺基本信息操作 -->
+	<update id="updateShopBaseInfoById" parameterMap="BaseParameterMap">
+		UPDATE sc_shop_info SET SHOP_NAME = #{SHOP_NAME}, SHOP_TEL = #{SHOP_TEL}, SHOP_TYPE = #{SHOP_TYPE}, SHOP_AREA = #{SHOP_AREA}, SHOP_ADDRESS = #{SHOP_ADDRESS}, UPDATE_TIME = NOW(),
+			UPDATE_BY = #{UPDATE_BY}
+		WHERE SHOP_ID = #{SHOP_ID};
+	</update>	 
  	
 </mapper>

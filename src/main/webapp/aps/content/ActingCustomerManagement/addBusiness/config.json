@@ -4,6 +4,7 @@
 	"controllerUrl": "aps/content/ActingCustomerManagement/addBusiness/controller.js",
 	"config": {
 		"addURL":"json/Shop_insert_insertShop.json",
+		"findURL":"json/Shop_select_findShopInfoById.json",
 		"findVersionURL":"json/ServiceType_queryForList_findServiceTypeList.json",
 		"menu":{
 			"buttons":[{

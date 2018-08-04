@@ -41,18 +41,62 @@ public class ShopController extends BaseController {
 
 	/**
 	 * 添加商户
-	 * @author wangjinglong
+	 * @author wangjinglong    2018年8月4日23:21:41 修改 lps   添加或修改商铺
 	 * 
 	 */
 	@RequestMapping(value="/Shop_insert_insertShop",method = RequestMethod.POST)
 	public void saveShopData() {
 		try {
 			Map<String, Object> map = getParameterMap();
+			//合二为一
+			map.put("SHOP_TYPE",map.get("SHOP_TYPE_FIRSET")+" "+map.get("SHOP_TYPE_SECOND"));
+			//判断是添加还是修改
+			String shopId = (String) map.get("SHOP_ID");
+			if(shopId != null && !"".equals(shopId.trim())){//是修改
+				map.put("sqlMapId", "updateShopBaseInfoById");
+				map.put("UPDATE_BY", "admin");
+				
+				boolean b = openService.update(map);
+				if(b){
+					output("0000","修改成功");
+				}else{
+					output("9999","修改失败");
+				}
+				return;
+			}
 			
-			map.put("SHOPTYPE",map.get("SHOP_TYPE_FIRSET")+" "+map.get("SHOP_TYPE_SECOND"));
+			//是添加
+			//先查询出来商铺的服务类型
+			map.put("sqlMapId", "findServiceTypeIdByName");
+			Map serviceMap = (Map) openService.queryForObject(map);
+			String serviceId = (String) serviceMap.get("SERVICE_PK");
+			if(serviceId == null){
+				output("9999","请确认服务类型是否有误");
+				return;
+			}
+			
 			map.put("sqlMapId", "insertShop");
-			openService.insert(map);
-			output("0000","保存成功");
+			map.put("CREATE_BY", "admin");
+			map.put("SERVICETYPE_FK", serviceId);
+			String insert = openService.insert(map);
+			
+			if(insert == null){
+				output("9999","保存失败");
+				return;
+			}
+			//插入用户商铺中间表
+			map.put("sqlMapId", "insertUserShop");
+			map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
+			map.put("SHOP_ID", insert);
+			
+			String insert2 = openService.insert(map);
+			
+			if(insert2 != null){
+				output("0000","保存成功");
+			}else{
+				output("9999","保存失败");
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,6 +142,36 @@ public class ShopController extends BaseController {
 		  	return "已过期";
 		}
 		return a+"天";
+	}
+	
+	/**
+	 * 
+	 * @date 2018年8月4日 下午8:05:45 
+	 * @author lps
+	 * 
+	 * @Description:  根据商铺id查询商铺信息
+	 * @return void 
+	 *
+	 */
+	@RequestMapping(value="/Shop_select_findShopInfoById")
+	public void findShopInfoById(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "SelectByPrimaryKey");
+			map.put("SHOP_FK", map.get("shopid"));
+			Map reMap = (Map)openService.queryForObject(map);
+			if(reMap == null){
+				output("9999","查询失败");
+				return;
+			}
+			output("0000",reMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999","查询失败");
+		}
+		
+		
+		
 	}
 	
 	
