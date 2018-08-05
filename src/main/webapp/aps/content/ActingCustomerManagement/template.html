@@ -78,8 +78,9 @@
 		<div class="weui_cell slidelefts" ng-repeat="item in customer_information_list | filter:input_value">		
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="padding:2px 15px; display:flex;transform: translateX(0px);")" ng-click="toHref('ActingCustomerManagement/addBusiness','{{item.SHOP_ID}}')">	
 				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;max-width:28%;">
-					<div >
-						<span>{{item.USER_SN}}</span>
+					<div ng-switch on = "{{item.SHOP_STATE}}">
+						<span ng-switch-when = "0" style="color:red">未认领</span>
+						<span ng-switch-default>{{item.USER_SN}}</span>
 					</div>
 					
 					<div >
@@ -92,9 +93,9 @@
 					<div >
 						<span>{{item.SHOP_NAME}}</span>
 					</div>
-					
-					<div >
-						<span>{{item.USER_NAME}}</span>
+					<div ng-switch on = "{{item.SHOP_STATE}}">
+						<span ng-switch-when = "0">无</span>
+						<span ng-switch-default>{{item.USER_NAME}}</span>
 					</div>
 				</div>
 				<div class="weui_cell_bd " dir="rtl">

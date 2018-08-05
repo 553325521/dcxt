@@ -33,15 +33,9 @@
 	</insert>
 	<!-- 查询当前登录代理商的商铺信息 -->
 	 <select id="findAgentShopInfo" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
- 			select shopInfo.*,u1.USER_NAME,u1.USER_SN from 
- 				(select ssi.*,sst.SERVICE_TYPE from sc_shop_info ssi 
- 					INNER JOIN sc_service_type  sst on ssi.SERVICETYPE_FK = sst.SERVICE_PK where ssi.SHOP_ID IN 
-					(SELECT us.FK_SHOP  FROM sc_user_shop us where us.FK_USER = #{USER_WX})) AS shopInfo 
-					INNER JOIN (select u.USER_NAME,u.USER_SN,sus.FK_SHOP  from 
-						(SELECT su.USER_PK,su.USER_NAME,su.USER_SN  from sc_user su 
-							inner join (select sur.FK_USER from sc_user_shop sur where  sur.FK_ROLE = (select ssr.ROLE_PK from sc_sys_role ssr where ssr.ROLE_NAME = '店长')) as userInfo on 
-							su.USER_PK = userInfo.FK_USER) as u 
-							INNER JOIN sc_user_shop sus on u.USER_PK = sus.FK_USER) as u1 on shopInfo.SHOP_ID = u1.FK_SHOP;
+ 			select u.USER_NAME,u.USER_SN,s.* from (SELECT su.USER_SN,su.USER_NAME,sus1.FK_SHOP from sc_user as su INNER JOIN sc_user_shop sus1 on su.USER_PK = sus1.FK_USER where sus1.FK_ROLE = (select ssr.ROLE_PK from sc_sys_role ssr where ssr.ROLE_NAME = '店长' )) as u RIGHT JOIN (
+				select ssi.*,sst.SERVICE_TYPE from sc_shop_info ssi INNER JOIN sc_service_type  sst on ssi.SERVICETYPE_FK = sst.SERVICE_PK where ssi.SHOP_ID IN(
+					SELECT sus.FK_SHOP FROM sc_user_shop as sus WHERE sus.FK_USER = #{USER_FK})) s on s.SHOP_ID = u.FK_SHOP;
  			
  	</select>
  	
@@ -65,4 +59,12 @@
 		WHERE SHOP_ID = #{SHOP_ID};
 	</update>	 
  	
+ 	<!-- 更新商铺的认领状态 -->
+ 	<update id="UpdateShopState" parameterMap="BaseParameterMap">
+		update SC_SHOP_INFO
+			set 
+				SHOP_STATE = #{SHOP_STATE}
+		where SHOP_ID = #{SHOP_FK} 
+	</update> 	
+	
 </mapper>

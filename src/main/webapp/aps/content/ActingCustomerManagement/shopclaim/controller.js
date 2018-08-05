@@ -5,7 +5,7 @@
 				'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 				function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
 					scope = $scope;
-					scope.qrUrl = "aps/content/ActingCustomerManagement/shopclaim/code.png";
+					scope.qrUrl = config.createQrCodeURL+"?SHOPID="+params.shopid;
 					scope.pageTitle="商户认领";
 					scope.toHref = function(path) {
 						var m2 = {

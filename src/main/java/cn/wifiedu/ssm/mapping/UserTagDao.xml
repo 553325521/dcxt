@@ -10,13 +10,20 @@
 		BY CREATE_TIME
 	</select>
 
+	<!--根据用户标签名称查询标签ID -->
+	<select id="findUserTagIdByUserTagName" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT USER_TAG_ID FROM  SC_USER_TAG
+		WHERE USER_TAG_NAME = #{USER_TAG_NAME}
+	</select>
+
 	<!--查询用户标签数量 -->
 	<select id="loadUserTagCount" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT count(USER_TAG_ID) as USER_TAG_COUNT FROM
 		SC_USER_TAG
 	</select>
-
+	
 	<!--插入新的用户标签 -->
 	<insert id="insertUserTag" parameterMap="BaseParameterMap">
 		insert into SC_USER_TAG

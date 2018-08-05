@@ -3,6 +3,6 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/shopclaim/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/shopclaim/controller.js",
 	"config": {
-
+		"createQrCodeURL":"json/Shop_create_createShopClaimQrCode.json"
 	}
 }
