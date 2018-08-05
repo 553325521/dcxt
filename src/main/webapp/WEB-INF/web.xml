@@ -3,7 +3,7 @@
   <display-name>dcxt</display-name>
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath*:sc-mybatis.xml</param-value>
+    <param-value>classpath:sc-mybatis.xml,classpath:applicationContext-jedis.xml</param-value>
   </context-param>
   <filter>
     <filter-name>encodingFilter</filter-name>

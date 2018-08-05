@@ -5,18 +5,14 @@
 		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 	</div>
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
-	<div class="weui-header-right" style="top: 0;">
-		<div class="button_sp_area" style="padding: 12px 0;">
-			<div class="bom-radio bom-radio-big" id="attend2"
-				ng-click="toHref('SystemSetup/BasicSetting/platform/add')">新增菜单</div>
-		</div>
+</div>
+
+<div class="weui_cells weui_cells_form"
+	style="margin-top: 0;text-align: center;">
+	<div style="text-align: center;">
+		<img alt="" ng-src="{{form.url}}">
 	</div>
 </div>
 
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
-	<img alt="" ng-src="{{form.url}}">
-	<a ng-href="{{form.url}}">点击跳转</a>
-</div>
-
 <!-- 底部 -->
-<div class="weui_cells_tips">公众账号最多允许3个一级菜单，每个一级菜单最多包含5个子菜单，未认证的普通订阅号无法使用该功能。</div>
+<div class="weui_cells_tips">请使用需授权微信平台管理员账号扫描。</div>

@@ -264,5 +264,29 @@ public class UserTagController extends BaseController {
 			return;
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年7月24日 - 下午10:37:23 
+	 * @description:查询平台类型根据AppId
+	 */
+	@RequestMapping("/UserTag_queryForList_findPlatformTypeByAppId")
+	public void findPlatformTypeList(HttpServletRequest request, HttpSession session){
+		try {
+			Map<String, Object> map = getParameterMap();
+			// 一会根据用户缓存拿
+			String appId = "wx6041a1eff32d3c5e";
+			map.put("FK_APP", appId);
+			map.put("sqlMapId", "findPlatformTypeByAppId");
+			List<Map<String, Object>> reMap = openService.queryForList(map);
+			output("0000", reMap);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+	
 }

@@ -3,13 +3,21 @@
 <mapper namespace="userTagDao">
 	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+	
+	<!--查询用户标签数量 -->
+	<select id="findPlatformTypeByAppId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT USER_TAG_ID, USER_TAG_NAME FROM
+		SC_USER_TAG WHERE FK_APP=#{FK_APP}
+	</select>
+	
 	<!--查询用户标签列表 -->
 	<select id="loadUserTagList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT USER_TAG_ID, USER_TAG_NAME FROM SC_USER_TAG ORDER
 		BY CREATE_TIME
 	</select>
-
+	
 	<!--根据用户标签名称查询标签ID -->
 	<select id="findUserTagIdByUserTagName" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">

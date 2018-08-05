@@ -81,8 +81,18 @@
 						onChange : function(e) {
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
-								scope.form.MENU_PLAT = value
-
+								
+								for (var ind in scope.userTagList) {
+									if (scope.userTagList[ind].USER_TAG_NAME != undefined) {
+										let val = scope.userTagList[ind];
+										if (value == val.USER_TAG_NAME) {
+											scope.form.MENU_PLAT = val.USER_TAG_ID
+											$("#lx_select").val(value);
+											break;
+										}
+									}
+								}
+								
 								$httpService.post(config.findAllMenuURL, $scope.form).success(function(data) {
 									if (data.code != '0000') {
 										loggingService.info(data.data);
@@ -105,17 +115,26 @@
 						} else {
 							var values = []
 							for (var index in data.data) {
-								if (data.data[index].DICTIONARY_NAME != undefined) {
-									values.push(data.data[index].DICTIONARY_NAME)
+								if (data.data[index].USER_TAG_NAME != undefined) {
+									values.push(data.data[index].USER_TAG_NAME)
 								}
 							}
+
+							scope.userTagList = data.data;
+
 							comboboxInit(values)
 
 							if (params.plattype != undefined) {
-
-								scope.form.MENU_PLAT = params.plattype
-
-								$("#lx_select").val(params.plattype);
+								for (var ind in scope.userTagList) {
+									if (scope.userTagList[ind].USER_TAG_NAME != undefined) {
+										let value = scope.userTagList[ind];
+										if (params.plattype == value.USER_TAG_ID) {
+											scope.form.MENU_PLAT = params.plattype
+											$("#lx_select").val(value.USER_TAG_NAME);
+											break;
+										}
+									}
+								}
 
 								$httpService.post(config.findAllMenuURL, $scope.form).success(function(data) {
 									if (data.code != '0000') {

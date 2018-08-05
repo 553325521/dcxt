@@ -1,14 +1,14 @@
 package cn.wifiedu.ssm.controller;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,10 +28,11 @@ import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
-import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.qq.weixin.AesException;
 import cn.wifiedu.ssm.util.qq.weixin.WXBizMsgCrypt;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 /**
  * @author kqs
@@ -52,10 +53,6 @@ public class InterfaceController extends BaseController {
 	private final String component_appid = "wx623296bf9fc03f81";
 	// 第三方平台组件secret
 	private final String component_secret = "cfe18cc292ad99b2a3c44eb0b3c88938";
-	// token 过期时间
-	private final long token_timeout = 7200;
-	// token 过期时间
-	private final long preAuthCode_timeout = 10 * 60 * 1000;
 
 	@Resource
 	OpenService openService;
@@ -68,6 +65,9 @@ public class InterfaceController extends BaseController {
 		this.openService = openService;
 	}
 
+	@Resource
+	private JedisClient jedisClient;
+
 	/**
 	 * 
 	 * @author kqs
@@ -79,14 +79,14 @@ public class InterfaceController extends BaseController {
 	 */
 	@RequestMapping(value = "/getComponentVerifyTicket")
 	@ResponseBody
-	public void getComponentVerifyTicket(HttpServletRequest request, HttpSession session) {
+	public void getComponentVerifyTicket(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			logger.info("微信第三方平台---------微信推送Ticket消息10分钟一次-----------" + StringDeal.getStringDate());
 			processAuthorizeEvent(request);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		output("success");
+		output2(response, "success");
 	}
 
 	/**
@@ -174,13 +174,10 @@ public class InterfaceController extends BaseController {
 	 */
 	public String getComponentAccessToken(HttpSession session) {
 		try {
-			if (session.getAttribute("componentAccessToken") != null) {
-				Map<String, Object> mapp = (Map<String, Object>) session.getAttribute("componentAccessToken");
-				long second = (Long.valueOf(mapp.get("createTime").toString()) - Long.valueOf(StringDeal.timeStamp()))
-						/ 1000;
-				if (token_timeout - second > 0) {
-					return mapp.get("token").toString();
-				}
+
+			if (jedisClient.isExit(RedisConstants.WX_COMPONENT_ACCESS_TOKEN)
+					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.WX_COMPONENT_ACCESS_TOKEN))) {
+				return jedisClient.get(RedisConstants.WX_COMPONENT_ACCESS_TOKEN);
 			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("sqlMapId", "getNewTicket");
@@ -205,11 +202,11 @@ public class InterfaceController extends BaseController {
 
 				System.out.println("componentAccessToken ==== " + componentAccessToken);
 
-				Map<String, Object> mapSession = new HashMap<>();
-				mapSession.put("token", componentAccessToken);
-				mapSession.put("createTime", StringDeal.timeStamp());
-				session.setAttribute("componentAccessToken", mapSession);
-				session.setMaxInactiveInterval(1000 * 60 * 60 * 2);
+				jedisClient.set(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, componentAccessToken);
+
+				// 设置componentAccessToken的过期时间2小时
+				jedisClient.expire(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, 1000 * 60 * 60 * 2);
+
 				return componentAccessToken;
 			}
 		} catch (Exception e) {
@@ -229,13 +226,9 @@ public class InterfaceController extends BaseController {
 	 */
 	public String getComponentPreAuthCode(HttpSession session) {
 		try {
-			if (session.getAttribute("componentPreAuthCode") != null) {
-				Map<String, Object> mapp = (Map<String, Object>) session.getAttribute("componentPreAuthCode");
-				long second = (Long.valueOf(mapp.get("createTime").toString()) - Long.valueOf(StringDeal.timeStamp()))
-						/ 1000;
-				if (preAuthCode_timeout - second > 0) {
-					return mapp.get("token").toString();
-				}
+			if (jedisClient.isExit(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE)
+					&& StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE))) {
+				return jedisClient.get(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE);
 			}
 
 			String url = CommonUtil.getPath("getWxPreAuthCode").toString();
@@ -249,13 +242,14 @@ public class InterfaceController extends BaseController {
 			String retStr = CommonUtil.posts(url, json.toString(), "utf-8");
 
 			JSONObject resultJson = JSONObject.parseObject(retStr);
-			/** 在返回结果中获取token */
+			/** 在返回结果中获取pre_auth_code */
 			String componentPreAuthCode = resultJson.getString("pre_auth_code");
-			Map<String, Object> mapSession = new HashMap<>();
-			mapSession.put("token", componentPreAuthCode);
-			mapSession.put("createTime", StringDeal.timeStamp());
-			session.setAttribute("componentPreAuthCode", mapSession);
-			session.setMaxInactiveInterval(1000 * 60 * 60 * 2);
+
+			jedisClient.set(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, componentPreAuthCode);
+
+			// 设置componentPreAuthCode的过期时间2小时
+			jedisClient.expire(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, 1000 * 60 * 60 * 2);
+
 			return componentPreAuthCode;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -263,12 +257,19 @@ public class InterfaceController extends BaseController {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月5日 - 上午11:19:18
+	 * @description:获取微信授权连接
+	 */
 	@RequestMapping(value = "/getPlatFormAuthorizedCode")
 	@ResponseBody
 	public void getPlatFormAuthorizedCode(HttpServletRequest request, HttpSession session) {
 		try {
-
-			Map<String, Object> map = getParameterMap();
 
 			String url = CommonUtil.getPath("AuthWxPlatFormUrl").toString();
 
@@ -276,13 +277,7 @@ public class InterfaceController extends BaseController {
 					.replace("preAuthCode", getComponentPreAuthCode(session))
 					.replace("redirectUri", CommonUtil.getPath("project_url").toString().replace("DATA", "getRes"));
 
-			BufferedImage image = QRCode.genBarcode(url, 200, 200);
-			response.setContentType("image/png");
-			response.setHeader("pragma", "no-cache");
-			response.setHeader("cache-control", "no-cache");
-			response.reset();
-			ImageIO.write(image, "png", response.getOutputStream());
-
+			output(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -293,13 +288,66 @@ public class InterfaceController extends BaseController {
 	public void getRes(HttpServletRequest request, HttpSession session) {
 		try {
 
-			Map<String, Object> map = getParameterMap();
+			String authorization_code = request.getParameter("auth_code");
+			if (StringUtils.isNotBlank(authorization_code)) {
+				String url = CommonUtil.getPath("getWxPlatFormInfoURL").toString();
 
-			for (String key : map.keySet()) {
-				System.out.println("key:" + key + "----value:" + map.get(key));
+				url = url.replace("componentAccessToken", getComponentAccessToken(session));
+
+				JSONObject jsonObj = new JSONObject();
+
+				jsonObj.put("component_appid", component_appid);
+				jsonObj.put("authorization_code", authorization_code);
+
+				String resContent = CommonUtil.posts(url, jsonObj.toJSONString(), "utf-8");
+
+				if (StringUtils.isNotBlank(resContent)) {
+					JSONObject resObj = JSONObject.parseObject(resContent);
+					JSONObject obj = JSONObject.parseObject(resObj.get("authorization_info").toString());
+					String authorizer_appid = obj.getString("authorizer_appid");
+					String authorizer_access_token = obj.getString("authorizer_access_token");
+					String authorizer_refresh_token = obj.getString("authorizer_refresh_token");
+
+					jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, authorizer_access_token);
+
+					// 设置authorizer_access_token的过期时间2小时
+					jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, 1000 * 60 * 60 * 2);
+					
+					Map<String, Object> map = getParameterMap();
+					map.put("APP_PK", authorizer_appid);
+					map.put("APP_REFRESH_TOKEN", authorizer_refresh_token);
+					map.put("CREATE_TIME", StringDeal.getStringDate());
+					map.put("sqlMapId", "insertApp");
+					openService.insert(map);
+					
+				}
+
+			} else {
+				logger.warn("获取授权码失败");
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		output2(response, "success");
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param response
+	 * @param returnvaleue
+	 * @return void
+	 * @date 2018年8月3日 - 下午1:12:25
+	 * @description:回复微信服务器"文本消息"
+	 */
+	public void output2(HttpServletResponse response, String returnvaleue) {
+		try {
+			PrintWriter pw = response.getWriter();
+			pw.write(returnvaleue);
+			pw.flush();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

@@ -19,7 +19,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -154,52 +153,52 @@ public class MenuController extends BaseController {
 			if (map.containsKey("MENU_PLAT")) {
 				String token = WxUtil.getToken();
 				if (token != null) {
-					String url = CommonUtil.getPath("userTagGetList").toString();
-					url = url.replace("ACCESS_TOKEN", token);
-					String resMsg = CommonUtil.get(url);
-					if (resMsg != null) {
-						JSONObject obj = JSON.parseObject(resMsg);
-						JSONArray tags = JSONObject.parseArray(obj.get("tags").toString());
-						String tagId = "";
-						for (Object tag : tags) {
-							JSONObject tagInfo = JSON.parseObject(tag.toString());
-							if (tagInfo != null && (map.get("MENU_PLAT")).equals(tagInfo.get("name"))) {
-								tagId = tagInfo.get("id").toString();
-								break;
-							}
-						}
-						if (!"用户端".equals(map.get("MENU_PLAT"))) {
-							if ("".equals(tagId)) {
-								output("9999", " 获取对应微信标签信息失败 ");
-								return;
-							}
-							// 删除个性化套餐
-							if (delMenuById(map) <= 0) {
-								throw new RuntimeException();
-							}
-						} else {
-							// 删除 自定义套餐 
-							// 存在问题 删除自定义的时候 会删除个性化套餐
-//							if (delMenuForWx(map) <= 0) {
-//								throw new RuntimeException();
-//							}
-						}
-						// 获取所有的菜单
-						map.put("sqlMapId", "loadTopMenusByAppId");
-						List<Map<String, Object>> fatherMap = openService.queryForList(map);
-
-						if (!fatherMap.isEmpty()) {
-							this.insertAppMenu(map, fatherMap, tagId);
-							// 提交所有事务
-							transactionManager.commit(status);
-							return;
-						} else {
-							output("9999", " 该菜单为空不可更新! ");
-							return;
-						}
+					// String url =
+					// CommonUtil.getPath("userTagGetList").toString();
+					// url = url.replace("ACCESS_TOKEN", token);
+					// String resMsg = CommonUtil.get(url);
+					// if (resMsg != null) {
+					// JSONObject obj = JSON.parseObject(resMsg);
+					// JSONArray tags =
+					// JSONObject.parseArray(obj.get("tags").toString());
+					String tagId = map.get("MENU_PLAT").toString();
+					// for (Object tag : tags) {
+					// JSONObject tagInfo = JSON.parseObject(tag.toString());
+					// if (tagInfo != null && tagId.equals(tagInfo.get("id"))) {
+					// tagId = tagInfo.get("id").toString();
+					// break;
+					// }
+					// }
+					// if (!"用户端".equals(map.get("MENU_PLAT"))) {
+					if ("".equals(tagId)) {
+						output("9999", " 获取对应微信标签信息失败 ");
+						return;
 					}
-					output("9999", " 获取微信标签列表失败 ");
-					return;
+					// 删除个性化套餐
+					delMenuById(map);
+					// } else {
+					// // 删除 自定义套餐
+					// // 存在问题 删除自定义的时候 会删除个性化套餐
+					// if (delMenuForWx(map) <= 0) {
+					// throw new RuntimeException();
+					// }
+					// }
+					// 获取所有的菜单
+					map.put("sqlMapId", "loadTopMenusByAppId");
+					List<Map<String, Object>> fatherMap = openService.queryForList(map);
+
+					if (!fatherMap.isEmpty()) {
+						this.insertAppMenu(map, fatherMap, tagId);
+						// 提交所有事务
+						transactionManager.commit(status);
+						return;
+					} else {
+						output("9999", " 该菜单为空不可更新! ");
+						return;
+					}
+					// }
+					// output("9999", " 获取微信标签列表失败 ");
+					// return;
 				}
 				output("9999", " 获取微信token失败 ");
 				return;
@@ -325,21 +324,23 @@ public class MenuController extends BaseController {
 		try {
 			map.put("sqlMapId", "findMenuIdByAppId");
 			Map<String, Object> obj = (Map<String, Object>) openService.queryForObject(map);
-			String postStr = "{\"menuid\":\"" + obj.get("FK_MENU_WX") + "\"}";
-			map.put("sqlMapId", "deleteMenuApp");
-			if (openService.delete(map)) {
-				String url = CommonUtil.getPath("deleteconditionalURL").toString();
-				String token = WxUtil.getToken();
-				url = url.replace("ACCESS_TOKEN", token);
-				String res = CommonUtil.posts(url, postStr, "utf-8");
-				if (res != null) {
-					JSONObject resObj = JSON.parseObject(res);
-					if ("0".equals(resObj.get("errcode"))) {
-						transactionManager.commit(status);
-						return 1;
+			if (obj != null && obj.containsKey("FK_MENU_WX")) {
+				String postStr = "{\"menuid\":\"" + obj.get("FK_MENU_WX") + "\"}";
+				map.put("sqlMapId", "deleteMenuApp");
+				if (openService.delete(map)) {
+					String url = CommonUtil.getPath("deleteconditionalURL").toString();
+					String token = WxUtil.getToken();
+					url = url.replace("ACCESS_TOKEN", token);
+					String res = CommonUtil.posts(url, postStr, "utf-8");
+					if (res != null) {
+						JSONObject resObj = JSON.parseObject(res);
+						if ("0".equals(resObj.get("errcode"))) {
+							transactionManager.commit(status);
+							return 1;
+						}
 					}
+					throw new RuntimeException();
 				}
-				throw new RuntimeException();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

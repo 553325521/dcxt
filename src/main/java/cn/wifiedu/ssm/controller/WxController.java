@@ -14,12 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
@@ -27,6 +29,8 @@ import cn.wifiedu.core.util.SessionUtil;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.WxUtil;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 /**
  * 微信与数据库交互相关
@@ -50,6 +54,9 @@ public class WxController extends BaseController {
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
+
+	@Resource
+	private JedisClient jedisClient;
 
 	@RequestMapping("/Qrcode_testQrcode_data")
 	public void testQrcode(HttpServletRequest request, HttpServletResponse reponse) {
@@ -167,29 +174,144 @@ public class WxController extends BaseController {
 	public void ymsqCommon() {
 		try {
 			String url = CommonUtil.getPath("Auth-wx-qrcode-url");
-			url = url.replace("REDIRECT_URI", URLEncoder
-					.encode(CommonUtil.getPath("project_url").replace("DATA", request.getParameter("params")), "UTF-8"));
+			url = url.replace("REDIRECT_URI", URLEncoder.encode(
+					CommonUtil.getPath("project_url").replace("DATA", request.getParameter("params")), "UTF-8"));
 			System.out.println("qrcodeURL:" + url);
 			response.sendRedirect(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * 跳转店员页面
+	 */
+	@RequestMapping("/welcome")
+	public void welcome() {
+		try {
+			String code = request.getParameter("code");
+			if (null != code && !"".equals(code)) {
+				String openId = getOpenIdByCode(code);
+				System.out.println("WeChart openId : " + openId);
+
+				Map<String, Object> map = getParameterMap();
+				map.put("OPENID", openId);
+				map.put("sqlMapId", "checkUserWx");
+
+				List<Map<String, Object>> checkList = openService.queryForList(map);
+				logger.info("checkList: " + checkList);
+
+				Map<String, Object> userMap = new HashMap<>();
+
+				if (checkList != null && checkList.size() == 0) {
+
+					// 查询 openId 根据 用户详细信息
+					getWxUserInfo(openId, userMap);
+
+				}
+
+				// 根据openId 获取 系统中的 商铺、权限、功能
+				getUserInfo(openId, userMap);
+				
+				userMap.put("USER_WX", openId);
+				
+				// redis存储用户登录信息
+				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
+			}
+
+			String url = CommonUtil.getPath("pathUrl");
+			response.sendRedirect(url);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 跳转代理设置页面
 	 */
 	@RequestMapping("/ActingCustomerManagement")
 	public void ActingCustomerManagement() {
 		try {
+
+			String code = request.getParameter("code");
+			if (null != code && !"".equals(code)) {
+				String openId = getOpenIdByCode(code);
+				System.out.println("WeChart openId : " + openId);
+
+				Map<String, Object> map = getParameterMap();
+				map.put("OPENID", openId);
+				map.put("sqlMapId", "checkUserWx");
+
+				List<Map<String, Object>> checkList = openService.queryForList(map);
+				logger.info("checkList: " + checkList);
+
+				Map<String, Object> userMap = new HashMap<>();
+
+				if (checkList != null && checkList.size() == 0) {
+					// 用户第一次授权
+					// 查询 openId 根据 用户详细信息
+					getWxUserInfo(openId, userMap);
+				}
+
+				userMap.put("USER_WX", openId);
+
+				// redis存储用户登录信息
+				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
+			}
+
 			String url = CommonUtil.getPath("pathUrl") + "#ActingCustomerManagement/ActingCustomerManagement";
-			System.out.println("qrcodeURL:" + url);
 			response.sendRedirect(url);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * @author kqs
+	 * @param openId
+	 * @param userMap
+	 * @return void
+	 * @date 2018年8月5日 - 下午4:25:55
+	 * @description:根据openId 获取 系统中的 商铺、权限、功能
+	 */
+	private void getUserInfo(String openId, Map<String, Object> userMap) {
+		try {
+			Map<String, Object> map = new HashMap<>();
+			map.put("openId", openId);
+			map.put("sqlMapId", "selectUserInfo");
+			userMap = (Map<String, Object>) openService.queryForObject(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void getWxUserInfo(String openId, Map<String, Object> map) {
+		String url = CommonUtil.getPath("wx_userinfo_get_url");
+
+		String accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + CommonUtil.getPath("AppID"));
+
+		url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
+
+		String res = CommonUtil.get(url);
+		if (res != null && res.indexOf("errcode") <= 0) {
+			JSONObject obj = JSONObject.parseObject(res);
+
+			map.put("USER_NAME", obj.get("nickname"));
+
+			map.put("USER_SEX", obj.get("sex"));
+
+			map.put("province", obj.get("province"));
+
+			map.put("city", obj.get("city"));
+
+			map.put("country", obj.get("country"));
+
+			map.put("headimgurl", obj.get("headimgurl"));
+		} else {
+			System.out.println("获取用户基本信息失败");
+		}
+	}
+
 	public String getOpenIdByCode(String code) {
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL");
 		url = url.replace("CODE", code);
@@ -199,6 +321,26 @@ public class WxController extends BaseController {
 		Map result = (Map) succesResponse;
 
 		String openId = result.get("openid").toString();
+
+		String refresh_token = result.get("refresh_token").toString();
+
+		String access_token = result.get("access_token").toString();
+
+		// redis存储refresh_token信息 鸡肋 无用
+		// if (!jedisClient.isExit(RedisConstants.WX_REFRESH_TOKEN)
+		// &&
+		// StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_REFRESH_TOKEN)))
+		// {
+		// jedisClient.set(RedisConstants.WX_REFRESH_TOKEN, refresh_token);
+		// }
+
+		// redis存储access_token信息
+		if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + CommonUtil.getPath("AppID")) && StringUtils
+				.isNoneBlank(jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + CommonUtil.getPath("AppID")))) {
+			jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + CommonUtil.getPath("AppID"), access_token);
+			// 设置access_token的过期时间2小时
+			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + CommonUtil.getPath("AppID"), 1000 * 60 * 60 * 2);
+		}
 		System.out.println(openId);
 		return openId;
 	}

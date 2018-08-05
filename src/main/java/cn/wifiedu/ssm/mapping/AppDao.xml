@@ -6,9 +6,24 @@
 
 	<select id="findAppList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		SELECT APP_PK, APP_NAME, APP_URL
+		SELECT APP_PK, APP_REFRESH_TOKEN
 		FROM SC_APP
 		ORDER BY CREATE_TIME
 	</select>
 
+	<insert id="insertApp" parameterMap="BaseParameterMap">
+		insert into SC_APP
+		(
+		APP_PK,
+		APP_REFRESH_TOKEN,
+		CREATE_TIME
+		)
+		values
+		(
+		#{APP_PK},
+		#{APP_REFRESH_TOKEN},
+		#{CREATE_TIME}
+		)
+	</insert>
+	
 </mapper>
