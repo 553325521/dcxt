@@ -69,7 +69,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 *
 			 */
 			@RequestMapping("/AgentInfo_query_findAgentInfoById")
-			public void findTablesList(HttpServletRequest request,HttpSession seesion){
+			public void findAgentInfoById(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
@@ -86,6 +86,64 @@ import cn.wifiedu.ssm.util.StringDeal;
 			}
 			
 			
+			
+			
+			
+			/**
+			 * 
+			 * @date 2018年8月6日 上午2:58:53 
+			 * @author lps
+			 * 
+			 * @Description: 更新代理信息
+			 * @param request
+			 * @param seesion 
+			 * @return void 
+			 *
+			 */
+			@RequestMapping("/AgentInfo_update_updateAgentInfoById")
+			public void updateAgentInfoById(HttpServletRequest request,HttpSession seesion){
+				try {
+					
+					//如果已经认证成功，就不能修改了
+					Map<String, Object> map = getParameterMap();
+					map.put("sqlMapId", "selectAgentInfoById");
+					map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
+					Map<String, Object> reMap = (Map)openService.queryForObject(map);
+					
+					if(reMap == null || "1".equals(reMap.get("AUTH_STATUS"))){
+						output("9999", "保存失败");
+						return;
+					}
+					
+					//先更新代理信息表
+					map.put("sqlMapId", "updateAgentInfoById");
+					map.put("UPDATE_BY", "admin");
+					
+					boolean update = openService.update(map);
+					
+					if(!update){
+						output("9999", "保存失败");
+						return;
+					}
+					
+					//然后更新用户表信息
+					
+					map.put("sqlMapId", "updateUserBaseInfoById");
+					
+					update = openService.update(map);
+					
+					if(update){
+						output("0000", "完善成功，请等待管理员审核");
+					}else{
+						output("9999", "保存失败");
+					}
+					
+					return;
+				} catch (Exception e) {
+					output("9999", " Exception ", e);
+					return;
+				}
+			}
 			
 			
 			

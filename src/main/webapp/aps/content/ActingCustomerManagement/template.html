@@ -77,7 +77,8 @@
 	<div class="weui_cells tablessetting-font-style dcxt-font-overflow" style="margin-top:0px;" ng-show="pageShow">
 		<div class="weui_cell slidelefts" ng-repeat="item in customer_information_list | filter:input_value">		
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="padding:2px 15px; display:flex;transform: translateX(0px);")" ng-click="toHref('ActingCustomerManagement/addBusiness','{{item.SHOP_ID}}')">	
-				<div class="weui_cell_bd" style="margin-right:10px;min-width:20%;max-width:28%;">
+				
+				<div class="weui_cell_bd" style="margin-right:10px;width:20%;">
 					<div ng-switch on = "{{item.SHOP_STATE}}">
 						<span ng-switch-when = "0" style="color:red">未认领</span>
 						<span ng-switch-default>{{item.USER_SN}}</span>
@@ -108,10 +109,12 @@
 				</div>	
 			</div>
 					
-			<div class="slideleft">
-	        	<span  style="background:#FF832E;color:#fff" ng-click="toHref('ActingCustomerManagement/shopclaim','{{item.SHOP_ID}}')">商户认领</span>
-	        	<span  class="bg-red f-white dels" id="delete-table-cate" ng-click="toHref('ActingCustomerManagement/buyService','{{item.SHOP_ID}}')">购买服务</span>
-       		</div>	      
+			
+			<div class="slideleft" ng-switch="item.SHOP_STATE">
+    			<span ng-switch-when="0" style="background:#FF832E;color:#fff;" ng-click="toHref('ActingCustomerManagement/shopclaim', '{{item.SHOP_ID}}')">商户认领</span>
+    			<span ng-switch-when="1" style="background:#ccc;color:#fff;">认领完成</span>
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="toHref('ActingCustomerManagement/buyService','{{item.SHOP_ID}}')">购买服务</span>
+       		
 		</div>
 		
 		

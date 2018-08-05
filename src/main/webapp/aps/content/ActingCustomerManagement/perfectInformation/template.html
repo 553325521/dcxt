@@ -1,0 +1,202 @@
+<style>
+	
+</style>
+
+<div ng-hide="tsPage">
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="back()">
+			<a class="icon icon-109"></a>
+		</div>
+
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+ 
+		<div ng-hide="lookMessage" class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 完善信息页面 -->
+	<div ng-hide="lookMessage" class="weui_cells weui_cells_form"  style="margin-top: 0;" id="form">
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">姓名</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" type="text"
+						placeholder="输入姓名" ng-model="form.USER_NAME" required emptyTips="请输入姓名">
+				</div>
+			</div>
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">微信号</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" type="text"
+						placeholder="输入微信号" ng-model="form.USER_WX_NUMBER" required emptyTips="请输入微信号">
+				</div>
+			</div>
+			
+
+			<div class="weui_cell dcxt_active">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">联系电话</label>
+				</div>
+				<div class="weui-cell_bd  weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" type="text"
+						value="" ng-model="form.USER_PHONE" placeholder="输入联系电话" required emptyTips="请输入联系电话" notMatchTips="请输入正确联系电话"
+						 pattern="^[0-9|-]{5,}$">
+				</div>
+			</div>
+
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">公司名称</label>
+				</div>
+				<div class="weui_cell_bd  weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" id="dw_select" type="text"
+						placeholder="输入公司名称" value="" ng-model="form.COMPANY_NAME" required 
+						emptyTips="请输入公司名称">
+				</div>
+			</div>
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">营业执照</label>
+				</div>
+				<div class="weui_cell_bd  weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" id="dw_select" type="text"
+						placeholder="输入营业执照" value="" ng-model="form.BUSINESS_LICENSE" required 
+						emptyTips="请输入营业执照">
+				</div>
+			</div>
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">公司地址</label>
+				</div>
+				<div class="weui_cell_bd  weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" id="dw_select" type="text"
+						placeholder="输入公司地址" value="" ng-model="form.COMPANY_ADDRESS" required 
+						emptyTips="请输入公司地址">
+				</div>
+			</div>
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">代理区域</label>
+				</div>
+				<div class="weui_cell_bd  weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" id="dw_select" type="text"
+						placeholder="多个代理区域用空格分开" value="" ng-model="form.AGENT_AREA" required 
+						emptyTips="请输入代理区域">
+				</div>
+			</div>
+			
+			
+			<div class="weui_cell">
+				<div class="weui_cell_bd weui_cell_primary" dir="rtl">
+						<span style="color:#B2B2B2;font-size: 11px;" >
+							请如实填写信息，否则会导致微信提现操作失败</span>
+				</div>
+			</div>
+	</div>
+	
+	<!-- 查看信息页面 -->
+	<div class="weui_cells dcxt_weui_cells" style="margin-top:0;" ng-show="lookMessage">
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">姓名</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<label class="tablessetting-gray-font label" ng-bind="form.USER_NAME"></label>
+				</div>	
+		</div>
+		
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">微信号</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary ">
+					<label class="tablessetting-gray-font label" ng-bind="form.USER_WX_NUMBER"></label>
+				</div>	
+		</div>
+		
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">联系电话</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<label class="tablessetting-gray-font label" ng-bind="form.USER_PHONE"></label>
+				</div>	
+		</div>
+		
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">公司名称</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary ">
+					<label class="tablessetting-gray-font label" ng-bind="form.COMPANY_NAME"></label>
+				</div>	
+		</div>
+		
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">营业执照</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary ">
+					<label class="tablessetting-gray-font label" ng-bind="form.BUSINESS_LICENSE"></label>
+				</div>	
+		</div>
+		
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">公司地址</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary ">
+					<label class="tablessetting-gray-font label" ng-bind="form.COMPANY_ADDRESS"></label>
+				</div>	
+		</div>
+		
+		
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">代理区域</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<label class="tablessetting-gray-font label" ng-bind="form.AGENT_AREA"></label>
+				</div>	
+		</div>
+		
+	
+	</div>
+			
+</div>
+
+
+
+
+
+
+
+
+
+
+<div ng-show="tsPage" class="weui_msg" id="msg2" style="display: block; opacity: 1;">
+        <div class="weui_icon_area"><i class="weui_icon_warn weui_icon_msg"></i></div>
+        <div class="weui_text_area">
+            <h2 class="weui_msg_title">提示</h2>
+            <p class="weui_msg_desc">你的代理商信息不完善，请完善代理商信息，若已经完善，请耐心等待审核。</p>
+        </div>
+        <div class="weui_opr_area">
+            <p class="weui_btn_area">
+                <a href="javascript:;" class="weui_btn weui_btn_primary" ng-click="perfectInformation()">完善信息</a>
+                <a href="javascript:;" class="weui_btn weui_btn_default" ng-click="lookInformation()">查看信息</a>
+            </p>
+        </div>
+        <div class="weui_extra_area">
+            
+        </div>
+</div>

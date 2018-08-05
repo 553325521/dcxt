@@ -1,0 +1,21 @@
+{
+	"name": "perfectInformation",
+	"viewUrl": "aps/content/ActingCustomerManagement/perfectInformation/template.html",
+	"controllerUrl": "aps/content/ActingCustomerManagement/perfectInformation/controller.js",
+	"config": {
+		"findURL" : "json/AgentInfo_query_findAgentInfoById.json",
+		"saveURL" : "json/AgentInfo_update_updateAgentInfoById.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"perfectInformation.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"perfectInformation.confirm"
+		        	}
+				]
+		}
+	}
+}

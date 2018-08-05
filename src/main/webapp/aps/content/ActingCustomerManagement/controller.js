@@ -10,18 +10,8 @@
 					
 					scope.customer_information_list = [];
 					
-					function initCuntomerInformation(){
-						$httpService.post(config.showAgentShopInfoURL, $scope.form).success(function(data) {
-							if (data.code == '0000') {
-								scope.customer_information_list = data.data;
-								scope.pageShow = "True"
-								scope.$apply();
-							} 
-						}).error(function(data) {
-							loggingService.info('获取测试信息出错');
-						});
-					}
-					initCuntomerInformation();
+					
+					
 					
 					scope.toHref = function(path,shopid) {
 						var m2 = {
@@ -31,6 +21,25 @@
 						}
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
 					}
+					
+					
+					
+					function initCuntomerInformation(){
+						$httpService.post(config.showAgentShopInfoURL, $scope.form).success(function(data) {
+							if (data.code == '0000') {
+								scope.customer_information_list = data.data;
+								scope.pageShow = "True"
+								scope.$apply();
+							}else if(data.code == "5555"){//信息没完善，需要完善信息
+								scope.toHref('ActingCustomerManagement/perfectInformation','');
+								scope.$apply();
+							}
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
+					}
+					initCuntomerInformation();
+				
 					
 			
 					comboboxInit();

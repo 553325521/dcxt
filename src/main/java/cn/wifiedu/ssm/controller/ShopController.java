@@ -138,9 +138,21 @@ public class ShopController extends BaseController {
 	@RequestMapping(value="/Shop_select_findAgentShopInfo",method = RequestMethod.POST)
 	public void showAgentShopInfo() {
 		try {
+			
+			//如果未认证，跳转完善信息界面
 			Map<String, Object> map = getParameterMap();
-			map.put("USER_FK","4b8cea73b03a4ddfacf8fbaf7a31028d");
+			map.put("sqlMapId", "selectAgentInfoById");
+			map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
+			Map<String, Object> reMap1 = (Map)openService.queryForObject(map);
+			
+			if(reMap1 == null || "0".equals(reMap1.get("AUTH_STATUS"))){
+				output("5555", "信息有误");
+				return;
+			}
+			
+			
 			map.put("sqlMapId", "findAgentShopInfo");
+			map.put("USER_FK","4b8cea73b03a4ddfacf8fbaf7a31028d");
 			List<Map<String, Object>> reMap  = openService.queryForList(map);
 			for(int i = 0;i< reMap.size();i++){
 				Map<String,Object> singleMap = reMap.get(i);
