@@ -195,23 +195,6 @@ public class ShopController extends BaseController {
 			Map<String,Object> param = new HashMap<String,Object>();
 			PrintWriter out = reponse.getWriter();
 			String userId = "";
-			String tagId = "";
-			String roleId = "";
-			/*查询店员端标签ID*/
-			param.put("USER_TAG_NAME", "店员端");
-			param.put("sqlMapId","findUserTagIdByUserTagName");
-			Map<String, Object> resultUserTagMap = (Map<String, Object>)openService.queryForObject(param);
-			if(resultUserTagMap!=null && resultUserTagMap.get("USER_TAG_ID") != null){
-				tagId = resultUserTagMap.get("USER_TAG_ID").toString();
-			}
-			/*查询店长角色ID*/
-			param.clear();
-			param.put("ROLE_NAME", "店长");
-			param.put("sqlMapId","findRolePKByRoleName");
-			Map<String, Object> resultRoleMap = (Map<String, Object>)openService.queryForObject(param);
-			if(resultRoleMap!=null && resultRoleMap.get("ROLE_PK") != null){
-				roleId = resultRoleMap.get("ROLE_PK").toString();
-			}
 			if (openId!=null && !openId.equals("") ) {
 				param.clear();
 			/*	判断当前用户openID是否存在*/
@@ -230,21 +213,21 @@ public class ShopController extends BaseController {
 			}
 			/*添加到用户商铺中间表里*/
 			param.clear();
-			param.put("FK_USER", userId);
-			param.put("FK_ROLE", roleId);
-			param.put("FK_USER_TAG", tagId);
-			param.put("FK_SHOP", state);
-			param.put("INSERT_TIME",StringDeal.getStringDate());
+			param.put("USER_ID", userId);
+			param.put("roleName", "店长");
+			param.put("tagName", "店员端");
+			param.put("SHOP_ID", state);
 			param.put("sqlMapId", "insertUserShop");
 			String insertResult = openService.insert(param);
 			/*插入成功修改商铺认领状态*/
-			if(insertResult!=null&&insertResult.equals("")){
+			if(insertResult!=null&&!insertResult.equals("")){
 				param.clear();
 				param.put("SHOP_FK", state);
 				param.put("SHOP_STATE", 1);
 				param.put("sqlMapId", "UpdateShopState");
 				openService.update(param);
-				output("9999","认领成功");
+				response.sendRedirect(
+				CommonUtil.getPath("project_url").replace("json/DATA.json", "") + "/shopclaim_success.jsp");
 			}
 			} 
 			}
