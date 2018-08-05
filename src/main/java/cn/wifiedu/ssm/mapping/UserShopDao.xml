@@ -19,8 +19,8 @@
 		(
 			#{UUID},
 			#{USER_ID},
-			(SELECT ROLE_PK FROM sc_sys_role WHERE ROLE_NAME = "代理商"),
-			(SELECT USER_TAG_ID FROM sc_user_tag WHERE USER_TAG_NAME = "代理端"),
+			(SELECT ROLE_PK FROM sc_sys_role WHERE ROLE_NAME = #{roleName}),
+			(SELECT USER_TAG_ID FROM sc_user_tag WHERE USER_TAG_NAME = #{tagName}),
 			#{SHOP_ID},
 			NOW()
 		)

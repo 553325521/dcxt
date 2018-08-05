@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -83,9 +84,10 @@ public class ShopController extends BaseController {
 				
 				boolean b = openService.update(map);
 				if(b){
+					transactionManager.commit(status);
 					output("0000","修改成功");
 				}else{
-					output("9999","修改失败");
+					throw new Exception();
 				}
 				return;
 			}
@@ -96,8 +98,7 @@ public class ShopController extends BaseController {
 			Map serviceMap = (Map) openService.queryForObject(map);
 			String serviceId = (String) serviceMap.get("SERVICE_PK");
 			if(serviceId == null){
-				output("9999","请确认服务类型是否有误");
-				return;
+				throw new Exception();
 			}
 			
 			map.put("sqlMapId", "insertShop");
@@ -106,25 +107,25 @@ public class ShopController extends BaseController {
 			String insert = openService.insert(map);
 			
 			if(insert == null){
-				output("9999","保存失败");
-				return;
+				throw new Exception();
 			}
 			//插入用户商铺中间表
 			map.put("sqlMapId", "insertUserShop");
 			map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
 			map.put("SHOP_ID", insert);
+			map.put("roleName", "代理商");
+			map.put("tagName", "代理端");
 			
 			String insert2 = openService.insert(map);
 			
 			if(insert2 != null){
+				transactionManager.commit(status);
 				output("0000","保存成功");
 			}else{
-				output("9999","保存失败");
+				throw new Exception();
 			}
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-		
 			transactionManager.rollback(status);
 			output("9999","保存失败");
 		}
@@ -151,7 +152,6 @@ public class ShopController extends BaseController {
 			}
 			output("0000",reMap);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			output("9999","查询失败");
 		}
