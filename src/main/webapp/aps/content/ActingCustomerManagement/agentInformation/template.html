@@ -56,7 +56,7 @@
 					<label class="weui_label label tablessetting-label">姓名</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary dcxt-right-label">
-					<label class="tablessetting-gray-font">{{agent_info.USER_NAME}} ( 先生 )</label>
+					<label class="tablessetting-gray-font">{{agent_info.USER_NAME}} ( {{agent_info.USER_SEX==1?'先生':agent_info.USER_SEX==2?'女士':'未知'}} )</label>
 				</div>	
 		</div>
 		

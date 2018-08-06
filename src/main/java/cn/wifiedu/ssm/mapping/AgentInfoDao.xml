@@ -6,7 +6,7 @@
   
   <!-- 查询代理商信息 -->
 	<select id="selectAgentInfoById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		SELECT u.USER_NAME, u.USER_PHONE, u.USER_WX_NUMBER, u.USER_SN, u.USER_BALANCE, ai.AGENT_PK, ai.COMPANY_NAME, ai.BUSINESS_LICENSE, ai.COMPANY_ADDRESS, ai.AUTH_STATUS, ai.AGENT_LEVEL, ai.AGENT_AREA
+		SELECT u.USER_NAME, u.USER_PHONE, u.USER_WX_NUMBER, u.USER_SN, u.USER_SEX, u.USER_BALANCE, ai.AGENT_PK, ai.COMPANY_NAME, ai.BUSINESS_LICENSE, ai.COMPANY_ADDRESS, ai.AUTH_STATUS, ai.AGENT_LEVEL, ai.AGENT_AREA
 		FROM sc_agent_info ai, sc_user u WHERE u.USER_PK = ai.USER_FK AND u.USER_PK = #{USER_ID};
 	</select>
 	
@@ -19,7 +19,7 @@
 	<!-- 跟新用户表部分信息 -->
 	
 	<update  id="updateUserBaseInfoById" parameterMap="BaseParameterMap" >
-		UPDATE sc_user SET USER_NAME = #{USER_NAME}, USER_PHONE = #{USER_PHONE}, USER_WX_NUMBER = #{USER_WX_NUMBER}, UPDATE_TIME = NOW(), UPDATE_BY = #{UPDATE_BY}
+		UPDATE sc_user SET USER_NAME = #{USER_NAME}, USER_PHONE = #{USER_PHONE},USER_SEX = #{USER_SEX}, USER_WX_NUMBER = #{USER_WX_NUMBER}, UPDATE_TIME = NOW(), UPDATE_BY = #{UPDATE_BY}
 		WHERE USER_PK = #{USER_ID};
 	</update>
 

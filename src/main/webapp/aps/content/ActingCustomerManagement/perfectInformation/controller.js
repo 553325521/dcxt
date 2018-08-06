@@ -12,6 +12,11 @@
 						$httpService.post(config.findURL).success(function(data) {
 							if (data.code == '0000') {
 								scope.form = data.data;
+								if(scope.tsPage == "false" && scope.lookMessage == "false"){
+									if("1" != scope.form.USER_SEX && "2" != scope.form.USER_SEX){
+										scope.form.USER_SEX = 1;
+									}
+								}
 								scope.$apply();
 							} 
 						}).error(function(data) {
