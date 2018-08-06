@@ -4,6 +4,6 @@
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/platform/list/controller.js",
 	"config": {
 		"pageTitle": "授权列表",
-		"findURL": "json/App_queryForList_findAppList.json"
+		"findURL": "json/Menu_check_checkAppByUser.json"
 	}
 }

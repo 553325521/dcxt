@@ -19,4 +19,6 @@ public class RedisConstants {
 	public final static String WX_COMPONENT_ACCESS_TOKEN = "wx_component_access_token:";
 
 	public static final String WX_COMPONENT_PRE_AUTH_CODE = "wx_pre_auth_code:";
+	
+	public static final String WX_BUTTON_TOKEN = "wx_button_token:";
 }

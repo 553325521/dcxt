@@ -1,6 +1,5 @@
 package cn.wifiedu.ssm.controller;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +12,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSONObject;
+
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 /**
  * @author kqs
@@ -38,6 +42,9 @@ public class FunctionController extends BaseController {
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
+
+	@Resource
+	private JedisClient jedisClient;
 
 	/**
 	 * 
@@ -77,41 +84,21 @@ public class FunctionController extends BaseController {
 	public void loadFunctionListByUserRole(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
-			List<Map<String, Object>> reList = null;
 			
-			//下边两个从session获取
-			map.put("SHOP_ID", "30f1bbd3cbbe45d5b34cb8991ca5a886");
-			map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
 			
-			//获取对应商铺对应权限的所有菜单
-			map.put("sqlMapId","selectFunctionByUserAndShop");
-			reList = openService.queryForList(map);
-			
-			//判断是初始加载还是点击菜单
-			String fid = (String) map.get("fid");
-			if(fid != null && fid != ""){
-				//是点击菜单
-				//先判断当前用户所在商铺有访问当前菜单的权限吗
-				Iterator<Map<String, Object>> iterator = reList.iterator();
-				while(iterator.hasNext()){
-					if(iterator.next().containsValue(fid)){
-						map.put("sqlMapId", "loadFunctionListByUserRole");
-						reList = openService.queryForList(map);
-						
-						map.put("functionList", reList);
-						output("0000", map);
-						return;
-					}
-				}
-				//没有能够匹配的，说明权限不足
-				output("9999", "权限不足！");
-				return;
-			}
-			
-			//是初始加载，直接返回所有菜单数据
+			map.put("SHOP_ID", userObj.get("FK_SHOP"));
+			map.put("USER_ID", userObj.get("USER_PK")); 
+			map.put("ROLE_ID", userObj.get("FK_ROLE")); 
+
+			map.put("sqlMapId", "loadFunctionListByUserRole");
+			List<Map<String, Object>> reList = openService.queryForList(map);
+
 			map.put("functionList", reList);
 			output("0000", map);
-			
+			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}

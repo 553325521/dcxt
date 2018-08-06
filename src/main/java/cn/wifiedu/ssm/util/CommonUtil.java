@@ -296,4 +296,62 @@ public class CommonUtil {
 		}
 		return result;
 	}
+
+	/**
+	 * @author kqs
+	 * @param code
+	 * @return
+	 * @return String
+	 * @date 2018年8月6日 - 上午10:09:15
+	 * @description:根据微信授权code 获取用户信息
+	 */
+	public static Map<String, Object> getWxUserInfo(String code) {
+		Map<String, Object> userMap = getOpenIdByCode(code);
+
+		String url = CommonUtil.getPath("wx_userinfo_get_url");
+
+		String accessToken = userMap.get("USER_WX_TOKEN").toString();
+
+		String openId = userMap.get("USER_WX").toString();
+
+		url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
+
+		String res = CommonUtil.get(url);
+		if (res != null && res.indexOf("errcode") <= 0) {
+			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject(res);
+			userMap.put("USER_SN", obj.get("nickname"));
+			userMap.put("USER_SEX", obj.get("sex"));
+//			userMap.put("province", obj.get("province"));
+//			userMap.put("city", obj.get("city"));
+//			userMap.put("country", obj.get("country"));
+			userMap.put("USER_HEAD_IMG", obj.get("headimgurl"));
+			return userMap;
+		}
+		return null;
+	}
+
+	/**
+	 * @author kqs
+	 * @param code
+	 * @return
+	 * @return String
+	 * @date 2018年8月6日 - 上午10:09:54
+	 * @description:根据微信授权code 获取openId
+	 */
+	public static Map<String, Object> getOpenIdByCode(String code) {
+		String url = CommonUtil.getPath("WX_GET_OPENID_URL");
+		url = url.replace("CODE", code);
+		System.out.println("getOpenIdByCode=" + url);
+		String res = CommonUtil.get(url);
+		com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject(res);
+		String openId = obj.get("openid").toString();
+		String refresh_token = obj.get("refresh_token").toString();
+		String access_token = obj.get("access_token").toString();
+		
+		Map<String, Object> reMap = new HashMap<>();
+		reMap.put("USER_WX", openId);
+		reMap.put("USER_WX_TOKEN", access_token);
+		reMap.put("USER_WX_REFRESH_TOKEN", refresh_token);
+		return reMap;
+	}
 }

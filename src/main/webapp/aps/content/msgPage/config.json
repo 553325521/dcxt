@@ -1,0 +1,8 @@
+{
+	"name": "msgPage",
+	"viewUrl": "aps/content/msgPage/template.html",
+	"controllerUrl": "aps/content/msgPage/controller.js",
+	"config": {
+		"findURL": "json/Wx_getBtnToken_data.json"
+	}
+}

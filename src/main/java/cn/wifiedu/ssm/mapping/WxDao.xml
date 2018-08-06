@@ -10,7 +10,7 @@
   		s_app.FK_APP
   	FROM (
   	SELECT 
-  		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_EMAIL, b.FK_ROLE, b.FK_SHOP, b.FK_USER_TAG
+  		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_SN, a.USER_SEX, a.USER_HEAD_IMG, b.FK_ROLE, b.FK_SHOP, b.FK_USER_TAG
   	FROM SC_USER a 
   	LEFT JOIN SC_USER_SHOP b 
   	ON a.USER_PK = b.FK_USER 
@@ -32,20 +32,7 @@
             USER_PK GUID,
 		    USER_PK,
 		    USER_NAME,
-		    USER_EMAIL,
-		    USER_PHONE,
-		    USER_CARD,
-		    USER_PWD,
-		    USER_TYPE,
-		    USER_STATUS,
-		    FK_UNIT,
-		    USER_WX,
-		    USER_SN,
-		    USER_BG,
-		    USER_MN,
-		    ID_NUMBER,
-		    XJFH,
-		    OTHER_TYPE
+		    USER_WX
             FROM SC_USER
            WHERE USER_WX = #{OPENID}
     </select>
@@ -54,8 +41,11 @@
  	(
  		USER_PK,
  		USER_WX,
+ 		USER_SN,
+ 		USER_SEX,
+ 		USER_HEAD_IMG,
+ 		USER_WX_REFRESH_TOKEN,
  		USER_STATUS,
- 		CREATE_BY,
  		CREATE_TIME,
  		USER_TYPE
  	)
@@ -63,8 +53,11 @@
  	(
  		#{UUID},
  		#{OPENID},
+ 		#{USER_SN},
+ 		#{USER_SEX},
+ 		#{USER_HEAD_IMG},
+ 		#{USER_WX_REFRESH_TOKEN},
  		0,
- 		'system',
  		NOW(),
  		0
  	)

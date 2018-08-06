@@ -25,14 +25,16 @@
 
 	app.config(function($routeProvider, $locationProvider) {
 		
-		//console.info($routeParams);
-		
 		$routeProvider
 			.when('/', {
 				templateUrl : 'html/main.html',
 				controller : 'MainController'
 			})
 			.when('/ActingCustomerManagement/:LOCALPATH', {
+				templateUrl : 'html/main.html',
+				controller : 'MainController'
+			})
+			.when('/toOtherPage/:LOCALPATH/:btnToken', {
 				templateUrl : 'html/main.html',
 				controller : 'MainController'
 			})

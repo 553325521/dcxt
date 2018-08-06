@@ -1,5 +1,7 @@
 package cn.wifiedu.ssm.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +26,11 @@ import com.alibaba.fastjson.JSONObject;
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.WxUtil;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 /**
  * @author kqs
@@ -51,6 +56,9 @@ public class MenuController extends BaseController {
 
 	@Resource
 	PlatformTransactionManager transactionManager;
+
+	@Resource
+	private JedisClient jedisClient;
 
 	/**
 	 * 
@@ -347,5 +355,34 @@ public class MenuController extends BaseController {
 			transactionManager.rollback(status);
 		}
 		return 0;
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param @param
+	 *            request
+	 * @param @param
+	 *            session
+	 * @return void
+	 * @date 2018年7月18日 - 上午11:32:19
+	 * @description:新增菜单
+	 */
+	@RequestMapping("/Menu_check_checkAppByUser")
+	public void checkAppByUser(HttpServletRequest request, HttpSession session) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			if (userObj.containsKey("FK_APP")) {
+				output("0000");
+				return;
+			} else {
+				redirectedUrl("9999");
+				return;
+			}
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
 	}
 }

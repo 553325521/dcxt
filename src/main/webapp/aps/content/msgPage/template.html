@@ -1,0 +1,17 @@
+<div class="weui_msg" id="msg1">
+	<div class="weui_icon_area">
+		<i class="{{form.status == 9999 ? 'weui_icon_warn' : 'weui_icon_success'}} weui_icon_msg"></i>
+	</div>
+	<div class="weui_text_area">
+		<h2 class="weui_msg_title">{{form.status == 9999 ? '操作失败' : '操作成功'}}</h2>
+		<p class="weui_msg_desc">{{form.msg}}</p>
+	</div>
+	<div class="weui_opr_area">
+		<p class="weui_btn_area">
+			<a href="javascript:;"
+				class="weui_btn {{$index == 0 ? 'weui_btn_primary' : 'weui_btn_default'}}"
+				ng-repeat="btn in form.data" ng-click="clickButton(btn)">{{btn.buttonName}}</a>
+		</p>
+	</div>
+	<div class="weui_extra_area"></div>
+</div>

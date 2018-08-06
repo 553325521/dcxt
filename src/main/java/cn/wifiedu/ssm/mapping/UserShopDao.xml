@@ -6,23 +6,25 @@
 
 	<!--插入user shop role对应关系 -->
 	<insert id="insertUserShop" parameterMap="BaseParameterMap">
-		INSERT INTO sc_user_shop 
+		INSERT INTO
+		sc_user_shop
 		(
-			USER_SHOP_ID, 
-			FK_USER, 
-			FK_ROLE, 
-			FK_USER_TAG, 
-			FK_SHOP, 
-			INSERT_TIME
-		) 
-		VALUES 
+		USER_SHOP_ID,
+		FK_USER,
+		FK_ROLE,
+		FK_USER_TAG,
+		FK_SHOP,
+		INSERT_TIME
+		)
+		VALUES
 		(
-			#{UUID},
-			#{USER_ID},
-			(SELECT ROLE_PK FROM sc_sys_role WHERE ROLE_NAME = #{roleName}),
-			(SELECT USER_TAG_ID FROM sc_user_tag WHERE USER_TAG_NAME = #{tagName}),
-			#{SHOP_ID},
-			NOW()
+		#{UUID},
+		#{USER_ID},
+		#{ROLE_ID},
+		<!-- 根据标签名称和appid 查询对应标签id -->
+		(SELECT USER_TAG_ID FROM sc_user_tag WHERE USER_TAG_NAME = #{tagName} AND FK_APP = #{FK_APP}),
+		#{SHOP_ID},
+		NOW()
 		)
 	</insert>
 

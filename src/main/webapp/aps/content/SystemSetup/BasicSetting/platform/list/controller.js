@@ -35,10 +35,9 @@
 				var init = function() {
 					$httpService.post(config.findURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
-							loggingService.info(data.data);
+							scope.toHref('SystemSetup/BasicSetting/platform');
 						} else {
-							scope.tagList = data.data;
-							scope.$apply();
+							scope.toHref('SystemSetup/BasicSetting/platform/page');
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');

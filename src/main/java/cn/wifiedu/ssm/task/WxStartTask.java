@@ -7,7 +7,6 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.ssm.controller.ProgressController;
 import cn.wifiedu.ssm.util.WxUtil;
 
 public class WxStartTask extends TimerTask {
@@ -22,7 +21,7 @@ public class WxStartTask extends TimerTask {
 		this.openService = openService;
 	}
 
-	private static Logger logger = Logger.getLogger(ProgressController.class);
+	private static Logger logger = Logger.getLogger(WxStartTask.class);
 	private int num = 1;
 
 	@Override
