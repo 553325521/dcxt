@@ -80,6 +80,18 @@ public class StringDeal {
 		String dateString = formatter.format(currentTime);
 		return dateString;
 	}
+	
+	/**
+	 * 获取现在时间的年月
+	 * 
+	 * @return返回字符串格式 yyyy-MM
+	 */
+	public static String getNowYearMonthStr() {
+		Date currentTime = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
+		String dateString = formatter.format(currentTime);
+		return dateString;
+	}
 
 	/**
 	 * 获取现在时间

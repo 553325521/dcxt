@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="userDao">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+	<!--根据用户ID查询用户信息-->
+	<select id="selectUserByPrimaryKey" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT * FROM SC_USER 
+		WHERE USER_PK = #{USER_PK} 
+	</select>
+	<!-- 根据用户ID更新用户余额 -->
+	<update id="updateUserBalance" parameterMap="BaseParameterMap">
+		update SC_USER
+			set 
+				USER_BALANCE = #{USER_BALANCE}
+		where USER_PK = #{USER_PK} 
+	</update> 
+</mapper>

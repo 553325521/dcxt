@@ -3,6 +3,6 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/presentRecord/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/presentRecord/controller.js",
 	"config": {
-
+		 "findCashRecordURL":"json/Cash__select_cashRecord.json"
 	}
 }

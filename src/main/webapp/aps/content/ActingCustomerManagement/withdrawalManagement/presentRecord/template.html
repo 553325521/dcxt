@@ -5,28 +5,30 @@
 		</div>
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 	</div>
-	<div class="weui_cells " style="margin-top:0">
+	<div class="weui_cells " style="margin-top:0" ng-repeat="item in record_list">
 		<div style="background:#eee;">
-			<p style="margin-left:3%">{{yearMonth}}<span style="margin-left:50%">共计:{{total}}</span></p>
+			<p style="margin-left:3%">{{item.yearMonth}}<span style="margin-left:50%">共计:{{item.monthMoney}}元</span></p>
 		</div>
-		<div class="weui_cell" ng-repeat="item in record_list">
+		<div class="weui_cell" ng-repeat="item1 in item.recordList">
 			<div class="weui_cell_bd weui_cell_primary">
 				<div class="weui_cell_bd " style="width:15%;float:left;margin-left:2%;">
-					<span class="label">{{item.monthDay}}</span>
+					<span class="label">{{item1.monthDay}}</span>
 				</div>
 				<div class="weui_cell_bd " style="width:15%;float:left;margin-left:2%;">
-					<span class="label">{{item.time}}</span>
+					<span class="label">{{item1.time}}</span>
 				</div>
 				<div class="weui_cell_bd " style="width:20%;float:left;margin-left:2%;">
-					<span class="label">{{item.type}}</span>
+					<span class="label">{{item1.CASH_WAY}}</span>
 				</div>
 				<div class="weui_cell_bd " style="float:left;margin-left:2%;">
-					<span class="label">{{item.money}}</span>
+					<span class="label">{{item1.CASH_MONEY}}元</span>
 				</div>
-				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
-					<span class="label">{{item.state}}</span>
+				<div class="weui_cell_bd " style="float:left;margin-left:5%;" ng-switch="item1.CASH_STATE">
+					<span class="label" ng-switch-when="0">待审核</span>
+					<span class="label" ng-switch-when="1">已结算</span>
 				</div>
 			</div>
 		</div>
 	</div>
+	
    <!-- body 最后 -->

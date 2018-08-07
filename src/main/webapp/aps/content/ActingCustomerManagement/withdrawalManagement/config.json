@@ -3,6 +3,7 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/template.html",
 	"controllerUrl": "aps/content/ActingCustomerManagement/withdrawalManagement/controller.js",
 	"config": {
-
+		"loadAgentInfoURL":"json/Cash__select_agentInfo.json",
+		"updateCashURL":"json/Cash_update_updateCash.json"
 	}
 }
