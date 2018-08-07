@@ -60,9 +60,12 @@ public class CashController extends BaseController {
 	 */
 	@RequestMapping(value="/Cash__select_agentInfo",method = RequestMethod.POST)
 	public void showAgentShopInfo() {
+		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+		JSONObject userObj = JSONObject.parseObject(userJson);
 		try {
 			Map<String, Object> map = new HashMap<String,Object>();
-			map.put("USER_PK","4b8cea73b03a4ddfacf8fbaf7a31028d");
+			map.put("USER_PK",userObj.get("USER_PK"));
 			map.put("sqlMapId", "selectUserByPrimaryKey");
 			Map<String, Object> reMap  = (Map<String, Object>)openService.queryForObject(map);
 			output("0000",reMap);
