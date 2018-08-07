@@ -19,7 +19,6 @@
   	ON user_info.FK_SHOP = s_app.FK_SHOP
   	ORDER BY s_app.INSERT_TIME DESC
   	LIMIT 1 
-  	
   </select>
   
   <update id="updateScUserTag" parameterMap="BaseParameterMap">

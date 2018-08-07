@@ -192,7 +192,6 @@ public class WxController extends BaseController {
 	public void welcome() {
 		try {
 			String code = request.getParameter("code");
-			code = "";
 			if (null != code && !"".equals(code)) {
 				String openId = getOpenIdByCode(code);
 				System.out.println("WeChart openId : " + openId);
@@ -336,7 +335,9 @@ public class WxController extends BaseController {
 			map.put("OPENID", openId);
 			map.put("sqlMapId", "selectUserInfo");
 			map = (Map<String, Object>) openService.queryForObject(map);
-			userMap.put("USER_PK", map.get("USER_PK"));
+			map.remove("OPENID");
+			map.remove("sqlMapId");
+			userMap.putAll(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
