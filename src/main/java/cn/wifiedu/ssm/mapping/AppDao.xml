@@ -26,4 +26,10 @@
 		)
 	</insert>
 	
+	<select id="getRefreshTokenByAppId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT APP_REFRESH_TOKEN
+		FROM SC_APP WHERE APP_PK = #{APP_PK}
+	</select>
+	
 </mapper>

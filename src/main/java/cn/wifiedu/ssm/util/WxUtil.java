@@ -3,8 +3,7 @@ package cn.wifiedu.ssm.util;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
-
-import cn.wifiedu.ssm.controller.WxController;
+import com.alibaba.fastjson.JSONObject;
 
 public class WxUtil {
 	private static final String appid = CommonUtil.getPath("AppID").toString();
@@ -56,5 +55,32 @@ public class WxUtil {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param authorizer_appid
+	 * @param authorizer_refresh_token
+	 * @return
+	 * @return String
+	 * @date 2018年8月7日 - 下午11:00:08 
+	 * @description:获取对应授权app的token
+	 */
+	public static String getWxAccessToken(String authorizer_appid, String token, String authorizer_refresh_token) {
+		try {
+			String url = CommonUtil.getPath("getWxComponentAccessToken").toString();
+			url = url.replace("componentAccessToken", token);
+			JSONObject postStr = new JSONObject();
+			postStr.put("component_appid", CommonUtil.getPath("component_appid"));
+			postStr.put("authorizer_appid", authorizer_appid);
+			postStr.put("authorizer_refresh_token", authorizer_refresh_token);
+			String res = CommonUtil.posts(url, postStr.toJSONString(), "utf-8");
+			String authorizer_access_token_new = JSONObject.parseObject(res).getString("authorizer_access_token");
+			return authorizer_access_token_new;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 }

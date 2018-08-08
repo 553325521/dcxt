@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,6 +60,9 @@ public class WxController extends BaseController {
 
 	@Resource
 	private JedisClient jedisClient;
+
+	@Autowired
+	private InterfaceController interCtrl;
 
 	@RequestMapping("/Qrcode_testQrcode_data")
 	public void testQrcode(HttpServletRequest request, HttpServletResponse reponse) {
@@ -175,8 +179,8 @@ public class WxController extends BaseController {
 	@RequestMapping("/Wxcode_ymsqCommon_data")
 	public void ymsqCommon() {
 		try {
-			String url = CommonUtil.getPath("Auth-wx-qrcode-url");
-			url = url.replace("REDIRECT_URI", URLEncoder.encode(
+			String url = CommonUtil.getPath("Auth-wx-qrcode-url-plat");
+			url = url.replace("APPID", request.getParameter("appid")).replace("REDIRECT_URI", URLEncoder.encode(
 					CommonUtil.getPath("project_url").replace("DATA", request.getParameter("params")), "UTF-8"));
 			System.out.println("qrcodeURL:" + url);
 			response.sendRedirect(url);
@@ -192,8 +196,9 @@ public class WxController extends BaseController {
 	public void welcome() {
 		try {
 			String code = request.getParameter("code");
+			String appid = request.getParameter("appid");
 			if (null != code && !"".equals(code)) {
-				String openId = getOpenIdByCode(code);
+				String openId = getOpenIdByCode2(code, appid);
 				System.out.println("WeChart openId : " + openId);
 
 				Map<String, Object> map = getParameterMap();
@@ -204,7 +209,7 @@ public class WxController extends BaseController {
 				logger.info("checkList: " + checkList);
 				Map<String, Object> userMap = new HashMap<>();
 				userMap.put("USER_WX", openId);
-
+				userMap.put("FK_APP", appid);
 				if (checkList != null && checkList.size() == 0) {
 					// 查询 openId 根据 用户详细信息
 					getWxUserInfo(openId, userMap);
@@ -251,42 +256,29 @@ public class WxController extends BaseController {
 	@RequestMapping("/ActingCustomerManagement")
 	public void ActingCustomerManagement() {
 		try {
-
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
 				String openId = getOpenIdByCode(code);
 				System.out.println("WeChart openId : " + openId);
-
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
 				map.put("sqlMapId", "checkUserWx");
-
 				List<Map<String, Object>> checkList = openService.queryForList(map);
 				logger.info("checkList: " + checkList);
-
 				Map<String, Object> userMap = new HashMap<>();
-
 				if (checkList != null && checkList.size() == 0) {
 					// 用户第一次授权
 					// 查询 openId 根据 用户详细信息
 					getWxUserInfo(openId, userMap);
-
 					map.put("sqlMapId", "insertUserInitOpenId");
-
 					String USER_PK = openService.insert(map);
-
 					userMap.put("USER_PK", USER_PK);
 				} else {
-					// 根据openId 获取 系统中的 商铺、权限、功能
-					getUserInfo(openId, userMap);
+					userMap.putAll(checkList.get(0));
 				}
-
 				userMap.put("USER_WX", openId);
-
 				userMap.put("FK_ROLE", "7");
-
 				userMap.put("FK_USER_TAG", "141");
-
 				// redis存储用户登录信息
 				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
 
@@ -329,6 +321,7 @@ public class WxController extends BaseController {
 		try {
 			Map<String, Object> map = new HashMap<>();
 			map.put("OPENID", openId);
+			map.put("FK_APP", userMap.get("FK_APP"));
 			map.put("sqlMapId", "selectUserInfo");
 			map = (Map<String, Object>) openService.queryForObject(map);
 			map.remove("OPENID");
@@ -360,6 +353,42 @@ public class WxController extends BaseController {
 		}
 	}
 
+	/**
+	 * 
+	 * @author kqs
+	 * @param code
+	 * @return
+	 * @return String
+	 * @date 2018年8月8日 - 下午4:03:38
+	 * @description:根据第三方平台基础获取openId
+	 */
+	public String getOpenIdByCode2(String code, String appid) {
+		String url = CommonUtil.getPath("WX_GET_OPENID_URL-plat");
+		url = url.replace("CODE", code).replace("APPID", appid).replace("COMPONENT_ACCESS_TOKEN",
+				interCtrl.getComponentAccessToken());
+		System.out.println("getOpenIdByCode=" + url);
+		String res = CommonUtil.get(url);
+		JSONObject succesResponse = JSONObject.parseObject(res);
+
+		String openId = succesResponse.getString("openid");
+
+		String refresh_token = succesResponse.getString("refresh_token");
+
+		String access_token = succesResponse.getString("access_token");
+
+		// redis存储refresh_token
+		jedisClient.set(RedisConstants.WX_REFRESH_TOKEN + openId, refresh_token);
+		//jedisClient.expire(RedisConstants.WX_REFRESH_TOKEN + openId, 1000 * 60 * 60 * 24 * 30);
+
+		// redis存储access_token信息
+		jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
+		// 设置access_token的过期时间2小时
+		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 1000 * 60 * 60 * 1);
+		
+		System.out.println(appid + "====" + openId);
+		return openId;
+	}
+
 	public String getOpenIdByCode(String code) {
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL");
 		url = url.replace("CODE", code);
@@ -386,7 +415,7 @@ public class WxController extends BaseController {
 				&& StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + openId))) {
 			jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
 			// 设置access_token的过期时间2小时
-			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 1000 * 60 * 60 * 2);
+			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 1000 * 60 * 60 * 1);
 		}
 		System.out.println(openId);
 		return openId;

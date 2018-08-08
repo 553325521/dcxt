@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -58,6 +59,9 @@ public class MenuController extends BaseController {
 	@Resource
 	private JedisClient jedisClient;
 
+	@Autowired
+	private InterfaceController interfaceController;
+
 	/**
 	 * 
 	 * @author kqs
@@ -70,7 +74,12 @@ public class MenuController extends BaseController {
 	@RequestMapping("/Menu_queryForList_loadTopMenusByAppId")
 	public void loadTopMenus(HttpServletRequest request, HttpSession session) {
 		try {
+			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+
 			Map<String, Object> map = getParameterMap();
+			map.put("FK_APP", userObj.getString("FK_APP"));
 			map.put("sqlMapId", "loadTopMenusByAppId");
 			List<Map<String, Object>> reMap = openService.queryForList(map);
 			output("0000", reMap);
@@ -91,7 +100,13 @@ public class MenuController extends BaseController {
 	@RequestMapping("/Menu_queryForList_loadAllMenusByAppId")
 	public void loadAllMenusByAppId(HttpServletRequest request, HttpSession session) {
 		try {
+
+			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+
 			Map<String, Object> map = getParameterMap();
+			map.put("FK_APP", userObj.getString("FK_APP"));
 			map.put("sqlMapId", "loadTopMenusByAppId");
 			List<Map<String, Object>> reMap = new ArrayList<Map<String, Object>>();
 			List<Map<String, Object>> fatherMap = openService.queryForList(map);
@@ -150,31 +165,30 @@ public class MenuController extends BaseController {
 	@RequestMapping("/Menu_update_updateWxMenuForTagId")
 	public void updateWxMenuForTagId(HttpServletRequest request, HttpSession session) {
 		try {
+			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+
 			Map<String, Object> map = getParameterMap();
 			if (map.containsKey("MENU_PLAT")) {
-				String token = WxUtil.getToken();
-				if (token != null) {
-					String tagId = map.get("MENU_PLAT").toString();
-					if ("".equals(tagId)) {
-						output("9999", " 获取对应微信标签信息失败 ");
-						return;
-					}
-					// 删除个性化套餐
-					delMenuById(map);
-					// 获取所有的菜单
-					map.put("sqlMapId", "loadTopMenusByAppId");
-					List<Map<String, Object>> fatherMap = openService.queryForList(map);
-
-					if (!fatherMap.isEmpty()) {
-						this.insertAppMenu(map, fatherMap, tagId);
-						return;
-					} else {
-						output("9999", " 该菜单为空不可更新! ");
-						return;
-					}
+				String tagId = map.get("MENU_PLAT").toString();
+				if ("".equals(tagId)) {
+					output("9999", " 获取对应微信标签信息失败 ");
+					return;
 				}
-				output("9999", " 获取微信token失败 ");
-				return;
+				// 删除个性化套餐
+				delMenuById(map);
+				// 获取所有的菜单
+				map.put("FK_APP", userObj.getString("FK_APP"));
+				map.put("sqlMapId", "loadTopMenusByAppId");
+				List<Map<String, Object>> fatherMap = openService.queryForList(map);
+				if (!fatherMap.isEmpty()) {
+					this.insertAppMenu(map, fatherMap, tagId);
+					return;
+				} else {
+					output("9999", " 该菜单为空不可更新! ");
+					return;
+				}
 			}
 			output("9999", " 参数异常 ");
 			return;
@@ -197,7 +211,7 @@ public class MenuController extends BaseController {
 			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-			
+
 			Map<String, Object> postMap = new HashMap<>();
 
 			List<Map<String, Object>> postMap2ToBtn = new ArrayList<>();
@@ -216,8 +230,9 @@ public class MenuController extends BaseController {
 						Map<String, Object> smap = new HashMap<>();
 						String stype = "view";
 						smap.put("type", stype);
-						smap.put("url", CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data")
-								+ "?params=" + sMap.get("MENU_LINK").toString() + "&appid=" + userObj.getString("AUTHORIZE_APP"));
+						smap.put("url",
+								CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data") + "?params="
+										+ sMap.get("MENU_LINK").toString() + "&appid=" + userObj.getString("FK_APP"));
 						smap.put("name", sMap.get("MENU_NAME"));
 						sonMapList.add(smap);
 					}
@@ -229,7 +244,7 @@ public class MenuController extends BaseController {
 				fmap.put("name", fMap.get("MENU_NAME"));
 				if ("view".equals(ftype)) {
 					fmap.put("url", CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data")
-							+ "?params=" + fMap.get("MENU_LINK").toString());
+							+ "?params=" + fMap.get("MENU_LINK").toString() + "&appid=" + userObj.getString("FK_APP"));
 				}
 				postMap2ToBtn.add(fmap);
 			}
@@ -254,23 +269,29 @@ public class MenuController extends BaseController {
 			postMap.put("button", postMap2ToBtn);
 
 			String postStr = JSON.toJSONString(postMap);
-
-			String token = WxUtil.getToken();
-
+			
+			String token = "";
+			
+			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"))) {
+				token = WxUtil.getWxAccessToken(userObj.getString("FK_APP"),
+						interfaceController.getComponentAccessToken(), getRefreshTokenByAppId(userObj.getString("FK_APP")));
+				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"), token);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"), 1000 * 60 * 60 * 1);
+			} else {
+				token = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"));
+			}
+			
 			postURL = postURL.replace("ACCESS_TOKEN", token);
 
 			String resContent = CommonUtil.posts(postURL, postStr, "utf-8");
 
 			if (resContent.indexOf("errcode") <= 0) {
-
 				JSONObject resObj = JSON.parseObject(resContent);
-
 				map.put("CREATE_BY", "admin");
 				map.put("CREATE_TIME", StringDeal.getStringDate());
 				map.put("FK_MENU_WX", resObj.get("menuid"));
 				map.put("sqlMapId", "insertMenuApp");
 				openService.insert(map);
-
 				output("0000", " 同步成功! ");
 				return;
 			} else {
@@ -280,6 +301,30 @@ public class MenuController extends BaseController {
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
+	}
+
+	/**
+	 * @author kqs
+	 * @param string
+	 * @return
+	 * @return String
+	 * @date 2018年8月8日 - 上午11:43:43
+	 * @description:根据appid 获取 refresh_token
+	 */
+	private String getRefreshTokenByAppId(String appid) {
+		try {
+			Map<String, Object> obj = (Map<String, Object>) openService.queryForObject(new HashMap<String, Object>() {
+				{
+					put("APP_PK", appid);
+					put("sqlMapId", "getRefreshTokenByAppId");
+				}
+			});
+
+			return obj.get("APP_REFRESH_TOKEN").toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -325,35 +370,6 @@ public class MenuController extends BaseController {
 		return 0;
 	}
 
-	/**
-	 * 
-	 * @author kqs
-	 * @param @param
-	 *            request
-	 * @param @param
-	 *            session
-	 * @return void
-	 * @date 2018年7月18日 - 上午11:32:19
-	 * @description:新增菜单
-	 */
-	@RequestMapping("/Menu_check_checkAppByUser")
-	public void checkAppByUser(HttpServletRequest request, HttpSession session) {
-		try {
-			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
-			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
-			if (userObj.containsKey("FK_APP")) {
-				output("0000", "have app");
-				return;
-			} else {
-				output("9999", "no have app");
-				return;
-			}
-		} catch (Exception e) {
-			output("9999", " Exception ", e);
-		}
-	}
-	
 	@RequestMapping("/Menu_insert_test")
 	public void test(HttpServletRequest request, HttpSession session) {
 		try {
@@ -372,5 +388,5 @@ public class MenuController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
 }

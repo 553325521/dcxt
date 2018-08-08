@@ -6,9 +6,6 @@
 
 				scope = $scope;
 
-				// 定义页面标题
-				scope.pageTitle = config.pageTitle
-
 				scope.form = {}
 
 				$scope.form.MENU_FATHER_PK = 'all'
@@ -81,7 +78,6 @@
 						onChange : function(e) {
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
-								
 								for (var ind in scope.userTagList) {
 									if (scope.userTagList[ind].USER_TAG_NAME != undefined) {
 										let val = scope.userTagList[ind];
@@ -92,7 +88,7 @@
 										}
 									}
 								}
-								
+
 								$httpService.post(config.findAllMenuURL, $scope.form).success(function(data) {
 									if (data.code != '0000') {
 										loggingService.info(data.data);
@@ -154,7 +150,31 @@
 					});
 				}
 
-				init()
+				var initt = function() {
+					$httpService.post(config.findURL, $scope.form).success(function(data) {
+						if (data.code != '0000') {
+							// 定义页面标题
+							scope.pageTitle = '设备授权'
+
+							scope.isList = false;
+							
+							scope.authorizerURL = data.data;
+							
+						} else {
+							init()
+							// 定义页面标题
+							scope.pageTitle = config.pageTitle
+
+							scope.isList = true;
+						}
+						scope.$apply()
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+
+
+				initt()
 
 			}
 		];

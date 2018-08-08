@@ -1,11 +1,11 @@
 
 <div class="weui-header" style="background-color:#FFFFFF">
 	<div class="weui-header-left"
-		ng-click="toHref('SystemSetup/BasicSetting/platform/list')">
+		ng-click="toHref('SystemSetup/BasicSetting')">
 		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 	</div>
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
-	<div class="weui-header-right" style="top: 0;">
+	<div class="weui-header-right" style="top: 0;" ng-show="isList">
 		<div class="button_sp_area" style="padding: 12px 0;">
 			<div class="bom-radio bom-radio-big" id="attend2"
 				ng-click="toHref('SystemSetup/BasicSetting/platform/add')">新增菜单</div>
@@ -13,7 +13,7 @@
 	</div>
 </div>
 
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+<div class="weui_cells weui_cells_form" style="margin-top: 0;" ng-show="isList">
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">平台类型</label>
@@ -56,7 +56,8 @@
 		</div>
 		<div class="weui_cell" ng-repeat="item in itemList">
 			<div class="weui_cell_hd">
-				<label class="weui_label label" style="width: 40px;" ng-bind="item.MENU_FATHER_PK == null ? item.MENU_SORT : '├'"></label>
+				<label class="weui_label label" style="width: 40px;"
+					ng-bind="item.MENU_FATHER_PK == null ? item.MENU_SORT : '├'"></label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary" style="width: 40px;">
 				<div class="weui-form-text label-input" style="margin: 0;">
@@ -68,7 +69,8 @@
 					<p ng-bind="item.MENU_TYPE"></p>
 				</div>
 			</div>
-			<div class="weui_cell_bd weui_cell_primary" style="width: 40px;overflow-x: hidden;">
+			<div class="weui_cell_bd weui_cell_primary"
+				style="width: 40px;overflow-x: hidden;">
 				<div class="weui-form-text label-input" style="margin: 0;">
 					<p ng-bind="item.MENU_LINK"></p>
 				</div>
@@ -80,6 +82,22 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div class="weui_msg" id="qrCode" ng-show="!isList">
+	<div class="weui_icon_area">
+		<i class="weui_icon_warn weui_icon_msg"></i>
+	</div>
+	<div class="weui_text_area">
+		<p class="weui_msg_desc">请先授权设备。</p>
+	</div>
+	<div class="weui_opr_area">
+		<p class="weui_btn_area">
+			<a class="weui_btn weui_btn_primary"
+				ng-href="{{authorizerURL}}">授权设备</a>
+		</p>
+	</div>
+	<div class="weui_extra_area"></div>
 </div>
 
 <!-- 底部 -->

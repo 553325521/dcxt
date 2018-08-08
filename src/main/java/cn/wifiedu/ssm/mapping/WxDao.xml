@@ -1,95 +1,97 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="Wxcore" >
-  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
-  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
-  
-  <select id="selectUserInfo" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
-  	SELECT 
-  		user_info.*,
-  		s_app.FK_APP
-  	FROM (
-  	SELECT 
-  		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_SN, a.USER_SEX, a.USER_HEAD_IMG, b.FK_ROLE, b.FK_SHOP, b.FK_USER_TAG
-  	FROM SC_USER a 
-  	LEFT JOIN SC_USER_SHOP b 
-  	ON a.USER_PK = b.FK_USER 
-  	WHERE a.USER_WX = #{OPENID}) user_info
-  	LEFT JOIN SC_SHOP_APP s_app 
-  	ON user_info.FK_SHOP = s_app.FK_SHOP
-  	ORDER BY s_app.INSERT_TIME DESC
-  	LIMIT 1 
-  </select>
-  
-  <update id="updateScUserTag" parameterMap="BaseParameterMap">
-  		UPDATE SC_USER SET
-  			FK_USER_TAG = #{ROLE_PK}
-  		WHERE USER_WX = #{OPENID}
-  </update>
-  <select id="checkUserWx"  resultMap="BaseResultMap" parameterMap="BaseParameterMap"> 
-           SELECT 
-            USER_PK GUID,
-		    USER_PK,
-		    USER_NAME,
-		    USER_WX
-            FROM SC_USER
-           WHERE USER_WX = #{OPENID}
-    </select>
- <insert id="insertUserInitOpenId" parameterMap="BaseParameterMap">
- 	INSERT INTO SC_USER
- 	(
- 		USER_PK,
- 		USER_WX,
- 		USER_SN,
- 		USER_SEX,
- 		USER_HEAD_IMG,
- 		USER_WX_REFRESH_TOKEN,
- 		USER_STATUS,
- 		CREATE_TIME,
- 		USER_TYPE
- 	)
- 	VALUES
- 	(
- 		#{UUID},
- 		#{OPENID},
- 		#{USER_SN},
- 		#{USER_SEX},
- 		#{USER_HEAD_IMG},
- 		#{USER_WX_REFRESH_TOKEN},
- 		0,
- 		NOW(),
- 		0
- 	)
- </insert>
- <select id="checkUserExits" resultMap="BaseResultMap" parameterMap="BaseParameterMap"> 
- 	SELECT
- 		USER_PK
- 	FROM SC_USER WHERE USER_WX = #{OPENID}
- </select>
-  <!-- 保存token  -->
-  <insert id="saveAccessToken" parameterMap="BaseParameterMap">
-  		INSERT INTO WX_TOKEN
-  		(
-  			ACCESS_TOKEN,
-  			EXPIRES_IN,
-  			CREATE_TIME
-  		)
-  		VALUES
-  		(
-  			#{TOKEN},
-  			'7200',
-  			NOW()
-  		)
-  </insert>
- 
- <select id="getAccessToken" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
- 		SELECT 
- 			ACCESS_TOKEN
- 		FROM WX_TOKEN
- 		ORDER BY ID DESC
- 		LIMIT 0,1
- </select>
-  	
-  
-  
+<mapper namespace="Wxcore">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+
+	<select id="selectUserInfo" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT
+		user_info.*
+		FROM (
+		SELECT
+		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_SN, a.USER_SEX, a.USER_HEAD_IMG,
+		b.FK_ROLE, b.FK_SHOP, b.FK_USER_TAG
+		FROM SC_USER a
+		LEFT JOIN SC_USER_SHOP b
+		ON a.USER_PK = b.FK_USER
+		WHERE a.USER_WX = #{OPENID} AND b.FK_SHOP = (
+		SELECT FK_SHOP FROM SC_SHOP_APP WHERE FK_APP = #{FK_APP})) user_info
+	</select>
+
+	<update id="updateScUserTag" parameterMap="BaseParameterMap">
+		UPDATE SC_USER SET
+		FK_USER_TAG = #{ROLE_PK}
+		WHERE USER_WX = #{OPENID}
+	</update>
+	
+	<select id="checkUserWx" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT
+		USER_PK,
+		USER_NAME,
+		USER_SN,
+		USER_SEX,
+		USER_HEAD_IMG
+		FROM SC_USER
+		WHERE USER_WX = #{OPENID}
+	</select>
+	<insert id="insertUserInitOpenId" parameterMap="BaseParameterMap">
+		INSERT INTO SC_USER
+		(
+		USER_PK,
+		USER_WX,
+		USER_SN,
+		USER_SEX,
+		USER_HEAD_IMG,
+		USER_WX_REFRESH_TOKEN,
+		USER_STATUS,
+		CREATE_TIME,
+		USER_TYPE
+		)
+		VALUES
+		(
+		#{UUID},
+		#{OPENID},
+		#{USER_SN},
+		#{USER_SEX},
+		#{USER_HEAD_IMG},
+		#{USER_WX_REFRESH_TOKEN},
+		0,
+		NOW(),
+		0
+		)
+	</insert>
+	<select id="checkUserExits" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT
+		USER_PK
+		FROM SC_USER WHERE USER_WX = #{OPENID}
+	</select>
+	<!-- 保存token -->
+	<insert id="saveAccessToken" parameterMap="BaseParameterMap">
+		INSERT INTO WX_TOKEN
+		(
+		ACCESS_TOKEN,
+		EXPIRES_IN,
+		CREATE_TIME
+		)
+		VALUES
+		(
+		#{TOKEN},
+		'7200',
+		NOW()
+		)
+	</insert>
+
+	<select id="getAccessToken" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT
+		ACCESS_TOKEN
+		FROM WX_TOKEN
+		ORDER BY ID DESC
+		LIMIT 0,1
+	</select>
+
+
+
 </mapper>

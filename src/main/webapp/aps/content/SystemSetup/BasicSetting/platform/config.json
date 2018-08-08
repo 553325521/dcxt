@@ -7,6 +7,7 @@
 		"findDictionaryURL": "json/UserTag_queryForList_findPlatformTypeByAppId.json",
 		"findMenuURL": "json/Menu_queryForList_loadTopMenusByAppId.json",
 		"findAllMenuURL": "json/Menu_queryForList_loadAllMenusByAppId.json",
-		"updateWxMenuForTagIdURL": "json/Menu_update_updateWxMenuForTagId.json"
+		"updateWxMenuForTagIdURL": "json/Menu_update_updateWxMenuForTagId.json",
+		"findURL": "json/Menu_check_checkAppByUser.json"
 	}
 }

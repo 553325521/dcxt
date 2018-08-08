@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -28,6 +27,7 @@ import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.qq.weixin.AesException;
 import cn.wifiedu.ssm.util.qq.weixin.WXBizMsgCrypt;
@@ -172,7 +172,7 @@ public class InterfaceController extends BaseController {
 	 * @date 2018年8月1日 - 下午11:09:05
 	 * @description:获取ComponentAccessToken
 	 */
-	public String getComponentAccessToken(HttpSession session) {
+	public String getComponentAccessToken() {
 		try {
 			if (jedisClient.isExit(RedisConstants.WX_COMPONENT_ACCESS_TOKEN)
 					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.WX_COMPONENT_ACCESS_TOKEN))) {
@@ -223,7 +223,7 @@ public class InterfaceController extends BaseController {
 	 * @date 2018年8月1日 - 下午11:09:29
 	 * @description:获取ComponentPreAuthCode
 	 */
-	public String getComponentPreAuthCode(HttpSession session) {
+	public String getComponentPreAuthCode() {
 		try {
 			if (jedisClient.isExit(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE)
 					&& StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE))) {
@@ -232,7 +232,7 @@ public class InterfaceController extends BaseController {
 
 			String url = CommonUtil.getPath("getWxPreAuthCode").toString();
 
-			url = url.replace("componentAccessToken", getComponentAccessToken(session));
+			url = url.replace("componentAccessToken", getComponentAccessToken());
 
 			JSONObject json = new JSONObject();
 			json.put("component_appid", component_appid);
@@ -255,7 +255,36 @@ public class InterfaceController extends BaseController {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param @param
+	 *            request
+	 * @param @param
+	 *            session
+	 * @return void
+	 * @date 2018年7月18日 - 上午11:32:19
+	 * @description:新增菜单
+	 */
+	@RequestMapping("/Menu_check_checkAppByUser")
+	public void checkAppByUser(HttpServletRequest request) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			if (userObj.containsKey("FK_APP")) {
+				output("0000", "have app");
+				return;
+			} else {
+				output("9999", getPlatFormAuthorizedCode());
+				return;
+			}
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+	
 	/**
 	 * 
 	 * @author kqs
@@ -265,33 +294,31 @@ public class InterfaceController extends BaseController {
 	 * @date 2018年8月5日 - 上午11:19:18
 	 * @description:获取微信授权连接
 	 */
-	@RequestMapping(value = "/getPlatFormAuthorizedCode")
-	@ResponseBody
-	public void getPlatFormAuthorizedCode(HttpServletRequest request, HttpSession session) {
+	public String getPlatFormAuthorizedCode() {
 		try {
 
 			String url = CommonUtil.getPath("AuthWxPlatFormUrl").toString();
 
 			url = url.replace("componentAppid", component_appid)
-					.replace("preAuthCode", getComponentPreAuthCode(session))
+					.replace("preAuthCode", getComponentPreAuthCode())
 					.replace("redirectUri", CommonUtil.getPath("project_url").toString().replace("DATA", "getRes"));
-
-			output(url);
+			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
-
+	
 	@RequestMapping(value = "/getRes")
 	@ResponseBody
-	public void getRes(HttpServletRequest request, HttpSession session) {
+	public void getRes(HttpServletRequest request) {
 		try {
 
 			String authorization_code = request.getParameter("auth_code");
 			if (StringUtils.isNotBlank(authorization_code)) {
 				String url = CommonUtil.getPath("getWxPlatFormInfoURL").toString();
 
-				url = url.replace("componentAccessToken", getComponentAccessToken(session));
+				url = url.replace("componentAccessToken", getComponentAccessToken());
 
 				JSONObject jsonObj = new JSONObject();
 
@@ -323,40 +350,6 @@ public class InterfaceController extends BaseController {
 			e.printStackTrace();
 		}
 		output2(response, "success");
-	}
-	
-	/**
-	 * 
-	 * @author kqs
-	 * @param authorizer_appid
-	 * @param authorizer_refresh_token
-	 * @return
-	 * @return String
-	 * @date 2018年8月7日 - 下午11:00:08 
-	 * @description:获取对应授权app的token
-	 */
-	public String getWxComponentAccessToken(String authorizer_appid, String authorizer_refresh_token) {
-		try {
-			String url = CommonUtil.getPath("getWxComponentAccessToken").toString();
-			String authorizer_access_token = "";
-			if (jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid)) {
-				authorizer_access_token = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid);
-			}
-			url = url.replace("componentAccessToken", authorizer_access_token);
-			JSONObject postStr = new JSONObject();
-			postStr.put("component_appid", component_appid);
-			postStr.put("authorizer_appid", authorizer_appid);
-			postStr.put("authorizer_refresh_token", authorizer_refresh_token);
-			String res = CommonUtil.posts(url, postStr.toJSONString(), "utf-8");
-			String authorizer_access_token_new = JSONObject.parseObject(res).getString("authorizer_access_token");
-			jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, authorizer_access_token_new);
-			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, 1000 * 60 * 60 * 1);
-			return authorizer_access_token_new;
-		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
-		return "";
 	}
 
 	/**
