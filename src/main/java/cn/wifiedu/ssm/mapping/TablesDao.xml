@@ -10,7 +10,7 @@
 		FROM
 			sc_tables
 		WHERE
-			TABLES_AREA_FK = #{TABLES_AREA_FK} ORDER BY CAST(TABLES_PXXH AS SIGNED integer);
+			TABLES_AREA_FK = #{TABLES_AREA_ID} ORDER BY CAST(TABLES_PXXH AS SIGNED integer);
 	</select>
 	
 	<!-- 根绝桌位id删除指定桌位 -->
@@ -46,7 +46,7 @@
 		VALUES
 		(
 			#{UUID},
-			#{TABLES_AREA_FK},
+			#{TABLES_AREA_ID},
 			#{TABLES_NAME},
 			#{TABLES_NUM},
 			#{TABLES_STATUS},
@@ -67,9 +67,10 @@
 			UPDATE_TIME = NOW(),
 			UPDATE_BY = #{UPDATE_BY}
 		WHERE 
-			TABLES_AREA_PK = #{TABLES_ID}
+			TABLES_PK = #{TABLES_ID}
 	</update>
 	
+	<!-- 插入或添加桌位, 之前位置后边的桌位排序序号依次增加 -->
 	<update id="updateTablesPxxhAddById" parameterMap="BaseParameterMap">
 		UPDATE 
 			sc_tables
@@ -86,6 +87,7 @@
 		;
 	</update>
 	
+	<!-- 修改或删除桌位, 之前位置后边的桌位排序序号依次减少 -->
 	<update id="updateTablesPxxhSubById" parameterMap="BaseParameterMap">
 		UPDATE 
 			sc_tables

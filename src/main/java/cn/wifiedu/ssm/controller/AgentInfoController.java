@@ -24,11 +24,15 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 	import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 		/**
 		 * 
@@ -48,6 +52,9 @@ import cn.wifiedu.ssm.util.StringDeal;
 
 			@Resource
 			OpenService openService;
+			
+			@Resource
+			private JedisClient jedisClient;
 			
 			public OpenService getOpenService() {
 				return openService;
@@ -73,6 +80,16 @@ import cn.wifiedu.ssm.util.StringDeal;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
+					
+					/*String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
+					
+					map.put("SHOP_ID", userObj.get("FK_SHOP"));
+					map.put("USER_ID", userObj.get("USER_PK")); 
+					map.put("ROLE_ID", userObj.get("FK_ROLE")); 
+*/
+					
 					map.put("sqlMapId", "selectAgentInfoById");
 					map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
 					

@@ -3,6 +3,21 @@
 	"viewUrl": "aps/content/DailyManagement/tables/catelist/tableslist/setting/template.html",
 	"controllerUrl": "aps/content/DailyManagement/tables/catelist/tableslist/setting/controller.js",
 	"config": {
-		"pageTitle": "餐桌设置"
+		"pageTitle": "餐桌设置",
+		"findURL":"json/Tables_query_findTablesById.json",
+		"saveURL":"json/Tables_save_saveTables.json",
+		"updateURL": "json/Tables_update_updateTablesById.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"tables_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"tables_setting.confirm"
+		        	}
+				]
+			}
 	}
 }

@@ -24,7 +24,6 @@
 				}
 
 				var init = function() {
-					
 					if ($routeParams.LOCALPATH != undefined && $routeParams.LOCALPATH != null) {
 						scope.toHref($routeParams.LOCALPATH);
 						return;

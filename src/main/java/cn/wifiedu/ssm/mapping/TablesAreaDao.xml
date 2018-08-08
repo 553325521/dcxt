@@ -6,11 +6,11 @@
   
 	<select id="selectTablesArea" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 
-			TABLES_AREA_PK, TABLES_AREA_NAME, TABLES_AREA_NUM, TABLES_AREA_STATUS, TABLES_AREA_PXXH, TABLES_AREA_DESC
+			ta.TABLES_AREA_PK, ta.TABLES_AREA_NAME, ta.TABLES_AREA_STATUS, ta.TABLES_AREA_PXXH, ta.TABLES_AREA_DESC,COUNT(t.TABLES_PK) as TABLES_AREA_NUM
 		FROM
-			sc_tables_area
-		WHERE
-			SHOP_FK = #{SHOP_ID} ORDER BY CAST(TABLES_AREA_PXXH AS SIGNED integer);
+			sc_tables_area ta LEFT JOIN sc_tables t
+		ON
+			SHOP_FK = #{SHOP_ID} and t.TABLES_AREA_FK = ta.TABLES_AREA_PK GROUP BY ta.TABLES_AREA_PK ORDER BY CAST(ta.TABLES_AREA_PXXH AS SIGNED integer);
 	</select>
 	
 	<!-- 根绝区域id删除指定区域 -->
@@ -101,12 +101,11 @@
 		</if>
 		;
 	</update>
-	
+	<!-- 根据商铺id查询区域总数量 -->
 	<select id="findTablesAreaCountByShopId" parameterMap="BaseParameterMap"  resultMap="BaseResultMap">
 	
-		SELECT COUNT(TABLES_AREA_PXXH) AS area_count FROM sc_tables_area WHERE SHOP_FK = #{SHOP_ID};
+		SELECT COUNT(TABLES_AREA_PK) AS area_count FROM sc_tables_area WHERE SHOP_FK = #{SHOP_ID};
 	
 	</select>
-	
-	
+
 </mapper>

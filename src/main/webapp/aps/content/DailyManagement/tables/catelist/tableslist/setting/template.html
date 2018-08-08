@@ -1,6 +1,6 @@
 
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('DailyManagement/tables/catelist/tableslist','')">
+		<div href="#" class="weui-header-left" ng-click="toHref('DailyManagement/tables/catelist/tableslist')">
 			<a class="icon icon-109"></a>
 		</div>
 
@@ -16,14 +16,14 @@
 	</div>
 	
 
-		<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+		<div class="weui_cells weui_cells_form" style="margin-top: 0;" ng-show="pageShow" id="form">
 			<div class="weui_cell">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">餐位名称</label>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
 					<input class="weui_input tablessetting-weui_hd_self label-input" type="text"
-						placeholder="输入餐位名称" ng-model="form.TABLES_NAME">
+						placeholder="输入餐位名称" ng-model="form.TABLES_NAME" required emptyTips="请输入餐位名称">
 				</div>
 			</div>
 
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 
-			<div class="weui_cell tablessetting-weui_select dcxt_active">
+		<!-- 	<div class="weui_cell tablessetting-weui_select dcxt_active">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label ">选择区域</label>
 				</div>
@@ -48,7 +48,7 @@
 						
 				</div>
 			
-			</div>
+			</div> -->
 
 			<div class="weui_cell dcxt_active">
 				<div class="weui_cell_hd">
@@ -57,8 +57,8 @@
 				<div class="weui_cell_bd tablessetting-weui_hd_self weui_cell_primary ">
 					<div class="weui-form">
 						<div class="weui-form-li iblock li-checkbox-self">
-							<input class="weui-form-checkbox" name="f2" id="g1" value="是"
-									type="radio" ng-model="form.TABLES_IS_USE"> 
+							<input class="weui-form-checkbox" name="f2" id="g1" value="1"
+									type="radio" ng-model="form.TABLES_STATUS"> 
 							<label for="g1"> 
 								<i class="weui-icon-radio icon-checkbox-self"
 												style="margin: 0;">
@@ -70,8 +70,8 @@
 						</div>
 						<div class="weui-form-li iblock li-checkbox-self"
 							style="margin-left: 15px;">
-							<input class="weui-form-checkbox" name="f2" id="g2" value="否"
-								type="radio" ng-model="form.TABLES_IS_USE"> 
+							<input class="weui-form-checkbox" name="f2" id="g2" value="0"
+								type="radio" ng-model="form.TABLES_STATUS"> 
 							<label for="g2"> 
 								<i class="weui-icon-radio icon-checkbox-self"
 										style="margin: 0;">	
@@ -94,7 +94,8 @@
 				</div>
 				<div class="weui-cell_bd weui_cell_primary">
 					<input class="weui_input tablessetting-weui_hd_self label-input" id="rs_select" type="text" ng-model="form.TABLES_NUM"
-						placeholder="输入餐位人数" value="">
+						placeholder="输入餐位人数" value="" required 
+						emptyTips="请输入餐位人数" notMatchTips="请输入正确餐位人数" pattern="^[0-9]*$">
 					
 				</div>
 			</div>
@@ -110,8 +111,15 @@
 			<div class="weui_cell">
                 <div class="weui_cell_bd weui_cell_primary">
                     <textarea style="padding:0 12px;" id="textarea" class="weui_textarea" placeholder="请输入备注（选填）" rows="3" ng-model="form.TABLES_DESC"></textarea>
-                    <div class="weui_textarea_counter"><span id="count">{{font_count}}</span>/<span id="count_max">20</span></div>
+                    <div class="weui_textarea_counter"><span id="count">{{font_length}}</span>/<span id="count_max">20</span></div>
                 </div>
             </div>
 			
 		</div>
+
+		
+		<div class="weui-loadmore" ng-hide="pageShow">
+			<i class="weui-loading"></i>
+			<span class="weui-loadmore-tips">正在加载</span>
+		</div>
+	

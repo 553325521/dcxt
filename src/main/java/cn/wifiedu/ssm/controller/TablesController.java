@@ -74,9 +74,10 @@ import cn.wifiedu.ssm.util.StringDeal;
 				try {
 					Map<String, Object> map = getParameterMap();
 					map.put("sqlMapId", "selectTablesByAreaId");
-					map.put("TABLES_AREA_FK", map.get("area_id"));
+					map.put("TABLES_AREA_ID", map.get("area_id"));
 					
 					List<Map<String, Object>> reMap = openService.queryForList(map);
+					
 					output("0000", reMap);
 					return;
 				} catch (Exception e) {
@@ -102,6 +103,8 @@ import cn.wifiedu.ssm.util.StringDeal;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
+					//TODO先查询当前区域是否在当前商铺，不然不能删除
+					
 					//先查询区域总数量
 					map.put("sqlMapId", "findTablesCountByAreaId");
 					map.put("TABLES_AREA_ID", map.get("area_id"));
@@ -121,7 +124,6 @@ import cn.wifiedu.ssm.util.StringDeal;
 						//如果不等于，进行排序序号重置
 						map.put("sqlMapId", "updateTablesPxxhSubById");
 						map.put("SMALL_TABLES_PXXH", bef_pxxh);
-						map.put("TABLES_AREA_ID", map.get("TABLES_AREA_FK"));
 						
 						boolean update = openService.update(map);
 						
@@ -153,7 +155,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 * @date 2018年8月1日 上午1:56:48 
 			 * @author lps
 			 * 
-			 * @Description: 查询单个区域信息
+			 * @Description: 查询单个桌位信息
 			 * @param request
 			 * @param seesion 
 			 * @return void 
@@ -165,7 +167,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 				try {
 					Map<String, Object> map = getParameterMap();
 					map.put("sqlMapId", "findTablesById");
-					map.put("TABLES_ID", map.get("area_id"));
+					map.put("TABLES_ID", map.get("tables_id"));
 					
 					Object object = openService.queryForObject(map);
 					if(object != null){
@@ -186,19 +188,41 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 * @date 2018年8月1日 下午5:48:29 
 			 * @author lps
 			 * 
-			 * @Description: 
+			 * @Description: 添加table
 			 * @param request
 			 * @param seesion 
 			 * @return void 
 			 *
 			 */
 			@RequestMapping("/Tables_save_saveTables")
-			public void saveTablesArea(HttpServletRequest request,HttpSession seesion){
+			public void saveTables(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
+					
+					//先查询当前区域桌位总数量
+					map.put("sqlMapId", "findTablesCountByAreaId");
+					map.put("TABLES_AREA_ID", map.get("area_id"));
+					
+					Map reMap = (Map)openService.queryForObject(map);
+					long areaCount = (long) reMap.get("tables_count");
+					
+					Integer pxxh = Integer.parseInt((String) map.get("TABLES_PXXH"));
+					
+					if(pxxh - 1 != areaCount){
+						
+						map.put("sqlMapId", "updateTablesPxxhAddById");
+						map.put("SMALL_TABLES_PXXH", pxxh);
+						boolean b = openService.update(map);
+						
+						if(!b){
+							output("0000", "修改失败！");
+							return;
+						}
+						
+					}
+					
 					map.put("sqlMapId", "insertTables");
-					map.put("TABLES_AREA_ID", map.get("TABLES_AREA_FK"));
 					map.put("CREATE_BY", "admin");
 					String insert = openService.insert(map);
 					if(insert != null){
@@ -214,13 +238,23 @@ import cn.wifiedu.ssm.util.StringDeal;
 			}
 			
 			
-			
+			/**
+			 * 
+			 * @date 2018年8月8日 上午4:46:49 
+			 * @author lps
+			 * 
+			 * @Description: 根据tableId更新table
+			 * @param request
+			 * @param seesion 
+			 * @return void 
+			 *
+			 */
 			@RequestMapping("/Tables_update_updateTablesById")
-			public void updateTablesArea(HttpServletRequest request,HttpSession seesion){
+			public void updateTablesById(HttpServletRequest request,HttpSession seesion){
 		
 				try {
 					Map<String, Object> map = getParameterMap();
-					//先查询当前区域的排序序号
+					//先查询当前桌位的排序序号
 					map.put("sqlMapId", "findTablesById");
 					map.put("TABLES_ID", map.get("TABLES_PK"));
 					Map reMap = (Map)openService.queryForObject(map);
@@ -237,7 +271,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 							map.put("BIG_TABLES_PXXH", after_pxxh);
 							map.put("sqlMapId", "updateTablesPxxhSubById");
 						}
-						map.put("TABLES_AREA_ID", map.get("TABLES_AREA_FK"));
+						map.put("TABLES_AREA_ID", map.get("area_id"));
 						boolean b = openService.update(map);
 						
 						if(!b){
@@ -246,9 +280,6 @@ import cn.wifiedu.ssm.util.StringDeal;
 						}
 					
 					}
-					
-					map.put("sqlMapId", "updateTablesById");
-
 					
 					map.put("sqlMapId", "updateTablesById");
 					map.put("TABLES_ID", map.get("TABLES_PK"));

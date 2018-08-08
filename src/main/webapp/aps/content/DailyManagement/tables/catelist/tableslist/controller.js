@@ -15,7 +15,7 @@
 	area = {}
 	area.area_id = params.area_id;//获取传过来的区域id
 
-	// 餐桌区域数据源
+	// 餐桌数据源
 	scope.tables_list = [];
 	
 	//页面初始化

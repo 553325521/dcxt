@@ -77,6 +77,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
 					
 					List<Map<String, Object>> reMap = openService.queryForList(map);
+					
 					output("0000", reMap);
 					return;
 				} catch (Exception e) {
@@ -196,8 +197,31 @@ import cn.wifiedu.ssm.util.StringDeal;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
-					map.put("sqlMapId", "insertTablesArea");
+					
+					//先查询区域总数量
+					map.put("sqlMapId", "findTablesAreaCountByShopId");
 					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
+					
+					Map reMap = (Map)openService.queryForObject(map);
+					long areaCount = (long) reMap.get("area_count");
+					
+					Integer pxxh = Integer.parseInt((String) map.get("TABLES_AREA_PXXH"));
+					
+					if(pxxh - 1 != areaCount){
+						
+						map.put("sqlMapId", "updateTablesAreaPxxhAddById");
+						map.put("SMALL_TABLES_AREA_PXXH", pxxh);
+						boolean b = openService.update(map);
+						
+						if(!b){
+							output("0000", "修改失败！");
+							return;
+						}
+						
+						
+					}
+					
+					map.put("sqlMapId", "insertTablesArea");
 					map.put("CREATE_BY", "admin");
 					String insert = openService.insert(map);
 					if(insert != null){
