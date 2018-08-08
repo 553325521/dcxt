@@ -104,6 +104,7 @@ public class StaffController extends BaseController {
 				Map<String, Object> userMap = CommonUtil.getWxUserInfo(code);
 				userMap.put("sqlMapId", "insertUserInitOpenId");
 				String USER_PK = openService.insert(userMap);
+				System.out.println("USER_PK====" + USER_PK);
 				if (StringUtils.isNotBlank(USER_PK)) {
 					Map<String, Object> map = getParameterMap();
 					map.put("tagName", "店员端");
@@ -116,22 +117,19 @@ public class StaffController extends BaseController {
 							String tagAddURL = CommonUtil.getPath("user_tag_add");
 							tagAddURL = tagAddURL.replace("ACCESS_TOKEN", token);
 							JSONObject postObj = new JSONObject();
-
+							map.put("USER_TAG_NAME", "店员端");
 							map.put("sqlMapId", "findUserTagIdByUserTagName");
-
 							Map<String, Object> resMap = (Map<String, Object>) openService.queryForObject(map);
-
 							postObj.put("tagid", resMap == null ? "" : resMap.get("USER_TAG_ID").toString());
 							postObj.put("openid_list", new ArrayList<String>() {
 								{
 									add(userMap.get("USER_WX").toString());
 								}
 							});
-
+							System.out.println("tagAddURL====" + tagAddURL);
 							String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
-
+							System.out.println("resCont====" + resCont);
 							JSONObject resObj = JSONObject.parseObject(resCont);
-
 							if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
 								// 重定向成功页面
 							} else if (WxConstants.ERRORCODE_1.equals(resObj.getString("errcode"))) {
@@ -157,19 +155,14 @@ public class StaffController extends BaseController {
 			} else {
 				// 重定向失败页面
 			}
-
-			Map<String, Object> map = getParameterMap();
-			map.put("sqlMapId", "addStaff");
-			List<Map<String, Object>> reMap = openService.queryForList(map);
-			output("0000", reMap);
 		} catch (Exception e) {
+			logger.info(e);
+			e.printStackTrace();
 			if ("404".equals(e.getMessage())) {
 				logger.error("获取微信token失败");
-				// 错误页面
 				try {
 					response.sendRedirect("");
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}

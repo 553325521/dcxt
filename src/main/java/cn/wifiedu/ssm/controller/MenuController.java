@@ -1,7 +1,5 @@
 package cn.wifiedu.ssm.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,62 +149,29 @@ public class MenuController extends BaseController {
 
 	@RequestMapping("/Menu_update_updateWxMenuForTagId")
 	public void updateWxMenuForTagId(HttpServletRequest request, HttpSession session) {
-
-		DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
-		definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = transactionManager.getTransaction(definition);
-
 		try {
 			Map<String, Object> map = getParameterMap();
 			if (map.containsKey("MENU_PLAT")) {
 				String token = WxUtil.getToken();
 				if (token != null) {
-					// String url =
-					// CommonUtil.getPath("userTagGetList").toString();
-					// url = url.replace("ACCESS_TOKEN", token);
-					// String resMsg = CommonUtil.get(url);
-					// if (resMsg != null) {
-					// JSONObject obj = JSON.parseObject(resMsg);
-					// JSONArray tags =
-					// JSONObject.parseArray(obj.get("tags").toString());
 					String tagId = map.get("MENU_PLAT").toString();
-					// for (Object tag : tags) {
-					// JSONObject tagInfo = JSON.parseObject(tag.toString());
-					// if (tagInfo != null && tagId.equals(tagInfo.get("id"))) {
-					// tagId = tagInfo.get("id").toString();
-					// break;
-					// }
-					// }
-					// if (!"用户端".equals(map.get("MENU_PLAT"))) {
 					if ("".equals(tagId)) {
 						output("9999", " 获取对应微信标签信息失败 ");
 						return;
 					}
 					// 删除个性化套餐
 					delMenuById(map);
-					// } else {
-					// // 删除 自定义套餐
-					// // 存在问题 删除自定义的时候 会删除个性化套餐
-					// if (delMenuForWx(map) <= 0) {
-					// throw new RuntimeException();
-					// }
-					// }
 					// 获取所有的菜单
 					map.put("sqlMapId", "loadTopMenusByAppId");
 					List<Map<String, Object>> fatherMap = openService.queryForList(map);
 
 					if (!fatherMap.isEmpty()) {
 						this.insertAppMenu(map, fatherMap, tagId);
-						// 提交所有事务
-						transactionManager.commit(status);
 						return;
 					} else {
 						output("9999", " 该菜单为空不可更新! ");
 						return;
 					}
-					// }
-					// output("9999", " 获取微信标签列表失败 ");
-					// return;
 				}
 				output("9999", " 获取微信token失败 ");
 				return;
@@ -215,7 +180,6 @@ public class MenuController extends BaseController {
 			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
-			transactionManager.rollback(status);
 		}
 	}
 
@@ -230,6 +194,10 @@ public class MenuController extends BaseController {
 	 */
 	private void insertAppMenu(Map<String, Object> map, List<Map<String, Object>> fatherMap, String tagId) {
 		try {
+			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			
 			Map<String, Object> postMap = new HashMap<>();
 
 			List<Map<String, Object>> postMap2ToBtn = new ArrayList<>();
@@ -249,7 +217,7 @@ public class MenuController extends BaseController {
 						String stype = "view";
 						smap.put("type", stype);
 						smap.put("url", CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data")
-								+ "?params=" + sMap.get("MENU_LINK").toString());
+								+ "?params=" + sMap.get("MENU_LINK").toString() + "&appid=" + userObj.getString("AUTHORIZE_APP"));
 						smap.put("name", sMap.get("MENU_NAME"));
 						sonMapList.add(smap);
 					}
@@ -270,7 +238,7 @@ public class MenuController extends BaseController {
 
 			String postURL = "";
 
-			if (!"用户端".equals(map.get("MENU_PLAT"))) {
+			if (!"".equals(tagId)) {
 				// 设置对应微信用户标签id
 				postMap2ToRule.put("tag_id", tagId);
 				// 设置中文
@@ -375,14 +343,34 @@ public class MenuController extends BaseController {
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			if (userObj.containsKey("FK_APP")) {
-				output("0000");
+				output("0000", "have app");
 				return;
 			} else {
-				redirectedUrl("9999");
+				output("9999", "no have app");
 				return;
 			}
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
 	}
+	
+	@RequestMapping("/Menu_insert_test")
+	public void test(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+
+			// String url = CommonUtil.getPath("menuWxGetList").toString();
+			// String token = WxUtil.getToken();
+			// url = url.replace("ACCESS_TOKEN", token);
+			// String res = CommonUtil.get(url);
+			String url = CommonUtil.getPath("deleteconditionalURL").toString();
+			String token = WxUtil.getToken();
+			url = url.replace("ACCESS_TOKEN", token);
+			String res = CommonUtil.posts(url, "{\"menuid\":\"430283769\"}", "utf-8");
+			output("0000", res);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+	
 }

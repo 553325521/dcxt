@@ -202,9 +202,7 @@ public class WxController extends BaseController {
 
 				List<Map<String, Object>> checkList = openService.queryForList(map);
 				logger.info("checkList: " + checkList);
-
 				Map<String, Object> userMap = new HashMap<>();
-
 				userMap.put("USER_WX", openId);
 
 				if (checkList != null && checkList.size() == 0) {
@@ -220,7 +218,6 @@ public class WxController extends BaseController {
 					// 根据openId 获取 系统中的 商铺、权限、功能
 					getUserInfo(openId, userMap);
 				}
-
 				// redis存储用户登录信息
 				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
 
@@ -230,30 +227,16 @@ public class WxController extends BaseController {
 				String url = CommonUtil.getPath("project_url").replace("json/DATA.json", "");
 				response.sendRedirect(url);
 			} else {
-				//output("9999", "获取微信授权失败！");
-				
 				// 生成token
 				String btnToken = UUID.randomUUID().toString();
 				JSONObject obj = new JSONObject();
 				obj.put("status", 9999);
-				obj.put("msg", "获取微信授权失败！");
-				obj.put("data", new ArrayList<JSONObject>(){
-					{
-						JSONObject btn1 = new JSONObject();
-						btn1.put("buttonName", "测试1");
-						btn1.put("buttonLink", "123");
-						add(btn1);
-						
-						JSONObject btn2 = new JSONObject();
-						btn2.put("buttonName", "测试2");
-						btn2.put("buttonLink", "123");
-						add(btn2);
-					}
-				});
-				
+				obj.put("msg", "获取微信授权失败！请重新登录！");
+				obj.put("data", new ArrayList<JSONObject>());
+
 				// 保存button信息
 				jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
-				
+
 				response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
 						"#toOtherPage/msgPage/" + btnToken));
 			}
@@ -314,6 +297,19 @@ public class WxController extends BaseController {
 						"#ActingCustomerManagement/ActingCustomerManagement");
 
 				response.sendRedirect(url);
+			} else {
+				// 生成token
+				String btnToken = UUID.randomUUID().toString();
+				JSONObject obj = new JSONObject();
+				obj.put("status", 9999);
+				obj.put("msg", "获取微信授权失败！");
+				obj.put("data", new ArrayList<JSONObject>());
+
+				// 保存button信息
+				jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+
+				response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+						"#toOtherPage/msgPage/" + btnToken));
 			}
 
 		} catch (Exception e) {
@@ -593,7 +589,7 @@ public class WxController extends BaseController {
 			output("9999", "error");
 		}
 	}
-	
+
 	/**
 	 * 根据btnToken 获取 btn信息
 	 */

@@ -28,9 +28,6 @@
 								appPartSrc : $scope.appPartSrc
 							});
 						}
-						eventBusService.publish(controllerName, 'appPart.load.content.checkMenu', m2);
-
-						//$location.search(m2.contentName, m2.url);
 						return $scope.appPartSrc = m2.url;
 					}
 				});

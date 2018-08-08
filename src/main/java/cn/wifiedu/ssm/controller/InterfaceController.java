@@ -174,7 +174,6 @@ public class InterfaceController extends BaseController {
 	 */
 	public String getComponentAccessToken(HttpSession session) {
 		try {
-
 			if (jedisClient.isExit(RedisConstants.WX_COMPONENT_ACCESS_TOKEN)
 					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.WX_COMPONENT_ACCESS_TOKEN))) {
 				return jedisClient.get(RedisConstants.WX_COMPONENT_ACCESS_TOKEN);
@@ -204,8 +203,8 @@ public class InterfaceController extends BaseController {
 
 				jedisClient.set(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, componentAccessToken);
 
-				// 设置componentAccessToken的过期时间2小时
-				jedisClient.expire(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, 1000 * 60 * 60 * 2);
+				// 设置componentAccessToken的过期时间1小时
+				jedisClient.expire(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, 1000 * 60 * 60 * 1);
 
 				return componentAccessToken;
 			}
@@ -248,7 +247,7 @@ public class InterfaceController extends BaseController {
 			jedisClient.set(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, componentPreAuthCode);
 
 			// 设置componentPreAuthCode的过期时间2小时
-			jedisClient.expire(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, 1000 * 60 * 60 * 2);
+			jedisClient.expire(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, 1000 * 60 * 60 * 1);
 
 			return componentPreAuthCode;
 		} catch (Exception e) {
@@ -310,27 +309,54 @@ public class InterfaceController extends BaseController {
 
 					jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, authorizer_access_token);
 
-					// 设置authorizer_access_token的过期时间2小时
-					jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, 1000 * 60 * 60 * 2);
-					
 					Map<String, Object> map = getParameterMap();
 					map.put("APP_PK", authorizer_appid);
 					map.put("APP_REFRESH_TOKEN", authorizer_refresh_token);
 					map.put("CREATE_TIME", StringDeal.getStringDate());
 					map.put("sqlMapId", "insertApp");
 					openService.insert(map);
-					
 				}
-
 			} else {
 				logger.warn("获取授权码失败");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 		output2(response, "success");
+	}
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param authorizer_appid
+	 * @param authorizer_refresh_token
+	 * @return
+	 * @return String
+	 * @date 2018年8月7日 - 下午11:00:08 
+	 * @description:获取对应授权app的token
+	 */
+	public String getWxComponentAccessToken(String authorizer_appid, String authorizer_refresh_token) {
+		try {
+			String url = CommonUtil.getPath("getWxComponentAccessToken").toString();
+			String authorizer_access_token = "";
+			if (jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid)) {
+				authorizer_access_token = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid);
+			}
+			url = url.replace("componentAccessToken", authorizer_access_token);
+			JSONObject postStr = new JSONObject();
+			postStr.put("component_appid", component_appid);
+			postStr.put("authorizer_appid", authorizer_appid);
+			postStr.put("authorizer_refresh_token", authorizer_refresh_token);
+			String res = CommonUtil.posts(url, postStr.toJSONString(), "utf-8");
+			String authorizer_access_token_new = JSONObject.parseObject(res).getString("authorizer_access_token");
+			jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, authorizer_access_token_new);
+			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + authorizer_appid, 1000 * 60 * 60 * 1);
+			return authorizer_access_token_new;
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	/**
