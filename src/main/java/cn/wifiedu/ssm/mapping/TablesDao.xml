@@ -105,10 +105,24 @@
 	</update>
 	
 	<select id="findTablesCountByAreaId" parameterMap="BaseParameterMap"  resultMap="BaseResultMap">
-	
 		SELECT COUNT(TABLES_PXXH) AS tables_count FROM sc_tables WHERE TABLES_AREA_FK = #{TABLES_AREA_ID};
-	
 	</select>
 	
+	<!-- 根据区域id删除下边的所有桌位 -->
+	<delete id="removeTablesByAreaId" parameterMap="BaseParameterMap">
+		DELETE FROM 
+			sc_tables
+		WHERE
+			TABLES_AREA_FK = #{TABLES_AREA_ID}
+	</delete>
+	
+	<update id="updateTablesStatusByAreaId" parameterMap="BaseParameterMap">
+		UPDATE 
+			sc_tables
+		SET 
+			TABLES_STATUS = #{TABLES_AREA_STATUS}
+		WHERE 
+			TABLES_AREA_FK = #{TABLES_AREA_ID} 
+	</update>
 	
 </mapper>

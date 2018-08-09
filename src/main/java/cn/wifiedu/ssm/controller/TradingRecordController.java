@@ -16,9 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.alibaba.fastjson.JSONObject;
+
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.WxUtil;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 
 /**
@@ -33,6 +38,9 @@ public class TradingRecordController extends BaseController {
 
 	@Resource
 	OpenService openService;
+	
+	@Resource
+	private JedisClient jedisClient;
 
 	public OpenService getOpenService() {
 		return openService;
@@ -50,12 +58,16 @@ public class TradingRecordController extends BaseController {
 	public void fingTradingRecord() {
 		try {
 			Map<String, Object> map = getParameterMap();
-			map.put("USER_WX","4b8cea73b03a4ddfacf8fbaf7a31028d");
+			
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			
+			map.put("USER_WX", userObj.get("USER_PK")); 
 			map.put("sqlMapId", "fingTradingRecord");
 			List<Map<String, Object>> reMap  = openService.queryForList(map);
 			output("0000",reMap);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			output("9999","查询失败");
 		}
@@ -77,7 +89,11 @@ public class TradingRecordController extends BaseController {
 	public void findCommissionRecordList(HttpServletRequest request,HttpSession seesion){
 		try {
 			Map<String, Object> map = getParameterMap();
-			map.put("USER_ID","4b8cea73b03a4ddfacf8fbaf7a31028d");
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			
+			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("sqlMapId", "findCommissionRecordList");
 			List<Map<String, Object>> reMap  = openService.queryForList(map);
 			output("0000",reMap);

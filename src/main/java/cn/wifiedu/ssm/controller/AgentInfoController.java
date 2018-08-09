@@ -81,17 +81,16 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				try {
 					Map<String, Object> map = getParameterMap();
 					
-					/*String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 					JSONObject userObj = JSONObject.parseObject(userJson);
 					
-					map.put("SHOP_ID", userObj.get("FK_SHOP"));
+//					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					map.put("USER_ID", userObj.get("USER_PK")); 
-					map.put("ROLE_ID", userObj.get("FK_ROLE")); 
-*/
+//					map.put("ROLE_ID", userObj.get("FK_ROLE")); 
+
 					
 					map.put("sqlMapId", "selectAgentInfoById");
-					map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
 					
 					Map<String, Object> reMap = (Map)openService.queryForObject(map);
 					output("0000", reMap);
@@ -101,10 +100,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					return;
 				}
 			}
-			
-			
-			
-			
 			
 			/**
 			 * 
@@ -120,34 +115,53 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			@RequestMapping("/AgentInfo_update_updateAgentInfoById")
 			public void updateAgentInfoById(HttpServletRequest request,HttpSession seesion){
 				try {
+					Map<String, Object> map = getParameterMap();
+					
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
+					
+					map.put("USER_ID", userObj.get("USER_PK")); 
 					
 					//如果已经认证成功，就不能修改了
-					Map<String, Object> map = getParameterMap();
 					map.put("sqlMapId", "selectAgentInfoById");
-					map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
 					Map<String, Object> reMap = (Map)openService.queryForObject(map);
 					
-					if(reMap == null || "1".equals(reMap.get("AUTH_STATUS"))){
+					if((String)map.get("AGENT_PK") == null){
+						//说明代理信息表没东西，插入
+						//代理表有东西，更新代理信息表
+						map.put("sqlMapId", "insertAgentInfoById");
+						map.put("CREATE_BY", "admin");
+						
+						String insert = openService.insert(map);
+						
+						if(insert == null){
+							output("9999", "保存失败");
+							return;
+						}
+						
+					}else if( "1".equals(reMap.get("AUTH_STATUS"))){
 						output("9999", "保存失败");
 						return;
+					}else{
+						//代理表有东西，更新代理信息表
+						map.put("sqlMapId", "updateAgentInfoById");
+						map.put("UPDATE_BY", "admin");
+						
+						boolean update = openService.update(map);
+						
+						if(!update){
+							output("9999", "保存失败");
+							return;
+						}
 					}
 					
-					//先更新代理信息表
-					map.put("sqlMapId", "updateAgentInfoById");
-					map.put("UPDATE_BY", "admin");
-					
-					boolean update = openService.update(map);
-					
-					if(!update){
-						output("9999", "保存失败");
-						return;
-					}
 					
 					//然后更新用户表信息
 					
 					map.put("sqlMapId", "updateUserBaseInfoById");
 					
-					update = openService.update(map);
+					boolean update = openService.update(map);
 					
 					if(update){
 						output("0000", "完善成功，请等待管理员审核");

@@ -3,7 +3,7 @@
 	"viewUrl": "aps/content/DailyManagement/tables/catelist/tableslist/template.html",
 	"controllerUrl": "aps/content/DailyManagement/tables/catelist/tableslist/controller.js",
 	"config": {
-		"pageTitle": "餐桌设置",
+		"pageTitle": "餐桌列表",
 		"findURL":"json/Tables_query_findTablesListByAreaId.json",
 		"removeURL":"json/Tables_delete_removeTablesById.json",
 		"menu":{	

@@ -27,15 +27,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.zxing.WriterException;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.WxUtil;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 
 /**
@@ -53,6 +57,9 @@ public class ShopController extends BaseController {
 
 	@Resource
 	PlatformTransactionManager transactionManager;
+	
+	@Resource
+	private JedisClient jedisClient;
 	
 	public OpenService getOpenService() {
 		return openService;
@@ -81,7 +88,6 @@ public class ShopController extends BaseController {
 			if(shopId != null && !"".equals(shopId.trim())){//是修改
 				map.put("sqlMapId", "updateShopBaseInfoById");
 				map.put("UPDATE_BY", "admin");
-				
 				boolean b = openService.update(map);
 				if(b){
 					transactionManager.commit(status);
@@ -100,7 +106,6 @@ public class ShopController extends BaseController {
 			if(serviceId == null){
 				throw new Exception();
 			}
-			
 			map.put("sqlMapId", "insertShop");
 			map.put("CREATE_BY", "admin");
 			map.put("SERVICETYPE_FK", serviceId);
@@ -111,20 +116,21 @@ public class ShopController extends BaseController {
 			}
 			//插入用户商铺中间表
 			map.put("sqlMapId", "insertUserShop");
-			map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("SHOP_ID", insert);
-			map.put("roleName", "代理商");
+			map.put("ROLE_ID", "7");
 			map.put("tagName", "代理端");
-			
+			map.put("FK_APP",  userObj.get("FK_APP"));
 			String insert2 = openService.insert(map);
-			
 			if(insert2 != null){
 				transactionManager.commit(status);
 				output("0000","保存成功");
 			}else{
 				throw new Exception();
 			}
-			
 		} catch (Exception e) {
 			transactionManager.rollback(status);
 			output("9999","保存失败");
@@ -132,7 +138,7 @@ public class ShopController extends BaseController {
 	}
 	
 	/**
-	 * 显示当前登录代理商下的商铺信息
+	 * 显示当前登录代理商下的商铺信息    2018年8月8日23:50:27 修改 lps
 	 * @author wangjinglong
 	 */
 	@RequestMapping(value="/Shop_select_findAgentShopInfo",method = RequestMethod.POST)
@@ -141,18 +147,20 @@ public class ShopController extends BaseController {
 			
 			//如果未认证，跳转完善信息界面
 			Map<String, Object> map = getParameterMap();
+			//获取当前session信息
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			map.put("USER_ID", userObj.get("USER_PK")); 
 			map.put("sqlMapId", "selectAgentInfoById");
-			map.put("USER_ID", "4b8cea73b03a4ddfacf8fbaf7a31028d");
 			Map<String, Object> reMap1 = (Map)openService.queryForObject(map);
-			
+			//如果还未认证，跳转到认证界面
 			if(reMap1 == null || "0".equals(reMap1.get("AUTH_STATUS"))){
 				output("5555", "信息有误");
 				return;
 			}
-			
-			
+			//开始查询当前登录代理商下的商铺信息
 			map.put("sqlMapId", "findAgentShopInfo");
-			map.put("USER_FK","4b8cea73b03a4ddfacf8fbaf7a31028d");
 			List<Map<String, Object>> reMap  = openService.queryForList(map);
 			for(int i = 0;i< reMap.size();i++){
 				Map<String,Object> singleMap = reMap.get(i);
@@ -225,8 +233,15 @@ public class ShopController extends BaseController {
 			}
 			/*添加到用户商铺中间表里*/
 			param.clear();
+			
+			//从session获取信息
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			param.put("FK_APP",  userObj.get("FK_APP"));
+			
 			param.put("USER_ID", userId);
-			param.put("roleName", "店长");
+			param.put("ROLE_ID", 2);
 			param.put("tagName", "店员端");
 			param.put("SHOP_ID", state);
 			param.put("sqlMapId", "insertUserShop");
@@ -244,7 +259,6 @@ public class ShopController extends BaseController {
 			} 
 			}
 			catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -269,7 +283,6 @@ public class ShopController extends BaseController {
 		try {
 			date1 = format.parse(date);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		int a = (int) ((date1.getTime() - new Date().getTime()) / (1000*3600*24));

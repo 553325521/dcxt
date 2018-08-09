@@ -24,11 +24,15 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 	import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 		/**
 		 * 
@@ -48,6 +52,9 @@ import cn.wifiedu.ssm.util.StringDeal;
 
 			@Resource
 			OpenService openService;
+			
+			@Resource
+			private JedisClient jedisClient;
 			
 			public OpenService getOpenService() {
 				return openService;
@@ -92,7 +99,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 * @date 2018年8月1日 上午12:41:31 
 			 * @author lps
 			 * 
-			 * @Description: 根据区域id删除指定桌位
+			 * @Description: 根据桌位id删除指定桌位
 			 * @param request
 			 * @param seesion 
 			 * @return void 
@@ -103,16 +110,22 @@ import cn.wifiedu.ssm.util.StringDeal;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
-					//TODO先查询当前区域是否在当前商铺，不然不能删除
+				/*	//先查询当前桌位是否在当前商铺，不然不能删除
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
 					
-					//先查询区域总数量
+					map.put("SHOP_ID", userObj.get("FK_SHOP"));
+				
+					*/
+					
+					//先查询桌位总数量
 					map.put("sqlMapId", "findTablesCountByAreaId");
 					map.put("TABLES_AREA_ID", map.get("area_id"));
 					
 					Map reMap = (Map)openService.queryForObject(map);
 					long areaCount = (long) reMap.get("tables_count");
-					
-					//再获取当前区域的排序序号
+					//再获取当前桌位的排序序号
 					map.put("TABLES_ID", map.get("tables_id"));
 					map.put("sqlMapId", "findTablesById");
 					
@@ -149,7 +162,6 @@ import cn.wifiedu.ssm.util.StringDeal;
 			}
 			
 			
-			
 			/**
 			 * 
 			 * @date 2018年8月1日 上午1:56:48 
@@ -182,7 +194,6 @@ import cn.wifiedu.ssm.util.StringDeal;
 				}
 			}
 			
-			
 			/**
 			 * 
 			 * @date 2018年8月1日 下午5:48:29 
@@ -196,7 +207,6 @@ import cn.wifiedu.ssm.util.StringDeal;
 			 */
 			@RequestMapping("/Tables_save_saveTables")
 			public void saveTables(HttpServletRequest request,HttpSession seesion){
-		
 				try {
 					Map<String, Object> map = getParameterMap();
 					
@@ -206,22 +216,18 @@ import cn.wifiedu.ssm.util.StringDeal;
 					
 					Map reMap = (Map)openService.queryForObject(map);
 					long areaCount = (long) reMap.get("tables_count");
-					
 					Integer pxxh = Integer.parseInt((String) map.get("TABLES_PXXH"));
-					
+					//判断，如果当前排序序号不是最后一个，开始把当前序号后边的依次加一
 					if(pxxh - 1 != areaCount){
-						
 						map.put("sqlMapId", "updateTablesPxxhAddById");
 						map.put("SMALL_TABLES_PXXH", pxxh);
 						boolean b = openService.update(map);
-						
 						if(!b){
-							output("0000", "修改失败！");
+							output("9999", "修改失败！");
 							return;
 						}
-						
 					}
-					
+					//开始添加桌位
 					map.put("sqlMapId", "insertTables");
 					map.put("CREATE_BY", "admin");
 					String insert = openService.insert(map);
@@ -236,7 +242,6 @@ import cn.wifiedu.ssm.util.StringDeal;
 					return;
 				}
 			}
-			
 			
 			/**
 			 * 
@@ -261,26 +266,39 @@ import cn.wifiedu.ssm.util.StringDeal;
 					Integer bef_pxxh = Integer.parseInt((String)reMap.get("TABLES_PXXH"));
 					Integer after_pxxh = Integer.parseInt((String)map.get("TABLES_PXXH"));
 					
+					//判断是否设置已启用而父节点未启用
+					map.put("TABLES_AREA_ID", map.get("area_id"));
+					map.put("sqlMapId", "findTablesAreaById");
+					Map<String,String> areaMess = (Map) openService.queryForObject(map);
+					if(areaMess == null){
+						output("9999", "修改失败！");
+						return;
+					}
+					//如果是的话，直接返回错误
+					if("0".equals(areaMess.get("TABLES_AREA_STATUS")) && "1".equals(map.get("TABLES_STATUS"))){
+						output("9999", "该区域已停用，不允许启用该桌位！");
+						return;
+					}
+					
+					
+					//判断当前桌位的排序位置是不是最后一个
 					if(bef_pxxh != after_pxxh){
-						if(bef_pxxh > after_pxxh){
+						if(bef_pxxh > after_pxxh){//如果更新前的序号大于更新后的，那就把更新后的后边的序号依次加一
 							map.put("sqlMapId", "updateTablesPxxhAddById");
 							map.put("SMALL_TABLES_PXXH", after_pxxh);
 							map.put("BIG_TABLES_PXXH", bef_pxxh);
-						}else if(bef_pxxh < after_pxxh){
+						}else if(bef_pxxh < after_pxxh){//如果更新前的序号小于更新后的，那就把更新后的后边的序号依次减一
 							map.put("SMALL_TABLES_PXXH", bef_pxxh);
 							map.put("BIG_TABLES_PXXH", after_pxxh);
 							map.put("sqlMapId", "updateTablesPxxhSubById");
 						}
-						map.put("TABLES_AREA_ID", map.get("area_id"));
 						boolean b = openService.update(map);
-						
 						if(!b){
-							output("0000", "修改失败！");
+							output("9999", "修改失败！");
 							return;
 						}
-					
 					}
-					
+					//开始更新桌位信息
 					map.put("sqlMapId", "updateTablesById");
 					map.put("TABLES_ID", map.get("TABLES_PK"));
 					map.put("UPDATE_BY", "admin");
@@ -296,8 +314,4 @@ import cn.wifiedu.ssm.util.StringDeal;
 					return;
 				}
 			}
-			
-			
-		
 		}
-

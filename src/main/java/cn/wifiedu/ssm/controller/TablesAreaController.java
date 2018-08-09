@@ -24,11 +24,15 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 	import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.CommonUtil;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 		/**
 		 * 
@@ -48,6 +52,9 @@ import cn.wifiedu.ssm.util.StringDeal;
 
 			@Resource
 			OpenService openService;
+			
+			@Resource
+			private JedisClient jedisClient;
 			
 			public OpenService getOpenService() {
 				return openService;
@@ -73,8 +80,12 @@ import cn.wifiedu.ssm.util.StringDeal;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
+
+					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					map.put("sqlMapId", "selectTablesArea");
-					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
 					
 					List<Map<String, Object>> reMap = openService.queryForList(map);
 					
@@ -103,9 +114,14 @@ import cn.wifiedu.ssm.util.StringDeal;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
+					
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
+					
 					//先查询区域总数量
 					map.put("sqlMapId", "findTablesAreaCountByShopId");
-					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
+					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					
 					Map reMap = (Map)openService.queryForObject(map);
 					long areaCount = (long) reMap.get("area_count");
@@ -119,21 +135,28 @@ import cn.wifiedu.ssm.util.StringDeal;
 					
 					//判断当前是不是最后一个数据
 					if(areaCount != bef_pxxh){
-						//如果不等于，进行排序序号重置
+						//如果不等于，进行排序序号重置，后边的区域序号依次减一
 						map.put("sqlMapId", "updateTablesAreaPxxhSubById");
 						map.put("SMALL_TABLES_AREA_PXXH", bef_pxxh);
 						
 						boolean update = openService.update(map);
-						
 						if(!update){
 							output("9999", "删除失败！");
 							return;
 						}
 					}
-					//开始删除
+					
+					//先删除区域下边的桌位
+					map.put("sqlMapId", "removeTablesByAreaId");
+					boolean b = openService.delete(map);
+					if(!b){
+						output("9999", "删除失败！");
+					}
+					
+					//开始删除区域
 					map.put("sqlMapId", "removeTablesAreaById");
 					
-					boolean b = openService.delete(map);
+					b = openService.delete(map);
 					if(b){
 						output("0000", "删除成功！");
 						return;
@@ -145,7 +168,6 @@ import cn.wifiedu.ssm.util.StringDeal;
 					return;
 				}
 			}
-			
 			
 			
 			/**
@@ -197,30 +219,28 @@ import cn.wifiedu.ssm.util.StringDeal;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
 					
 					//先查询区域总数量
 					map.put("sqlMapId", "findTablesAreaCountByShopId");
-					map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
+					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					
 					Map reMap = (Map)openService.queryForObject(map);
 					long areaCount = (long) reMap.get("area_count");
-					
 					Integer pxxh = Integer.parseInt((String) map.get("TABLES_AREA_PXXH"));
-					
+					//判断，如果当前排序序号不是最后一个，开始把当前序号后边的依次加一
 					if(pxxh - 1 != areaCount){
-						
 						map.put("sqlMapId", "updateTablesAreaPxxhAddById");
 						map.put("SMALL_TABLES_AREA_PXXH", pxxh);
 						boolean b = openService.update(map);
-						
 						if(!b){
-							output("0000", "修改失败！");
+							output("9999", "修改失败！");
 							return;
 						}
-						
-						
 					}
-					
+					//开始添加区域
 					map.put("sqlMapId", "insertTablesArea");
 					map.put("CREATE_BY", "admin");
 					String insert = openService.insert(map);
@@ -237,7 +257,17 @@ import cn.wifiedu.ssm.util.StringDeal;
 			}
 			
 			
-			
+			/**
+			 * 
+			 * @date 2018年8月9日 上午1:21:31 
+			 * @author lps
+			 * 
+			 * @Description: 通过区域ID更改区域信息
+			 * @param request
+			 * @param seesion 
+			 * @return void 
+			 *
+			 */
 			@RequestMapping("/TablesArea_update_updateTablesAreaById")
 			public void updateTablesArea(HttpServletRequest request,HttpSession seesion){
 		
@@ -246,42 +276,50 @@ import cn.wifiedu.ssm.util.StringDeal;
 					//先查询当前区域的排序序号
 					map.put("sqlMapId", "findTablesAreaById");
 					map.put("TABLES_AREA_ID", map.get("TABLES_AREA_PK"));
+					Integer after_pxxh = Integer.parseInt((String)map.get("TABLES_AREA_PXXH"));
 					Map reMap = (Map)openService.queryForObject(map);
 					Integer bef_pxxh = Integer.parseInt((String)reMap.get("TABLES_AREA_PXXH"));
-					Integer after_pxxh = Integer.parseInt((String)map.get("TABLES_AREA_PXXH"));
+					String bef_status = (String) reMap.get("TABLES_AREA_STATUS");//获取之前的区域状态
 					
+					//判断当前区域的排序位置是不是最后一个
 					if(bef_pxxh != after_pxxh){
-						if(bef_pxxh > after_pxxh){
+						if(bef_pxxh > after_pxxh){//如果更新前的序号大于更新后的，那就把更新后的后边的序号依次加一
 							map.put("sqlMapId", "updateTablesAreaPxxhAddById");
 							map.put("SMALL_TABLES_AREA_PXXH", after_pxxh);
 							map.put("BIG_TABLES_AREA_PXXH", bef_pxxh);
-						}else if(bef_pxxh < after_pxxh){
+						}else if(bef_pxxh < after_pxxh){//如果更新前的序号小于更新后的，那就把更新后的后边的序号依次减一
 							map.put("SMALL_TABLES_AREA_PXXH", bef_pxxh);
 							map.put("BIG_TABLES_AREA_PXXH", after_pxxh);
 							map.put("sqlMapId", "updateTablesAreaPxxhSubById");
 						}
-						map.put("SHOP_ID", "9a312aeb91514e79bd7837124b1b5242");
-						boolean b = openService.update(map);
+						//从session取数据
+						String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+						JSONObject userObj = JSONObject.parseObject(userJson);
 						
+						map.put("SHOP_ID", userObj.get("FK_SHOP"));
+						boolean b = openService.update(map);
 						if(!b){
-							output("0000", "修改失败！");
+							output("9999", "修改失败！");
 							return;
 						}
-					
 					}
-					
-					map.put("sqlMapId", "updateTablesAreaById");
-
-					
+					//开始更新区域信息
 					map.put("sqlMapId", "updateTablesAreaById");
 					map.put("TABLES_AREA_ID", map.get("TABLES_AREA_PK"));
 					map.put("UPDATE_BY", "admin");
 					boolean update = openService.update(map);
-					if(update){
-						output("0000", "修改成功！");
+					if(!update){
+						output("9999", "修改失败！");
 						return;
 					}
-					output("9999", "修改失败！");
+					//判断区域状态是不是改变，是的话是不是改成已停用，如果是，就把子节点全都改成已停用
+					if(!bef_status.equals((String)map.get("TABLES_AREA_STATUS")) && bef_status.equals("1")){
+						map.put("sqlMapId", "updateTablesStatusByAreaId");
+						update = openService.update(map);
+					}
+					
+					output("0000", "修改成功！");
 					return;
 				} catch (Exception e) {
 					output("9999", " Exception ", e);
