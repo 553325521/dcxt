@@ -67,4 +67,12 @@
 		where SHOP_ID = #{SHOP_FK} 
 	</update> 	
 	
+	<!-- 查询 用户是否已经关联该店铺 -->
+	<select id="checkUserShop" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT
+			COUNT(*) AS nums  
+		FROM SC_USER_SHOP WHERE FK_USER = #{USER_ID} AND FK_SHOP=#{SHOP_ID}
+	</select>
+	
 </mapper>

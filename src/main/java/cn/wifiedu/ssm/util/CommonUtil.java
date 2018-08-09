@@ -300,12 +300,13 @@ public class CommonUtil {
 	/**
 	 * @author kqs
 	 * @param code
+	 * @param appid 
 	 * @return
 	 * @return String
 	 * @date 2018年8月6日 - 上午10:09:15
 	 * @description:根据微信授权code 获取用户信息
 	 */
-	public static Map<String, Object> getWxUserInfo(String code) {
+	public static Map<String, Object> getWxUserInfo(String code, String appid) {
 		Map<String, Object> userMap = getOpenIdByCode(code);
 
 		String url = CommonUtil.getPath("wx_userinfo_get_url");

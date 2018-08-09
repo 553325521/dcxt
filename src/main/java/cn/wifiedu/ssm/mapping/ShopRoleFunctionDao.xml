@@ -7,7 +7,6 @@
 	<!-- 根据用户、店铺 来查询所具有的功能 -->
 	<select id="selectFunctionByUserAndShop" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-
 		SELECT
 		FUNCTION_PK, FUNCTION_NAME, FUNCTION_URL,FUNCTION_ICON,FUNCTION_SORT
 		FROM
@@ -35,8 +34,12 @@
 	<insert id="insertFuntionForAdmin" parameterMap="BaseParameterMap">
 		insert into
 		sc_shop_role_function
-		SELECT #{UUID}, #{FK_SHOP}, #{FK_ROLE}, FUNCTION_PK, NOW() FROM sc_function
+		SELECT #{UUID}, #{SHOP_ID}, #{ROLE_ID}, FUNCTION_PK, NOW() FROM sc_function
 		where FUNCTION_SWITCH = 'on' ORDER BY CONVERT(FUNCTION_SORT, SIGNED)
 	</insert>
-
+	
+	<insert id="insertFuntionForYuangong" parameterMap="BaseParameterMap">
+		insert into sc_shop_role_function VALUES (replace(uuid(),'-',''), #{SHOP_ID}, #{ROLE_ID}, '9133733eee4a405fa6e8ccfd939db145', NOW()), (replace(uuid(),'-',''), #{SHOP_ID}, #{ROLE_ID}, '1ce7161531ba4599bb817c1d21892a0a', NOW());
+	</insert>
+	
 </mapper>

@@ -333,23 +333,31 @@ public class WxController extends BaseController {
 	}
 
 	public void getWxUserInfo(String openId, Map<String, Object> map) {
-		String url = CommonUtil.getPath("wx_userinfo_get_url");
+		try {
+			String url = CommonUtil.getPath("wx_userinfo_get_url");
 
-		String accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + openId);
+			String accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + openId);
 
-		url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
+			url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
 
-		String res = CommonUtil.get(url);
-		if (res != null && res.indexOf("errcode") <= 0) {
-			JSONObject obj = JSONObject.parseObject(res);
-			map.put("USER_SN", obj.get("nickname"));
-			map.put("USER_SEX", obj.get("sex"));
-			// map.put("province", obj.get("province"));
-			// map.put("city", obj.get("city"));
-			// map.put("country", obj.get("country"));
-			map.put("USER_HEAD_IMG", obj.get("headimgurl"));
-		} else {
-			System.out.println("获取用户基本信息失败");
+			String res = CommonUtil.get(url);
+			if (res != null && res.indexOf("errcode") <= 0) {
+				logger.info("userInfo====" + res);
+				res = new String(res.getBytes("ISO-8859-1"), "UTF-8");
+				logger.info("userInfo====" + res);
+				JSONObject obj = JSONObject.parseObject(res);
+				map.put("USER_SN", obj.getString("nickname"));
+				map.put("USER_SEX", obj.getString("sex"));
+				// map.put("province", obj.get("province"));
+				// map.put("city", obj.get("city"));
+				// map.put("country", obj.get("country"));
+				map.put("USER_HEAD_IMG", obj.getString("headimgurl"));
+				map.put("USER_WX_REFRESH_TOKEN", jedisClient.get(RedisConstants.WX_REFRESH_TOKEN + openId));
+			} else {
+				logger.error("获取用户基本信息失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -37,5 +37,6 @@ public class WxConstants {
 	public final static String ERRORCODE_49003_MSG = "传入的openid不属于此AppID";
 	public final static String ERRORCODE_40032 = "40032";
 	public final static String ERRORCODE_40032_MSG = "每次传入的openid列表个数不能超过50个";
+	public static final String ERRORCODE_50005 = "50005";
 	
 }

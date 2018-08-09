@@ -311,7 +311,7 @@ public class MenuController extends BaseController {
 	 * @date 2018年8月8日 - 上午11:43:43
 	 * @description:根据appid 获取 refresh_token
 	 */
-	private String getRefreshTokenByAppId(String appid) {
+	public String getRefreshTokenByAppId(String appid) {
 		try {
 			Map<String, Object> obj = (Map<String, Object>) openService.queryForObject(new HashMap<String, Object>() {
 				{
