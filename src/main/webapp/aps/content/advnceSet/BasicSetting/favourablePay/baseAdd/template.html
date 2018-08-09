@@ -1,0 +1,207 @@
+<style>
+	.slidelefts .weui_cell_bd:active{
+		background-color:#ececec;
+	}
+	.slidelefts .weui_cell_bd{
+		background-color: inherit;
+	}
+</style>
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('welcome','')">
+			<a class="icon icon-109" ></a>
+		</div>
+
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<!-- <div class="bom-radio bom-radio-big" ng-click="toHistory()" style="transform: translateX(-260%);">优惠记录</div> -->
+				<div class="bom-radio" style="transform: translateX(-210%);" id="attend2" ng-click="doSave()">重置</div>
+			<div class="bom-radio" id="attend2" ng-click="doAdd()">添加</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">优惠名称</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<input class="weui_input label-input" style="text-align: right" placeholder="请输入活动名称" ng-model="form.ACTIVITY_NAME" type="text" id="ACTIVITY_NAME">
+			</div>
+		</div>
+		<div class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">排序序号</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<input class="weui_input label-input" style="text-align: right" placeholder="请输入排序序号" ng-model="form.ACTIVITY_NAME" type="text" id="ACTIVITY_NAME">
+			</div>
+		</div>
+		<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">是否启用</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self">
+					<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
+						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+						style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>是</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: 10px;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
+						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+						style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>否</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+		<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">优惠方式</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self">
+					<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
+						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+						style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>折扣优惠</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: 10px;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
+						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+						style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>固定满减</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: 10px;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
+						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
+						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+						style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>随机满减</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+<div class="weui_cell " style="background-color:;width:46%;height:44px;float:left;margin-left:2%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label">金额范围</label></div>
+		</div>
+		 <div class="weui_cell " style="background-color:;height:44px;margin-right:2%;padding:0">
+                <div class="weui_cell_hd"><label class="weui_label label">优惠范围</label></div>
+                <div class="weui_cell_bd" style="margin-left:20%">
+                	<i class="icon-plus-sign" style="color:#04be02"></i>
+                </div>
+         </div>
+        <div class="weui_cell" style="width:40%;height:44px;float:left;padding-right:0">
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">消费</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">元，</label>
+			</div>
+		</div>
+		 <div class="weui_cell " style="width:45%;height:44px;">
+                <div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:85px" class="weui_label label">折扣优惠</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">折</label>
+			</div>
+         </div>
+         
+        <div class="weui_cell" style="width:40%;height:44px;float:left;padding-right:0">
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">消费</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">元，</label>
+			</div>
+		</div>
+		 <div class="weui_cell " style="width:45%;height:44px;">
+                <div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:85px" class="weui_label label">固定减</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">元</label>
+			</div>
+         </div>
+         
+         <div class="weui_cell" style="width:40%;height:44px;float:left;padding-right:0">
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">消费</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">元，</label>
+			</div>
+		</div>
+		 <div class="weui_cell " style="width:45%;height:44px;">
+                <div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:85px" class="weui_label label">随机减</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float: left">
+				<label style="font-size:90%;width:45px" class="weui_label label">元</label>
+			</div>
+         </div>
+		
+
+				<div class="weui_cell">
+					<div class="weui_cell_hd">
+						<label class="weui_label label">备注说明</label>
+					</div>
+					<div class="weui_cell_bd weui_cell_primary">
+						<textarea class="weui_textarea" ng-model="form.SHOP_REMARK" placeholder="1000字以内的图文说明" rows="3"></textarea>
+			            <div class="weui_textarea_counter"><span>0</span>/1000</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	</div>
+
+		

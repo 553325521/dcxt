@@ -1,0 +1,8 @@
+{
+	"name": "advnce_favourablePay_baseList",
+	"viewUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseList/template.html",
+	"controllerUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseList/controller.js",
+	"config": {
+		"pageTitle": "优惠设置"
+	}
+}
