@@ -14,5 +14,17 @@
 		</where>
 		ORDER BY CREATE_TIME
 	</select>
+	
+	<!-- 查询所有权限 -->
+	<select id="findRoleList" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT ROLE_PK, ROLE_NAME
+		FROM SC_SYS_ROLE
+		<where>
+			AND ROLE_PK != '2'
+			AND ROLE_PK != '7'
+		</where>
+		ORDER BY ROLE_PK
+	</select>
 
 </mapper>

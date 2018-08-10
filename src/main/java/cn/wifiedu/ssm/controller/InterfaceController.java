@@ -3,8 +3,10 @@ package cn.wifiedu.ssm.controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,7 +70,10 @@ public class InterfaceController extends BaseController {
 
 	@Resource
 	private JedisClient jedisClient;
-
+	
+	@Autowired
+	private UserTagController userTagCtrl;
+	
 	/**
 	 * 
 	 * @author kqs
@@ -313,20 +319,16 @@ public class InterfaceController extends BaseController {
 	@ResponseBody
 	public void getRes(HttpServletRequest request) {
 		try {
-
 			String authorization_code = request.getParameter("auth_code");
+			logger.info("status app authorization");
+			logger.info("authorization_code:" + authorization_code);
 			if (StringUtils.isNotBlank(authorization_code)) {
 				String url = CommonUtil.getPath("getWxPlatFormInfoURL").toString();
-
 				url = url.replace("componentAccessToken", getComponentAccessToken());
-
 				JSONObject jsonObj = new JSONObject();
-
 				jsonObj.put("component_appid", component_appid);
 				jsonObj.put("authorization_code", authorization_code);
-
 				String resContent = CommonUtil.posts(url, jsonObj.toJSONString(), "utf-8");
-
 				if (StringUtils.isNotBlank(resContent)) {
 					JSONObject resObj = JSONObject.parseObject(resContent);
 					JSONObject obj = JSONObject.parseObject(resObj.get("authorization_info").toString());
@@ -342,14 +344,54 @@ public class InterfaceController extends BaseController {
 					map.put("CREATE_TIME", StringDeal.getStringDate());
 					map.put("sqlMapId", "insertApp");
 					openService.insert(map);
+					
+					// 创建店员端标签
+					userTagCtrl.createTagForAppId(authorizer_appid, authorizer_access_token);
+					
+					// TODO 创建店员端菜单 用户端菜单
+					
+					String btnToken = UUID.randomUUID().toString();
+					JSONObject objj = new JSONObject();
+					objj.put("status", 0000);
+					objj.put("msg", "授权成功！请重新登录！");
+					objj.put("data", new ArrayList<JSONObject>());
+					// 保存button信息
+					jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, objj.toJSONString());
+					output2(response, "success");
+					response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+							"#toOtherPage/msgPage/" + btnToken));
+					return;
+				} else {
+					String btnToken = UUID.randomUUID().toString();
+					JSONObject obj = new JSONObject();
+					obj.put("status", 9999);
+					obj.put("msg", "授权失败！请重试！");
+					obj.put("data", new ArrayList<JSONObject>());
+					// 保存button信息
+					jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+					output2(response, "success");
+					response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+							"#toOtherPage/msgPage/" + btnToken));
+					return;
 				}
 			} else {
 				logger.warn("获取授权码失败");
+				
+				String btnToken = UUID.randomUUID().toString();
+				JSONObject obj = new JSONObject();
+				obj.put("status", 9999);
+				obj.put("msg", "该获取授权码失败！请重试！");
+				obj.put("data", new ArrayList<JSONObject>());
+				// 保存button信息
+				jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+				output2(response, "success");
+				response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+						"#toOtherPage/msgPage/" + btnToken));
+				return;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		output2(response, "success");
 	}
 
 	/**

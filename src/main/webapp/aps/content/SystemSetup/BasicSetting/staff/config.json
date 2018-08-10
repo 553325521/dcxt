@@ -4,7 +4,7 @@
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/staff/controller.js",
 	"config": {
 		"pageTitle": "员工列表",
-		"saveURL": "json/Staff_queryForList_findStaffList.json",
+		"findURL": "json/Staff_queryForList_findStaffList.json",
 		"menu":{	
 	            "buttons":[
 		        	{

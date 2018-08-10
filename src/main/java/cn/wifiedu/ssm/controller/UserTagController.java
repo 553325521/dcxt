@@ -118,7 +118,7 @@ public class UserTagController extends BaseController {
 						}
 
 						JSONObject obj = JSON.parseObject(resMsg);
-						String errcode = obj.get("obj.get").toString();
+						String errcode = obj.get("errcode").toString();
 						String errMsg = "";
 						if (WxConstants.ERRORCODE_1.equals(errcode)) {
 							errMsg = WxConstants.ERRORCODE_1_MSG;
@@ -264,18 +264,18 @@ public class UserTagController extends BaseController {
 			return;
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
 	 * @param request
 	 * @param session
 	 * @return void
-	 * @date 2018年7月24日 - 下午10:37:23 
+	 * @date 2018年7月24日 - 下午10:37:23
 	 * @description:查询平台类型根据AppId
 	 */
 	@RequestMapping("/UserTag_queryForList_findPlatformTypeByAppId")
-	public void findPlatformTypeList(HttpServletRequest request, HttpSession session){
+	public void findPlatformTypeList(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
 			// 一会根据用户缓存拿
@@ -288,5 +288,63 @@ public class UserTagController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
+	/**
+	 * @author kqs
+	 * @param appid
+	 * @param token
+	 * @return void
+	 * @date 2018年8月9日 - 下午2:45:06
+	 * @description:创建app对应的店员端标签 限定标签名称必须为店员端
+	 */
+	public void createTagForAppId(String appid, String token) {
+		try {
+			logger.info("appid:" + appid + ",token:" + token + ",create userTag");
+			String url = CommonUtil.getPath("userTagCreate").toString();
+			url = url.replace("ACCESS_TOKEN", token);
+			Map p = new HashMap();
+			Map pp = new HashMap();
+			pp.put("name", "店员端");
+			p.put("tag", pp);
+			String resMsg = CommonUtil.posts(url, JSON.toJSONString(p), "utf-8");
+			if (resMsg != null) {
+				if (resMsg.indexOf("errcode") <= 0) {
+					JSONObject obj = JSON.parseObject(resMsg);
+					JSONObject object = JSON.parseObject(obj.get("tag").toString());
+					Map<String, Object> map = new HashMap<>();
+					map.put("FK_APP", appid);
+					map.put("USER_TAG_ID", object.get("id").toString());
+					map.put("CREATE_TIME", StringDeal.getStringDate());
+					map.put("sqlMapId", "insertUserTag");
+					String result = openService.insert(map);
+					if (result != null) {
+						logger.info("appid:" + appid + ",token:" + token + ", create userTag success");
+						return;
+					}
+					logger.error("appid:" + appid + ",token:" + token + ",create userTag error, insert to DB error");
+					return;
+				}
+				JSONObject obj = JSON.parseObject(resMsg);
+				String errcode = obj.get("errcode").toString();
+				String errMsg = "";
+				if (WxConstants.ERRORCODE_1.equals(errcode)) {
+					errMsg = WxConstants.ERRORCODE_1_MSG;
+				} else if (WxConstants.ERRORCODE_45157.equals(errcode)) {
+					errMsg = WxConstants.ERRORCODE_45157_MSG;
+				} else if (WxConstants.ERRORCODE_45158.equals(errcode)) {
+					errMsg = WxConstants.ERRORCODE_45158_MSG;
+				} else if (WxConstants.ERRORCODE_45056.equals(errcode)) {
+					errMsg = WxConstants.ERRORCODE_45056_MSG;
+				}
+				logger.error("appid:" + appid + ",token:" + token + ",create userTag error, errormsg:" + errMsg);
+				return;
+			}
+			logger.error("appid:" + appid + ",token:" + token + ",create userTag error");
+			return;
+		} catch (Exception e) {
+			logger.error("appid:" + appid + ",token:" + token + ",create userTag error", e);
+			return;
+		}
+	}
+
 }

@@ -10,7 +10,31 @@
 			return $sce.trustAsHtml(input);
 		}
 	});
-	
+
+	app.filter('trustRole', function($sce) {
+		return function(input) {
+			if (input == '2') {
+				input = '店长';
+				return $sce.trustAsHtml(input)
+			} else if (input == '3') {
+				input = '收银'
+				return $sce.trustAsHtml(input)
+			} else if (input == '4') {
+				input = '点菜'
+				return $sce.trustAsHtml(input)
+			} else if (input == '5') {
+				input = '后厨'
+				return $sce.trustAsHtml(input)
+			} else if (input == '6') {
+				input = '店员'
+				return $sce.trustAsHtml(input)
+			} else if (input == '7') {
+				input = '代理商'
+				return $sce.trustAsHtml(input)
+			}
+		}
+	});
+
 	app.controller('LoginController', function($scope, $route, $routeParams, $location) {
 		$scope.$route = $route;
 		$scope.$location = $location;
@@ -24,7 +48,7 @@
 	});
 
 	app.config(function($routeProvider, $locationProvider) {
-		
+
 		$routeProvider
 			.when('/', {
 				templateUrl : 'html/main.html',

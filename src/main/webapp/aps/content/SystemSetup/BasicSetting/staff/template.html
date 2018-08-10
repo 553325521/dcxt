@@ -12,20 +12,23 @@
 		</div>
 	</div>
 </div>
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+<div class="weui_cells weui_cells_form" style="margin-top: 1px;">
 	<div class="weui_cell slidelefts weui_cell_primary slide_cell"
 		ng-repeat="item in tagList">
-		<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd">
+		<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd" ng-click="toHref('SystemSetup/BasicSetting/staff/setting', item.FK_USER)">
 			<div class="weui_cell_bd list_bd">
-				<p class="label-input" ng-bind="$index + 1"></p>
+				<p>{{item.USER_NAME == undefined ? item.USER_SN :
+					item.USER_NAME}}({{item.FK_ROLE | trustRole}})</p>
 			</div>
 			<div class="weui_cell_bd list_bd">
-				<p class="label-input" ng-bind="item.USER_TAG_NAME"></p>
+				<p>13361209455</p>
+			</div>
+			<div class="weui_cell_bd list_bd">
+				<p>{{item.IS_USE == 1 ? '启用' : '禁用'}}</p>
 			</div>
 		</div>
 		<div class="slideleft">
-			<span style="background:#ccc;color:#fff" ng-click="updateTag(item)">启用</span> <span
-				class="bg-red f-white dels" ng-click="removeTag(item)">禁用</span>
+			<span class="bg-red f-white dels" ng-click="removeTag(item)">删除</span>
 		</div>
 	</div>
 </div>

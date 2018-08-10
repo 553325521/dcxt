@@ -67,16 +67,31 @@ public class StaffController extends BaseController {
 	@Autowired
 	private MenuController menuCtrl;
 
-	@RequestMapping("/Staff_queryForList_findStaffList")
-	public void loadTopMenus(HttpServletRequest request, HttpSession session) {
+	@RequestMapping("/User_queryForObject_findUserInfoById")
+	public void findUserInfoById(HttpServletRequest request, HttpSession session) {
 		try {
-
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-
 			Map<String, Object> map = getParameterMap();
-			map.put("sqlMapId", "findStaffList");
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "findUserInfoById");
+			List<Map<String, Object>> reMap = openService.queryForList(map);
+			output("0000", reMap);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+
+	@RequestMapping("/Staff_queryForList_findStaffList")
+	public void loadTopMenus(HttpServletRequest request, HttpSession session) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "findStaffByShopId");
 			List<Map<String, Object>> reMap = openService.queryForList(map);
 			output("0000", reMap);
 		} catch (Exception e) {

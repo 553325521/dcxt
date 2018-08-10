@@ -40,15 +40,15 @@
 		(
 		USER_TAG_ID,
 		USER_TAG_NAME,
-		CREATE_BY,
-		CREATE_TIME
+		CREATE_TIME,
+		FK_APP
 		)
 		values
 		(
 		#{USER_TAG_ID},
 		#{USER_TAG_NAME},
-		#{CREATE_BY},
-		#{CREATE_TIME}
+		#{CREATE_TIME},
+		#{FK_APP}
 		)
 	</insert>
 

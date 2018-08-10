@@ -4,6 +4,32 @@
 	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
 
+	<!-- 查询商铺所有员工 -->
+	<select id="findStaffByShopId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT a.FK_USER, a.FK_ROLE, b.USER_NAME, b.USER_SN,
+		b.USER_PHONE, b.USER_SEX, b.USER_TYPE FROM
+		SC_USER_SHOP a LEFT JOIN SC_USER b
+		ON
+		a.FK_USER = b.USER_PK
+		WHERE a.FK_SHOP = #{FK_SHOP}
+		AND a.FK_ROLE != '1'
+		AND a.FK_ROLE != '2' AND a.FK_ROLE != '7' ORDER BY CREATE_TIME DESC
+	</select>
+	
+	<!-- 查询商铺员工基本信息 -->
+	<select id="findStaffByShopId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT a.FK_USER, a.FK_ROLE, b.USER_NAME, b.USER_SN,
+		b.USER_PHONE, b.USER_SEX, b.USER_TYPE FROM
+		SC_USER_SHOP a LEFT JOIN SC_USER b
+		ON
+		a.FK_USER = b.USER_PK
+		WHERE a.FK_SHOP = #{FK_SHOP} AND a.FK_USER = #{FK_USER}
+		AND a.FK_ROLE != '1'
+		AND a.FK_ROLE != '2' AND a.FK_ROLE != '7' ORDER BY CREATE_TIME DESC
+	</select>
+	
 	<!--插入user shop role对应关系 -->
 	<insert id="insertUserShop" parameterMap="BaseParameterMap">
 		INSERT INTO
@@ -22,7 +48,8 @@
 		#{USER_ID},
 		#{ROLE_ID},
 		<!-- 根据标签名称和appid 查询对应标签id -->
-		(SELECT USER_TAG_ID FROM sc_user_tag WHERE USER_TAG_NAME = #{tagName} AND FK_APP = #{FK_APP}),
+		(SELECT USER_TAG_ID FROM sc_user_tag WHERE USER_TAG_NAME = #{tagName}
+		AND FK_APP = #{FK_APP}),
 		#{SHOP_ID},
 		NOW()
 		)

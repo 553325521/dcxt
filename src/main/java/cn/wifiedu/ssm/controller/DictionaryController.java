@@ -57,4 +57,16 @@ public class DictionaryController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
+	
+	@RequestMapping("/Role_queryForList_findRoleList")
+	public void findRoleList(HttpServletRequest request, HttpSession session){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "findRoleList");
+			List<Map<String, Object>> reMap = openService.queryForList(map);
+			output("0000", reMap);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
 }

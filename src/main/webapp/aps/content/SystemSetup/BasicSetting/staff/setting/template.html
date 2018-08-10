@@ -1,201 +1,84 @@
-<!DOCTYPE html>
-<html ng-app="settingApp">
-<head>
-<title></title>
-<meta charset="utf-8">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, user-scalable=no">
-<!-- head 中 -->
-<link rel="stylesheet" href="/dcxt/assets/weui/css/weuix.min.css">
-<link rel="stylesheet" href="/dcxt/assets/weui/css/weui.css">
-<link rel="stylesheet" href="/dcxt/assets/weui/css/weui2.css">
-<link rel="stylesheet" href="/dcxt/assets/weui/css/weui3.css">
-<link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
-<link rel="stylesheet" href="/dcxt/assets/weui/css/icon.css">
-<link rel="stylesheet"
-	href="https://cdn.bootcss.com/jquery-weui/1.2.0/css/jquery-weui.min.css">
-<style type="text/css">
-* {
-	touch-action: none;
-}
 
-.radio-checkbox {
-	width: 15px;
-	height: 15px;
-}
-
-.bom-radio {
-	position: absolute;
-	width: 3rem;
-	font-size: 0.5rem;
-	color: #FFFFFF;
-	text-align: center;
-	background-color: #A1A1A1;
-	border-radius: .5rem;
-	transform: translateX(-100%);
-}
-</style>
-</head>
-<body ontouchstart ng-controller="settingCtrl">
-
-	<div class="weui-header" style="background-color:#FFFFFF">
-		<div class="weui-header-left">
-			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
-		</div>
-		<h1 class="weui-header-title"
-			style="margin-left: 0;width: 160px;color: #0D0D0D;font-size: 16px;">{{pageTitle}}</h1>
-		<div class="weui-header-right" style="top: 0;">
-			<div class="button_sp_area">
-				<div class="bom-radio" id="attend1" ng-click="reset()">重置</div>
-				<div class="bom-radio" id="attend2"
-					style="transform: translateX(-210%);" ng-click="doSave()">保存</div>
-			</div>
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting/staff')">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	<div class="weui-header-right" style="top: 0;">
+		<div class="button_sp_area" style="padding: 12px 0;">
+			<div class="bom-radio" ng-click="doSave()">保存</div>
 		</div>
 	</div>
+</div>
 
-	<div class="weui_cells weui_cells_form" style="margin-top: 0;">
-		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label">员工姓名</label>
-			</div>
-			<div class="weui_cell_bd">
-				<input class="weui_input" type="text" ng-model="form.STAFF_NAME">
-			</div>
+<div class="weui_cells weui_cells_form" style="margin-top: 0;"
+	id="menuAddForm">
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">员工姓名</label>
 		</div>
-		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label">是否启用</label>
-			</div>
-			<div class="weui_cell_bd">
-				<div class="weui-form">
-					<div class="weui-form-li iblock" style="margin-left: 0;">
-						<input class="weui-form-checkbox" name="f2" id="g1" value="0"
-							type="radio" ng-model="form.STAFF_ISENABLE"> <label
-							for="g1"> <i class="weui-icon-radio" style="margin: 0;"></i>
-							<div class="weui-form-text" style="margin: 0;">
-								<p>启用</p>
-							</div>
-						</label>
-					</div>
-					<div class="weui-form-li iblock" style="margin-left: 0;">
-						<input class="weui-form-checkbox" name="f2" id="g2" value="1"
-							type="radio" ng-model="form.STAFF_ISENABLE"> <label
-							for="g2"> <i class="weui-icon-radio" style="margin: 0;"></i>
-							<div class="weui-form-text" style="margin: 0;">
-								<p>禁用</p>
-							</div>
-						</label>
-					</div>
-				</div>
-			</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				ng-model="form.USER_NAME" required emptyTips="请输入员工姓名"
+				notMatchTips="请输入正确员工姓名" pattern="^[\s\S]*.*[^\s][\s\S]*$">
 		</div>
-		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label">员工电话</label>
-			</div>
-			<div class="weui_cell_bd">
-				<input class="weui_input" type="text" ng-model="form.STAFF_TEL">
-			</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">是否启用</label>
 		</div>
-		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label">员工角色</label>
-			</div>
-			<div class="weui_cell_bd">
-				<input class="weui_input" id="role_select" type="text" value="">
-			</div>
-		</div>
-		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label">份数</label>
-			</div>
-			<div class="weui_cell_bd">
-				<div class="weui-count">
-					<a class="weui-count__btn weui-count__decrease"
-						ng-click="fsDoReduce()"></a> <input class="weui-count__number"
-						ng-model="form.PRINTER_PAGE_NUMS" type="number"
-						style="width: 1.5rem;" pattern="[0-9]*" ng-blur="fsReduceNum()" />
-					<a class="weui-count__btn weui-count__increase"
-						ng-click="fsDoAdd()"></a>
-				</div>
-			</div>
-		</div>
-		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label">抬头</label>
-			</div>
-			<div class="weui_cell_bd">
-				<input class="weui_input" type="text" placeholder="输入小票抬头文字"
-					ng-model="form.PRINTER_BILL_HEAD">
-			</div>
-		</div>
-		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label">范围(标签)</label>
-			</div>
-			<div class="weui_cell_bd">
-
-				<div class="weui_cell_bd weui_cell_primary">
-					<div class="weui-form">
-						<div class="weui-form-li iblock" style="margin-left: 0;">
-							<input class="weui-form-checkbox" name="f4" id="g3" type="radio"
-								value="all" ng-model="form.PRINTER_PRODUCT_RANGE"> <label
-								for="g3"> <i class="weui-icon-radio" style="margin: 0;"></i>
-								<div class="weui-form-text" style="margin: 0;">
-									<p>全部商品</p>
-								</div>
-							</label>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self">
+					<input class="weui-form-checkbox" name="f2" id="g1" value="1"
+						type="radio" ng-model="form.IS_USE"> <label for="g1">
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>启用</p>
 						</div>
-						<div class="weui-form-li iblock" style="margin-left: 0;">
-							<input class="weui-form-checkbox" name="f4" id="g4" type="radio"
-								value="part" ng-model="form.PRINTER_PRODUCT_RANGE"> <label
-								for="g4"> <i class="weui-icon-radio" style="margin: 0;"></i>
-								<div class="weui-form-text" style="margin: 0;">
-									<p>部分商品</p>
-								</div>
-							</label>
-						</div>
-					</div>
+					</label>
 				</div>
-
-			</div>
-		</div>
-		<div class="weui_cell" ng-show="form.KIND_OF_DISHES">
-			<div class="weui_cell_hd">
-				<label class="weui_label"></label>
-			</div>
-			<div class="weui_cell_bd">
-				<div class="weui-form">
-					<div class="weui-form-li iblock" style="margin-left: 0;"
-						ng-repeat="item in printer_dishes_list">
-						<input class="weui-form-checkbox" name="f3" id="s{{$index + 1}}"
-							ng-model="item.checked" value="{{item.value}}" type="checkbox"
-							ng-change="selectDishes(item)"
-							ng-checked="noCheckArr.indexOf(item.value)==-1"> <label
-							for="s{{$index + 1}}"> <i class="weui-icon-checkbox"
-							style="margin: 0;"></i>
-							<div class="weui-form-text" style="margin: 0;">
-								<p>{{item.title}}</p>
-							</div>
-						</label>
-					</div>
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: 10px;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="0"
+						type="radio" ng-model="form.IS_USE"> <label for="g2">
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>禁用</p>
+						</div>
+					</label>
 				</div>
 			</div>
 		</div>
 	</div>
-
-	<!-- 底部 -->
-	<div class="weui_cells_tips">先购买打印机，添加打印机时选择生成的ID，然后填写入打印机的id中。</div>
-
-</body>
-<!-- body 最后 -->
-<script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
-<script
-	src="https://cdn.bootcss.com/jquery-weui/1.2.0/js/jquery-weui.min.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/zepto.min.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/picker.js"></script>
-<script type="text/javascript" src="/dcxt/assets/weui/js/picker-city.js"></script>
-<script type="text/javascript"
-	src="https://cdn.sjedu.cn/js/angular/1.2.0/angular.min.js"></script>
-<script type="text/javascript" src="setting.js"></script>
-</html>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">联系电话</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				ng-model="form.USER_PHONE" required emptyTips="请输入联系电话"
+				notMatchTips="请输入联系电话" pattern="^[1][3,4,5,7,8][0-9]{9}$">
+		</div>
+	</div>
+	<div class="weui_cell self_select" id="gnxz">
+		<div class="weui_cell_hd">
+			<label class="weui_label label">员工角色</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text" id="gnxz_select"
+				required emptyTips="请选择对应角色">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<textarea id="textarea" class="weui_textarea" placeholder="请输入员工备注"
+				rows="3" required emptyTips="请输入员工备注"
+				notMatchTips="员工备注长度不可超过50" pattern="^.{0,50}$"></textarea>
+			<div class="weui_textarea_counter">
+				<span id="count">0</span>/<span id="count_max">50</span>
+			</div>
+		</div>
+	</div>
+</div>
