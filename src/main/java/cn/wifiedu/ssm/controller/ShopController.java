@@ -7,16 +7,19 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -37,6 +40,7 @@ import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.WxConstants;
 import cn.wifiedu.ssm.util.WxUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
@@ -57,6 +61,9 @@ public class ShopController extends BaseController {
 
 	@Resource
 	PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	WxController wxControllerl;
 	
 	@Resource
 	private JedisClient jedisClient;
@@ -155,7 +162,7 @@ public class ShopController extends BaseController {
 			map.put("sqlMapId", "selectAgentInfoById");
 			Map<String, Object> reMap1 = (Map)openService.queryForObject(map);
 			//如果还未认证，跳转到认证界面
-			if(reMap1 == null || "0".equals(reMap1.get("AUTH_STATUS"))){
+			if(!reMap1.containsKey("AUTH_STATUS") || "0".equals(reMap1.get("AUTH_STATUS"))){
 				output("5555", "信息有误");
 				return;
 			}
@@ -207,6 +214,9 @@ public class ShopController extends BaseController {
 	 */
 	@RequestMapping("/responseShopClaim")
 	public void responseShopClaim(HttpServletResponse reponse){
+		DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+	    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+	    TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 		try {
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
@@ -225,23 +235,19 @@ public class ShopController extends BaseController {
 					/*没存在插入到用户表*/
 					param.clear();
 					param.put("OPENID", openId);
+					wxControllerl.getWxUserInfo(openId, param);
 					param.put("sqlMapId", "insertUserInitOpenId");
 					userId = openService.insert(param);
 				}else{
 					userId = checkUserList.get(0).get("USER_PK").toString();
 				}
+			}else{
+				throw new Exception();
 			}
 			/*添加到用户商铺中间表里*/
 			param.clear();
-			
-			//从session获取信息
-			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
-			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
-			param.put("FK_APP",  userObj.get("FK_APP"));
-			
 			param.put("USER_ID", userId);
-			param.put("ROLE_ID", 2);
+			param.put("roleName", "店长");
 			param.put("tagName", "店员端");
 			param.put("SHOP_ID", state);
 			param.put("sqlMapId", "insertUserShop");
@@ -252,15 +258,112 @@ public class ShopController extends BaseController {
 				param.put("SHOP_FK", state);
 				param.put("SHOP_STATE", 1);
 				param.put("sqlMapId", "UpdateShopState");
-				openService.update(param);
-				response.sendRedirect(
-				CommonUtil.getPath("project_url").replace("json/DATA.json", "") + "/shopclaim_success.jsp");
+				boolean updateResult = openService.update(param);
+				if(updateResult){
+					String token = WxUtil.getToken();
+					if (token != null) {
+						String tagAddURL = CommonUtil.getPath("user_tag_add");
+						tagAddURL = tagAddURL.replace("ACCESS_TOKEN", token);
+						JSONObject postObj = new JSONObject();
+						param.clear();
+						param.put("USER_TAG_NAME", "店员端");
+						param.put("sqlMapId", "findUserTagIdByUserTagName");
+						Map<String, Object> resMap = (Map<String, Object>) openService.queryForObject(param);
+						postObj.put("tagid","148");
+						postObj.put("openid_list", new ArrayList<String>() {
+							{
+								add(openId);
+							}
+						});
+						String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
+						JSONObject resObj = JSONObject.parseObject(resCont);
+						if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
+							// 重定向成功页面
+							String btnToken = UUID.randomUUID().toString();
+							JSONObject obj = new JSONObject();
+							Map<String, Object> userMap = new HashMap<>();
+							userMap.put("USER_WX", openId);
+							userMap.put("OPENID", openId);
+							wxControllerl.getWxUserInfo(openId, userMap);
+							obj.put("status", 0000);
+							obj.put("msg", "商户认领成功！");
+							obj.put("data", new ArrayList<JSONObject>() {
+								{
+									JSONObject btn1 = new JSONObject();
+									btn1.put("buttonName", "");
+									btn1.put("buttonLink",
+											CommonUtil.getPath("project_url").replace("json/DATA.json", "")+"/index.jsp");
+									add(btn1);
+								}
+							});
+							// 保存button信息
+							jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+
+							// redis存储用户登录信息
+							jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId,
+									JSONObject.toJSONString(userMap));
+
+							// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
+							CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
+
+							response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+									"#toOtherPage/msgPage/" + btnToken));
+							return;
+						} else if (WxConstants.ERRORCODE_1.equals(resObj.getString("errcode"))) {
+							throw new RuntimeException("1");
+						} else if (WxConstants.ERRORCODE_40032.equals(resObj.getString("errcode"))) {
+							throw new RuntimeException("40032");
+						} else if (WxConstants.ERRORCODE_49003.equals(resObj.getString("errcode"))) {
+							throw new RuntimeException("49003");
+						} else if (WxConstants.ERRORCODE_45159.equals(resObj.getString("errcode"))) {
+							throw new RuntimeException("45159");
+						} else if (WxConstants.ERRORCODE_45059.equals(resObj.getString("errcode"))) {
+							throw new RuntimeException("45059");
+						} else if (WxConstants.ERRORCODE_40003.equals(resObj.getString("errcode"))) {
+							throw new RuntimeException("40003");
+						} else if (WxConstants.ERRORCODE_50005.equals(resObj.getString("errcode"))) {
+							// 重定向成功页面
+							String btnToken = UUID.randomUUID().toString();
+							JSONObject obj = new JSONObject();
+							obj.put("status", 9999);
+							obj.put("msg", "请先关注公众号后再认领！");
+							obj.put("data", new ArrayList<JSONObject>());
+							// 保存button信息
+							jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+
+							response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+									"#toOtherPage/msgPage/" + btnToken));
+							return;
+						}
+					}else{
+						throw new Exception();
+					}
+				}else{
+					throw new Exception();
+				}
+			}else{
+				throw new Exception();
 			}
 			} 
 			}
 			catch (Exception e) {
+				// TODO Auto-generated catch block
+				transactionManager.rollback(status);
 				e.printStackTrace();
 			}
+		String btnToken = UUID.randomUUID().toString();
+		JSONObject obj = new JSONObject();
+		obj.put("status", 9999);
+		obj.put("msg", "商户认领失败");
+		obj.put("data", new ArrayList<JSONObject>());
+		// 保存button信息
+		jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+		try {
+			response.sendRedirect(
+					CommonUtil.getPath("project_url").replace("json/DATA.json", "#toOtherPage/msgPage/" + btnToken));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		}
 		
 	
@@ -271,7 +374,7 @@ public class ShopController extends BaseController {
 		String res = CommonUtil.get(url);
 		Object succesResponse = JSON.parse(res);
 		Map result = (Map) succesResponse;
-
+		System.out.println("getOpenIdByCodeResult:===="+result);
 		String openId = result.get("openid").toString();
 		System.out.println(openId);
 		return openId;
@@ -283,6 +386,7 @@ public class ShopController extends BaseController {
 		try {
 			date1 = format.parse(date);
 		} catch (ParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		int a = (int) ((date1.getTime() - new Date().getTime()) / (1000*3600*24));
