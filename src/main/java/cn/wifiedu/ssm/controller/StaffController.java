@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
@@ -66,6 +67,35 @@ public class StaffController extends BaseController {
 
 	@Autowired
 	private MenuController menuCtrl;
+	
+	@Resource
+	PlatformTransactionManager transactionManager;
+	
+	@RequestMapping("/User_update_updateStaffInfo")
+	public void updateStaffInfo(HttpServletRequest request, HttpSession session) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			Map<String, Object> map = getParameterMap();
+			map.put("IS_USE", String.valueOf(map.get("IS_USE")));
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "updateStaffInfo");
+			logger.info("update staffInfo: info [ " + map + "]");
+			if (openService.update(map)) {
+				map.put("sqlMapId", "updateUserInfo");
+				logger.info("update userInfo: info [ " + map + "]");
+				if (openService.update(map)) {
+					output("0000", "保存成功！");
+					return;
+				}
+			}
+			output("9999", "保存失败！");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
 
 	@RequestMapping("/User_queryForObject_findUserInfoById")
 	public void findUserInfoById(HttpServletRequest request, HttpSession session) {
@@ -75,8 +105,8 @@ public class StaffController extends BaseController {
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			Map<String, Object> map = getParameterMap();
 			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
-			map.put("sqlMapId", "findUserInfoById");
-			List<Map<String, Object>> reMap = openService.queryForList(map);
+			map.put("sqlMapId", "findStaffByShopIdAndUserId");
+			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
 			output("0000", reMap);
 		} catch (Exception e) {
 			output("9999", " Exception ", e);

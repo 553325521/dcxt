@@ -8,28 +8,35 @@
 	<select id="findStaffByShopId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT a.FK_USER, a.FK_ROLE, b.USER_NAME, b.USER_SN,
-		b.USER_PHONE, b.USER_SEX, b.USER_TYPE FROM
-		SC_USER_SHOP a LEFT JOIN SC_USER b
+		b.USER_PHONE, b.USER_SEX, a.IS_USE FROM
+		SC_USER_SHOP a LEFT JOIN
+		SC_USER b
 		ON
 		a.FK_USER = b.USER_PK
 		WHERE a.FK_SHOP = #{FK_SHOP}
-		AND a.FK_ROLE != '1'
-		AND a.FK_ROLE != '2' AND a.FK_ROLE != '7' ORDER BY CREATE_TIME DESC
+		AND
+		a.FK_ROLE != '1'
+		AND a.FK_ROLE != '2' AND a.FK_ROLE != '7' ORDER BY
+		CREATE_TIME DESC
 	</select>
-	
+
 	<!-- 查询商铺员工基本信息 -->
-	<select id="findStaffByShopId" resultMap="BaseResultMap"
+	<select id="findStaffByShopIdAndUserId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		SELECT a.FK_USER, a.FK_ROLE, b.USER_NAME, b.USER_SN,
-		b.USER_PHONE, b.USER_SEX, b.USER_TYPE FROM
+		SELECT a.FK_USER, a.FK_ROLE, CONVERT(a.IS_USE, SIGNED) as
+		IS_USE, a.USER_DESC, b.USER_NAME, b.USER_SN,
+		b.USER_PHONE, b.USER_SEX FROM
 		SC_USER_SHOP a LEFT JOIN SC_USER b
 		ON
-		a.FK_USER = b.USER_PK
+		a.FK_USER =
+		b.USER_PK
 		WHERE a.FK_SHOP = #{FK_SHOP} AND a.FK_USER = #{FK_USER}
-		AND a.FK_ROLE != '1'
-		AND a.FK_ROLE != '2' AND a.FK_ROLE != '7' ORDER BY CREATE_TIME DESC
+		AND
+		a.FK_ROLE != '1'
+		AND a.FK_ROLE != '2' AND a.FK_ROLE != '7' ORDER BY
+		CREATE_TIME DESC
 	</select>
-	
+
 	<!--插入user shop role对应关系 -->
 	<insert id="insertUserShop" parameterMap="BaseParameterMap">
 		INSERT INTO
@@ -54,5 +61,13 @@
 		NOW()
 		)
 	</insert>
-
+	
+	<update id="updateStaffInfo" parameterMap="BaseParameterMap">
+		UPDATE SC_USER_SHOP SET FK_ROLE = #{FK_ROLE}, USER_DESC = #{USER_DESC}, IS_USE = #{IS_USE} WHERE FK_USER = #{FK_USER} AND FK_SHOP = #{FK_SHOP}
+	</update>
+	
+	<update id="updateUserInfo" parameterMap="BaseParameterMap">
+		UPDATE SC_USER SET USER_NAME = #{USER_NAME}, USER_PHONE = #{USER_PHONE} WHERE USER_PK = #{FK_USER}
+	</update>
+	
 </mapper>

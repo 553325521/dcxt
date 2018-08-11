@@ -1,10 +1,23 @@
 {
-	"name": "Achieve_update",
+	"name": "staff_setting",
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/staff/setting/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/staff/setting/controller.js",
 	"config": {
 		"findByIdURL": "json/User_queryForObject_findUserInfoById.json",
 		"findRoleList": "json/Role_queryForList_findRoleList.json",
-		"pageTitle" : "员工设置"
+		"updateStaffInfo": "json/User_update_updateStaffInfo.json",
+		"pageTitle" : "员工设置",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"staff_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"staff_setting.confirm"
+		        	}
+				]
+			}
 	}
 }
