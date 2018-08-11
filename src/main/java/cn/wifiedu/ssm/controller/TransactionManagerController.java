@@ -1,8 +1,7 @@
 package cn.wifiedu.ssm.controller;
 
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -10,6 +9,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.ssm.util.StringDeal;
 
 /**
@@ -19,17 +19,17 @@ import cn.wifiedu.ssm.util.StringDeal;
  */
 @Controller
 @Scope("prototype")
-public class TransactionManagerController {
+public class TransactionManagerController extends BaseController {
 	
 	private static Logger logger = Logger.getLogger(TransactionManagerController.class);
 	
-	@Resource
-	public PlatformTransactionManager txManager;
+	@Autowired
+	PlatformTransactionManager txManager;
 
 	private TransactionStatus status;
 	
 	// 类被实例化的时候 创建事务对象
-	public TransactionManagerController() {
+	public void createTxManager() {
 		logger.info("init txManager");
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
