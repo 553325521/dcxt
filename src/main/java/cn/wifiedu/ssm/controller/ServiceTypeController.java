@@ -1,6 +1,7 @@
 package cn.wifiedu.ssm.controller;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,8 +59,9 @@ import cn.wifiedu.ssm.util.StringDeal;
 			try {
 				Map<String, Object> map = getParameterMap();
 				map.put("sqlMapId", "findServiceTypeList");
-				List<Map<String, Object>> reMap  = openService.queryForList(map);
-				output("0000", reMap);
+				List<Map<String, Object>> reList  = openService.queryForList(map);
+				
+				output("0000", reList);
 				return;
 			} catch (Exception e) {
 				output("9999", " Exception ", e);
@@ -67,6 +69,23 @@ import cn.wifiedu.ssm.util.StringDeal;
 			}
 		}
 		
+		/**
+		 * 
+		 * @date 2018年8月11日 下午6:44:34 
+		 * @author lps
+		 * 
+		 * @Description: 查询购买服务计算规则
+		 * @return 
+		 * @return List<Map<String,Object>> 
+		 * @throws Exception 
+		 *
+		 */
+		public static List<Map<String, Object>> getServiceRule(OpenService openService) throws Exception{
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("sqlMapId", "findServiceRuleList");
+				List<Map<String, Object>> reList = openService.queryForList(map);
+				return reList;
+		}
 		
 		
 	

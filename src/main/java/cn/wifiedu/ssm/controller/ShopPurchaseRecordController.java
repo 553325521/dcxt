@@ -1,34 +1,41 @@
 package cn.wifiedu.ssm.controller;
 
 
-	import java.text.SimpleDateFormat;
+	import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Period;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.LinkedHashMap;
 import java.util.List;
-	import java.util.Map;
+import java.util.Map;
+import java.util.Map.Entry;
 
-	import javax.annotation.Resource;
-import javax.json.Json;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-	import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSession;
 
-	import org.apache.log4j.Logger;
-import org.apache.log4j.chainsaw.Main;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
-	import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
-	import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.ssm.util.CommonUtil;
-import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.util.CookieUtils;
+import cn.wifiedu.ssm.util.DateUtil;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 		/**
 		 * 
@@ -42,10 +49,15 @@ import cn.wifiedu.ssm.util.StringDeal;
 		@Scope("prototype")
 		public class ShopPurchaseRecordController extends BaseController {
 
+			private static final String Map = null;
+
 			private static Logger logger = Logger.getLogger(UserTagController.class);
 
 			@Resource
 			OpenService openService;
+			
+			@Resource
+			private JedisClient jedisClient;
 			
 			@Resource
 			PlatformTransactionManager transactionManager;
@@ -59,7 +71,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 			}
 			
 			//优惠策略
-			Map discountsMap = JSON.parseObject("{\"12\" : 2,\"24\" : 5 ,\"36\" :  9 ,\"48\" : 12,\"60\" : 15}");
+			//Map discountsMap = JSON.parseObject("{\"12\" : 2,\"24\" : 5 ,\"36\" :  9 ,\"48\" : 12,\"60\" : 15}");
 
 			/**
 			 * 
@@ -79,98 +91,139 @@ import cn.wifiedu.ssm.util.StringDeal;
 			    TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 		
 				try {
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
 					Map<String, Object> map = getParameterMap();
 					
-					
+					/**数据验证*/
+					/*查询服务类型*/
 					map.put("sqlMapId", "findServicePriceById");
 					map.put("SERVICE_PK",map.get("SERVICE_ID"));
-					//购买的时长
-					Integer buyTime = Integer.parseInt((String)map.get("BUY_TIME"));
+					
+					Integer buyTime = Integer.parseInt((String)map.get("BUY_TIME")); //购买的时长
 					Map serviceMap = (Map)openService.queryForObject(map);
 					if (serviceMap == null || buyTime <= 0){
 						output("9999", " 购买失败！   ");
 						return;
 					}
-					//从数据库获取该服务的单价
-					Integer servicePrice = Integer.parseInt((String)serviceMap.get("SERVICE_PRICE"));
-					//查看是否享有优惠
+					Integer servicePrice = Integer.parseInt((String)serviceMap.get("SERVICE_PRICE"));//从数据库获取该服务的单价
+					
+					/*查询优惠规则表*/
+					List<Map<String,Object>> serviceRule = ServiceTypeController.getServiceRule(openService);
+					Map<String,String> discountsMap = new LinkedHashMap<String,String>();//存储优惠策略
+					for (Map<String, Object> m : serviceRule) {
+						discountsMap.put((String)m.get("BUYSERVICE_RULE_SJYS"), (String)m.get("BUYSERVICE_RULE_YHYS"));
+					}
+					
+					/*判断是升级服务还是购买服务*/
+					String shopId = (String) map.get("SHOP_ID");
+					map.put("SHOP_ID",shopId);
+					map.put("sqlMapId", "selectNODSTAndODByShopId");
+					Map<String, Object> servicePrePriceMap = (Map<String, Object>) openService.queryForObject(map);
+					int discountsMoney = 0;	//抵扣金额
+					boolean isUpdateService = false;
+					if(servicePrePriceMap != null){
+						//如果servicePrePriceMap不为null，说明之前购买的还未过期，现在购买的服务类型不能低于之前购买的服务类型
+						Integer servicePrePrice = Integer.parseInt((String) servicePrePriceMap.get("SERVICE_PRICE")); //之前购买的服务类型的价格
+						if(servicePrice < servicePrePrice){
+							output("9999", " 升级服务不允许降级购买！   ");
+							return;
+						}
+						if(servicePrice > servicePrePrice){//如果大于之前购买的，说明是升级服务，计算出抵扣价格
+							isUpdateService = true;
+							discountsMoney = getDiscountsMoney(servicePrePriceMap, serviceRule);
+						}
+					}
+			
+					/*根据优惠规则判断是不是享有优惠*/
 					Integer afterTime = buyTime;
 					if(discountsMap.containsKey(buyTime.toString())){
-						afterTime =  buyTime - (Integer)discountsMap.get(buyTime.toString());
+						afterTime =  buyTime - Integer.parseInt(discountsMap.get(buyTime.toString()));//享有优惠，计算优惠后的月数
 					}
-					//计算所需金额
-					Integer needMoney = afterTime * servicePrice;
-					//判断所需金额是否等于缴纳金额
-					if(needMoney != Integer.parseInt((String)map.get("TRANSACTION_MONEY"))){
+					
+					Integer needMoney = afterTime * servicePrice - discountsMoney;//计算所需金额
+					needMoney = needMoney < 0 ? 0 : needMoney;
+					if(needMoney != Integer.parseInt((String)map.get("TRANSACTION_MONEY"))){//判断所需金额是否等于缴纳金额
 						output("9999", " 数据异常！   ");
 						return;
 					}
-					//判断余额够不够，够得话直接付款，不够的话微信支付
+					
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
+					
+					/**数据验证结束*/
 					//TODO
+					//判断支付方式
+					String payType = (String) map.get("PAY_TYPE");
+					if("1".equals(payType)){//微信支付
+						//微信生成订单
+					}else{//余额支付
+						//判断当前用户余额够不够付款的
+						map.put("sqlMapId", "selectUserByPrimaryKey");
+						map.put("USER_PK", userObj.get("USER_PK"));
+						Map userMap = (java.util.Map) openService.queryForObject(map);
+						Double USER_BALANCE = Double.parseDouble((String) userMap.get("USER_BALANCE"));
+						if(USER_BALANCE - needMoney < 0){
+							throw new Exception("余额不足");
+						}
+						//插入新的余额
+						map.put("sqlMapId", "updateUserBalance");
+						map.put("USER_BALANCE", (int)(USER_BALANCE - needMoney));
+						String insert2 = openService.insert(map);
+						
+					}
 					
-					//微信生成订单
 					
 					
-					
-					
-					
-					//检验完毕，开始插入流程
+					/*检验完毕，开始插入流程*/
 					//先获取当前过期时间
 					map.put("sqlMapId", "SelectByPrimaryKey");
-					String shopId = (String) map.get("SHOP_ID");
 					map.put("SHOP_FK",shopId);
 					//从数据库获取当前店铺信息
 					Map shopMap = (Map)openService.queryForObject(map);
-					//格式化日期
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					String overDateStr = (String)shopMap.get("OVER_DATA");
 					
 					Date overDate = null;
-					if(overDateStr == null){//如果为空，说明还没购买过服务
+					if(overDateStr == null || isUpdateService){//如果为空或者是升级服务，那就重新计算日期
 						overDate = new Date();
+					}else{
+						//解析日期字符串
+						overDate = DateUtil.parseDate(overDateStr);
+				        if (overDate.before(new Date())){
+				        	//如果过期时间在今天之前，说明早过期了，不必进行在原来的时间基础上计算
+				        	overDate = new Date();
+				        }
 					}
-					//解析日期字符串
-					overDate = sdf.parse(overDateStr);
-			        if (overDate.before(new Date())){
-			        	//如果过期时间在今天之前，说明早过期了，不必进行在原来的时间基础上计算
-			        	overDate = new Date();
-			        }
-			        //开始日期计算
-			        GregorianCalendar gc=new GregorianCalendar(); 
-			        gc.setTime(overDate); 
-			        gc.add(2,buyTime); 
-					String buyAfterData = sdf.format(gc.getTime());
 					
-					map.put("sqlMapId","UpdateOverDate");
+			        //计算购买后的日期
+			        Date buyAfterData = DateUtil.calculateDate(overDate, buyTime, Calendar.MONTH);
+					map.put("sqlMapId","UpdateOverDateAndServiceType");
 					map.put("OVER_DATA",buyAfterData);
-					
 					boolean buyResult = openService.update(map);
 					
 					if(!buyResult){
 						throw new Exception("系统异常");
 					}
 					
+					//判断是代理支付还是商家续费
+					//获取当前购买店铺的代理商的userid
+					String agentUserId = "";
+					String roleId = (String) userObj.get("FK_ROLE");
+					map.put("SHOP_ID",shopId);
+					Boolean isAgent = "7".equals(roleId) ? true : false;
+					String TRANSACTION_TYPE = "1";
+					if(isAgent){
+						//是代理
+						TRANSACTION_TYPE = "2";
+						agentUserId = (String) userObj.get("USER_PK");
+					}else{					
+						//如果不是代理商支付，通过商铺id获取代理商信息
+						map.put("sqlMapId","selectAgentIdByShopId");
+						Map agentUserIdMap = (Map) openService.queryForObject(map);
+						agentUserId = (String) agentUserIdMap.get("FK_USER");
+					}
 					
 					//店铺过期时间更新成功，开始插入购买服务表
+					map.put("TRANSACTION_TYPE", TRANSACTION_TYPE);
 					map.put("sqlMapId","insertShopPurchaseRecord");
 					map.put("OVER_DATA",buyAfterData);
 					map.put("USER_FK","admin");
@@ -183,50 +236,42 @@ import cn.wifiedu.ssm.util.StringDeal;
 						throw new Exception("系统异常");
 					}
 					
+					map.clear();//先清除一下map，感觉里边的数据太乱了，避免混用
 					
-					
-					//插入购买记录成功，开始插入提成记录表
-					//获取一下是代付还是续费
-					String TRANSACTION_TYPE = (String) map.get("TRANSACTION_TYPE");
-					//先清除一下map，感觉里边的数据太乱了，避免重复
-					map.clear();
-					
-					//插入记录表之前先查询代理商的userid
-					map.put("SHOP_ID",shopId);
-					//先判断当前登录是不是代理商，是的话就直接获取userid
-					
-					String agentUserId = "";
-					if("1".equals(TRANSACTION_TYPE)){
-						//是代理商，直接
-						map.put("sqlMapId","selectAgentIdByShopId");
-						Map agentUserIdMap = (Map) openService.queryForObject(map);
-						agentUserId = (String) agentUserIdMap.get("FK_USER");
-					}else{
-						map.put("sqlMapId","selectAgentIdByShopId");
-						Map agentUserIdMap = (Map) openService.queryForObject(map);
-						agentUserId = (String) agentUserIdMap.get("FK_USER");
-					}
-					
-					
-					
-					
-					//正式开始插入提成记录表
-					map.put("sqlMapId","insertTradingRecord");
+					/*插入购买记录成功，开始插入提成记录表*/
+					//根据代理提成比例获取佣金，查询当前代理的提成比例
+					map.put("sqlMapId", "selectCommissionPercentageByAgentId");
 					map.put("USER_ID", agentUserId);
+					Map cpMap = (Map)openService.queryForObject(map);
+					String  percentNumber = (String) cpMap.get("COMMISSION_PERCENTAGE");
+					String substring = percentNumber.substring(0, percentNumber.indexOf("%"));
+					Integer commissionMoney = (int) Math.ceil(Integer.parseInt(substring)* needMoney / 100.00);
+					//正式开始插入提成记录表
+					map.put("TRADE_MONEY", commissionMoney);
+					map.put("sqlMapId","insertTradingRecord");
 					map.put("SHOP_PURCHASE_ID", shopPurchaseId);
 					
-					Integer commissionMoney =  (int)(needMoney * 0.3);//TODO 还没处理提成比例,暂时是写死的
-					map.put("TRADE_MONEY", commissionMoney);
-					
 					//交易类型，10 代付提成  11续费提成
-					String TRADE_TYPE = "0".equals(TRANSACTION_TYPE) ? "10" : "11";
-					
+					String TRADE_TYPE = isAgent ? "10" : "11";
+					map.put("SHOP_ID",shopId);
 					map.put("TRADE_TYPE", TRADE_TYPE);
 					map.put("CREATE_BY", "admin");
 					
 					String insert = openService.insert(map);
-
-					if (insert != null) {
+					if(insert == null){
+						throw new Exception("系统异常");
+					}
+					//更新代理余额
+					map.put("sqlMapId", "selectUserByPrimaryKey");
+					map.put("USER_PK", agentUserId);
+					Map userMap = (Map) openService.queryForObject(map);
+					Double USER_BALANCE = Double.parseDouble((String) userMap.get("USER_BALANCE"));
+					//插入新的余额
+					map.put("sqlMapId", "updateUserBalance");
+					map.put("USER_BALANCE", (int)(USER_BALANCE + commissionMoney));
+					String insert2 = openService.insert(map);
+					
+					if (insert2 != null) {
 						transactionManager.commit(status);
 						output("0000", "支付成功!");
 						return;
@@ -239,6 +284,56 @@ import cn.wifiedu.ssm.util.StringDeal;
 				}
 			}
 			
-		
+			
+			/**
+			 * 
+			 * @date 2018年8月12日 下午10:44:08 
+			 * @author lps
+			 * 
+			 * @Description: 根据优惠规则和之前的购买信息获取抵扣金额
+			 * @param perServiceMess
+			 * @param serviceRule
+			 * @return
+			 * @throws Exception 
+			 * @return Integer 
+			 *
+			 */
+			public static Integer getDiscountsMoney(Map perServiceMess, List<Map<String,Object>> serviceRule) throws Exception{
+				int discountsMoney = 0;
+				//计算抵扣金额
+				Map<String,String> discountsMap = new LinkedHashMap<String,String>();//存储优惠策略
+				for (Map<String, Object> m : serviceRule) {
+					discountsMap.put((String)m.get("BUYSERVICE_RULE_SJYS"), (String)m.get("BUYSERVICE_RULE_YHYS"));
+				}
+				
+				String overDate = (String) perServiceMess.get("OVER_DATA");
+				//计算相差几个月
+				Period intervalTime = DateUtil.getintervalTime(new Date(), overDate);
+				Integer intervalMonths = intervalTime.getYears() * 12 + intervalTime.getMonths();
+				boolean flag = false;
+				int dmInt = 0;
+				int discountsMouth = 0;
+				for (String dmStr : discountsMap.keySet()) {//抵扣规则按照高的进行运算，详情见计算规则表
+					dmInt = Integer.parseInt(dmStr);
+					if(dmInt >= intervalMonths){
+						flag = true;
+						discountsMouth = Integer.parseInt(discountsMap.get(dmStr.toString()));
+						break;
+					}
+				}
+				if(!flag){//如果没匹配到，说明比最多的还高
+					//获取最后一个元素
+					Field tail = discountsMap.getClass().getDeclaredField("tail");
+				    tail.setAccessible(true);
+				    Entry<String, String> entry = (Entry<String, String>)tail.get(discountsMap);
+				    dmInt = Integer.parseInt(entry.getKey());
+				    discountsMouth = intervalMonths/dmInt * Integer.parseInt(entry.getValue());
+				}
+				
+				discountsMoney = (intervalMonths - discountsMouth) * Integer.parseInt((String) perServiceMess.get("SERVICE_PRICE"));
+				return discountsMoney;
+			}
+			
+		 
 		}
 

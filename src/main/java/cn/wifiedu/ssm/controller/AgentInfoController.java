@@ -149,18 +149,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						map.put("UPDATE_BY", "admin");
 						
 						boolean update = openService.update(map);
-						
 						if(!update){
 							output("9999", "保存失败");
 							return;
 						}
 					}
 					
-					
 					//然后更新用户表信息
-					
 					map.put("sqlMapId", "updateUserBaseInfoById");
-					
 					boolean update = openService.update(map);
 					
 					if(update){

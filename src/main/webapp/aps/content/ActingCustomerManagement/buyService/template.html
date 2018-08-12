@@ -36,6 +36,27 @@
 		width:auto;
 	}
 	
+	.no-border:before{
+	    content: " ";
+	    position: absolute;
+	    left: 0;
+	    top: 0;
+	    width: 100%;
+	    height: 1px;
+	    border-top: 1px solid #fff;
+	    color: #fff;
+	    -webkit-transform-origin: 0 0;
+	    transform-origin: 0 0;
+	    -webkit-transform: scaleY(.5);
+	    transform: scaleY(.5);
+	    left: 15px;
+	}
+	
+	.weui_icon_success_no_circle:before {
+    	color: #31C4F7;
+	}
+	
+	
 </style>
 
 
@@ -48,7 +69,7 @@
  	
 </div>
 <div class="weui_cells dcxt-shopselects" ng-show="pageShow">
-	<div class="dcxt-shopselect {{$index == 0 ? 'dcxt-shopselect-on':''}}" ng-model="item" ng-repeat="item in service_type" data-value="{{$index}}">
+	<div class="dcxt-shopselect {{current_service.SERVICE_PRICE == item.SERVICE_PRICE ? 'dcxt-shopselect-on':''}}" ng-model="item" ng-repeat="item in service_type" data-value="{{$index}}">
 		<div class="location-center">
             <span class="weui_cell_primary" ng-bind="item.SERVICE_TYPE"></span>
         	<span>{{item.SERVICE_PRICE}}/月</span>
@@ -58,7 +79,6 @@
         </div>
 	</div>
 	
-	
 	<div class="weui_cell tablessetting-weui_select" style="margin-top:-1px;">
 		<div class="weui_cell_hd">
 			<label class="weui_label label tablessetting-label">购买期限</label>
@@ -67,8 +87,9 @@
 			<input class="weui_input tablessetting-weui_hd_self label-input" id="buying_select" type="text"
 					 value="" ng-model="buy_time">
 		</div>
-	</div>            
-     <div class="weui_cell" style="margin-top:-1px;">
+	</div>  
+	<div style="width:100%;height:10px;background-color:#F2F2F2;"></div>           
+     <div class="weui_cell no-border" style="margin-top:-1px;">
 		<div class="weui_cell_hd  weui_cell_primary"  style="display:flex;align-items: flex-end;">
 			<label class="weui_label label tablessetting-label">
 			服务价格
@@ -94,7 +115,18 @@
 			-￥{{discounts_money}}.00
 		</div>
 	</div>     
-	
+		 <div class="weui_cell" style="margin-top:-1px;" ng-show="deduction_show">
+		<div class="weui_cell_hd  weui_cell_primary"  style="display:flex;align-items: flex-end;">
+			<label class="weui_label label tablessetting-label">
+			抵扣金额
+			
+			<label class="label dcxt-explain-font">升级服务抵扣金额</label>
+			</label>
+		</div>
+		<div class="weui-cell_bd dcxt-red-right">
+			-￥{{deduction_money}}.00
+		</div>
+	</div>  
    
     <div class="weui_cell" style="margin-top:-1px;">
 		<div class="weui_cell_hd  weui_cell_primary">
@@ -105,8 +137,33 @@
 		<div class="weui-cell_bd dcxt-red-right dcxt-red-right">
 			￥{{form.TRANSACTION_MONEY}}.00
 		</div>
-	</div>     
-	<div  class="weui_cell" style="padding:30px 20px 20px 20px;">
+	</div>    
+	
+	<div style="width:100%;height:24px;background-color:#F2F2F2;"><label class="label dcxt-explain-font" style="line-height:24px;">请选择支付方式</label></div>   
+		 <div class="weui_cell dcxt_active no-border location-center" style="margin-top:-1px;" ng-click="selectPay(1)">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">
+				微信支付
+				</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary" style="margin-left:-16px;display: flex;">
+					<img src="assets/img/weixinpay.png" height="22px;" width="25px;"></img>
+			</div>
+			<div class="{{form.PAY_TYPE == '1' ?'weui_icon_success_no_circle':''}}" style="min-width:23px;height:23px;">
+			</div>
+		</div> 
+		
+		 <div class="weui_cell dcxt_active" style="margin-top:-1px;" ng-click="selectPay(2)">
+			<div class="weui_cell_hd  weui_cell_primary">
+				<label class="weui_label label tablessetting-label">
+				余额支付
+				</label>
+			</div>
+			<div class="{{form.PAY_TYPE == '2' ?'weui_icon_success_no_circle':''}}" style="min-width:23px;height:23px;">
+			</div>
+		</div> 
+	        <div style="width:100%;height:10px;background-color:#F2F2F2;"></div>  
+	<div  class="weui_cell no-border" style="padding:30px 20px 20px 20px;">
       	<a style="width:100%;" class="weui_btn bg-blue" ng-click="confirmPayment()">确认支付</a>
 	</div>
      

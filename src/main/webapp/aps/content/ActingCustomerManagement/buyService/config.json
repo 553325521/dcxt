@@ -4,8 +4,8 @@
 	"viewUrl": "aps/content/ActingCustomerManagement/buyService/template.html",
 	"config": {
 		"pageTitle": "购买服务",
-		"findUrl": "json/ServiceType_queryForList_findServiceTypeList",
-		"saveUrl":"json/ShopPurchaseRecord_insert_insertShopPurchaseRecord",
+		"findUrl": "json/Shop_query_initShopBuyServiceMessage.json",
+		"saveUrl":"json/ShopPurchaseRecord_insert_insertShopPurchaseRecord.json",
 		"menu":{	
 	            "buttons":[
 		        	{

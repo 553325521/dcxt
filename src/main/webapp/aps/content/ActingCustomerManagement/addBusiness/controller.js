@@ -64,7 +64,7 @@
 						$("#fs_select1").val(shop_type_second[0]);
 						
 						//初始化店铺类型
-						initShopVersion();
+//						initShopVersion();
 						//初始化下拉框
 						comboboxInit();
 					}
@@ -77,14 +77,14 @@
 				scope.shop_version_value = new Array();
 				scope.shop_version_text = new Array();
 				
-				function initShopVersion(){
+				/*function initShopVersion(){
 					$httpService.post(config.findVersionURL, null).success(function(data) {
-						scope.shop_version = data.data;
+						scope.shop_version = data.data[];
 						for(var i = 0;i< scope.shop_version.length;i++){
 							scope.shop_version_value[i] = scope.shop_version[i].SERVICE_PK;
 							scope.shop_version_text[i] = scope.shop_version[i].SERVICE_TYPE;
 						}
-						/*scope.form.VERSION = scope.shop_version_text[1];*/
+						scope.form.VERSION = scope.shop_version_text[1];
 						$("#version_select").val(scope.shop_version_text[0]);
 						$("#version_select").picker({
 							title : "选择类型",
@@ -98,7 +98,7 @@
 							]
 						});
 					})
-				}
+				}*/
 				
 				
 				
@@ -119,7 +119,7 @@
 					scope.form.SHOP_AREA = $("#ssx").val();
 					scope.form.SHOP_TYPE_FIRSET = $("#fs_select").val();
 					scope.form.SHOP_TYPE_SECOND = $("#fs_select1").val();
-					scope.form.SERVICE_TYPE = $("#version_select").val();
+//					scope.form.SERVICE_TYPE = $("#version_select").val();
 					
 					 $form.validate(function(error){
 				        if(!error){

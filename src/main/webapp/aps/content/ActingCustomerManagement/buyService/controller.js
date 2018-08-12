@@ -10,35 +10,58 @@
 					scope.pageTitle = config.pageTitle;
 					scope.fromUrl = params.fromUrl;
 					scope.form.SHOP_ID = params.shopid;
-					scope.form.TRANSACTION_TYPE = 1;//初始化交易类型 
-					if(scope.fromUrl == "ActingCustomerManagement"){
-						scope.form.TRANSACTION_TYPE = 0;
-					}
+					//购买期限数据源
+					buying_select = [];
+					//初始化优惠栏不显示
+					scope.show_discounts = "False";
+					scope.form.PAY_TYPE = 1;
+					pre_service_price = 0;
+					scope.deduction_money = 0;
+					
 					
 					//页面初始化
 					var init = function() {
-						$httpService.post(config.findUrl).success(function(data) {
+						$httpService.post(config.findUrl,scope.form).success(function(data) {
 							if (data.code != '0000') {
 								loggingService.info(data.data);
 							} else {
 								//服务类型
-								scope.service_type = data.data;
+								scope.service_type = data.data["service_type"];
+								service_rule = data.data["service_rule"];
+								pre_service_rule = data.data["pre_service_mess"];
+								if(pre_service_rule != null){
+									pre_service_price = pre_service_rule.SERVICE_PRICE;		
+									
+								}
 								scope.pageShow = "True";
-								//转换以版本类型为key的map字典
-								angular.forEach(scope.service_type,function(data,index,array){
-									service_type_dictionaries[data.SERVICE_TYPE] = data;
-								});
+
 								//当前选择的服务类型
-								scope.current_service = scope.service_type[0];
-								//form表单初始化服务类型值
-								scope.form.SERVICE_ID = scope.current_service.SERVICE_PK;
+								angular.forEach(scope.service_type,function(data, index, array) {
+									if(data.SERVICE_PRICE == pre_service_price){
+										scope.current_service = scope.service_type[index];
+										//form表单初始化服务类型值
+										scope.form.SERVICE_ID = scope.current_service.SERVICE_PK;
+									}
+								});
 								//初始化获取优惠之前的总价格
-								scope.total_money_before = scope.service_type[0].SERVICE_PRICE;
-								//初始化优惠栏显示不显示
-								scope.show_discounts = "False";
+								scope.total_money_before = scope.current_service.SERVICE_PRICE;
 								//初始化优惠之后的总价格
 								scope.form.TRANSACTION_MONEY = scope.total_money_before;
+								
+								//把购买优惠规则转换成以月数或年数为key的字典
+								service_rule_dictionaries = {};
+								angular.forEach(service_rule,function(data, index, array) {
+									key = data["BUYSERVICE_RULE_XFSJ"];
+									service_rule_dictionaries[key] = data; 
+									//购买期限数据源
+									buying_select.push(key);
+								});
+								
+								//初始化当前购买时间
+								scope.buy_time = buying_select[0];
+								scope.form.BUY_TIME = service_rule_dictionaries[scope.buy_time]["BUYSERVICE_RULE_SJYS"];
 								scope.$apply();
+								comboboxInit();
 							}
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
@@ -47,40 +70,6 @@
 					
 					init();
 					
-					// 购买期限数据源
-					buying_select = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','1年','2年','3年','4年','5年'];
-					//购买期数对应月数的字典
-					buying_month = {"1月":1,"2月":2,"3月":3,"4月":4,"5月":5,"6月":6,"7月":7,"8月":8,"9月":9,"1年":12,"2年":24,"3年":36,"4年":48,"5年":60}
-					
-					//当前选择的服务版本
-					scope.current_service = [];
-					//以版本类型为key的map字典
-					service_type_dictionaries = [];
-					//平台优惠策略
-					service_discounts_table = {
-							"1年" : {
-								"discounts_month" : "2",		//优惠月份
-							} ,
-							"2年" : {
-								"discounts_month" : "5",
-							} ,
-							"3年" : {
-								"discounts_month" : "9",
-							} ,
-							"4年" : {
-								"discounts_month" : "12",
-							}  ,
-							"5年" : {
-								"discounts_month" : "15",
-							} 
-					}
-					
-					//初始化当前购买时间
-					scope.buy_time = buying_select[0];
-					scope.form.BUY_TIME = buying_month[scope.buy_time];
-//					
-					comboboxInit();
-					
 					//数据更新了 开始刷新
 					scope.refreshPage = function(){
 						//获取当前服务类型id
@@ -88,13 +77,13 @@
 						//获取当前选择的购买期数
 						scope.buy_time = $("#buying_select").val();
 						//转换当前选择的购买期数为月数
-						scope.form.BUY_TIME = buying_month[scope.buy_time];
+						scope.form.BUY_TIME = service_rule_dictionaries[scope.buy_time]["BUYSERVICE_RULE_SJYS"];
 						//计算当前选择的总价钱，折扣前
 						scope.total_money_before = scope.current_service.SERVICE_PRICE * scope.form.BUY_TIME;
 						//判断当前购买期数是否享有优惠
-						if(scope.form.BUY_TIME >= 12){
+						if(service_rule_dictionaries.hasOwnProperty(scope.buy_time)){
 							//优惠几个月
-							scope.discounts_month = service_discounts_table[scope.buy_time]["discounts_month"];
+							scope.discounts_month = service_rule_dictionaries[scope.buy_time]["BUYSERVICE_RULE_YHYS"];
 							//优惠多少钱
 							scope.discounts_money = scope.discounts_month * scope.current_service.SERVICE_PRICE;
 							//优惠后多少钱
@@ -104,12 +93,49 @@
 							//获取优惠之后的总价格
 							scope.form.TRANSACTION_MONEY = scope.total_money_before;
 						}
+						scope.form.TRANSACTION_MONEY -= scope.deduction_money;
+						scope.form.TRANSACTION_MONEY = scope.form.TRANSACTION_MONEY < 0 ? 0 : scope.form.TRANSACTION_MONEY;
 						scope.discounts_show = scope.discounts_money == 0 ? "False":"True";
 						scope.$apply();
 					}
 					
+					//支付函数
+					function onBridgeReady(){
+						   WeixinJSBridge.invoke(
+						      'getBrandWCPayRequest', {
+						         "appId":"wx6041a1eff32d3c5e",     //公众号名称，由商户传入     
+						         "timeStamp":"1533808629",         //时间戳，自1970年以来的秒数     
+						         "nonceStr":"L2BYxPB7tg4n8cK1", //随机串     
+						         "package":"prepay_id=wx10052017565144f9841b80334273358013",     
+						         "signType":"MD5",         //微信签名方式：     
+						         "paySign":"C2EB7AE806BFE1CA7A7532D43B6D06FA" //微信签名 
+						      },
+						      function(res){
+						      if(res.err_msg == "get_brand_wcpay_request:ok" ){
+						      // 使用以上方式判断前端返回,微信团队郑重提示：
+						            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+						      } 
+						   }); 
+						}
+					
 					//支付按钮
 					scope.confirmPayment = function(){
+						
+				
+//					if (typeof WeixinJSBridge == "undefined"){
+//					   if( document.addEventListener ){
+//					       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+//					   }else if (document.attachEvent){
+//					       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+//					       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+//					   }
+//					}else{
+//					   onBridgeReady();
+//					}
+//						
+						
+						
+						
 						console.info(scope.form)
 						var m2 = {
 							"url" : "aps/content/ActingCustomerManagement/buyService/config.json",
@@ -129,6 +155,12 @@
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
 					}
 					
+					
+					scope.selectPay = function(type){
+						scope.form.PAY_TYPE = type;
+						console.info(type)
+					}
+					
 					// 弹窗确认事件
 					eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 						$httpService.post(config.saveUrl, $scope.form).success(function(data) {
@@ -141,18 +173,6 @@
 									}
 							} else if(data.code == '1111'){
 								//发起微信支付
-//								console.info(data)
-//								
-//								if (typeof WeixinJSBridge == "undefined"){
-//									   if( document.addEventListener ){
-//									       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-//									   }else if (document.attachEvent){
-//									       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
-//									       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-//									   }
-//									}else{
-//									   onBridgeReady();
-//									}
 								
 							}else{
 								var m2 = {
@@ -190,9 +210,22 @@
 						});
 						
 						$(".dcxt-shopselects").on('click','.dcxt-shopselect',function(){
+							serviceMess = scope.service_type[$(this)[0].dataset.value];
+							if(serviceMess.SERVICE_PRICE < pre_service_price){
+								$.toptips('升级服务不允许降级购买')
+								return;
+							}
+							
+							if(serviceMess.SERVICE_PRICE > pre_service_price){
+								scope.deduction_show = "True"
+								scope.deduction_money = pre_service_rule.deduction_money
+							}else{
+								scope.deduction_show = "False";
+								scope.deduction_money = 0;
+							}
 							$(this).addClass("dcxt-shopselect-on");
 							$(this).siblings().removeClass("dcxt-shopselect-on");
-							scope.current_service =  scope.service_type[$(this)[0].dataset.value];
+							scope.current_service =  serviceMess;
 							//页面数据变化，刷新数据
 							scope.refreshPage();
 						})
@@ -200,29 +233,6 @@
 						document.getElementById("buying_select").onchange = function(event) {
 							scope.refreshPage();
 						};
-						
-						//微信支付操作
-//						function onBridgeReady(){
-//							   WeixinJSBridge.invoke(
-//							      'getBrandWCPayRequest', {
-//							         "appId":"wx2421b1c4370ec43b",     //公众号名称，由商户传入     
-//							         "timeStamp":"1395712654",         //时间戳，自1970年以来的秒数     
-//							         "nonceStr":"e61463f8efa94090b1f366cccfbbb444", //随机串     
-//							         "package":"prepay_id=u802345jgfjsdfgsdg888",     
-//							         "signType":"MD5",         //微信签名方式：     
-//							         "paySign":"70EA570631E4BB79628FBCA90534C63FF7FADD89" //微信签名 
-//							      },
-//							      function(res){
-//							      if(res.err_msg == "get_brand_wcpay_request:ok" ){
-//							      // 使用以上方式判断前端返回,微信团队郑重提示：
-//							            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-//							      } 
-//							   }); 
-//							}
-//							
-						
-						
-						
 					
 					}
 				}

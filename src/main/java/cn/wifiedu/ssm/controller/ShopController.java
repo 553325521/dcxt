@@ -4,19 +4,23 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,7 @@ import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
+import cn.wifiedu.ssm.util.DateUtil;
 import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.WxConstants;
@@ -45,9 +50,9 @@ import cn.wifiedu.ssm.util.WxUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 
+
 /**
  * 商铺与数据库交互
- * 
  * @author wangjinglong
  *
  */
@@ -61,13 +66,12 @@ public class ShopController extends BaseController {
 
 	@Resource
 	PlatformTransactionManager transactionManager;
-
+	
 	@Autowired
 	WxController wxControllerl;
-
 	@Resource
 	private JedisClient jedisClient;
-
+	
 	public OpenService getOpenService() {
 		return openService;
 	}
@@ -78,51 +82,50 @@ public class ShopController extends BaseController {
 
 	/**
 	 * 添加商户
-	 * 
-	 * @author wangjinglong 2018年8月4日23:21:41 修改 lps 添加或修改商铺
+	 * @author wangjinglong    2018年8月4日23:21:41 修改 lps   添加或修改商铺
 	 * 
 	 */
-	@RequestMapping(value = "/Shop_insert_insertShop", method = RequestMethod.POST)
+	@RequestMapping(value="/Shop_insert_insertShop",method = RequestMethod.POST)
 	public void saveShopData() {
 		DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-		defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-		TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
+	    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+	    TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 		try {
 			Map<String, Object> map = getParameterMap();
-			// 合二为一
-			map.put("SHOP_TYPE", map.get("SHOP_TYPE_FIRSET") + " " + map.get("SHOP_TYPE_SECOND"));
-			// 判断是添加还是修改
+			//合二为一
+			map.put("SHOP_TYPE",map.get("SHOP_TYPE_FIRSET")+" "+map.get("SHOP_TYPE_SECOND"));
+			//判断是添加还是修改
 			String shopId = (String) map.get("SHOP_ID");
-			if (shopId != null && !"".equals(shopId.trim())) {// 是修改
+			if(shopId != null && !"".equals(shopId.trim())){//是修改
 				map.put("sqlMapId", "updateShopBaseInfoById");
 				map.put("UPDATE_BY", "admin");
 				boolean b = openService.update(map);
-				if (b) {
+				if(b){
 					transactionManager.commit(status);
-					output("0000", "修改成功");
-				} else {
+					output("0000","修改成功");
+				}else{
 					throw new Exception();
 				}
 				return;
 			}
-
-			// 是添加
-			// 先查询出来商铺的服务类型
+			
+			//是添加
+			//先查询出来商铺的服务类型
 			map.put("sqlMapId", "findServiceTypeIdByName");
 			Map serviceMap = (Map) openService.queryForObject(map);
 			String serviceId = (String) serviceMap.get("SERVICE_PK");
-			if (serviceId == null) {
+			if(serviceId == null){
 				throw new Exception();
 			}
 			map.put("sqlMapId", "insertShop");
 			map.put("CREATE_BY", "admin");
 			map.put("SERVICETYPE_FK", serviceId);
 			String insert = openService.insert(map);
-
-			if (insert == null) {
+			
+			if(insert == null){
 				throw new Exception();
 			}
-			// 插入用户商铺中间表
+			//插入用户商铺中间表
 			map.put("sqlMapId", "insertUserShop");
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
@@ -131,20 +134,20 @@ public class ShopController extends BaseController {
 			map.put("SHOP_ID", insert);
 			map.put("ROLE_ID", "7");
 			map.put("tagName", "代理端");
-			map.put("FK_APP", userObj.get("FK_APP"));
+			map.put("FK_APP",  userObj.get("FK_APP"));
 			String insert2 = openService.insert(map);
-			if (insert2 != null) {
+			if(insert2 != null){
 				transactionManager.commit(status);
-				output("0000", "保存成功");
-			} else {
+				output("0000","保存成功");
+			}else{
 				throw new Exception();
 			}
 		} catch (Exception e) {
 			transactionManager.rollback(status);
-			output("9999", "保存失败");
+			output("9999","保存失败");
 		}
 	}
-
+	
 	/**
 	 * 显示当前登录代理商下的商铺信息 2018年8月8日23:50:27 修改 lps
 	 * 
@@ -160,12 +163,13 @@ public class ShopController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-			map.put("USER_ID", userObj.get("USER_PK"));
+			map.put("USER_ID", userObj.get("USER_PK")); 
 			map.put("sqlMapId", "selectAgentInfoById");
-			Map<String, Object> reMap1 = (Map) openService.queryForObject(map);
-			// 如果还未认证，跳转到认证界面
-			if (!reMap1.containsKey("AUTH_STATUS") || "0".equals(reMap1.get("AUTH_STATUS"))) {
-				output("5555", "信息有误");
+			
+			Map<String, Object> reMap1 = (Map)openService.queryForObject(map);
+			//如果还未认证，跳转到认证界面
+			if(!reMap1.containsKey("AUTH_STATUS") || "0".equals(reMap1.get("AUTH_STATUS"))){
+				output("5555", "代理信息不完善");
 				return;
 			}
 			// 开始查询当前登录代理商下的商铺信息
@@ -419,5 +423,57 @@ public class ShopController extends BaseController {
 		}
 
 	}
-
+	
+	
+	
+	
+	/**
+	 * 
+	 * @date 2018年8月12日 下午9:57:00 
+	 * @author lps
+	 * 
+	 * @Description: 根据商铺id初始化购买服务的信息
+	 * @param request
+	 * @param seesion 
+	 * @return void 
+	 *
+	 */
+	
+	
+	@RequestMapping("/Shop_query_initShopBuyServiceMessage")
+	public void initShopBuyServiceMessage(HttpServletRequest request,HttpSession seesion){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "findServiceTypeList");
+			List<Map<String, Object>> reList  = openService.queryForList(map);
+			List<Map<String,Object>> serviceRule = ServiceTypeController.getServiceRule(openService);
+			if(reList == null || serviceRule == null){
+				output("9999", "加载失败");
+				return;
+			}
+			
+			//通过shopid获取之前购买的服务类型的价格和过期时间
+			map.put("sqlMapId", "selectNODSTAndODByShopId");
+			Map perServiceMess = (Map) openService.queryForObject(map);
+			int discountsMoney = 0;
+			if(perServiceMess != null){
+				discountsMoney = ShopPurchaseRecordController.getDiscountsMoney(perServiceMess, serviceRule);
+				perServiceMess.put("deduction_money", discountsMoney);//抵扣金额
+			}
+			
+			
+			Map<String,Object> reMap = new HashMap<String, Object>();
+			reMap.put("pre_service_mess",perServiceMess);
+			reMap.put("service_type",reList);
+			reMap.put("service_rule",serviceRule);
+			
+			output("0000", reMap);
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+			return;
+		}
+	}
+	
+	
 }

@@ -6,8 +6,8 @@
   
   <!-- 查询代理商信息 -->
 	<select id="selectAgentInfoById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		SELECT u.USER_NAME, u.USER_PHONE, u.USER_WX_NUMBER, u.USER_SN, u.USER_SEX, u.USER_BALANCE, ai.AGENT_PK, ai.COMPANY_NAME, ai.BUSINESS_LICENSE, ai.COMPANY_ADDRESS, ai.AUTH_STATUS, ai.AGENT_LEVEL, ai.AGENT_AREA
-		FROM sc_user u LEFT JOIN sc_agent_info ai ON ai.USER_FK = u.USER_PK WHERE  u.USER_PK = #{USER_ID};
+		SELECT uu.*,ar.AGENT_NAME FROM(SELECT u.USER_NAME, u.USER_PHONE, u.USER_WX_NUMBER, u.USER_SN, u.USER_SEX, u.USER_BALANCE, ai.AGENT_PK, ai.COMPANY_NAME, ai.BUSINESS_LICENSE, ai.COMPANY_ADDRESS, ai.AUTH_STATUS, ai.AGENT_TYPE_FK, ai.AGENT_AREA
+	FROM sc_user u LEFT JOIN sc_agent_info ai ON ai.USER_FK = u.USER_PK  WHERE  u.USER_PK = #{USER_ID}) uu , sc_agent_rule ar WHERE uu.AGENT_TYPE_FK = ar.AGENT_PK;
 	</select>
 	
 	<!-- 完善代理商信息 -->
@@ -48,5 +48,14 @@
 		)
 	
 	</insert>
+	<!-- 根据代理userid查询代理的佣金比例 -->
+	<select id="selectCommissionPercentageByAgentId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			ar.COMMISSION_PERCENTAGE
+		FROM 
+			sc_agent_info ai LEFT JOIN sc_agent_rule ar ON ai.AGENT_TYPE_FK = ar.AGENT_PK 
+		WHERE 
+			ai.USER_FK = #{USER_ID};
+	</select>
 
 </mapper>
