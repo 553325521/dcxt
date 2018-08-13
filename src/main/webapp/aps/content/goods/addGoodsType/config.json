@@ -3,6 +3,17 @@
 	"viewUrl": "aps/content/goods/addGoodsType/template.html",
 	"controllerUrl": "aps/content/goods/addGoodsType/controller.js",
 	"config": {
-
+		"loadGoodsTypeOrderURL":"json/GoodsType_select_loadGoodsTypeOrder.json",
+		"addURL":"json/GoodsType_insert_insertGoodsType.json",
+		"selectGoodsTypePNameByPIDURL":"json/GoodsType_select_selectGoodsTypePNameByPID.json",
+		"menu":{
+			"buttons":[{
+				"buttonName":"取消",
+				"buttonLink":"type_setting_add.close"
+			},{
+				"buttonName":"确定",
+				"buttonLink":"type_setting_add.confirm"
+			}]
+		}
 	}
 }

@@ -1,34 +1,57 @@
-
+<style>
+	.noBorder:before{
+		border:0;
+	}
+</style>
 	<div class="weui-header"  style="background-color:#FFFFFF">
 		<div class="weui-header-left">
-			<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+			<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="returnClick()"></a>
 		</div>
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
-				<div class="bom-radio" id="attend2" ng-click="toHref('goods/addGoodsType')">添加</div>
+				<div class="bom-radio showAddGoodsTypeBtn" style="width:70px" id="attend2" ng-click="toHref('goods/addGoodsType')">添加类别</div>
 			</div>
 		</div>
 	</div>
-	<div class="weui_cells " style="margin-top:0">
-		<div class="weui_cell slidelefts" ng-repeat="item in type_list">
-			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd"  ng-click="toHref('goods/goods_show')">
-				<div class="weui_cell_bd " style="float:left;width:10%;">
-					<span>{{item.order}}</span>
+	<div class="weui_cells showGoodsType"  style="margin-top:0;display:block">
+		<div class="weui_cell slidelefts" ng-repeat="item in GoodsType_List">
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd"  ng-click="goodsTypeClick(item.GTYPE_PK,'next')">
+				<div class="weui_cell_bd " style="float:left;width:2%;">
+					<span>{{item.GTYPE_ORDER}}</span>
 				</div>
-				<div class="weui_cell_bd " style="float:left;width:16%;">
-					<span>{{item.name}}</span>
+				<div class="weui_cell_bd " style="float:left;width:15%;">
+					<span>{{item.GTYPE_NAME}}</span>
 				</div>
-				<div class="weui_cell_bd " style="float:left;width:16%;">
-					<span>{{item.isStart}}</span>
+				<div class="weui_cell_bd" ng-switch on = "{{item.GTYPE_STATE}}" style="float:left;width:15%;">
+					<span ng-switch-when = "0">未启用</span>
+					<span ng-switch-when = "1">已启用</span>
 				</div>
-				<div class="weui_cell_bd " style="float:left;width:16%;">
-					<span>{{item.area}}</span>
+				<div class="weui_cell_bd " style="float:left;width:33%;">
+					<span>{{item.GTYPE_AREA}}</span>
 				</div>
 			</div>
 			<div class="slideleft">
 				<span style="background:#ccc;color:#fff">编辑</span> <span
 					class="bg-red f-white dels">删除</span>
 			</div>
+		</div>
+	</div>
+	<div class="weui_cells showSelectDiv"  style="margin-top:0;display:none">
+		<div class="weui_cell" style="margin-top: 40%;">
+			<h5 style="text-align:center;margin-left:5%;width:89%">当前类别下尚无商品和商品分类</h5>
+		</div>
+		<div class="weui_cell noBorder"  style="">
+			<h5 style="text-align:center;margin-left:5%;width:89%">请选择添加</h5>
+		</div>
+		<div  class="weui_cell noBorder">
+				 <div style="width:60%;margin-left: 20%">
+					<a href="javascript:;" class="weui_btn weui_btn_default" ng-click="toHref('goods/addGoodsType')">添加类别</a>
+				</div>
+		</div>
+		<div  class="weui_cell noBorder">
+				<div style="width:60%;margin-left: 20%;margin-bottom: 30%;">
+					<a href="javascript:;" class="weui_btn weui_btn_default">添加商品</a>
+				</div>
 		</div>
 	</div>

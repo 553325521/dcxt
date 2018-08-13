@@ -3,6 +3,7 @@
 	"viewUrl": "aps/content/goods/template.html",
 	"controllerUrl": "aps/content/goods/controller.js",
 	"config": {
-
+		"loadGoodsTypeListByPIDURL":"json/GoodsType_select_loadGoodsTypeListByPID.json",
+		"selectLastRecordCountByPIDURL":"json/GoodsType_select_selectLastRecordCountByPID.json"	
 	}
 }

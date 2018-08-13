@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="goodsType" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
+	<!-- 根据PID查询当前级别商品分类序号 -->
+	<select id="loadGoodsTypeOrder" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT 
+		GTYPE_ORDER  
+		FROM sc_goods_type 
+		WHERE GTYPE_PID = #{GTYPE_PID}
+		ORDER BY GTYPE_ORDER DESC
+		LIMIT 1
+	</select>
+	<!-- 根据PID查询当前商品类别 -->
+	<select id="loadGoodsTypeListByPID" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT * 
+		FROM sc_goods_type 
+		WHERE GTYPE_PID = #{GTYPE_PID}
+		ORDER BY GTYPE_ORDER
+	</select>
+	 <!--添加商品类别表  -->
+	<insert id="insertGoodsType" parameterMap="BaseParameterMap">
+		insert into 
+			SC_GOODS_TYPE
+			(
+			GTYPE_PK,
+			GTYPE_NAME,
+			GTYPE_PID,
+			GTYPE_ORDER,
+			GTYPE_AREA,
+			GTYPE_STATE,
+			GTYPE_ATTACH,
+			GTYPE_LEVEL,
+			GTYPE_BZ,
+			SHOP_FK,
+			CREATE_BY,
+			CREATE_TIME
+			)
+	values(
+			#{UUID},
+			#{GTYPE_NAME},
+			#{GTYPE_PID},
+			#{GTYPE_ORDER},
+			#{GTYPE_AREA},
+			#{GTYPE_STATE},
+			#{GTYPE_ATTACH},
+			#{GTYPE_LEVEL},
+			#{GTYPE_BZ},
+			#{SHOP_FK},
+			#{CREATE_BY},
+			NOW()
+	)
+	</insert>
+<!-- 	根据ID查询商品分类名称 -->
+	<select id="selectGoodsTypePNameByPID" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT  GTYPE_NAME
+		FROM sc_goods_type 
+		WHERE GTYPE_PK = #{GTYPE_PID}
+	</select>
+</mapper>

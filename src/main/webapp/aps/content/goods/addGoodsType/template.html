@@ -1,4 +1,8 @@
-
+<style>
+	.noBorder:before{
+		border:0;
+	}
+</style>
    <div class="weui-header" style="background-color:#FFFFFF">
 		<div class="weui-header-left">
 			<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="toHref('goods')"></a>
@@ -6,7 +10,7 @@
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area">
-				<div class="bom-radio" id="attend2">保存</div>
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
 			</div>
 		</div>
 	</div>
@@ -14,23 +18,23 @@
         <div class="weui_cell" style="margin-top:10px">
           <div class="weui_cell_hd"><label class="weui_label label">分类名称</label></div>
             <div class="weui_cell_bd">
-            <input class="weui_input label-input" type="text" ng-model="form.TYPE_NAME"  placeholder="荤菜">
+            <input class="weui_input label-input" type="text" ng-model="form.GTYPE_NAME"  placeholder="请输入菜名">
           </div>
         </div>
         <div class="weui_cell">
-          <div class="weui_cell" style="padding-left:0">
+           <div class="weui_cell" style="padding-left:0">
 			<div class="weui_cell_hd">
-				<label class="weui_label label">选择分类</label>
+				<label class="weui_label label">分类</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input label-input" id="fs_select" type="text"
-					value="" ng-model="form.SELECTTYPE">
+				<input class="weui_input label-input"  type="text"
+					value="" ng-model="form.GTYPE_PNAME" readonly>
 			</div>
 		</div>
-          <div class="weui_cell">
+          <div class="weui_cell noBorder">
             <div class="weui_cell_hd"><label class="weui_label label">排序序号</label></div>
             <div class="weui_cell_bd">
-                <input class="weui_input label-input" type="text"  placeholder="1">
+                <input class="weui_input label-input" type="text" readonly  ng-model="form.GTYPE_ORDER">
             </div>
           </div>
         </div>
@@ -42,7 +46,7 @@
 				<div class="weui-form">
 					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 0;">
 						<input class="weui-form-checkbox" name="f2" id="g1" value="1"
-							type="radio" ng-model="form.IS_START"> 
+							type="radio" ng-model="form.GTYPE_STATE"> 
 							<label for="g1"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
 							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>是</p>
@@ -51,7 +55,7 @@
 					</div>
 					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;">
 						<input class="weui-form-checkbox" name="f2" id="g2" value="0"
-							type="radio" ng-model="form.IS_START"> 
+							type="radio" ng-model="form.GTYPE_STATE"> 
 							<label for="g2"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
 							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>否</p>
@@ -68,9 +72,12 @@
 			<div class="weui_cell_bd">
 				<div class="weui-form">
 					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;"
-						ng-repeat="item in show_area">
+						ng-repeat="item in GTYPE_AREA">
 						<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
-							value="{{item.value}}" type="checkbox"  ng-model="item.checked"> 
+							value="{{item.name}}" type="checkbox" 
+							ng-checked="item.checked" 
+							ng-model="item.checked"
+							ng-change="selectArea(item)"> 
 							<label for="h{{$index + 1}}"> <i class="weui-icon-checkbox icon-checkbox-self"
 							style="margin: 0;"></i>
 							<div class="weui-form-text label-input" style="margin: 0">
@@ -84,7 +91,7 @@
         <div class="weui_cell">
           <div class="weui_cell_hd"><label class="weui_label label">分类备注</label></div>
             <div class="weui_cell_bd">
-            <input class="weui_input label-input" type="text"  placeholder="填写备注信息">
+            <input class="weui_input label-input" type="text" ng-model="form.GTYPE_BZ"  placeholder="填写备注信息">
           </div>
         </div>
     </div>

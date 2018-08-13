@@ -8,61 +8,137 @@
 				// 定义页面标题
 				scope.pageTitle = '商品分类';
 				
-				scope.selectType =  [ '热菜', '凉菜', '汤类' ];
 				// 显示范围数据源
-				scope.show_area = [
+				scope.GTYPE_AREA = [
 					{
-						value : 1,
 						name : '堂点',
-						checked: true
+						checked: false
 					},
 					{
-						value : 2,
 						name : '外卖',
 						checked: false
 					},
 					{
-						value : 3,
 						name : '预订',
 						checked: false
 					}
 				];
 				
-				scope.toHref = function(path,shopid) {
+				//初始化form表单
+				scope.form = {};
+				
+				/*初始化排序序号*/
+				scope.form.GTYPE_ORDER = 1;
+				
+				/*	初始化上一级分类ID*/
+				scope.form.GTYPE_PID = params.GTYPE_PID;
+				
+				/*选择分类初始化*/
+				scope.form.GTYPE_PNAME = "顶级类";
+				
+				/*是否启用初始化*/
+				scope.form.GTYPE_STATE = 1;
+				
+				/*显示范围数组初始化*/
+				scope.form.GTYPE_AREA_Array = [];
+				
+				/*显示范围值初始化*/
+				scope.form.GTYPE_AREA = "";
+				
+				console.info("添加中传过来的:"+params.Last_Page);
+				/*初始化商品类别等级*/
+				scope.form.GTYPE_LEVEL = 1;
+				
+				/*根据PID查询更新要添加分类的上一级分类名称*/
+				function loadLastGoodsTypeName(){
+					$httpService.post(config.selectGoodsTypePNameByPIDURL,params).success(function(data) {
+						/*$scope.$apply();*/
+						if(data.code == '0000' && data.data !=null){
+							scope.form.GTYPE_PNAME = data.data.GTYPE_NAME;
+							$scope.$apply();
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+				loadLastGoodsTypeName();
+				
+				scope.toHref = function(path) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&shopid=" + shopid,
-						"size" : "modal-lg",
-						"contentName" : "content"
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+params.Last_Page,
+							"size" : "modal-lg",
+							"contentName" : "content"
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
 				
-				//初始化form表单
-				scope.form = {};
-				
-				scope.form.SELECTTYPE = scope.selectType[1];
-				
-				/*angular.element("#fs_select").get(0).value = scope.form.SELECTTYPE;*/
-				$("#fs_select").val(scope.selectType[1]);
+				// 范围勾选
+				scope.selectArea = function(item) {
+					var action = (item.checked ? 'add' : 'remove');
+					if (action == "add") {
+						scope.form.GTYPE_AREA_Array.push({name:item.name,checked:item.checked});
+						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
+					} else {
+						scope.form.GTYPE_AREA_Array.remove({name:item.name,checked:item.checked});
+						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
+					}
+				}
 				
 				scope.doSave = function() {
-
-					console.info("aa");
+					 var m2 = {
+				        		"url":"aps/content/goods/addGoodsType/config.json",
+				        		"title":"提示",
+				        		"contentName":"modal",
+				        		"text":"是否保存"
+				        	 }
+				    eventBusService.publish(controllerName,"appPart.load.modal",m2);
 				}
-				function comboboxInit() {	
-					$("#fs_select").picker({
-						title : "选择分类",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : scope.selectType,
-								displayValues : scope.selectType
-							}
-						]
+				/*加载排序序号*/
+				function loadGoodsTypeOrder(){
+					//发送post请求
+					$httpService.post(config.loadGoodsTypeOrderURL,params).success(function(data) {
+						/*$scope.$apply();*/
+						if(data.code == '0000' && data.data !=null){
+							scope.form.GTYPE_ORDER = parseInt(data.data.GTYPE_ORDER)+1;
+							$scope.$apply();
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
 					});
 				}
-				comboboxInit();
+				/*调用加载排序序号方法*/
+				loadGoodsTypeOrder();
+				
+				// 弹窗默认事件
+				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					$httpService.post(config.addURL, $scope.form).success(function(data) {
+						if (data.code != '0000') {
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data,
+							}
+						} else {
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data,
+								"toUrl" : "aps/content/goods/config.json?fid=" + scope.form.fid
+							}
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+					
+					
+				});
+				// 弹窗取消事件
+				eventBusService.subscribe(controllerName, controllerName + '.close', function(event, btn) {
+					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+						contentName : "modal"
+					});
+				});
 			}
 		];
 	});
