@@ -12,9 +12,7 @@
 				
 				scope.form.GTYPE_PID = 0 ;
 				
-				console.info(params);
-				
-				scope.lastPage = [];
+				scope.lastPage = [0];
 				
 				
 				/*判断是否进入选择添加商品或者类别界面(返回按钮的时候使用)*/
@@ -33,23 +31,16 @@
 				scope.GoodsType_List = [];
 				
 				/*定义加载商品分类列表方法*/
-				function loadGoodsTypeListByPID(method){
-					console.info(scope.form.GTYPE_PID);
+				function loadGoodsTypeListByPID(){
 					//发送post请求
-					if(method == "next"){
-						scope.lastPage.push(scope.form.GTYPE_PID);
-					}
-					if(scope.methodType == 1){
+					/*if(scope.methodType == 1){
 						$(".showAddGoodsTypeBtn").css("display","block");
 						$(".showGoodsType").css("display","block");
 						$(".showSelectDiv").css("display","none");
-					}
+					}*/
 					$httpService.post(config.loadGoodsTypeListByPIDURL,scope.form).success(function(data) {
 						if(data.code == '0000' && data.data !=null){
 							scope.GoodsType_List = data.data;
-							$scope.$apply();
-						}else{
-							scope.GoodsType_List = [];
 							$scope.$apply();
 						}
 					}).error(function(data) {
@@ -57,46 +48,42 @@
 					});
 				}
 				/*调用加载商品分类列表方法*/
-				loadGoodsTypeListByPID("return");
+				loadGoodsTypeListByPID();
 				/*定义返回按钮被点击时的方法*/
 				scope.returnClick = function(){
-					if(scope.lastPage.length == 0 && scope.form.GTYPE_PID == 0){
+					/*如果lastPage数组的长度为0且此时的PID为0，则当前为一级分类*/
+					if(scope.lastPage.length == 1 && scope.form.GTYPE_PID == 0){
 						scope.toHref("welcome");
-					}else if(scope.lastPage.length == 0 && scope.form.GTYPE_PID != 0){
-						scope.form.GTYPE_PID = 0;
-						loadGoodsTypeListByPID("return");
-					}else{
+					}
+					if(scope.lastPage.length > 1){
 						scope.lastPage.pop();
-						if(scope.lastPage.length == 0){
-							scope.form.GTYPE_PID = 0;
-							loadGoodsTypeListByPID("return");
-						}else{
-							scope.form.GTYPE_PID = scope.lastPage[scope.lastPage.length-1];
-							loadGoodsTypeListByPID("return");
-						}
-						
+						scope.goodsTypeClick(scope.lastPage[scope.lastPage.length-1],"last");
 					}
 				}
 				/*定义某一个商品分类被点击调用的方法*/
 				scope.goodsTypeClick = function(GTYPE_PK,method){
 					scope.form.GTYPE_PID = GTYPE_PK;
+					/*若是往下点击往数组里边放*/
+					if(method == "next"){
+						scope.lastPage.push(GTYPE_PK);
+					}
 					$httpService.post(config.selectLastRecordCountByPIDURL,scope.form).success(function(data) {
 						if(data.code == '0000' && data.data !=null){
 							/*下面没有商品也没有商品分类*/
 							if(data.data == '00'){
-								scope.methodType = 1;
-								scope.lastPage.push(scope.form.GTYPE_PID);
-								scope.lastPage.pop();
+								/*隐藏商品分类数据，显示分类按钮*/
 								$(".showAddGoodsTypeBtn").css("display","none");
 								$(".showGoodsType").css("display","none");
 								$(".showSelectDiv").css("display","block");
-							/*	loadGoodsTypeListByPID();*/
 								/*下面没有商品有商品分类*/
 							}else if(data.data == '10'){
-								loadGoodsTypeListByPID(method);
+								/*显示商品分类数据，隐藏分类按钮*/
+								$(".showAddGoodsTypeBtn").css("display","block");
+								$(".showGoodsType").css("display","block");
+								$(".showSelectDiv").css("display","none");
+								loadGoodsTypeListByPID();
 								/*下面有商品没有商品分类*/
 							}else if(data.data == '01'){
-								
 								/*下面有商品有商品分类(不可能)*/
 							}else{
 								console.info("error");
@@ -106,27 +93,11 @@
 						loggingService.info('获取测试信息出错');
 					});
 				}
-				if(params!=null&&params.Last_Page!=null&&params.Last_Page!=""&&params.GTYPE_PID!=null){
+			/*	若接收的数组存在*/
+				if(params.Last_Page != undefined){
 					scope.lastPage = params.Last_Page.split(",");
-					scope.lastPage.push(params.GTYPE_PID);
-					scope.goodsTypeClick(scope.lastPage[scope.lastPage.length-1]);
-					console.info("测试"+scope.lastPage);
-				}else if(params.Last_Page == ""&&params.GTYPE_PID!=null){
-					scope.goodsTypeClick(params.GTYPE_PID);
-				}else{
-					scope.form.GTYPE_PID = 0;
-					loadGoodsTypeListByPID("return");
+					scope.goodsTypeClick(scope.lastPage[scope.lastPage.length-1],"last");
 				}
-				/*if(params!=null&&params.Last_Page!=null&&params.GTYPE_PID!=null){
-					console.info("进来了");
-					console.info("返回中传的param"+params.GTYPE_PID+"===="+params.Last_Page);
-				}*/
-				if(params!=null&&params.GTYPE_PID!=null){
-					scope.form.GTYPE_PID = params.GTYPE_PID;
-					/*scope.goodsTypeClick(params.GTYPE_PID,"return");*/
-				}
-				
-				
 			}
 		];
 	});
