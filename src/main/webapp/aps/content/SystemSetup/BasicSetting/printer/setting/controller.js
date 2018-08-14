@@ -23,7 +23,7 @@ Array.prototype.remove = function(val) {
 				scope.noCheckArr = [ 1, 2, 3, 4, 5 ];
 
 				// 定义页面标题
-				scope.pageTitle = '打印机设置'
+				scope.pageTitle = config.pageTitle
 
 				// 打印类型的被选中对象
 				scope.printer_level_selected = ''
@@ -91,51 +91,13 @@ Array.prototype.remove = function(val) {
 				scope.form.PRINTER_PAGE_NUMS = 1;
 
 				// 初始化打印速度
-				scope.form.RPINTER_SPEED = scope.printer_speed[0].value;
+				scope.form.RPINTER_SPEED = scope.printer_speed[0].title;
+
+				// 初始化宽度
+				scope.form.PRINTER_PAGE_WIDTH = '58mm'
 
 				// 初始化 菜品列表
 				scope.form.KIND_OF_DISHES = false;
-
-				// 打印份数减法
-				scope.fsDoReduce = function() {
-					if (scope.form.PRINTER_PAGE_NUMS > 1) {
-						scope.form.PRINTER_PAGE_NUMS -= 1;
-					}
-				}
-
-				// 打印份数加法
-				scope.fsDoAdd = function() {
-					scope.form.PRINTER_PAGE_NUMS += 1;
-				}
-
-				// 打印份数直接修改数字
-				scope.fsReduceNum = function() {
-					if (scope.form.PRINTER_PAGE_NUMS <= 0 || scope.form.PRINTER_PAGE_NUMS == null) {
-						scope.form.PRINTER_PAGE_NUMS = 1
-					}
-				}
-
-				// 打印类型单选实现
-				scope.selectLevel = function(item) {
-					if (scope.printer_level_selected == '') {
-						scope.printer_level_selected = item
-					} else if (scope.printer_level_selected != item) {
-						scope.printer_level_selected.checked = false
-						item.checked = true
-						scope.printer_level_selected = item
-					}
-					scope.form.PRINTER_LEVEL = item.value
-				}
-
-				// 菜品勾选
-				scope.selectDishes = function(item) {
-					var action = (item.checked ? 'add' : 'remove');
-					if (action == "remove") {
-						scope.noCheckArr.push(item.value);
-					} else {
-						scope.noCheckArr.remove(item.value);
-					}
-				}
 
 				$scope.$watch('form.PRINTER_PRODUCT_RANGE', function(newValue, oldValue) {
 					if (newValue === oldValue) {
@@ -155,36 +117,123 @@ Array.prototype.remove = function(val) {
 					}
 				}, true);
 
+				// 打印类型单选实现
+				scope.selectLevel = function(item) {
+					if (scope.printer_level_selected == '') {
+						scope.printer_level_selected = item
+					} else if (scope.printer_level_selected != item) {
+						scope.printer_level_selected.checked = false
+						item.checked = true
+						scope.printer_level_selected = item
+					}
+					scope.form.PRINTER_LEVEL = item.value
+				}
+
+				scope.toHref = function(path) {
+					var m2 = {
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
+
+				// 菜品勾选
+				scope.selectDishes = function(item) {
+					var action = (item.checked ? 'add' : 'remove');
+					if (action == "remove") {
+						scope.noCheckArr.push(item.value);
+					} else {
+						scope.noCheckArr.remove(item.value);
+					}
+				}
+
 				scope.doSave = function() {
+					var $form = $("#menuAddForm");
+					$form.form();
+					$form.validate(function(error) {
+						if (!error) {
+							if (scope.form.PRINTER_KEY == undefined || scope.form.PRINTER_KEY == '') {
+								var m2 = {
+									"title" : "提示",
+									"contentName" : "modal",
+									"text" : '请选择打印机密匙!'
+								}
+								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+								return;
+							}
+							
+							if (scope.form.PRINTER_LEVEL == undefined || scope.form.PRINTER_LEVEL == '') {
+								var m2 = {
+									"title" : "提示",
+									"contentName" : "modal",
+									"text" : '请选择打印类型!'
+								}
+								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+								return;
+							}
+							
+							// 定义菜品字段
+							scope.form.PRINTER_DISHES = []
 
-					// 定义菜品字段
-					scope.form.PRINTER_DISHES = []
-
-					$.each(scope.printer_dishes_list, function(index, item) {
-						if (scope.noCheckArr.indexOf(item.value) == -1) {
-							scope.form.PRINTER_DISHES.push(item.value)
+							$.each(scope.printer_dishes_list, function(index, item) {
+								if (scope.noCheckArr.indexOf(item.value) == -1) {
+									scope.form.PRINTER_DISHES.push(item.value)
+								}
+							})
+							
+							if (scope.form.PRINTER_DISHES.length <= 0) {
+								var m2 = {
+									"title" : "提示",
+									"contentName" : "modal",
+									"text" : '请选择范围!'
+								}
+								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+								return;
+							}
+							
+							var m2 = {
+								"url" : "aps/content/SystemSetup/BasicSetting/printer/setting/config.json",
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : "是否确定保存?"
+							}
+							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 						}
 					})
-
-					console.info(scope.form)
 				}
+				
+				// 弹窗确认事件
+				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					scope.form.PRINTER_DISHES_STR = scope.form.PRINTER_DISHES.join(',');
+					$httpService.post(config.saveURL, $scope.form).success(function(data) {
+						if (data.code != '0000') {
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data,
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/printer/config.json?fid=" + params.fid
+							}
+						} else {
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data
+							}
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
 
+				});
 
-				scope.reset = function() {
-					//初始化 form 表单
-					scope.form = {}
-
-					// 初始化打印份数
-					scope.form.PRINTER_PAGE_NUMS = 1;
-
-					// 初始化打印速度
-					scope.form.RPINTER_SPEED = scope.printer_speed[0].value;
-
-					// 取消勾选
-					scope.printer_level_selected.checked = false
-
-					scope.form.PRINTER_PRODUCT_RANGE = undefined
-				}
+				// 弹窗取消事件
+				eventBusService.subscribe(controllerName, controllerName + '.close', function(event, btn) {
+					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+						contentName : "modal"
+					});
+				});
 
 				function comboboxInit() {
 					$("#fs_select").picker({

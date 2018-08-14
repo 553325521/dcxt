@@ -1,8 +1,21 @@
 {
-	"name": "Printer_setting",
+	"name": "printer_setting",
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/printer/setting/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/printer/setting/controller.js",
 	"config": {
-		
+		"pageTitle": "打印机设置",
+		"saveURL":"json/Print_insert_addPinterInfo.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"printer_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"printer_setting.confirm"
+		        	}
+				]
+			}
 	}
 }

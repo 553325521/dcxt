@@ -1,0 +1,9 @@
+{
+	"name": "printer_bug",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/printer/bug/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/printer/bug/controller.js",
+	"config": {
+		"pageTitle": "打印机列表",
+		"findURL":"json/Print_queryForList_loadPrintRelevantList.json"
+	}
+}

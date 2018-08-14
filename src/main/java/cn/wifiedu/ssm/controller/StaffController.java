@@ -19,7 +19,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
@@ -47,7 +46,7 @@ public class StaffController extends BaseController {
 
 	@Resource
 	OpenService openService;
-
+	
 	public OpenService getOpenService() {
 		return openService;
 	}
@@ -68,9 +67,18 @@ public class StaffController extends BaseController {
 	@Autowired
 	private MenuController menuCtrl;
 	
-	@Resource
-	PlatformTransactionManager transactionManager;
+	@Autowired
+	private TransactionManagerController txManagerController;
 	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月13日 - 下午9:58:44 
+	 * @description:更新员工信息
+	 */
 	@RequestMapping("/User_update_updateStaffInfo")
 	public void updateStaffInfo(HttpServletRequest request, HttpSession session) {
 		try {
@@ -81,11 +89,13 @@ public class StaffController extends BaseController {
 			map.put("IS_USE", String.valueOf(map.get("IS_USE")));
 			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
 			map.put("sqlMapId", "updateStaffInfo");
+			txManagerController.createTxManager();
 			logger.info("update staffInfo: info [ " + map + "]");
 			if (openService.update(map)) {
 				map.put("sqlMapId", "updateUserInfo");
 				logger.info("update userInfo: info [ " + map + "]");
 				if (openService.update(map)) {
+					txManagerController.commit();
 					output("0000", "保存成功！");
 					return;
 				}
@@ -94,9 +104,19 @@ public class StaffController extends BaseController {
 			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
+			txManagerController.rollback();
 		}
 	}
 
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月13日 - 下午9:59:04 
+	 * @description:根据员工id获取具体信息
+	 */
 	@RequestMapping("/User_queryForObject_findUserInfoById")
 	public void findUserInfoById(HttpServletRequest request, HttpSession session) {
 		try {
@@ -112,7 +132,16 @@ public class StaffController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月13日 - 下午9:59:33 
+	 * @description:获取店铺所有员工
+	 */
 	@RequestMapping("/Staff_queryForList_findStaffList")
 	public void loadTopMenus(HttpServletRequest request, HttpSession session) {
 		try {
@@ -129,6 +158,15 @@ public class StaffController extends BaseController {
 		}
 	}
 
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月13日 - 下午9:59:49 
+	 * @description:员工添加二维码
+	 */
 	@RequestMapping("/Staff_add_getCodeToRes")
 	public void getCodeToRes(HttpServletRequest request, HttpSession session) {
 		try {
@@ -157,6 +195,15 @@ public class StaffController extends BaseController {
 		}
 	}
 
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月13日 - 下午10:00:01 
+	 * @description:员工添加逻辑
+	 */
 	@RequestMapping("/Staff_add_addStaff")
 	public void addStaff(HttpServletRequest request, HttpSession session) {
 		try {

@@ -1,6 +1,7 @@
 
 <div class="weui-header" style="background-color:#FFFFFF">
-	<div class="weui-header-left">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting/printer');">
 		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 	</div>
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
@@ -11,23 +12,25 @@
 	</div>
 </div>
 
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+<div class="weui_cells weui_cells_form" style="margin-top: 0;" id="menuAddForm">
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">名称</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text"
-				placeholder="输入打印机名称" ng-model="form.PRINTER_NAME">
+				placeholder="输入打印机名称" ng-model="form.PRINTER_NAME" required
+				emptyTips="请输入打印机名称" notMatchTips="输入正确的打印机名称"
+				pattern="^[\s\S]*.*[^\s][\s\S]*$">
 		</div>
 	</div>
-	<div class="weui_cell">
+	<div class="weui_cell self_select">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">密匙</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text"
-				placeholder="选择打印机ID号" ng-model="form.PRINTER_ID">
+				placeholder="选择打印机ID号" ng-model="form.PRINTER_KEY">
 		</div>
 	</div>
 	<div class="weui_cell">
@@ -82,38 +85,22 @@
 			</div>
 		</div>
 	</div>
-	<div class="weui_cell">
+	<div class="weui_cell self_select">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">份数</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" id="fs_select" type="text"
 				value="" ng-model="form.PRINTER_PAGE_NUMS">
-			<!-- <div class="weui-count">
-					<a class="weui-count__btn weui-count__decrease"
-						ng-click="fsDoReduce()"></a> <input class="weui-count__number"
-						 type="number"
-						style="width: 1.5rem;" pattern="[0-9]*" ng-blur="fsReduceNum()" />
-					<a class="weui-count__btn weui-count__increase"
-						ng-click="fsDoAdd()"></a>
-				</div> -->
 		</div>
 	</div>
-	<div class="weui_cell">
+	<div class="weui_cell self_select">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">速度</label>
 		</div>
-		<div class="weui-cell_bd weui_cell_primary">
+		<div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" id="sd_select" type="text"
 				value="" ng-model="form.RPINTER_SPEED">
-			<!-- <div class="weui_cell_select" style="width: 100%;">
-				<div class="weui_cell_bd weui_cell_primary">
-					<select class="weui_select" name="select1"
-						style="padding-left: 0;width: 100%;" ng-model="form.RPINTER_SPEED">
-						<option ng-repeat="item in printer_speed" value="{{item.value}}">{{item.title}}</option>
-					</select>
-				</div>
-			</div> -->
 		</div>
 	</div>
 	<div class="weui_cell">

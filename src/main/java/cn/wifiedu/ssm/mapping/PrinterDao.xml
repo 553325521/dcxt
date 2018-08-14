@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="printDao">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+
+	<insert id="addPinterInfo" parameterMap="BaseParameterMap">
+		insert into SC_PRINTER
+		(
+		PRINTER_PK,
+		PRINTER_NAME,
+		PRINTER_KEY,
+		PRINTER_PAGE_NUMS,
+		PRINTER_PAGE_WIDTH,
+		RPINTER_SPEED,
+		PRINTER_DISHES,
+		PRINTER_LEVEL,
+		PRINTER_BILL_HEAD,
+		INSERT_TIME
+		)
+		values
+		(
+		#{UUID},
+		#{PRINTER_NAME},
+		#{PRINTER_KEY},
+		#{PRINTER_PAGE_NUMS},
+		#{PRINTER_PAGE_WIDTH},
+		#{RPINTER_SPEED},
+		#{PRINTER_DISHES_STR},
+		#{PRINTER_LEVEL},
+		#{PRINTER_BILL_HEAD},
+		#{INSERT_TIME}
+		)
+	</insert>
+	<!-- 查询打印机相关信息 -->
+	<select id="loadPrintRelevantList" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT PRINT_RELEVANT_NAME, PRINT_RELEVANT_FPK,
+		PRINT_RELEVANT_TYPE FROM SC_PRINT_RELEVANT ORDER BY
+		CONVERT(PRINT_RELEVANT_PK, SIGNED)
+	</select>
+
+</mapper>

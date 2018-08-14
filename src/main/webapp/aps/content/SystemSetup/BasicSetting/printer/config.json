@@ -3,6 +3,7 @@
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/printer/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/printer/controller.js",
 	"config": {
-		"pageTitle": "打印机列表"
+		"pageTitle": "打印机列表",
+		"findURL":"json/Print_queryForList_loadPrintList.json"
 	}
 }
