@@ -30,7 +30,7 @@ import cn.wifiedu.ssm.util.StringDeal;
 	@Scope("prototype")
 	public class ServiceTypeController extends BaseController {
 
-		private static Logger logger = Logger.getLogger(UserTagController.class);
+		private static Logger logger = Logger.getLogger(ServiceTypeController.class);
 
 		@Resource
 		OpenService openService;

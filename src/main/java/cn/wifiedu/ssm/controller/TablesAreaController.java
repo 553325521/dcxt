@@ -48,7 +48,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 			private static final String Map = null;
 
-			private static Logger logger = Logger.getLogger(UserTagController.class);
+			private static Logger logger = Logger.getLogger(TablesAreaController.class);
 
 			@Resource
 			OpenService openService;
@@ -149,9 +149,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//先删除区域下边的桌位
 					map.put("sqlMapId", "removeTablesByAreaId");
 					boolean b = openService.delete(map);
-					if(!b){
-						output("9999", "删除失败！");
-					}
 					
 					//开始删除区域
 					map.put("sqlMapId", "removeTablesAreaById");

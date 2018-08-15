@@ -48,7 +48,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 			private static final String Map = null;
 
-			private static Logger logger = Logger.getLogger(UserTagController.class);
+			private static Logger logger = Logger.getLogger(TablesController.class);
 
 			@Resource
 			OpenService openService;
@@ -135,7 +135,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//判断当前是不是最后一个数据
 					if(areaCount != bef_pxxh){
 						//如果不等于，进行排序序号重置
-						map.put("sqlMapId", "updateTablesPxxhSubById");
+						map.put("sqlMapId", "updateTablesPxxhById");
+						map.put("sub", true);
 						map.put("SMALL_TABLES_PXXH", bef_pxxh);
 						
 						boolean update = openService.update(map);
@@ -219,7 +220,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Integer pxxh = Integer.parseInt((String) map.get("TABLES_PXXH"));
 					//判断，如果当前排序序号不是最后一个，开始把当前序号后边的依次加一
 					if(pxxh - 1 != areaCount){
-						map.put("sqlMapId", "updateTablesPxxhAddById");
+						map.put("sqlMapId", "updateTablesPxxhById");
 						map.put("SMALL_TABLES_PXXH", pxxh);
 						boolean b = openService.update(map);
 						if(!b){
@@ -284,13 +285,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//判断当前桌位的排序位置是不是最后一个
 					if(bef_pxxh != after_pxxh){
 						if(bef_pxxh > after_pxxh){//如果更新前的序号大于更新后的，那就把更新后的后边的序号依次加一
-							map.put("sqlMapId", "updateTablesPxxhAddById");
+							map.put("sqlMapId", "updateTablesPxxhById");
 							map.put("SMALL_TABLES_PXXH", after_pxxh);
 							map.put("BIG_TABLES_PXXH", bef_pxxh);
 						}else if(bef_pxxh < after_pxxh){//如果更新前的序号小于更新后的，那就把更新后的后边的序号依次减一
 							map.put("SMALL_TABLES_PXXH", bef_pxxh);
 							map.put("BIG_TABLES_PXXH", after_pxxh);
-							map.put("sqlMapId", "updateTablesPxxhSubById");
+							map.put("sqlMapId", "updateTablesPxxhById");
+							map.put("sub", true);
 						}
 						boolean b = openService.update(map);
 						if(!b){

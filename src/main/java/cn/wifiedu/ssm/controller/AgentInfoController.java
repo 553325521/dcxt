@@ -48,7 +48,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 			private static final String Map = null;
 
-			private static Logger logger = Logger.getLogger(UserTagController.class);
+			private static Logger logger = Logger.getLogger(AgentInfoController.class);
 
 			@Resource
 			OpenService openService;

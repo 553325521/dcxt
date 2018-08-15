@@ -6,26 +6,37 @@
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area">
-				<div class="bom-radio" id="attend2" ng-click="toHref('goods/general_goods_setting')">添加</div>
+				<div class="bom-radio" id="attend2" style="width:70px;" ng-click="toHref('goods/general_goods_setting')">添加商品</div>
 			</div>
 		</div>
 	</div>
-	<div class="weui_cells " style="margin-top:0">
-		<div class="weui_cell" ng-repeat="item in goods_list">
-			<div class="weui_cell_bd weui_cell_primary">
-				<div class="weui_cell_bd " style="width:10%;float:left;margin-left:5%;">
-					<span>{{item.order}}</span>
-				</div>
-				<div class="weui_cell_bd " style="width:27%;float:left;margin-left:5%;">
-					<span>{{item.name}}</span>
-				</div>
-				<div class="weui_cell_bd " style="width:20%;float:left;margin-left:5%;">
-					<span>{{item.type}}</span>
+	<div class="weui_cells " style="margin-top:0" ng-show="pageShow">
+		<div class="weui_cell slidelefts" ng-repeat="item in goods_list">
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd">
+				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
+					<span>{{$index+1}}</span>
 				</div>
 				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
-					<span>{{item.price}}</span>
+					<span>{{item.GOODS_NAME}}</span>
+				</div>
+				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
+					<span>{{item.GOODS_TYPE}}</span>
+				</div>
+				<div class="weui_cell_bd " style="float:left;margin-left:5%;" ng-switch="item.GOODS_TRUE_PRICE">
+					<span ng-switch-when="">{{item.GOODS_PRICE/100 | number:2}}</span>
+					<span ng-switch-default>{{item.GOODS_TRUE_PRICE/100 | number:2}}</span>/{{item.GOODS_DW}}
 				</div>
 			</div>
+			<div class="slideleft">
+	        <span style="background:#ccc;color:#fff" ng-click="toHref('goods/general_goods_setting',item.GOODS_PK)">修改</span>
+	        <span class="bg-red f-white dels" id="delete-table-cate" ng-click="tablesDelete(item.GOODS_PK)">删除</span>
+       	</div>	
 		</div>
 	</div>
+		
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	
    <!-- body 最后 -->

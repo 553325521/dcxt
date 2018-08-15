@@ -3,6 +3,18 @@
 	"viewUrl": "aps/content/goods/general_goods_setting/template.html",
 	"controllerUrl": "aps/content/goods/general_goods_setting/controller.js",
 	"config": {
-
+		"saveURL":"json/Goods_insert_insertGoods.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"general_goods_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"general_goods_setting.confirm"
+		        	}
+				]
+			}
 	}
 }

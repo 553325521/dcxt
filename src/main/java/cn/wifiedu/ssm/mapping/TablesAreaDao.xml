@@ -6,7 +6,7 @@
   
 	<select id="selectTablesArea" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 
-			ta.TABLES_AREA_PK, ta.TABLES_AREA_NAME, ta.TABLES_AREA_STATUS, ta.TABLES_AREA_PXXH, ta.TABLES_AREA_DESC,COUNT(t.TABLES_PK) as TABLES_AREA_NUM
+			ta.TABLES_AREA_PK, ta.TABLES_AREA_NAME, ta.TABLES_AREA_STATUS, ta.TABLES_AREA_PXXH,ta.TABLES_AREA_NUM as TABLES_AREA_DW, ta.TABLES_AREA_DESC,COUNT(t.TABLES_PK) as TABLES_AREA_NUM
 		FROM
 			sc_tables_area ta LEFT JOIN sc_tables t
 		ON

@@ -10,7 +10,8 @@
 		// 定义页面标题
 		scope.pageTitle = config.pageTitle
 		scope.showPage = "False"
-			
+		dw_select = ['桌','间'];
+		
 		//初始化form表单
 		scope.form={}
 		
@@ -32,8 +33,9 @@
 						scope.font_count = scope.form.TABLES_AREA_DESC.length
 						scope.pageShow = "True";
 						scope.$apply();
-						//这一行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
+						//这两行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
 						$("#pxxh_select").val(scope.form.TABLES_AREA_PXXH);
+						$("#dw_select").val(scope.form.TABLES_AREA_NUM);
 						comboboxInit()
 					}
 				}).error(function(data) {
@@ -43,8 +45,10 @@
 				scope.pageShow = "True";
 				//初始化排序序号列表
 				catesetting_pxxh = Array(Number(params.area_num)+1).fill().map((v,i) => i+1);//填充排序列表 1-n
-				//这一行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
+				//这两行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
 				$("#pxxh_select").val(Number(params.area_num)+1);
+				$("#pxxh_select").val(dw_select[0]);
+				scope.form.TABLES_AREA_NUM = dw_select[0];
 				scope.form.TABLES_AREA_PXXH = Number(params.area_num)+1;
 				scope.form.TABLES_AREA_STATUS = "1";
 				scope.form.TABLES_AREA_DESC="";
@@ -144,6 +148,18 @@ function comboboxInit(){
 				textAlign : 'center',
 				values : catesetting_pxxh,
 				displayValues : catesetting_pxxh
+			}
+		]
+	});
+	
+	$("#dw_select").picker({
+		title : "单位",
+		toolbarCloseText : '确定',
+		cols : [
+			{
+				textAlign : 'center',
+				values : dw_select,
+				displayValues : dw_select
 			}
 		]
 	});

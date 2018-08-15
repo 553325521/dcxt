@@ -3,6 +3,19 @@
 	"viewUrl": "aps/content/goods/goods_show/template.html",
 	"controllerUrl": "aps/content/goods/goods_show/controller.js",
 	"config": {
-
+		"findURL":"json/Goods_query_findBaseGoosList.json",
+		"removeURL":"json/Goods_delete_removeGoodsById.json",
+		"menu":{	
+	         "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"Goods_show.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"Goods_show.confirm"
+		        	}
+				]
+			}
 	}
 }

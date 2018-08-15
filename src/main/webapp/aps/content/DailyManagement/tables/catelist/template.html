@@ -7,7 +7,7 @@
 	}
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('welcome','')">
+		<div href="#" class="weui-header-left" ng-click="toHref('welcome')">
 			<a class="icon icon-109" ></a>
 		</div>
 
@@ -27,7 +27,7 @@
 					<span>{{$index + 1}}</span>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<span>{{item.TABLES_AREA_NAME}}（{{item.TABLES_AREA_NUM}}桌）</span>
+					<span>{{item.TABLES_AREA_NAME}}（{{item.TABLES_AREA_NUM}}{{item.TABLES_AREA_DW}}）</span>
 				</div>
 				<div class="weui_cell_bd tablessetting-small-font {{item.TABLES_AREA_STATUS == 0 ? 'tablessetting-red-font' : 'tablessetting-gray-font'}}" >
 					<span>{{item.TABLES_AREA_STATUS == 1 ? '已启用' : '已停用'}}</span>

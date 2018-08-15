@@ -71,28 +71,21 @@
 	</update>
 	
 	<!-- 插入或添加桌位, 之前位置后边的桌位排序序号依次增加 -->
-	<update id="updateTablesPxxhAddById" parameterMap="BaseParameterMap">
-		UPDATE 
-			sc_tables
-		SET 
-			TABLES_PXXH = CAST(TABLES_PXXH AS SIGNED integer) + 1 
-		WHERE 
-			TABLES_AREA_FK = #{TABLES_AREA_ID} 
-		AND 
-			CAST(TABLES_PXXH AS SIGNED integer) >= CAST(#{SMALL_TABLES_PXXH} AS SIGNED integer)
-		<if test="BIG_TABLES_PXXH != null and BIG_TABLES_PXXH != ''">
-			AND 
-				CAST(TABLES_PXXH AS SIGNED integer) &lt; CAST(#{BIG_TABLES_PXXH} AS SIGNED integer)
-		</if>
-		;
-	</update>
-	
 	<!-- 修改或删除桌位, 之前位置后边的桌位排序序号依次减少 -->
-	<update id="updateTablesPxxhSubById" parameterMap="BaseParameterMap">
+	<update id="updateTablesPxxhById" parameterMap="BaseParameterMap">
 		UPDATE 
 			sc_tables
 		SET 
-			TABLES_PXXH = CAST(TABLES_PXXH AS SIGNED integer) - 1 
+			TABLES_PXXH = CAST(TABLES_PXXH AS SIGNED integer) 
+				<choose>
+					<when test="sub == true">
+			           - 
+			        </when>
+			        <otherwise>
+			           +
+			        </otherwise>
+		    	</choose>
+			 1 
 		WHERE 
 			TABLES_AREA_FK = #{TABLES_AREA_ID} 
 		AND 

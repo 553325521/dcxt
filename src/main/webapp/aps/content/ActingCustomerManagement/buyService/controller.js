@@ -18,7 +18,6 @@
 					pre_service_price = 0;
 					scope.deduction_money = 0;
 					
-					
 					//页面初始化
 					var init = function() {
 						$httpService.post(config.findUrl,scope.form).success(function(data) {
@@ -104,17 +103,18 @@
 						   WeixinJSBridge.invoke(
 						      'getBrandWCPayRequest', {
 						         "appId":"wx6041a1eff32d3c5e",     //公众号名称，由商户传入     
-						         "timeStamp":"1533808629",         //时间戳，自1970年以来的秒数     
-						         "nonceStr":"L2BYxPB7tg4n8cK1", //随机串     
-						         "package":"prepay_id=wx10052017565144f9841b80334273358013",     
+						         "timeStamp":"1534099971",         //时间戳，自1970年以来的秒数     
+						         "nonceStr":"L2BYxPB7tg4n8cK2", //随机串     
+						         "package":"prepay_id=wx13025152173868bc37da7bfc2764005572",     
 						         "signType":"MD5",         //微信签名方式：     
-						         "paySign":"C2EB7AE806BFE1CA7A7532D43B6D06FA" //微信签名 
+						         "paySign":"2013CB1B826A6AD28FF85FA82A428C51" //微信签名 
 						      },
 						      function(res){
 						      if(res.err_msg == "get_brand_wcpay_request:ok" ){
 						      // 使用以上方式判断前端返回,微信团队郑重提示：
 						            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
 						      } 
+						      console.info(res)
 						   }); 
 						}
 					
@@ -122,28 +122,28 @@
 					scope.confirmPayment = function(){
 						
 				
-//					if (typeof WeixinJSBridge == "undefined"){
-//					   if( document.addEventListener ){
-//					       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-//					   }else if (document.attachEvent){
-//					       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
-//					       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-//					   }
-//					}else{
-//					   onBridgeReady();
-//					}
-//						
+					if (typeof WeixinJSBridge == "undefined"){
+					   if( document.addEventListener ){
+					       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+					   }else if (document.attachEvent){
+					       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+					       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+					   }
+					}else{
+					   onBridgeReady();
+					}
 						
 						
 						
-						console.info(scope.form)
-						var m2 = {
-							"url" : "aps/content/ActingCustomerManagement/buyService/config.json",
-							"title" : "提示",
-							"contentName" : "modal",
-							"text" : "是否支付?"
-						}
-						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						
+//						console.info(scope.form)
+//						var m2 = {
+//							"url" : "aps/content/ActingCustomerManagement/buyService/config.json",
+//							"title" : "提示",
+//							"contentName" : "modal",
+//							"text" : "是否支付?"
+//						}
+//						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 					}
 					
 					scope.toHref = function(path) {
@@ -158,7 +158,6 @@
 					
 					scope.selectPay = function(type){
 						scope.form.PAY_TYPE = type;
-						console.info(type)
 					}
 					
 					// 弹窗确认事件

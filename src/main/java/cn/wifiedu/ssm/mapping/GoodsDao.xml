@@ -1,13 +1,113 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="goods" >
-  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
-  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
-	<!-- 根据商品类别ID查询商品-->
+  	<resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+ 	<parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+ 	<!-- 根据商品类别ID查询商品-->
 	<select id="selectGoodsByGoodsType" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT *
 		FROM sc_goods
 		WHERE GTYPE_FK = #{GTYPE_PID}
 	</select>
+  	<!-- 根据类别id查询该类下的商品基本信息 -->
+	<select id="selectBaseGoosListByGid" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT GOODS_PK, GOODS_NAME, GOODS_TYPE, GOODS_PRICE, GOODS_TRUE_PRICE, GOODS_DW 
+		FROM sc_goods 
+		WHERE GTYPE_FK = #{GTYPE_ID}
+		ORDER BY CAST(GOODS_PXXH  AS SIGNED integer);
+	</select>
+	<!-- 根据商品id删除指定商品 -->
+	<delete id="deleteGoodsById" parameterMap="BaseParameterMap">
+		DELETE FROM sc_goods
+		WHERE GOODS_PK = #{GOODS_ID};	
+	</delete>
+	
+	<!-- 根据商品id查询当前类别有多少商品、当前商品的排序序号、当前商品的类别id -->
+	<select id="selectGoodsCountByGoodsId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			pg.GTYPE_FK, pg.GOODS_PXXH, COUNT(GOODS_PK) as goodsCount 
+		FROM 
+			sc_goods g, (
+						SELECT 
+							GOODS_PXXH,GTYPE_FK 
+						FROM 
+							sc_goods WHERE GOODS_PK = #{GOODS_ID}) pg 
+		WHERE pg.GTYPE_FK = g.GTYPE_FK;
+	</select>
+	
+		<!-- 修改或删除商品, 之前位置后边的商品排序序号依次减少 ,插入或添加商品, 之前位置后边的商品排序序号依次增加-->
+	<update id="updateGoodsPxxhById" parameterMap="BaseParameterMap">
+		UPDATE 
+			sc_goods
+		SET 
+			GOODS_PXXH = CAST(GOODS_PXXH AS SIGNED integer) 
+			<choose>
+				<when test="sub == true">
+		           - 
+		        </when>
+		        <otherwise>
+		           +
+		        </otherwise>
+		    </choose>
+			1 
+		WHERE 
+			GTYPE_FK = #{GTYPE_ID} 
+		AND 
+			CAST(GOODS_PXXH AS SIGNED integer) >= CAST(#{SMALL_GOODS_PXXH} AS SIGNED integer)
+		<if test="BIG_GOODS_PXXH != null and BIG_GOODS_PXXH != ''">
+			AND 
+				 CAST(GOODS_PXXH AS SIGNED integer) &lt;= CAST(#{BIG_GOODS_PXXH} AS SIGNED integer);
+		</if>
+		;
+	</update>
+	
+	<insert id="insertGoods" parameterMap="BaseParameterMap">
+		INSERT INTO sc_goods
+		(
+			GOODS_PK,
+			GTYPE_FK,
+			GOODS_NAME,
+			GOODS_TYPE,
+			GOODS_PRICE,
+			GOODS_TRUE_PRICE,
+			GOODS_CODE,
+			IS_USE,
+			GOODS_DW,
+			GOODS_PXXH,
+			GOODS_SPECIFICATION,
+			GOODS_RECIPE,
+			GOODS_TASTE,
+			GOODS_DESC,
+			GOODS_LABEL,
+			SHOW_RANGE,
+			PICTURE_URL,
+			CREATE_BY,
+			CREATE_TIME
+		)
+		VALUES
+		(
+			#{UUID},
+			#{GTYPE_ID},
+			#{GOODS_NAME},
+			#{GOODS_TYPE},
+			#{GOODS_PRICE},
+			#{GOODS_TRUE_PRICE},
+			#{GOODS_CODE},
+			#{IS_USE},
+			#{GOODS_DW},
+			#{GOODS_PXXH},
+			#{GOODS_SPECIFICATION},
+			#{GOODS_RECIPE},
+			#{GOODS_TASTE},
+			#{GOODS_DESC},
+			#{GOODS_LABEL},
+			#{SHOW_RANGE},
+			#{PICTURE_URL},
+			#{CREATE_BY},
+			NOW()
+		)
+	</insert>
+	
+
 </mapper>
