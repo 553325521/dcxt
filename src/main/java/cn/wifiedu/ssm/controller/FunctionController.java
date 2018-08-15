@@ -85,7 +85,8 @@ public class FunctionController extends BaseController {
 		try {
 			Map<String, Object> map = getParameterMap();
 			
-			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
+			//String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			

@@ -3,6 +3,8 @@
 	"viewUrl": "aps/content/SystemSetup/BasicSetting/shopSet/list/template.html",
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/shopSet/list/controller.js",
 	"config": {
-		"pageTitle": "商铺设置"
+		"pageTitle": "商铺设置",
+		"getShopInfoURL":"json/ShopInfo_getUserShopInfo_data.json",
+		"saveShopInfoURL":"json/Open_update_saveShopInfo.json"
 	}
 }

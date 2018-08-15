@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="ShopInfo">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+
+
+	<update id="saveShopInfo" parameterMap="BaseParameterMap">
+		update sc_shop_info set 
+			SHOP_NAME = #{SHOP_NAME},
+			SHOP_TEL = #{SHOP_TEL},
+			SHOP_TYPE = #{SHOP_TYPE},
+			SHOP_AREA = #{SHOP_AREA},
+			SHOP_ADDRESS = #{SHOP_ADDRESS},
+			UPDATE_BY = #{userPk},
+			UPDATE_TIME = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			SHOP_HOURS = #{SHOP_HOURS},
+			SUPPORT = #{SUPPORT},
+			IMG_LOGO = #{IMG_LOGO},
+			IMG_HEAD = #{IMG_HEAD},
+			IMG_BODAY = #{IMG_BODAY},
+			SHOP_REMARK = #{SHOP_REMARK}
+		where SHOP_ID = #{SHOP_ID}
+	</update>
+	
+	<select id="getShopInfo" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		select
+			SHOP_ID,
+			SHOP_NAME,
+			SHOP_TEL,
+			SHOP_TYPE,
+			SHOP_AREA,
+			SHOP_ADDRESS,
+			SHOP_STATE,
+			SERVICETYPE_FK,
+			OVER_DATA,
+			CREATE_BY,
+			CREATE_TIME,
+			UPDATE_BY,
+			UPDATE_TIME,
+			SHOP_HOURS,
+			SUPPORT,
+			IMG_LOGO,
+			IMG_HEAD,
+			IMG_BODAY,
+			SHOP_REMARK
+		from sc_shop_info
+		where shop_id = #{SHOP_ID}
+	</select>
+
+	
+
+</mapper>

@@ -17,7 +17,7 @@
 			<label class="weui_label label">商铺名称</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" id="SHOP_NAME">
+			<input class="weui_input label-input" ng-model="form.SHOP_NAME" type="text" id="SHOP_NAME">
 		</div>
 	</div>
 	<div class="weui_cell" >
@@ -39,14 +39,14 @@
              <input class="weui_input label-input" style="float: left;width: 30%" ng-model="form.SHOP_AREA_3" type="text" id="SHOP_AREA_3">
 		</div>
 	</div>
-	<div class="weui_cell">
+	<!-- <div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">商铺位置</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<input style="text-align: right" class="weui_input label-input" type="text" ng-model="form.SHOP_GPS">
 		</div>
-	</div>
+	</div> -->
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">商铺地址</label>
@@ -60,7 +60,7 @@
 			<label class="weui_label label">营业时间</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input style="text-align: right" class="weui_input label-input" type="text" ng-model="form.SHOP_TIME">
+			<input style="text-align: right" class="weui_input label-input" type="text" ng-model="form.SHOP_HOURS">
 		</div>
 	</div>
 	<div class="weui_cell">
@@ -76,10 +76,10 @@
 			<label class="weui_label label">配套设置</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input style="text-align: right" class="weui_input label-input" type="text" ng-model="form.SHOP_SUPPORT">
+			<input style="text-align: right" class="weui_input label-input" type="text" ng-model="form.SUPPORT">
 		</div>
 	</div>
-	<div class="weui_cell">
+	<!-- <div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">形象图片</label>
 		</div>
@@ -96,14 +96,14 @@
                </div>
            </div>
 		</div>
-	</div>
+	</div> -->
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">店铺介绍</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<textarea class="weui_textarea" ng-model="form.SHOP_REMARK" placeholder="1000字以内的图文说明" rows="3"></textarea>
-            <div class="weui_textarea_counter"><span>0</span>/1000</div>
+			<textarea class="weui_textarea"  ng-change="updateNum()" ng-model="form.SHOP_REMARK" placeholder="1000字以内的图文说明" rows="3"></textarea>
+            <div class="weui_textarea_counter"><span>{{fenzi}}</span>/{{fenmu}}</div>
 		</div>
 	</div>
 </div>
