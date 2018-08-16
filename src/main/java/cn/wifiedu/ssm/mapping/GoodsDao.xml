@@ -109,5 +109,9 @@
 		)
 	</insert>
 	
+	<!-- 根据类别商品类别ID查询当前类别下商品的总数量  -->
+	<select id="findGoodsCountByGtypeId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT COUNT(GOODS_PK) as goodsCount FROM sc_goods WHERE GTYPE_FK = #{GTYPE_ID};
+	</select>
 
 </mapper>

@@ -10,21 +10,23 @@
 			</div>
 		</div>
 	</div>
-	<div class="weui_cells " style="margin-top:0" ng-show="pageShow">
+	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
 		<div class="weui_cell slidelefts" ng-repeat="item in goods_list">
-			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd">
-				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated"  style="display:flex;transform: translateX(0px);" ng-click="toHref('goods/general_goods_setting',item.GOODS_PK)">
+				<div class="weui_cell_bd " style="margin-right:10px;">
 					<span>{{$index+1}}</span>
 				</div>
-				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
+				<div class="weui_cell_bd weui_cell_primary">
 					<span>{{item.GOODS_NAME}}</span>
 				</div>
-				<div class="weui_cell_bd " style="float:left;margin-left:5%;">
-					<span>{{item.GOODS_TYPE}}</span>
+				<div class="weui_cell_bd tablessetting-small-font" ng-switch="item.GOODS_TYPE"  dir="rtl">
+					<span ng-switch-when="1">单品</span>
+					<span ng-switch-when="2">常规</span>
+					<span ng-switch-when="3">套餐</span>
 				</div>
-				<div class="weui_cell_bd " style="float:left;margin-left:5%;" ng-switch="item.GOODS_TRUE_PRICE">
-					<span ng-switch-when="">{{item.GOODS_PRICE/100 | number:2}}</span>
-					<span ng-switch-default>{{item.GOODS_TRUE_PRICE/100 | number:2}}</span>/{{item.GOODS_DW}}
+				<div class="weui_cell_bd " style="width: 30%;" ng-switch="item.GOODS_TRUE_PRICE">
+					<span ng-switch-when="" style="float:right;">{{item.GOODS_PRICE/100 | number:2}}元/{{item.GOODS_DW}}</span>
+					<span ng-switch-default style="float:right;">{{item.GOODS_TRUE_PRICE/100 | number:2}}元/{{item.GOODS_DW}}</span>
 				</div>
 			</div>
 			<div class="slideleft">

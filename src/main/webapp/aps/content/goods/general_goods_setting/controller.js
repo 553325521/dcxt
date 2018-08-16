@@ -13,7 +13,6 @@
 					goods_type = ['荤菜', '素菜', '豆类' ];
 					goods_dw = ['份','盘','个'];
 					goods_specification = ['大份','小份'];
-					pxxh_select=[1,2,3,4,5];
 					//初始化显示范围
 					scope.SHOW_RANGE = {'堂点': true, '外卖':false, '预订':false};
 					//新添规格的时候的初始值
@@ -31,10 +30,37 @@
 					//获取传过来的类别id
 					scope.form.GTYPE_ID = params.gtype_id;
 					goods_id = params.goods_id;
+					goods_count = params.goods_count;
+					
+					//填充排序序号
+					//初始化排序序号列表
+					pxxh_select = Array(Number(goods_count)).fill().map((v,i) => i+1);//填充排序列表 1-n
 					
 					scope.form.IS_USE = "1"
 					scope.form.GOODS_TYPE = "2"
 						
+						
+					var init = function(){
+						if(goods_id != null && goods_id != ''){
+							
+							
+						}
+						
+						
+					}
+					
+					
+					init();
+						
+						
+						
+						
+						
+						
+					
+						
+					
+					
 					
 					scope.toHref = function(path,shopid) {
 						var m2 = {
@@ -66,7 +92,6 @@
 						angular.forEach(specifications, function(data,index,array){
 							scope.GOODS_SPECIFICATION[index].name = data.value;
 						});
-						debugger;
 						scope.form.GTYPE_ID = $("#fs_select").val();
 						scope.form.GOODS_DW = $("#unit_select").val();
 						scope.form.GOODS_PXXH = $("#pxxh_select").val();
@@ -87,6 +112,9 @@
 						scope.form.GOODS_SPECIFICATION = JSON.stringify(scope.GOODS_SPECIFICATION);
 						scope.form.GOODS_TASTE = JSON.stringify(scope.GOODS_TASTE);
 						scope.form.PICTURE_URL = JSON.stringify(scope.PICTURE_URL);
+						
+						
+						scope.form.GTYPE_ID="912bd2a503de44be8051ae1d5c3db650";
 						
 						console.info(scope.form)
 						$form.validate(function(error) {
@@ -237,7 +265,8 @@
 	    for(var i=0;i<file.files.length;i++){
 		    if (file.files && file.files[i]) {
 		        var reader = new FileReader();
-		        reader.onload = function (evt) { 
+		        reader.onload = function (evt) {
+		        	console.info(evt.loaded)
 		        	if(evt.loaded > 2097152){
 		        		$.toptips('单张图片上传大小最大为2M')
 		        		return;

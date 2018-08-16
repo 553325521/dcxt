@@ -5,28 +5,34 @@
 </style>
 	<div class="weui-header"  style="background-color:#FFFFFF">
 		<div class="weui-header-left">
+		
 			<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="returnClick()"></a>
 		</div>
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
-				<div class="bom-radio showAddGoodsTypeBtn" style="width:70px" id="attend2" ng-click="toHref('goods/addGoodsType')">添加类别</div>
+				
+				<div class="bom-radio showAddGoodsTypeBtn" style="width:70px" id="attend2" ng-click="toHref('goods/goods_show')">添加类别</div>
 			</div>
 		</div>
 	</div>
+
 	<div class="weui_cells showGoodsType"  style="margin-top:0;display:block">
 		<div class="weui_cell slidelefts" ng-repeat="item in GoodsType_List">
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd"  ng-click="goodsTypeClick(item.GTYPE_PK,'next')">
 				<div class="weui_cell_bd " style="float:left;width:2%;">
 					<span>{{item.GTYPE_ORDER}}</span>
 				</div>
+	
 				<div class="weui_cell_bd " style="float:left;width:15%;">
 					<span>{{item.GTYPE_NAME}}</span>
 				</div>
+
 				<div class="weui_cell_bd" ng-switch on = "{{item.GTYPE_STATE}}" style="float:left;width:15%;">
 					<span ng-switch-when = "0">未启用</span>
 					<span ng-switch-when = "1">已启用</span>
 				</div>
+
 				<div class="weui_cell_bd " style="float:left;width:33%;">
 					<span>{{item.GTYPE_AREA}}</span>
 				</div>

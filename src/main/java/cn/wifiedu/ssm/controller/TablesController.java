@@ -224,7 +224,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						map.put("SMALL_TABLES_PXXH", pxxh);
 						boolean b = openService.update(map);
 						if(!b){
-							output("9999", "修改失败！");
+							output("9999", "添加失败！");
 							return;
 						}
 					}
