@@ -1,0 +1,22 @@
+{
+	"name": "role_setting",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/role/setting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/role/setting/controller.js",
+	"config": {
+		"findFunctionListByRoleURL": "json/Function_queryForList_findFunctionListByRole.json",
+		"pageTitle" : "所属权限列表",
+		"updateRoleFunStatusURL" : "json/Function_update_updateRoleFunStatus.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"role_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"role_setting.confirm"
+		        	}
+				]
+			}
+	}
+}

@@ -6,15 +6,18 @@
 	<!--查询一级菜单 -->
 	<select id="loadFunctionListByUserRole" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		SELECT 
-			b.FUNCTION_PK, b.FUNCTION_NAME, b.FUNCTION_URL, b.FUNCTION_ICON, b.FUNCTION_SORT
+		SELECT
+		b.FUNCTION_PK, b.FUNCTION_NAME, b.FUNCTION_URL, b.FUNCTION_ICON,
+		b.FUNCTION_SORT
 		FROM (
-			SELECT 
-				a.FK_FUNCTION
-			FROM 
-				SC_SHOP_ROLE_FUNCTION a 
-			WHERE a.FK_SHOP = #{SHOP_ID} AND a.FK_ROLE = #{ROLE_ID}) fun_info
-		LEFT JOIN SC_FUNCTION b 
+		SELECT
+		a.FK_FUNCTION
+		FROM
+		SC_SHOP_ROLE_FUNCTION a
+		WHERE a.FK_SHOP = #{SHOP_ID} AND a.FK_ROLE = #{ROLE_ID}) fun_info
+		LEFT
+		JOIN
+		SC_FUNCTION b
 		ON fun_info.FK_FUNCTION = b.FUNCTION_PK
 		<where>
 			<if test="fid != null">
@@ -24,6 +27,31 @@
 				AND b.FUNCTION_PK_PID IS
 				NULL
 			</if>
+			AND b.FUNCTION_SWITCH = 'on'
+		</where>
+		ORDER BY CONVERT(b.FUNCTION_SORT, SIGNED)
+	</select>
+
+	<!--查询一级菜单 -->
+	<select id="findFunctionListByRole" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT
+		b.FUNCTION_PK, b.FUNCTION_NAME, b.FUNCTION_URL, b.FUNCTION_ICON,
+		fun_info.SHOP_ROLE_FUNCTION_ID, b.FUNCTION_SORT, fun_info.IS_USE
+		FROM (
+		SELECT
+		a.SHOP_ROLE_FUNCTION_ID, a.FK_FUNCTION, a.IS_USE
+		FROM
+		SC_SHOP_ROLE_FUNCTION a
+		WHERE a.FK_SHOP = #{SHOP_ID} AND a.FK_ROLE =
+		#{ROLE_ID}) fun_info
+		LEFT JOIN
+		SC_FUNCTION b
+		ON fun_info.FK_FUNCTION =
+		b.FUNCTION_PK
+		<where>
+			AND b.FUNCTION_PK_PID IS NOT
+			NULL
 			AND b.FUNCTION_SWITCH = 'on'
 		</where>
 		ORDER BY CONVERT(b.FUNCTION_SORT, SIGNED)
@@ -46,7 +74,8 @@
 		FUNCTION_ICON, FUNCTION_SORT
 		FROM SC_FUNCTION
 		WHERE
-		FUNCTION_SWITCH='on' ORDER BY CONVERT(FUNCTION_SORT, SIGNED)
+		FUNCTION_SWITCH='on'
+		ORDER BY CONVERT(FUNCTION_SORT, SIGNED)
 	</select>
 
 	<!--查询功能数量 -->

@@ -84,21 +84,50 @@ public class FunctionController extends BaseController {
 	public void loadFunctionListByUserRole(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
-			
-			String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
-			//String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-			
+
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
-			map.put("USER_ID", userObj.get("USER_PK")); 
-			map.put("ROLE_ID", userObj.get("FK_ROLE")); 
+			map.put("USER_ID", userObj.get("USER_PK"));
+			map.put("ROLE_ID", userObj.get("FK_ROLE"));
 
 			map.put("sqlMapId", "loadFunctionListByUserRole");
 			List<Map<String, Object>> reList = openService.queryForList(map);
 
 			map.put("functionList", reList);
 			output("0000", map);
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月16日 - 上午1:02:36
+	 * @description:根据用户对应的商铺以及传来的权限ID查询对应的权限列表
+	 */
+	@RequestMapping("/Function_queryForList_findFunctionListByRole")
+	public void findFunctionListByRole(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+
+			map.put("SHOP_ID", userObj.get("FK_SHOP"));
+
+			map.put("sqlMapId", "findFunctionListByRole");
+			List<Map<String, Object>> reList = openService.queryForList(map);
+
+			output("0000", reList);
 			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
@@ -146,6 +175,32 @@ public class FunctionController extends BaseController {
 			map.put("sqlMapId", "findAllFunctionURL");
 			List<Map<String, Object>> reList = openService.queryForList(map);
 			output("0000", reList);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月16日 - 下午11:45:31
+	 * @description:更新店铺角色对应的权限启用状态
+	 */
+	@RequestMapping("/Function_update_updateRoleFunStatus")
+	public void updateRoleFunStatus(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("IS_USE", (Boolean.valueOf(map.get("checked").toString())) ? "1" : "0");
+			map.put("sqlMapId", "updateRoleFunStatus");
+			if (openService.update(map)) {
+				output("0000", "操作成功!");
+				return;
+			}
+			output("9999", "操作失败!");
+			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}

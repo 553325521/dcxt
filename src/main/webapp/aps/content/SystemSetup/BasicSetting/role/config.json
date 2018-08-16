@@ -1,0 +1,9 @@
+{
+	"name": "role_manger",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/role/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/role/controller.js",
+	"config": {
+		"pageTitle": "角色管理",
+		"findURL":"json/Role_queryForList_findRoleList.json"
+	}
+}

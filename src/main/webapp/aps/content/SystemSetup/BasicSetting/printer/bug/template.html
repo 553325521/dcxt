@@ -5,11 +5,6 @@
 		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
 	</div>
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
-	<div class="weui-header-right" style="top: 0;">
-		<div class="button_sp_area" style="padding: 12px 0;">
-			<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
-		</div>
-	</div>
 </div>
 
 <div class="weui_cells weui_cells_form" style="margin-top: 0;"
@@ -23,8 +18,12 @@
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
-				<div class="weui-form-li iblock li-checkbox-self" style="height: 26px;" ng-repeat="item in nameList">
-					<a class="weui_btn weui_btn_mini weui_btn_primary" ng-click="doSave()">{{item.PRINT_RELEVANT_NAME}}</a>
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="height: 19px; margin-left: {{$index == 0 ? 0 : 10}}px;"
+					ng-repeat="item in nameList">
+					<a
+						class="weui_btn weui_btn_mini weui_btn_{{item.outer ? 'noouter' : 'outer'}} weui_btn_self"
+						ng-click="changeCheckArr(item)">{{item.PRINT_RELEVANT_NAME}}</a>
 				</div>
 			</div>
 		</div>
@@ -35,26 +34,12 @@
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
-				<div class="weui-form-li iblock li-checkbox-self">
-					<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
-						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
-						style="margin: 0;"></i>
-						<div class="weui-form-text label-input" style="margin: 0;">
-							<p>58mm</p>
-						</div>
-					</label>
-				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
-					style="margin-left: 10px;">
-					<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
-						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
-						style="margin: 0;"></i>
-						<div class="weui-form-text label-input" style="margin: 0;">
-							<p>80mm</p>
-						</div>
-					</label>
+					style="height: 19px; margin-left: {{$index == 0 ? 0 : 10}}px;"
+					ng-repeat="item in loadWidthList">
+					<a
+						class="weui_btn weui_btn_mini weui_btn_{{item.outer ? 'noouter' : 'outer'}} weui_btn_self"
+						ng-click="changeCheckArr(item)">{{item.PRINT_RELEVANT_NAME}}</a>
 				</div>
 			</div>
 		</div>
@@ -66,22 +51,16 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self"
-					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
-					ng-repeat="item in printer_level">
-					<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
-						value="{{item.value}}" type="checkbox" ng-model="item.checked"
-						ng-change="selectLevel(item)"> <label
-						for="h{{$index + 1}}"> <i
-						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
-						<div class="weui-form-text label-input" style="margin: 0;">
-							<p>{{item.name}}</p>
-						</div>
-					</label>
+					style="height: 19px; margin-left: {{$index == 0 ? 0 : 10}}px;"
+					ng-repeat="item in loadTypeList">
+					<a
+						class="weui_btn weui_btn_mini weui_btn_{{item.outer ? 'noouter' : 'outer'}} weui_btn_self"
+						ng-click="changeCheckArr(item)">{{item.PRINT_RELEVANT_NAME}}</a>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="weui_cell self_select">
+	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">购买数量</label>
 		</div>
@@ -89,9 +68,9 @@
 			<div class="weui-count">
 				<a class="weui-count__btn weui-count__decrease"
 					ng-click="fsDoReduce()"></a> <input class="weui-count__number"
-					type="number" style="width: 1.5rem;" pattern="[0-9]*"
-					ng-blur="fsReduceNum()" /> <a
-					class="weui-count__btn weui-count__increase" ng-click="fsDoAdd()"></a>
+					ng-model="form.PRINT_BUG_NUM" type="number"
+					style="width: 1.5rem;" pattern="[0-9]*" ng-blur="fsReduceNum()" />
+				<a class="weui-count__btn weui-count__increase" ng-click="fsDoAdd()"></a>
 			</div>
 		</div>
 	</div>
@@ -100,13 +79,18 @@
 			<label class="weui_label label">应付金额</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
+			<p style="color: red;">￥{{form.PRINT_PRICE}}</p>
 		</div>
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">配送地址</label>
 		</div>
-		<div class="weui_cell_bd">
-		</div>
+		<div class="weui_cell_bd weui_cell_primary"><input class="weui_input label-input" type="text"
+				placeholder="输入配送地址" ng-model="form.PRINTER_ADDRESS"></div>
+	</div>
+	<div class="weui_cell">
+		<a href="javascript:;" class="weui_btn weui_btn_primary weui_btn_self"
+			style="width: 80%;" ng-click="doSave();">确认支付</a>
 	</div>
 </div>

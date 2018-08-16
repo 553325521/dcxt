@@ -391,7 +391,7 @@ public class WxController extends BaseController {
 		// redis存储access_token信息
 		jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
 		// 设置access_token的过期时间2小时
-		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 1000 * 60 * 60 * 1);
+		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
 		
 		System.out.println(appid + "====" + openId);
 		return openId;
@@ -423,7 +423,7 @@ public class WxController extends BaseController {
 				&& StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + openId))) {
 			jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
 			// 设置access_token的过期时间2小时
-			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 1000 * 60 * 60 * 1);
+			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
 		}
 		System.out.println(openId);
 		return openId;

@@ -210,7 +210,7 @@ public class InterfaceController extends BaseController {
 				jedisClient.set(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, componentAccessToken);
 
 				// 设置componentAccessToken的过期时间1小时
-				jedisClient.expire(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, 1000 * 60 * 60 * 1);
+				jedisClient.expire(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, 3600 * 1);
 
 				return componentAccessToken;
 			}
@@ -253,7 +253,7 @@ public class InterfaceController extends BaseController {
 			jedisClient.set(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, componentPreAuthCode);
 
 			// 设置componentPreAuthCode的过期时间2小时
-			jedisClient.expire(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, 1000 * 60 * 60 * 1);
+			jedisClient.expire(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE, 3600 * 1);
 
 			return componentPreAuthCode;
 		} catch (Exception e) {

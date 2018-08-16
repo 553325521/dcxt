@@ -1,0 +1,20 @@
+
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting/role')">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+</div>
+
+<div class="weui_cells" style="margin-top: 0;">
+	<div class="weui_cell" ng-repeat="item in funList">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>{{item.FUNCTION_NAME}}</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus(item)" ng-model="item.checked">
+		</div>
+	</div>
+</div>

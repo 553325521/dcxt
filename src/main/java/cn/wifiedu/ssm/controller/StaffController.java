@@ -258,7 +258,7 @@ public class StaffController extends BaseController {
 							token = WxUtil.getWxAccessToken(appid, interCtrl.getComponentAccessToken(),
 									menuCtrl.getRefreshTokenByAppId(appid));
 							jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, token);
-							jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 1000 * 60 * 60 * 1);
+							jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
 						} else {
 							token = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
 						}
@@ -281,11 +281,6 @@ public class StaffController extends BaseController {
 							System.out.println("resCont====" + resCont);
 							JSONObject resObj = JSONObject.parseObject(resCont);
 							if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
-								// 增加店员所有权限
-								map.put("sqlMapId", "insertFuntionForYuangong");
-								logger.info("map : " + map);
-								openService.insert(map);
-
 								// 重定向成功页面
 								String btnToken = UUID.randomUUID().toString();
 								JSONObject obj = new JSONObject();

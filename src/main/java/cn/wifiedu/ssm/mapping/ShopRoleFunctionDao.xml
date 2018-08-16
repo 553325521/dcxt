@@ -8,10 +8,12 @@
 	<select id="selectFunctionByUserAndShop" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT
-		FUNCTION_PK, FUNCTION_NAME, FUNCTION_URL,FUNCTION_ICON,FUNCTION_SORT
+		FUNCTION_PK, FUNCTION_NAME,
+		FUNCTION_URL,FUNCTION_ICON,FUNCTION_SORT
 		FROM
 		SC_FUNCTION
-		WHERE FUNCTION_PK IN (
+		WHERE
+		FUNCTION_PK IN (
 		SELECT
 		FK_FUNCTION
 		FROM
@@ -27,19 +29,18 @@
 		WHERE
 		FK_USER = #{USER_ID}
 		AND
-		FK_SHOP = #{SHOP_ID})) AND FUNCTION_SWITCH='on'
+		FK_SHOP = #{SHOP_ID}) AND IS_USE = '1') AND
+		FUNCTION_SWITCH='on'
 		ORDER BY CONVERT(FUNCTION_SORT, SIGNED);
 	</select>
 
-	<insert id="insertFuntionForAdmin" parameterMap="BaseParameterMap">
-		insert into
-		sc_shop_role_function
-		SELECT #{UUID}, #{SHOP_ID}, #{ROLE_ID}, FUNCTION_PK, NOW() FROM sc_function
-		where FUNCTION_SWITCH = 'on' ORDER BY CONVERT(FUNCTION_SORT, SIGNED)
-	</insert>
-	
-	<insert id="insertFuntionForYuangong" parameterMap="BaseParameterMap">
-		insert into sc_shop_role_function VALUES (replace(uuid(),'-',''), #{SHOP_ID}, #{ROLE_ID}, '9133733eee4a405fa6e8ccfd939db145', NOW()), (replace(uuid(),'-',''), #{SHOP_ID}, #{ROLE_ID}, '1ce7161531ba4599bb817c1d21892a0a', NOW());
-	</insert>
-	
+	<select id="insertFuntionForShop" parameterMap="BaseParameterMap">
+		CALL
+		role_for_shop_insert(#{SHOP_ID})
+	</select>
+
+	<update id="updateRoleFunStatus" parameterMap="BaseParameterMap">
+		UPDATE sc_shop_role_function SET IS_USE = #{IS_USE} WHERE SHOP_ROLE_FUNCTION_ID = #{SHOP_ROLE_FUNCTION_ID}
+	</update>
+
 </mapper>

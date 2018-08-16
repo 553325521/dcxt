@@ -13,9 +13,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSONObject;
+
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 /**
  * @author kqs
@@ -38,7 +43,10 @@ public class PrinterController extends BaseController {
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
-
+	
+	@Resource
+	private JedisClient jedisClient;
+	
 	@Autowired
 	private TransactionManagerController txManagerController;
 
@@ -80,7 +88,16 @@ public class PrinterController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月14日 - 下午11:08:32 
+	 * @description:查询打印机相关信息
+	 */
 	@RequestMapping("/Print_queryForList_loadPrintRelevantList")
 	public void loadPrintRelevantList(HttpServletRequest request, HttpSession session) {
 		try {
@@ -88,6 +105,50 @@ public class PrinterController extends BaseController {
 			map.put("sqlMapId", "loadPrintRelevantList");
 			List<Map<String, Object>> res = openService.queryForList(map);
 			output("0000", res);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月14日 - 下午11:08:47 
+	 * @description:查询打印机价格
+	 */
+	@RequestMapping("/Print_queryForList_findPriceURL")
+	public void findPriceURL(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "findPriceURL");
+			Map<String, Object> res = (Map<String, Object>) openService.queryForObject(map);
+			output("0000", res);
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+	
+	@RequestMapping("/Print_queryForList_addPirntBug")
+	public void addPirntBug(HttpServletRequest request, HttpSession session) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			
+			Map<String, Object> map = getParameterMap();
+			map.put("INSERT_TIME", StringDeal.getStringDate());
+			map.put("CREATER", userObj.getString("USER_WX"));
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "addPirntBug");
+			String res = openService.insert(map);
+			if (res != null) {
+				output("0000", "购买成功！");
+				return;
+			}
+			output("9999", "购买失败！");
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}

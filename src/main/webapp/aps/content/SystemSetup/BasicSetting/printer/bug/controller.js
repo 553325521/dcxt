@@ -1,5 +1,20 @@
+Array.prototype.indexOf = function(val) {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] == val)
+			return i;
+	}
+	return -1;
+};
+Array.prototype.remove = function(val) {
+	var index = this.indexOf(val);
+	if (index > -1) {
+		this.splice(index, 1);
+	}
+};
+
+
 (function() {
-	define([ 'slideleft' ], function() {
+	define([], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
@@ -9,29 +24,35 @@
 				// 定义页面标题
 				scope.pageTitle = '打印机列表';
 
-				scope.type_list = [ {
-					PRINTER_NAME : '打印机1', // 打印机名称
-					PRINTER_PAGE_WIDTH : '58mm', // 打印机宽度
-					PRINTER_LEVEL : '收银联', // 打印类型
-					PRINTER_PAGE_NUMS : '1', // 打印份数
-					PRINTER_DISHES : [] // 菜品
-				}, {
-					PRINTER_NAME : '打印机2', // 打印机名称
-					PRINTER_PAGE_WIDTH : '58mm', // 打印机宽度
-					PRINTER_LEVEL : '收银联', // 打印类型
-					PRINTER_PAGE_NUMS : '2', // 打印份数
-					PRINTER_DISHES : [] // 菜品
-				}, {
-					PRINTER_NAME : '打印机3', // 打印机名称
-					PRINTER_PAGE_WIDTH : '80mm', // 打印机宽度
-					PRINTER_LEVEL : '收银联', // 打印类型
-					PRINTER_PAGE_NUMS : '3', // 打印份数
-					PRINTER_DISHES : [] // 菜品
-				} ];
-
-
-				//初始化 form 表单
 				scope.form = {};
+
+				// 初始化打印份数
+				scope.form.PRINT_BUG_NUM = 1;
+
+				scope.form.PRINT_PRICE = '600.00';
+				scope.form.PRINT_PRICE_ONCE = '600.00';
+
+				// 打印份数减法
+				scope.fsDoReduce = function() {
+					if (scope.form.PRINT_BUG_NUM > 1) {
+						scope.form.PRINT_BUG_NUM -= 1;
+						scope.refreshPrice();
+					}
+				}
+
+				// 打印份数加法
+				scope.fsDoAdd = function() {
+					scope.form.PRINT_BUG_NUM += 1;
+					scope.refreshPrice();
+				}
+
+				// 打印份数直接修改数字
+				scope.fsReduceNum = function() {
+					if (scope.form.PRINT_BUG_NUM <= 0 || scope.form.PRINT_BUG_NUM == null) {
+						scope.form.PRINT_BUG_NUM = 1
+						scope.refreshPrice();
+					}
+				}
 
 				scope.toHref = function(path) {
 					var m2 = {
@@ -41,17 +62,81 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
-				
+
+				scope.changeCheckArr = function(item) {
+					if (item.PRINT_RELEVANT_TYPE == 'name') {
+						$.each(scope.nameList, function(index, value) {
+							value.outer = false;
+						})
+						$.each(scope.typeList, function(index, value) {
+							value.outer = false;
+						})
+						$.each(scope.widthList, function(index, value) {
+							value.outer = false;
+						})
+						scope.checkList(item.PRINT_RELEVANT_PK);
+					} else if (item.PRINT_RELEVANT_TYPE == 'type') {
+						$.each(scope.typeList, function(index, value) {
+							value.outer = false;
+						})
+					} else if (item.PRINT_RELEVANT_TYPE == 'width') {
+						$.each(scope.widthList, function(index, value) {
+							value.outer = false;
+						})
+						scope.checkTypeList(item);
+					}
+					item.outer = true;
+
+					scope.checkPirce();
+
+				}
+
+				scope.checkList = function(fid) {
+					scope.loadTypeList = [];
+					scope.loadWidthList = [];
+					$.each(scope.typeList, function(index, value) {
+						if (value.PRINT_RELEVANT_FPK == fid) {
+							scope.loadTypeList.push(value);
+						}
+					})
+					$.each(scope.widthList, function(index, value) {
+						if (value.PRINT_RELEVANT_FPK == fid) {
+							scope.loadWidthList.push(value);
+						}
+					})
+
+					scope.form.PRINT_TYPE = undefined;
+					scope.form.PRINT_WIDTH = undefined;
+				}
+
+				scope.checkTypeList = function(item) {
+					scope.loadTypeList = [];
+					for (var index in scope.typeList) {
+						var value = scope.typeList[index]
+						if (value.PRINT_RELEVANT_FPK == item.PRINT_RELEVANT_FPK) {
+							if (item.PRINT_RELEVANT_NAME == '58mm' && value.PRINT_RELEVANT_NAME == 'WIFI+切刀') {
+								continue;
+							}
+							scope.loadTypeList.push(value);
+						}
+					}
+
+					scope.form.PRINT_TYPE = undefined;
+					scope.form.PRINT_WIDTH = undefined;
+				}
+
 				var init = function() {
 					$httpService.post(config.findURL, scope.form).success(function(data) {
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
+							scope.relevantList = data.data;
+
 							scope.nameList = [];
 							scope.widthList = [];
 							scope.typeList = [];
-							
-							$.each(data.data, function (index, value) {
+
+							$.each(scope.relevantList, function(index, value) {
 								if (value.PRINT_RELEVANT_TYPE == 'name') {
 									scope.nameList.push(value);
 								} else if (value.PRINT_RELEVANT_TYPE == 'type') {
@@ -60,17 +145,67 @@
 									scope.widthList.push(value);
 								}
 							})
-							
+							scope.nameList[0].outer = true;
+							scope.checkList(scope.nameList[0].PRINT_RELEVANT_PK);
+
 							scope.$apply();
-							
-							console.info(scope.nameList);
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
 				}
-				
+
 				init();
+
+				scope.doSave = function() {
+					$httpService.post(config.addPrintPriceURL, scope.form).success(function(data) {
+						if (data.code != '0000') {
+							loggingService.info(data.data);
+						} else {
+							console.info(data);
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+
+				scope.checkPirce = function() {
+					$.each(scope.relevantList, function(index, value) {
+						if (value.outer) {
+							if (value.PRINT_RELEVANT_TYPE == 'name') {
+								scope.form.PRINT_PK = value.PRINT_RELEVANT_PK;
+							} else if (value.PRINT_RELEVANT_TYPE == 'type') {
+								scope.form.PRINT_TYPE = value.PRINT_RELEVANT_NAME;
+							} else if (value.PRINT_RELEVANT_TYPE == 'width') {
+								scope.form.PRINT_WIDTH = value.PRINT_RELEVANT_NAME;
+							}
+						}
+					})
+
+					if (scope.form.PRINT_PK != undefined && scope.form.PRINT_TYPE != undefined && scope.form.PRINT_WIDTH != undefined) {
+						$httpService.post(config.findPriceURL, scope.form).success(function(data) {
+							if (data.code != '0000') {
+								loggingService.info(data.data);
+							} else {
+								if (data.data == undefined) {
+									scope.form.PRINT_PRICE = '0.00';
+									scope.form.PRINT_PRICE_ONCE = '0.00';
+								} else {
+									scope.form.PRINT_PRICE = data.data.PRINT_PRICE;
+									scope.form.PRINT_PRICE_ONCE = data.data.PRINT_PRICE;
+									scope.refreshPrice();
+								}
+								scope.$apply();
+							}
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
+					}
+				}
+
+				scope.refreshPrice = function() {
+					scope.form.PRINT_PRICE = scope.form.PRINT_PRICE_ONCE * scope.form.PRINT_BUG_NUM;
+				}
 			}
 		];
 	});

@@ -276,7 +276,7 @@ public class MenuController extends BaseController {
 				token = WxUtil.getWxAccessToken(userObj.getString("FK_APP"),
 						interfaceController.getComponentAccessToken(), getRefreshTokenByAppId(userObj.getString("FK_APP")));
 				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"), token);
-				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"), 1000 * 60 * 60 * 1);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"), 3600 * 1);
 			} else {
 				token = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"));
 			}
@@ -373,17 +373,22 @@ public class MenuController extends BaseController {
 	@RequestMapping("/Menu_insert_test")
 	public void test(HttpServletRequest request, HttpSession session) {
 		try {
+			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			
 			Map<String, Object> map = getParameterMap();
-
+			map.put("SHOP_ID", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "insertFuntionForShop");
 			// String url = CommonUtil.getPath("menuWxGetList").toString();
 			// String token = WxUtil.getToken();
 			// url = url.replace("ACCESS_TOKEN", token);
 			// String res = CommonUtil.get(url);
-			String url = CommonUtil.getPath("deleteconditionalURL").toString();
-			String token = WxUtil.getToken();
-			url = url.replace("ACCESS_TOKEN", token);
-			String res = CommonUtil.posts(url, "{\"menuid\":\"430283769\"}", "utf-8");
-			output("0000", res);
+//			String url = CommonUtil.getPath("deleteconditionalURL").toString();
+//			String token = WxUtil.getToken();
+//			url = url.replace("ACCESS_TOKEN", token);
+//			String res = CommonUtil.posts(url, "{\"menuid\":\"430283769\"}", "utf-8");
+			output("0000", openService.queryForObject(map));
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
