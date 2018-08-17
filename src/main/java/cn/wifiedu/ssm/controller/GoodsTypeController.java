@@ -170,4 +170,27 @@ public class GoodsTypeController extends BaseController {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	/**
+	 * 
+	 * @date 2018年8月17日 上午2:22:22 
+	 * @author lps
+	 * 
+	 * @Description:  根据类别id查询类别的名字
+	 * @return void 
+	 *
+	 */
+	@RequestMapping(value="/GoodsType_select_findGoodsNameById")
+	public void findGoodsNameById(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "selectGoodsNameById");
+			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
+			output("0000",reMap);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

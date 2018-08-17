@@ -7,14 +7,13 @@
 					scope = $scope;
 					//初始化form表单
 					scope.form = {};
-					// 定义页面标题
-					scope.pageTitle = '商品设置';
-					
+					scope.pageShow = "False";
 					goods_type = ['荤菜', '素菜', '豆类' ];
 					goods_dw = ['份','盘','个'];
 					goods_specification = ['大份','小份'];
 					//初始化显示范围
-					scope.SHOW_RANGE = {'堂点': true, '外卖':false, '预订':false};
+//					scope.SHOW_RANGE = {'堂点': true, '外卖':false, '预订':false};
+					scope.SHOW_RANGE = {}
 					//新添规格的时候的初始值
 					new_specification = {name:"大份",price:"+0.00"}
 					//初始默认值
@@ -29,38 +28,91 @@
 					scope.PICTURE_URL = []
 					//获取传过来的类别id
 					scope.form.GTYPE_ID = params.gtype_id;
-					goods_id = params.goods_id;
-					goods_count = params.goods_count;
-					
-					//填充排序序号
-					//初始化排序序号列表
-					pxxh_select = Array(Number(goods_count)).fill().map((v,i) => i+1);//填充排序列表 1-n
-					
+					scope.form.GOODS_ID = params.goods_id;
+					goods_count = Number(params.goods_count);
 					scope.form.IS_USE = "1"
 					scope.form.GOODS_TYPE = "2"
-						
-						
 					var init = function(){
-						if(goods_id != null && goods_id != ''){
+						//判断
+						if(scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
+							//是修改
+							// 定义页面标题
+							scope.pageTitle = '修改商品';
+							//初始化排序序号列表
+							pxxh_select = Array(goods_count).fill().map((v,i) => i+1);//填充排序列表 1-n
 							
+							//发送post请求
+							$httpService.post(config.findURL,scope.form).success(function(data) {
+								if (data.code != '0000') {
+									loggingService.info(data.data);
+								} else {
+									scope.pageShow = "True";
+									scope.form = data.data;
+									//字符串转json
+									scope.SHOW_RANGE = angular.fromJson(scope.form.SHOW_RANGE);
+									scope.GOODS_RECIPE = angular.fromJson(scope.form.GOODS_RECIPE);
+									scope.GOODS_SPECIFICATION = angular.fromJson(scope.form.GOODS_SPECIFICATION);
+									scope.GOODS_TASTE = angular.fromJson(scope.form.GOODS_TASTE);
+									scope.picMap = angular.fromJson(scope.form.PICTURE_URL);
+									//去掉map中的value组成list
+									angular.forEach(scope.picMap, function(data,index,array){
+										scope.PICTURE_URL.push(index)
+									});
+									
+									//分转换成元
+									scope.form.GOODS_PRICE = Number(scope.form.GOODS_PRICE)/100;
+									scope.form.GOODS_TRUE_PRICE = Number(scope.form.GOODS_TRUE_PRICE)/100;
+									//解决下拉选择框默认是第一个的问题
+									$("#pxxh_select").val(scope.form.GOODS_PXXH);
+									$("#unit_select").val(scope.form.GOODS_DW);
+									
+									$scope.$apply();
+									comboboxInit()
+								}
+							}).error(function(data) {
+								loggingService.info('获取测试信息出错');
+							});
 							
+						}else{
+							
+							//发送post请求
+							$httpService.post(config.initURL,scope.form).success(function(data) {
+								if (data.code != '0000') {
+									loggingService.info(data.data);
+								} else {
+									scope.form.GTYPE_NAME = data.data.GTYPE_NAME;//类别名字
+									gtype_area = angular.fromJson(data.data.GTYPE_AREA);//该商品类别的范围
+									angular.forEach(gtype_area, function(mapdata,index,array){
+										scope.SHOW_RANGE[mapdata.name] = mapdata.checked;
+									});
+									
+									scope.pageShow = "True";
+									// 定义页面标题
+									scope.pageTitle = '添加商品';
+									//初始化排序序号列表
+									pxxh_select = Array(goods_count+1).fill().map((v,i) => i+1);//填充排序列表 1-n
+									
+									//这几行是解决下拉框默认选择第一个的问题
+//									$("#fs_select").val(goods_type[0]);
+									$("#unit_select").val(goods_dw[0]);
+									$("#pxxh_select").val(goods_count+1);
+									//赋初值
+//									scope.form.GTYPE_ID = goods_type[0];
+									scope.form.GOODS_DW = goods_dw[0];
+									scope.form.GOODS_PXXH = goods_count+1;
+									
+									$scope.$apply();
+									comboboxInit();
+								}
+							}).error(function(data) {
+								loggingService.info('获取测试信息出错');
+							});
 						}
-						
-						
 					}
 					
 					
 					init();
 						
-						
-						
-						
-						
-						
-					
-						
-					
-					
 					
 					scope.toHref = function(path,shopid) {
 						var m2 = {
@@ -71,18 +123,6 @@
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
 					}
 					
-
-					
-					$("#fs_select").val(goods_type[0]);
-					$("#unit_select").val(goods_dw[0]);
-					$("#pxxh_select").val(pxxh_select[0]);
-					
-					scope.form.GTYPE_ID = goods_type[0];
-					scope.form.GOODS_DW = goods_dw[0];
-					scope.form.GOODS_PXXH = pxxh_select[0];
-					
-					
-					
 					var $form = $("#form");
 					$form.form();
 					//保存
@@ -92,7 +132,7 @@
 						angular.forEach(specifications, function(data,index,array){
 							scope.GOODS_SPECIFICATION[index].name = data.value;
 						});
-						scope.form.GTYPE_ID = $("#fs_select").val();
+//						scope.form.GTYPE_ID = $("#fs_select").val();
 						scope.form.GOODS_DW = $("#unit_select").val();
 						scope.form.GOODS_PXXH = $("#pxxh_select").val();
 						
@@ -112,9 +152,6 @@
 						scope.form.GOODS_SPECIFICATION = JSON.stringify(scope.GOODS_SPECIFICATION);
 						scope.form.GOODS_TASTE = JSON.stringify(scope.GOODS_TASTE);
 						scope.form.PICTURE_URL = JSON.stringify(scope.PICTURE_URL);
-						
-						
-						scope.form.GTYPE_ID="912bd2a503de44be8051ae1d5c3db650";
 						
 						console.info(scope.form)
 						$form.validate(function(error) {
@@ -137,12 +174,12 @@
 					// 弹窗确认事件
 					eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 						//判断是修改还是添加
-						if(goods_id == 'undefined' || goods_id == ''){
+						if(scope.form.GOODS_ID == 'undefined' || scope.form.GOODS_ID == ''){
 							url = config.saveURL;
 						}else{
 							url = config.updateURL;
 						}
-						 $httpService.post(url,$scope.form).success(function(data){
+						 $httpService.post(url,scope.form).success(function(data){
 							 
 							 if(data.code != "0000"){
 								 var m2 = {
@@ -226,7 +263,7 @@
 								}
 								]
 						});
-						$("#fs_select").picker({
+					/*	$("#fs_select").picker({
 							title : "选择分类",
 							toolbarCloseText : '确定',
 							cols : [
@@ -236,7 +273,7 @@
 									displayValues : goods_type
 								}
 								]
-						});
+						});*/
 						$("#unit_select").picker({
 							title : "选择单位",
 							toolbarCloseText : '确定',
@@ -249,10 +286,6 @@
 							]
 						});
 					}
-					
-					
-					comboboxInit();
-					
 					
 				}
 			];

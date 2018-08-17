@@ -61,4 +61,9 @@
 		FROM sc_goods_type 
 		WHERE GTYPE_PK = #{GTYPE_PID}
 	</select>
+	
+	<select id="selectGoodsNameById"  parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT GTYPE_NAME, GTYPE_AREA FROM sc_goods_type WHERE GTYPE_PK = #{GTYPE_ID};
+	</select>
 </mapper>

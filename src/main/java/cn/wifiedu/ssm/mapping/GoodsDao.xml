@@ -10,6 +10,18 @@
 		FROM sc_goods
 		WHERE GTYPE_FK = #{GTYPE_PID}
 	</select>
+	
+	<!-- 根据商品id查询单个商品详细信息 -->
+	<select id="selectGoosByGid" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+				GOODS_PK, GTYPE_FK, GOODS_NAME, GOODS_TYPE, GOODS_PRICE, GOODS_TRUE_PRICE, GOODS_CODE, IS_USE, GOODS_DW, GOODS_PXXH, GOODS_SPECIFICATION, GOODS_RECIPE, GOODS_TASTE, GOODS_DESC ,GOODS_LABEL, SHOW_RANGE, PICTURE_URL, GTYPE_NAME, GTYPE_AREA  
+			FROM 
+				sc_goods g,sc_goods_type gt 
+			WHERE 
+				GOODS_PK = #{GOODS_ID} 
+			AND gt.GTYPE_PK = g.GTYPE_FK;
+	</select>
+	
   	<!-- 根据类别id查询该类下的商品基本信息 -->
 	<select id="selectBaseGoosListByGid" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT GOODS_PK, GOODS_NAME, GOODS_TYPE, GOODS_PRICE, GOODS_TRUE_PRICE, GOODS_DW 
@@ -36,7 +48,8 @@
 		WHERE pg.GTYPE_FK = g.GTYPE_FK;
 	</select>
 	
-		<!-- 修改或删除商品, 之前位置后边的商品排序序号依次减少 ,插入或添加商品, 之前位置后边的商品排序序号依次增加-->
+		<!-- 修改或删除商品, 之前位置后边的商品排序序号依次减少 ;
+			  插入或添加商品, 之前位置后边的商品排序序号依次增加-->
 	<update id="updateGoodsPxxhById" parameterMap="BaseParameterMap">
 		UPDATE 
 			sc_goods
@@ -52,7 +65,14 @@
 		    </choose>
 			1 
 		WHERE 
-			GTYPE_FK = #{GTYPE_ID} 
+			<choose>
+				<when test="GOODS_ID != null and GOODS_ID != ''">
+		           GTYPE_FK = (SELECT g.GTYPE_FK FROM (SELECT GTYPE_FK FROM sc_goods WHERE GOODS_PK = #{GOODS_ID}) g)
+		        </when>
+		        <otherwise>
+		           GTYPE_FK = #{GTYPE_ID} 
+		        </otherwise>
+		    </choose>
 		AND 
 			CAST(GOODS_PXXH AS SIGNED integer) >= CAST(#{SMALL_GOODS_PXXH} AS SIGNED integer)
 		<if test="BIG_GOODS_PXXH != null and BIG_GOODS_PXXH != ''">
@@ -106,12 +126,41 @@
 			#{PICTURE_URL},
 			#{CREATE_BY},
 			NOW()
-		)
+		);
 	</insert>
 	
 	<!-- 根据类别商品类别ID查询当前类别下商品的总数量  -->
 	<select id="findGoodsCountByGtypeId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT COUNT(GOODS_PK) as goodsCount FROM sc_goods WHERE GTYPE_FK = #{GTYPE_ID};
+	</select>
+	
+	<update id="updateGoodsById" parameterMap="BaseParameterMap">
+		UPDATE 
+			sc_goods
+		SET
+			GOODS_NAME = #{GOODS_NAME},
+			GOODS_TYPE = #{GOODS_TYPE},
+			GOODS_PRICE = #{GOODS_PRICE},
+			GOODS_TRUE_PRICE = #{GOODS_TRUE_PRICE},
+			GOODS_CODE = #{GOODS_CODE},
+			IS_USE = #{IS_USE},
+			GOODS_DW = #{GOODS_DW},
+			GOODS_PXXH = #{GOODS_PXXH},
+			GOODS_SPECIFICATION = #{GOODS_SPECIFICATION},
+			GOODS_RECIPE = #{GOODS_RECIPE},
+			GOODS_TASTE = #{GOODS_TASTE},
+			GOODS_DESC = #{GOODS_DESC},
+			GOODS_LABEL = #{GOODS_LABEL},
+			PICTURE_URL = #{PICTURE_URL},
+			UPDATE_BY = #{UPDATE_BY},
+			UPDATE_TIME = NOW()
+		WHERE
+			GOODS_PK = #{GOODS_ID};
+	</update>
+	
+	<!-- 通过商品id查询部分信息 -->
+	<select id="selectGoodsPartMessById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT gt.GTYPE_STATE, g.GOODS_PXXH, g.PICTURE_URL, COUNT(g2.GOODS_PK) as goodsCount FROM sc_goods g, sc_goods g2, sc_goods_type gt WHERE g.GOODS_PK= #{GOODS_ID} AND g.GTYPE_FK = g2.GTYPE_FK AND gt.GTYPE_PK = g.GTYPE_FK;
 	</select>
 
 </mapper>

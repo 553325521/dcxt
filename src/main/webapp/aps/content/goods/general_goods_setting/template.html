@@ -22,7 +22,7 @@
 			</div>
 		</div>
 	</div>
-	 <div class="weui_cells weui_cells_form" style="margin-top:0" id="form">
+	 <div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow">
 	 		 <div class="weui_cell">
                 <div class="weui_cell_hd"><label class="weui_label label">商品名称</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
@@ -70,8 +70,8 @@
 				<label class="weui_label label" style="color:#04be02">分类</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input label-input" id="fs_select" type="text"
-					value=""  ng-model = "form.GTYPE_ID">
+				<input class="weui_input label-input" id="fs_select" type="text" ng-readonly="true"
+					value=""  ng-model = "form.GTYPE_NAME">
 			</div>
 		</div>
 		<div class="weui_cell" style="width:30%;float:left;margin-left:0;">
@@ -120,14 +120,14 @@
 			 <div class="weui_cell_hd"><label class="weui_label label">原价</label></div>
              <div class="weui_cell_bd">
                     <input class="weui_input label-input" style="float:left" type="text"  placeholder="输入原价" ng-model="form.GOODS_PRICE" required emptyTips="请输入商品价格"
-                    	notMatchTips="请输入正确价格" pattern="^[0-9|.]*$"/>
+                    	notMatchTips="请输入正确价格" pattern="^[0-9]+(.{1}[0-9]{1,2})?$"/>
              </div>
              <div class="weui_cell_bd"><span class="label-input">元</span></div>
 		</div>
 		 <div class="weui_cell">
                 <div class="weui_cell_hd"><label class="weui_label label">特价</label></div>
                 <div class="weui_cell_bd">
-                    <input class="weui_input label-input" type="text"  placeholder="输入特价" ng-model="form.GOODS_TRUE_PRICE" notMatchTips="请输入正确价格" pattern="^[0-9|.]*$"/>
+                    <input class="weui_input label-input" type="text"  placeholder="输入特价" ng-model="form.GOODS_TRUE_PRICE" notMatchTips="请输入正确价格" pattern="^([0-9]+(.{1}[0-9]{1,2})?)?$"/>
                 </div>
                  <div class="weui_cell_bd"><span class="label-input">元</span></div>
          </div>
@@ -277,3 +277,9 @@
 		 	<p style="font-size:14px;">&nbsp;&nbsp;说明:原价必填，特价可填，如特价已填，该商品为特价商品，不享受任何折扣优惠。</p>
 		</div>
 	 </div>
+	 
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	

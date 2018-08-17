@@ -95,7 +95,7 @@ public class PictureUtil {
 	 * @return boolean 
 	 *
 	 */
-	public boolean deletePic(String picPath){
+	public static boolean deletePic(String picPath){
 		picPath = projectPath + picPath;
 		File file = new File(picPath);
         // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除

@@ -282,7 +282,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					}
 					
 					
-					//判断当前桌位的排序位置是不是最后一个
+					//判断当前商品排序等于之前的排序吗
 					if(bef_pxxh != after_pxxh){
 						if(bef_pxxh > after_pxxh){//如果更新前的序号大于更新后的，那就把更新后的后边的序号依次加一
 							map.put("sqlMapId", "updateTablesPxxhById");
