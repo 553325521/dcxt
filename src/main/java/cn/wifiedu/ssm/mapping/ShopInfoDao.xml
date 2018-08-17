@@ -5,6 +5,62 @@
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
 
 
+	<insert id="saveYouhuimaidanGood" parameterMap="BaseParameterMap">
+		insert into sc_preferntial_rule_good
+		(
+			sc_preferntial_rule_good_pk,
+			fk_preferntial_rule,
+			fk_goodtype,
+			create_by,
+			create_time,
+			delete_flag
+		)
+		values
+		(
+			#{UUID},
+			#{fk_preferential_rule},
+			#{fk_goodtype},
+			#{USER_ID},
+			date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			'0'
+		)
+	</insert>
+	
+	<insert id="saveYouhuimaidan" parameterMap="BaseParameterMap">
+		insert into sc_preferntial_rule
+		(
+			preferential_rule_pk,
+			rule_name,
+			rule_order,
+			is_use,
+			rule_model,
+			remark,
+			good_scope,
+			rule_model_first,
+			rule_model_second,
+			create_by,
+			create_time,
+			delete_flag,
+			fk_shop
+		)
+		values
+		(
+			#{UUID},
+			#{rule_name},
+			#{rule_order},
+			#{is_use},
+			#{rule_model},
+			#{remark},
+			#{good_scope},
+			#{rule_model_first},
+			#{rule_model_second},
+			#{USER_ID},
+			date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			'0',
+			#{SHOP_ID}
+		)
+	</insert>
+	
 	<update id="saveShopInfo" parameterMap="BaseParameterMap">
 		update sc_shop_info set 
 			SHOP_NAME = #{SHOP_NAME},
