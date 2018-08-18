@@ -185,7 +185,7 @@ public class GoodsTypeController extends BaseController {
 	public void findGoodsNameById(){
 		try {
 			Map<String, Object> map = getParameterMap();
-			map.put("sqlMapId", "selectGoodsNameById");
+			map.put("sqlMapId", "selectGtypeNameById");
 			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
 			output("0000",reMap);
 		} catch (Exception e) {

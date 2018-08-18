@@ -62,7 +62,8 @@
 		WHERE GTYPE_PK = #{GTYPE_PID}
 	</select>
 	
-	<select id="selectGoodsNameById"  parameterMap="BaseParameterMap"
+	<!-- 根据类别id查询 -->
+	<select id="selectGtypeNameById"  parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT GTYPE_NAME, GTYPE_AREA FROM sc_goods_type WHERE GTYPE_PK = #{GTYPE_ID};
 	</select>

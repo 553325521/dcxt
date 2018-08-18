@@ -5,6 +5,7 @@ package cn.wifiedu.ssm.controller;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 	import java.util.Map;
@@ -56,9 +57,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 			private static Logger logger = Logger.getLogger(GoodsController.class);
 			
-			public static final long onePicMaxSize = 2100000L;
-			public static final long allPicMaxSize = 6300000L;
-			public static final int maxPicNum = 10;
+			public static final long ONE_PIC_MAXSIZE = 2100000L;	//允许的单张图片最大大小
+			public static final long ALL_PICMAX_SIZE = 6300000L;	//允许的所有图片最大大小
+			public static final int MAX_PIC_NUM = 10;				//允许的图片最大数量
+
+			private static final String GOODS_PICPATH = "assets/goodspic";	//图片存储位置
 			
 			@Resource
 			OpenService openService;
@@ -138,10 +141,18 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							return;
 						}
 					}
+					
+					//先查询出商品图片信息
+					map.put("sqlMapId", "selectGoosByGid");
+					Map goodsMap = (Map) openService.queryForObject(map);
+					
 					//开始删除
 					map.put("sqlMapId", "deleteGoodsById");
 					boolean delete = openService.delete(map);
 					if(delete){
+						//删除图片
+						deletePicByGoodId(goodsMap);
+						
 						output("0000", "删除成功");
 						return;
 					}
@@ -175,26 +186,21 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					map.put("GOODS_TRUE_PRICE", (long)(Double.parseDouble((String)map.get("GOODS_TRUE_PRICE"))*100));
 					
 					
-					//base64转图片
+					//检验图片大小是否超出限制
 					String picURLStr = (String)map.get("PICTURE_URL");
-					if(StringUtils.isNotBlank(picURLStr) && picURLStr.length()*3/4 > allPicMaxSize){//根据base64字符填充规则，base64大小*（3/4）即为原图片大小
-						output("9999", "图片总大小不允许超过6M");
+					String checkUploadPic = checkUploadPic(picURLStr);
+					if(checkUploadPic != null){
+						output("9999", checkUploadPic);
 						return;
 					}
+					
 					JSONArray base64Pic = JSON.parseArray(picURLStr);
 					Map picMap = new LinkedHashMap<String, String>();
-					if(base64Pic.size() > maxPicNum){
-						output("9999", "上传图片不能超过"+ maxPicNum +"张");
-						return;
-					}
-					for (Object pic : base64Pic) {//循环判断每张base64图片
+					//开始保存图片
+					for (Object pic : base64Pic) {
 						String picStr = (String)pic;
 						long picSize = picStr.length()*3/4;
-						if(picSize > onePicMaxSize){
-							output("9999", "单张图片大小不允许超过2M");
-							return;
-						}
-						String picUrl = PictureUtil.base64ToImage(picStr, "assets/goodspic");
+						String picUrl = PictureUtil.base64ToImage(picStr, GOODS_PICPATH);
 						picMap.put(picUrl, picSize);
 					}
 					
@@ -218,7 +224,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						}
 					}
 					
-					
 					//开始插入
 					map.put("sqlMapId", "insertGoods");
 					map.put("CREATE_BY", "admin");
@@ -236,6 +241,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				}
 			}
 			
+			
+
 			/**
 			 * 
 			 * @date 2018年8月16日 下午10:31:31 
@@ -265,9 +272,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					output("9999", " Exception ", e);
 					return;
 				}
-				
-				
-				
 			}
 			
 			/**
@@ -299,52 +303,21 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//取出新的pic信息和旧的pic信息
 					List<String> newPicList = (List<String>)JSONObject.parse((String) map.get("PICTURE_URL"));
 					Map<String,Long> picUrlMap = (Map)JSON.parseObject((String) reMap.get("PICTURE_URL"), LinkedHashMap.class,Feature.OrderedField);
-					if(newPicList != null && newPicList.size() > maxPicNum){
-						output("9999", "图片总大小不允许超过6M");
+					if(newPicList != null && newPicList.size() > MAX_PIC_NUM){
+						output("9999", "上传图片不能超过"+ MAX_PIC_NUM +"张");
 						return;
 					}
 					
 					//两两结合判断
 					int index = 0;
-					long onePicSize = 0;
-					long allPicSize = 0;
 					String base64Pic = "";
 					//判断总容量和单张图片有没有超出大小
-					for (Entry<String, Long> entry : picUrlMap.entrySet()) {
-						base64Pic = newPicList.get(index);
-						if(base64Pic == null){
-							break;
-						}
-						if(base64Pic.indexOf("data:image/") != -1){//说明该位置被更换，
-							onePicSize = base64Pic.length()*3/4;
-							if(onePicSize > onePicMaxSize){
-								output("9999", "单张图片大小不允许超过2M");
-								return;
-							}
-						}else{
-							onePicSize = Long.parseLong(entry.getValue()+"");
-						}
-						allPicSize += onePicSize;
-						index ++;
-					}
-					//遍历完成，判断新的picList遍历完了吗
-					if(newPicList.size() - index > 0){
-						//还没有遍历完
-						for (int i = index; i < newPicList.size(); i++) {
-							base64Pic = newPicList.get(index);
-							onePicSize = base64Pic.length()*3/4;
-							if(onePicSize > onePicMaxSize){
-								output("9999", "单张图片大小不允许超过2M");
-								return;
-							}
-							allPicSize += onePicSize;
-						}
-					}
-					
-					if(allPicSize > allPicMaxSize){
-						output("9999", "图片总大小不允许超过6M");
+					String checkUploadPic = checkUploadPic(newPicList,picUrlMap);
+					if(checkUploadPic != null){
+						output("9999", checkUploadPic);
 						return;
 					}
+					
 					//到此处，说明图片大小不存在问题，开始插入
 					index = 0;
 					Map picMap = new LinkedHashMap<String, Long>();
@@ -358,7 +331,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							//旧的图片被替换，先删除旧的图片
 							PictureUtil.deletePic(entry.getKey());
 							//插入新的图片
-							String picUrl = PictureUtil.base64ToImage(base64Pic, "assets/goodspic");
+							String picUrl = PictureUtil.base64ToImage(base64Pic, GOODS_PICPATH);
 							picMap.put(picUrl, base64Pic.length()*3/4);
 						}else{
 							picMap.put(entry.getKey(), entry.getValue());
@@ -371,7 +344,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						for (int i = index; i < newPicList.size(); i++) {
 							base64Pic = newPicList.get(index);
 							//插入新的图片
-							String picUrl = PictureUtil.base64ToImage(base64Pic, "assets/goodspic");
+							String picUrl = PictureUtil.base64ToImage(base64Pic, GOODS_PICPATH);
 							picMap.put(picUrl, base64Pic.length()*3/4);
 						}
 					}
@@ -418,14 +391,109 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				}
 				
 			}
-			public static void main(String[] args) {
-				Map picMap = new LinkedHashMap<String, Long>();
+			
+			/**
+			 * 
+			 * @date 2018年8月18日 下午3:50:42 
+			 * @author lps
+			 * 
+			 * @Description: 		根据数据库的图片信息和要插入的图片信息进行比较大小有没有超出限制
+			 * @param newPicList	新插入的图片信息
+			 * @param picUrlMap		数据库存储的图片信息
+			 * @return 
+			 * @return String 
+			 *
+			 */
+			private String checkUploadPic(List<String> newPicList, Map<String, Long> picUrlMap) {
+				int index = 0;
+				long onePicSize = 0;
+				long allPicSize = 0;
+				String base64Pic = "";
+				for (Entry<String, Long> entry : picUrlMap.entrySet()) {
+					base64Pic = newPicList.get(index);
+					if(base64Pic == null){
+						break;
+					}
+					if(base64Pic.indexOf("data:image/") != -1){//说明该位置被更换，
+						onePicSize = base64Pic.length()*3/4;
+						if(onePicSize > ONE_PIC_MAXSIZE){
+							return "单张图片大小不允许超过2M";
+						}
+					}else{
+						onePicSize = Long.parseLong(entry.getValue()+"");
+					}
+					allPicSize += onePicSize;
+					index ++;
+				}
+				//遍历完成，判断新的picList遍历完了吗
+				if(newPicList.size() - index > 0){
+					//还没有遍历完
+					for (int i = index; i < newPicList.size(); i++) {
+						base64Pic = newPicList.get(index);
+						onePicSize = base64Pic.length()*3/4;
+						if(onePicSize > ONE_PIC_MAXSIZE){
+							return "单张图片大小不允许超过2M";
+						}
+						allPicSize += onePicSize;
+					}
+				}
 				
-				picMap.put("assets/goodspic/4defca04-203f-450e-921e-4bf72913a977.jpg", "5210");
-				picMap.put("assets/goodspic/a1273806-7c69-4913-81ba-98ca12e73265.png", "81799");
-				
-				
-				System.out.println(JSONArray.toJSONString(picMap));
+				if(allPicSize > ALL_PICMAX_SIZE){
+					return "图片总大小不允许超过6M";
+				}
+				return null;
 			}
 
+			/**
+			 * 
+			 * @date 2018年8月18日 下午3:39:12 
+			 * @author lps
+			 * 
+			 * @Description: 	检查图片大小限制
+			 * @param picURLStr
+			 * @return 
+			 * @return String 
+			 *
+			 */
+			private String checkUploadPic(String picURLStr) {
+				if(StringUtils.isNotBlank(picURLStr) && picURLStr.length()*3/4 > ALL_PICMAX_SIZE){//根据base64字符填充规则，base64大小*（3/4）即为原图片大小
+					return "图片总大小不允许超过6M";
+				}
+				JSONArray base64Pic = JSON.parseArray(picURLStr);
+				if(base64Pic.size() > MAX_PIC_NUM){
+					return "上传图片不能超过"+ MAX_PIC_NUM +"张";
+				}
+				//检验单张图片大小限制
+				for (Object pic : base64Pic) {//循环判断每张base64图片
+					String picStr = (String)pic;
+					long picSize = picStr.length()*3/4;
+					if(picSize > ONE_PIC_MAXSIZE){
+						return "单张图片大小不允许超过2M";
+					}
+				}
+				return null;
+			}
+			
+			/**
+			 * 
+			 * @date 2018年8月18日 下午3:56:53 
+			 * @author lps
+			 * 
+			 * @Description: 	根据商品id删除商品图片
+			 * @param map		包含GOODS_ID的的map
+			 * @return 
+			 * @return boolean 
+			 * @throws Exception 
+			 *
+			 */
+			private boolean deletePicByGoodId(Map<String, Object> goodsMap) throws Exception {
+				Map<String,Long> picUrlMap = (Map)JSON.parseObject((String) goodsMap.get("PICTURE_URL"), LinkedHashMap.class,Feature.OrderedField);
+				
+				for (Entry<String, Long> entry : picUrlMap.entrySet()) {
+					//删除图片
+					boolean deletePic = PictureUtil.deletePic(entry.getKey());
+					if(!deletePic) return false;
+				}
+				return true;
+			}
 		}
