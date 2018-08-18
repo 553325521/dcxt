@@ -45,6 +45,72 @@ public class ShopInfoController extends BaseController {
 	private JedisClient jedisClient;
 	
 	/**
+	 * 获取用户信息
+	 * @throws Exception
+	 */
+	@RequestMapping("/ShopInfo_getUserInfo_data")
+	public void getUserInfo() throws Exception {
+		Map<String, Object> map = getParameterMap();
+		
+		//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
+		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+		JSONObject userObj = JSONObject.parseObject(userJson);
+		
+		map.put("userId", userObj.get("USER_PK"));
+		map.put("shopId", userObj.get("FK_SHOP"));
+		
+		output(map);
+	}
+	
+	
+	
+	@RequestMapping("/ShopInfo_editYouhuimaidan_data")
+	public void editYouhuimaidan() throws Exception {
+		Map<String, Object> map = getParameterMap();
+		
+		String rulePk = map.get("rulePk").toString();
+		
+		//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
+		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+		JSONObject userObj = JSONObject.parseObject(userJson);
+		
+		map.put("SHOP_ID", userObj.get("FK_SHOP"));
+		map.put("USER_ID", userObj.get("USER_PK")); 
+		map.put("ROLE_ID", userObj.get("FK_ROLE")); 
+		
+		if(map.get("rule_model").toString().equals("1")) {
+			map.put("rule_model_first", map.get("yh_zkxf").toString());
+			map.put("rule_model_second", map.get("yh_zkyh").toString());
+		}else if(map.get("rule_model").toString().equals("2")) {
+			map.put("rule_model_first", map.get("yh_gdxf").toString());
+			map.put("rule_model_second", map.get("yh_gdj").toString());
+		}else if(map.get("rule_model").toString().equals("3")) {
+			map.put("rule_model_first", map.get("yh_sjxf").toString());
+			map.put("rule_model_second", map.get("yh_sjj").toString());
+		}
+		
+		map.put("sqlMapId", "editYouhuimaidan");
+		openService.update(map);
+		
+		map.put("fk_preferential_rule", rulePk);
+		
+		map.put("sqlMapId", "deleteAllRuleGood");
+		if(openService.update(map)) {
+			List<Map<String, Object>> list = toListMap(map.get("goodType").toString());
+			
+			for(int i=0; i<list.size(); i++) {
+				map.put("sqlMapId", "saveYouhuimaidanGood");
+				map.put("fk_goodtype", list.get(i).get("GTYPE_PK").toString());
+				openService.insert(map);
+			}
+		}
+		output("success");
+	}
+	
+	
+	/**
 	 * 优惠买单设置
 	 * @throws Exception 
 	 */
@@ -99,8 +165,8 @@ public class ShopInfoController extends BaseController {
 		try {
 			Map<String, Object> map = getParameterMap();
 
-			String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
-			//String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			

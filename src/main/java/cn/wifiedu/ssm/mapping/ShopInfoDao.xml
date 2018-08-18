@@ -4,7 +4,185 @@
 	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
 
-
+	<update id="editFavour" parameterMap="BaseParameterMap">
+		update sc_preferntial set 
+			name = #{name},
+			is_use = #{is_use},
+			actor = #{actor},
+			start_time = #{start_time},
+			end_time = #{end_time},
+			period = #{period},
+			fk_shop = #{fk_shop},
+			fk_rule = #{fk_rule},
+			points = #{jifen},
+			remark = #{remark},
+			update_by = #{userId},
+			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			period_week = #{time_week},
+			period_period = #{time_time}
+		where preferntial_pk = #{favourPK}
+	</update>
+	
+	<update id="delFavour" parameterMap="BaseParameterMap">
+		update sc_preferntial set 
+			delete_flag = '1',
+			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			update_by = #{userId}
+		where preferntial_pk = #{favPk}
+	</update>
+	
+	<select id="favourList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		select
+			preferntial_pk,
+			name,
+			is_use,
+			actor,
+			start_time,
+			end_time,
+			period,
+			fk_shop,
+			fk_rule,
+			(select rule_name from sc_preferntial_rule where fk_rule = preferential_rule_pk)rule_name,
+			(select good_scope from sc_preferntial_rule where fk_rule = preferential_rule_pk)good_scope,
+			(select shop_name from sc_shop_info where shop_id = fk_shop)shop_name,
+			points,
+			remark,
+			create_by,
+			create_time,
+			delete_flag,
+			period_week,
+			period_period
+		from sc_preferntial
+		where delete_flag = 0
+		<if test="favourPK != null and favourPK != '' ">
+			AND preferntial_pk = #{favourPK}
+		</if>
+		<if test="userId != null and userId != '' ">
+			and create_by = #{userId}
+		</if>
+		order by create_time desc
+	</select>
+	
+	<insert id="saveFavour" parameterMap="BaseParameterMap">
+		insert into sc_preferntial
+		(
+			preferntial_pk,
+			name,
+			is_use,
+			actor,
+			start_time,
+			end_time,
+			period,
+			fk_shop,
+			fk_rule,
+			points,
+			remark,
+			create_by,
+			create_time,
+			delete_flag,
+			period_week,
+			period_period
+		)
+		values
+		(
+			#{UUID},
+			#{name},
+			#{is_use},
+			#{actor},
+			#{start_time},
+			#{end_time},
+			#{period},
+			#{fk_shop},
+			#{fk_rule},
+			#{jifen},
+			#{remark},
+			#{userId},
+			date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			'0',
+			#{time_week},
+			#{time_time}
+		)
+	</insert>
+	
+	<select id="getMyShop" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		select
+			fk_shop,
+			user_shop_id,
+			(select shop_name from sc_shop_info where shop_id = fk_shop)shop_name
+		from sc_user_shop
+		where is_use = '0'
+		and fk_user = #{userId}
+	</select>
+	
+	<update id="deleteAllRuleGood" parameterMap="BaseParameterMap">
+		update sc_preferntial_rule_good set 
+			delete_flag = '1'
+		where fk_preferntial_rule = #{rulePk}
+		and delete_flag = '0'
+	</update>
+	
+	<update id="editYouhuimaidan" parameterMap="BaseParameterMap">
+		update sc_preferntial_rule set
+			rule_name = #{rule_name},
+			rule_order = #{rule_order},
+			is_use = #{is_use},
+			rule_model = #{rule_model},
+			remark = #{remark},
+			good_scope = #{good_scope},
+			rule_model_first = #{rule_model_first},
+			rule_model_second = #{rule_model_second},
+			update_by = #{USER_ID},
+			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			fk_shop = #{SHOP_ID}
+		where preferential_rule_pk = #{rulePk}
+	</update>
+	
+	<select id="getGoodTypeForRule" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		select
+			sc_preferntial_rule_good_pk,
+			fk_preferntial_rule,
+			fk_goodtype,
+			create_by,
+			create_time,
+			delete_flag
+		from sc_preferntial_rule_good
+		where fk_preferntial_rule = #{rulePk}
+		and delete_flag = '0'
+	</select>
+	
+	<update id="deleteFavourBaseInfo" parameterMap="BaseParameterMap">
+		update sc_preferntial_rule set
+			delete_flag = '1',
+			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' )
+		where preferential_rule_pk = #{rulePk}
+	</update>
+	
+	<select id="getfavourBaseInfo" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		select
+			preferential_rule_pk,
+			rule_name,
+			rule_order,
+			is_use,
+			rule_model,
+			remark,
+			good_scope,
+			rule_model_first,
+			rule_model_second,
+			create_by,
+			create_time,
+			delete_flag,
+			fk_shop
+		from sc_preferntial_rule
+		where delete_flag = '0'
+		<if test="rulePk != null and rulePk != '' ">
+			AND preferential_rule_pk = #{rulePk}
+		</if>
+		<if test="userId != null and userId != '' ">
+			and create_by = #{userId}
+		</if>
+		order by rule_order asc
+	</select>
+	
 	<insert id="saveYouhuimaidanGood" parameterMap="BaseParameterMap">
 		insert into sc_preferntial_rule_good
 		(

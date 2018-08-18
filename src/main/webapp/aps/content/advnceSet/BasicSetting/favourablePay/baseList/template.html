@@ -21,26 +21,26 @@
 	</div>
 
 	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;">
-		<div class="weui_cell slidelefts" ng-repeat="item in tables_area_list | orderBy:'pxxh'" >		
+		<div class="weui_cell slidelefts" ng-repeat="item in dataList " >		
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="display:flex;transform: translateX(0px);" ng-click="toHref('','{{item.id}}')">	
 				<div class="weui_cell_bd" style="margin-right:10px;">
 					<span>{{$index + 1}}</span>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<span>{{item.name}}</span><br/>
+					<span>{{item.rule_name}}</span><br/>
 					<!-- <font size="0.5" color="#CCCCCC">所有人员/限星期/折扣/全部商品/单时段</font> -->
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
-					<span>{{item.name}}</span><br/>
+					<span>{{item.remark}}</span><br/>
 					<!-- <font size="0.5" color="#CCCCCC">所有人员/限星期/折扣/全部商品/单时段</font> -->
 				</div>
 				<div class="weui_cell_bd tablessetting-small-font {{item.status == 0 ? 'tablessetting-red-font' : 'tablessetting-gray-font'}}" >
-					<span>{{item.status == 1 ? '开启' : '关闭'}}</span>
+					<span>{{item.is_use == 1 ? '开启' : '关闭'}}</span>
 				</div>	
 			</div>
 			<div class="slideleft">
-	        	<span style="background:#ccc;color:#fff" ng-click="addOrChange($index)">修改</span>
-	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="tablesDelete($index)">删除</span>
+	        	<span style="background:#ccc;color:#fff" ng-click="addOrChange(item)">修改</span>
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="tablesDelete(item)">删除</span>
        		</div>	  
 		</div>
 		

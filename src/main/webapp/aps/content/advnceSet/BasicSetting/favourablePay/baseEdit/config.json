@@ -1,0 +1,13 @@
+{
+	"name": "advnce_favourablePay_baseedit",
+	"viewUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseEdit/template.html",
+	"controllerUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseEdit/controller.js",
+	"config": {
+		"pageTitle": "优惠买单",
+		"saveYouhuimaidan":"json/ShopInfo_saveYouhuimaidan_data.json",
+		"getGoodType":"json/GoodsType_select_loadGoodsTypeListByPID.json",
+		"getBaseInfoURL":"json/Open_queryForList_getfavourBaseInfo.json",
+		"getGoodTypeForRule":"json/Open_queryForList_getGoodTypeForRule.json",
+		"editYouhuimaidan":"json/ShopInfo_editYouhuimaidan_data.json"
+	}
+}

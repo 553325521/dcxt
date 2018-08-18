@@ -3,6 +3,10 @@
 	"viewUrl": "aps/content/advnceSet/BasicSetting/favourablePay/add/template.html",
 	"controllerUrl": "aps/content/advnceSet/BasicSetting/favourablePay/add/controller.js",
 	"config": {
-		"pageTitle": "优惠买单"
+		"pageTitle": "优惠买单",
+		"getUserInfo":"json/ShopInfo_getUserInfo_data.json",
+		"getBaseInfo":"json/Open_queryForList_getfavourBaseInfo.json",
+		"getMyShop":"json/Open_queryForList_getMyShop.json",
+		"saveURL":"json/Open_insert_saveFavour"
 	}
 }

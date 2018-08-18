@@ -6,6 +6,16 @@
 				$scope.pageTitle = config.pageTitle;
 				$scope.form = {};
 				
+				$scope.addOrChange = function(obj){
+					var m2 = {
+							"url" : "aps/content/advnceSet/BasicSetting/favourablePay/baseEdit/config.json?pk="+obj.preferential_rule_pk,
+							"size" : "modal-lg",
+							"contentName" : "content"
+						}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+					$scope.$apply();
+				}
+				
 				// 餐桌区域数据源
 				$scope.tables_area_list = [
 					{
@@ -38,21 +48,22 @@
 				}
 							
 				//根绝索引删除当前元素
-				$scope.tablesDelete = function(index){
-					console.info(index)
-					current_tables_area = scope.tables_area_list[index];
-					
-					$.confirm("您确定要删除 " + current_tables_area.name + " 吗?", "确认删除?", function() {
+				$scope.tablesDelete = function(obj){
+					$.confirm("您确定要删除 " + obj.rule_name + " 吗?", "确认删除?", function() {
 				        	
-				        //先发送请求删除，再本地删除
-						//TODO
-					       
-						scope.tables_area_list.splice(index,1);
-					    //刷新数据	
-						scope.$apply();	
-					        		
-					      //请求成功开始删除
-						$.toast("删除成功!");
+						$scope.form.rulePk = obj.preferential_rule_pk;
+						$httpService.post(config.deleteURL, $scope.form).success(function(data) {
+							if (data.code === '0000') {
+								$.toast("删除成功!");
+								init();
+							} else {
+								
+							}
+							
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
+						
 					        
 				      }, function() {
 				        	//闭合滑块
@@ -71,13 +82,44 @@
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
 				
-				
+
+				var getBase = function(){
+					$scope.form.shopId = $scope.form.userInfo.shopId;
+					$scope.form.userId = $scope.form.userInfo.userId;
+					$httpService.post(config.getBaseInfo, $scope.form).success(function(data) {
+						if (data.code === '0000') {
+							$scope.dataList = data.data;
+							$scope.$apply();
+						} else {
+							
+						}
+						
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
 				
 				
 				var init = function(){
-					
+					getBase();
 				}
-				init();
+				
+				var getUserInfo = function(){
+					$httpService.post(config.getUserInfo, $scope.form).success(function(data) {
+						if (data.code === '0000') {
+							$scope.form.userInfo = data.data;
+							console.log($scope.form);
+							init();
+						} else {
+							
+						}
+						
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+				getUserInfo();
+				
 				
 			}
 		];

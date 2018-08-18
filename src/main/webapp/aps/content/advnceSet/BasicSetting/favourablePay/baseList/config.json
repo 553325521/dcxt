@@ -3,6 +3,9 @@
 	"viewUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseList/template.html",
 	"controllerUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseList/controller.js",
 	"config": {
-		"pageTitle": "优惠设置"
+		"pageTitle": "优惠设置",
+		"getBaseInfo":"json/Open_queryForList_getfavourBaseInfo.json",
+		"getUserInfo":"json/ShopInfo_getUserInfo_data.json",
+		"deleteURL":"json/Open_update_deleteFavourBaseInfo.json"
 	}
 }

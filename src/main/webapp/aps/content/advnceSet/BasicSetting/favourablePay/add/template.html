@@ -7,7 +7,7 @@
 	}
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('welcome','')">
+		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/BasicSetting/favourablePay/list','')">
 			<a class="icon icon-109" ></a>
 		</div>
 
@@ -15,7 +15,7 @@
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
 				<div class="bom-radio bom-radio-big" ng-click="toHistory()" style="transform: translateX(-260%);">优惠记录</div>
-				<div class="bom-radio" style="transform: translateX(-210%);" id="attend2" ng-click="doSave()">重置</div>
+				<div class="bom-radio" style="transform: translateX(-210%);" id="attend2" ng-click="reSet()">重置</div>
 			<div class="bom-radio" id="attend2" ng-click="doAdd()">添加</div>
 			</div>
 		</div>
@@ -27,7 +27,7 @@
 				<label class="weui_label label">活动名称</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input label-input" style="text-align: right" placeholder="请输入活动名称" ng-model="form.rule_name" type="text" id="rule_name">
+				<input class="weui_input label-input" style="text-align: right" placeholder="请输入活动名称" ng-model="form.name" type="text" id="rule_name">
 			</div>
 		</div>
 		<div class="weui_cell">
@@ -37,9 +37,9 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input class="weui-form-checkbox" name="is_use" id="g1" value="58mm"
-						type="radio" ng-model="form.is_use_1"> <label
-						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+					<input class="weui-form-checkbox" name="is_use" id="is_user_1" value="0"
+						type="radio" ng-model="form.is_use"> <label
+						for="is_user_1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>是</p>
@@ -48,9 +48,9 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input class="weui-form-checkbox" name="is_use" id="g2" value="80mm"
-						type="radio" ng-model="form.is_use_2"> <label
-						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+					<input class="weui-form-checkbox" name="is_use" id="is_user_2" value="1"
+						type="radio" ng-model="form.is_use"> <label
+						for="is_user_2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>否</p>
@@ -67,9 +67,9 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
-						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+					<input class="weui-form-checkbox" name="actor" id="actor_1" value="0"
+						type="radio" ng-model="form.actor"> <label
+						for="actor_1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>所有粉丝</p>
@@ -78,9 +78,9 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
+					<input class="weui-form-checkbox" name="actor" id="actor_2" value="1"
 						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+						for="actor_2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>仅限会员</p>
@@ -95,8 +95,8 @@
 				<label class="weui_label label">有效期限</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input" style="float: left;width:48%" type="date" value="" />
-				<input class="weui_input" style="float: left;width:48%" type="date" value="" />	
+				<input class="weui_input" id="start_time" style="float: left;width:48%" type="date" value="" />
+				<input class="weui_input" id="end_time" style="float: left;width:48%" type="date" value="" />	
 			</div>
 		</div>
 		<div class="weui_cell">
@@ -106,9 +106,9 @@
 			<div class="weui_cell_bd weui_cell_primary">
 				<div class="weui-form">
 					<div class="weui-form-li iblock li-checkbox-self">
-						<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
-							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-							for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+						<input ng-click="xianTime('0')" class="weui-form-checkbox" name="time" id="time_1" value="0"
+							type="radio" ng-model="form.period"> <label
+							for="time_1"> <i class="weui-icon-radio icon-checkbox-self"
 							style="margin: 0;"></i>
 							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>不限时段</p>
@@ -117,9 +117,9 @@
 					</div>
 					<div class="weui-form-li iblock li-checkbox-self"
 						style="margin-left: 10px;">
-						<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
-							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-							for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+						<input ng-click="xianTime('1')" class="weui-form-checkbox" name="time" id="time_2" value="1"
+							type="radio" ng-model="form.period"> <label
+							for="time_2"> <i class="weui-icon-radio icon-checkbox-self"
 							style="margin: 0;"></i>
 							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>限星期</p>
@@ -128,9 +128,9 @@
 					</div>
 					<div class="weui-form-li iblock li-checkbox-self"
 						style="margin-left: 10px;">
-						<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
-							type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-							for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+						<input ng-click="xianTime('2')" class="weui-form-checkbox" name="time" id="time_3" value="2"
+							type="radio" ng-model="form.period"> <label
+							for="time_3"> <i class="weui-icon-radio icon-checkbox-self"
 							style="margin: 0;"></i>
 							<div class="weui-form-text label-input" style="margin: 0;">
 								<p>限时段</p>
@@ -140,7 +140,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="weui_cell">
+		<div class="weui_cell time_week">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">限星期</label>
 		</div>
@@ -149,10 +149,10 @@
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
 					ng-repeat="item in printer_level">
-					<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
+					<input class="weui-form-checkbox" name="time_week" id="time_week{{$index + 1}}"
 						value="{{item.value}}" type="checkbox" ng-model="item.checked"
-						ng-change="selectLevel(item)"> <label
-						for="h{{$index + 1}}"> <i
+						ng-change="selectWeek(item)"> <label
+						for="time_week{{$index + 1}}"> <i
 						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>{{item.name}}</p>
@@ -162,7 +162,7 @@
 			</div>
 		</div>
 	</div>
-		<div class="weui_cell">
+		<div class="weui_cell time_time">
 			<div class="weui_cell_hd">
 				<label class="weui_label label">限时段</label>
 			</div>
@@ -171,10 +171,10 @@
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
 					ng-repeat="item in printer_level_2">
-					<input style="text-align: right" class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
+					<input style="text-align: right" class="weui-form-checkbox" name="time_time" id="time_time{{$index + 1}}"
 						value="{{item.value}}" type="checkbox" ng-model="item.checked"
-						ng-change="selectLevel(item)"> <label
-						for="h{{$index + 1}}"> <i
+						ng-change="selectTime(item)"> <label
+						for="time_time{{$index + 1}}"> <i
 						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>{{item.name}}</p>
@@ -186,10 +186,10 @@
 		</div>
 		<div class="weui_cell" >
 		<div class="weui_cell_hd">
-			<label class="weui_label label">商铺类型</label>
+			<label class="weui_label label">优惠方式</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			 <input class="weui_input label-input" style="float: right;width: 35%;margin-left: 10px" ng-model="form.SHOP_TYPE_1" type="text" id="SHOP_TYPE_1">
+			 <input class="weui_input label-input" style="float: right;width: 35%;margin-left: 10px" type="text" id="SHOP_TYPE_1">
 		</div>
 		</div>
 		
@@ -198,7 +198,7 @@
 			<label class="weui_label label">适用门店</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			 <input class="weui_input label-input" style="float: right;width: 35%;margin-left: 10px" ng-model="form.SHOP_TYPE_2" type="text" id="SHOP_TYPE_2">
+			 <input class="weui_input label-input" style="float: right;width: 35%;margin-left: 10px" type="text" id="SHOP_TYPE_2">
 		</div>
 		</div>
 		
@@ -209,9 +209,9 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input class="weui-form-checkbox" name="f2" id="g1" value="58mm"
-						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+					<input class="weui-form-checkbox" name="points" id="points_1" value="0"
+						type="radio" ng-model="form.jifen"> <label
+						for="points_1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>开启</p>
@@ -220,9 +220,9 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input class="weui-form-checkbox" name="f2" id="g2" value="80mm"
-						type="radio" ng-model="form.PRINTER_PAGE_WIDTH"> <label
-						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+					<input class="weui-form-checkbox" name="points" id="points_2" value="1"
+						type="radio" ng-model="form.jifen"> <label
+						for="points_2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>关闭</p>
@@ -238,8 +238,8 @@
 						<label class="weui_label label">备注说明</label>
 					</div>
 					<div class="weui_cell_bd weui_cell_primary">
-						<textarea class="weui_textarea" ng-model="form.SHOP_REMARK" placeholder="1000字以内的图文说明" rows="3"></textarea>
-			            <div class="weui_textarea_counter"><span>0</span>/1000</div>
+						<textarea class="weui_textarea" ng-model="form.remark" placeholder="1000字以内的图文说明" rows="3"></textarea>
+			            <div class="weui_textarea_counter"><span>{{remarkLength}}</span>/1000</div>
 					</div>
 				</div>
 			</div>

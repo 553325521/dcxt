@@ -16,7 +16,7 @@
 			<div class="button_sp_area" style="padding: 12px 0;">
 				<!-- <div class="bom-radio bom-radio-big" ng-click="toHistory()" style="transform: translateX(-260%);">优惠记录</div> -->
 				<div class="bom-radio" style="transform: translateX(-210%);" id="attend2" ng-click="reset()">重置</div>
-			<div class="bom-radio" id="attend2" ng-click="doAdd()">添加</div>
+			<div class="bom-radio" id="attend2" ng-click="doEdit()">修改</div>
 			</div>
 		</div>
 	</div>
@@ -45,8 +45,8 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input ng-click="isUser('1')" class="weui-form-checkbox" name="is_use" id="g1" value="58mm"
-						type="radio" ng-model="form.is_use_1"> <label
+					<input ng-click="isUser('1')" class="weui-form-checkbox" name="is_use" id="g1" value="1"
+						type="radio" ng-model="form.is_use"> <label
 						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
@@ -56,8 +56,8 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input ng-click="isUser('0')" class="weui-form-checkbox" name="is_use" id="g2" value="80mm"
-						type="radio" ng-model="form.is_use_2"> <label
+					<input ng-click="isUser('0')" class="weui-form-checkbox" name="is_use" id="g2" value="0"
+						type="radio" ng-model="form.is_use"> <label
 						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
@@ -75,7 +75,7 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input ng-click="checkRuleModel('1')" class="weui-form-checkbox" name="rule_model" id="rule_model_1" value="58mm"
+					<input ng-click="checkRuleModel('1')" class="weui-form-checkbox" name="rule_model" id="rule_model_1" value="0"
 						type="radio" ng-model="form.yhfs_zkyh"> <label
 						for="rule_model_1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
@@ -86,7 +86,7 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input ng-click="checkRuleModel('2')" class="weui-form-checkbox" name="rule_model" id="rule_model_2" value=""
+					<input ng-click="checkRuleModel('2')" class="weui-form-checkbox" name="rule_model" id="rule_model_2" value="0"
 						type="radio" ng-model="form.yhfs_gdmj"> <label
 						for="rule_model_2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
@@ -97,7 +97,7 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input ng-click="checkRuleModel('3')" class="weui-form-checkbox" name="rule_model" id="rule_model_3" value=""
+					<input ng-click="checkRuleModel('3')" class="weui-form-checkbox" name="rule_model" id="rule_model_3" value="0"
 						type="radio" ng-model="form.yhfs_sjmj"> <label
 						for="rule_model_3"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
@@ -223,7 +223,7 @@
 				<div class="weui-form">
 					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;"
 						ng-repeat="item in goodType">
-						<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
+						<input class="weui-form-checkbox {{item.GTYPE_PK}}" name="f3" id="h{{$index + 1}}"
 							value="{{item.GTYPE_NAME}}" type="checkbox" 
 							ng-checked="item.checked" 
 							ng-model="item.checked"
