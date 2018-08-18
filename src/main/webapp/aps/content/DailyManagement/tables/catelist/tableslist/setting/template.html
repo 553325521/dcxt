@@ -102,17 +102,17 @@
 			</div>
 
 
-			<div class="weui_cell" style="flex-wrap:wrap;">	
+			<div class="weui_cell no-broder" style="flex-wrap:wrap;background-color:#F8F8F8;">	
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">分类备注</label>		
 				</div>		
 				
 			</div>
 			
-			<div class="weui_cell">
+			<div class="weui_cell no-broder">
                 <div class="weui_cell_bd weui_cell_primary">
                     <textarea style="padding:0 12px;" id="textarea" class="weui_textarea" placeholder="请输入备注（选填）" rows="3" ng-model="form.TABLES_DESC"></textarea>
-                    <div class="weui_textarea_counter"><span id="count">{{font_length}}</span>/<span id="count_max">20</span></div>
+                    <div class="weui_textarea_counter"><span id="count">{{form.TABLES_DESC.length}}</span>/<span id="count_max">20</span></div>
                 </div>
             </div>
 			

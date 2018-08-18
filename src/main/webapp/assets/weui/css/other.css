@@ -139,7 +139,7 @@
 }
 
 .weui-header .weui-header-left .icon-109:hover {
-	color: #888;
+	color: #aaa;
 }
 
 .dcxt_active:active {
@@ -160,6 +160,9 @@
 .weui_btn_outer {
 	background-color: #d9d9d9 !important;
 	color: #111 !important;
+}
+.no-broder:before{
+	width:0;
 }
 
 /** end **/

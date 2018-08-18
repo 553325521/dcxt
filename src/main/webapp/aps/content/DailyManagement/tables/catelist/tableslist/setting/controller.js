@@ -32,7 +32,6 @@
 					} else {
 						scope.form = data.data;
 						scope.form.area_id = params.area_id;
-						scope.font_length = scope.form.TABLES_DESC.length
 						scope.pageShow = "True";
 						scope.$apply();
 						//这一行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题

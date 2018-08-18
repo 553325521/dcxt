@@ -30,7 +30,6 @@
 						loggingService.info(data.data);
 					} else {
 						scope.form = data.data;
-						scope.font_count = scope.form.TABLES_AREA_DESC.length
 						scope.pageShow = "True";
 						scope.$apply();
 						//这两行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
