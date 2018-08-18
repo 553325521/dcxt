@@ -183,7 +183,10 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Map<String, Object> map = getParameterMap();
 					//元转换成分存数据库
 					map.put("GOODS_PRICE", (long)(Double.parseDouble((String)map.get("GOODS_PRICE"))*100));
-					map.put("GOODS_TRUE_PRICE", (long)(Double.parseDouble((String)map.get("GOODS_TRUE_PRICE"))*100));
+					String true_price = (String)map.get("GOODS_TRUE_PRICE");
+					if(StringUtils.isNotBlank(true_price)){
+						map.put("GOODS_TRUE_PRICE", (long)(Double.parseDouble(true_price)*100));
+					}
 					
 					
 					//检验图片大小是否超出限制
@@ -376,7 +379,10 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					//元转换成分
 					map.put("GOODS_PRICE", (long)(Double.parseDouble((String)map.get("GOODS_PRICE"))*100));
-					map.put("GOODS_TRUE_PRICE", (long)(Double.parseDouble((String)map.get("GOODS_TRUE_PRICE"))*100));
+					String true_price = (String)map.get("GOODS_TRUE_PRICE");
+					if(StringUtils.isNotBlank(true_price)){
+						map.put("GOODS_TRUE_PRICE", (long)(Double.parseDouble(true_price)*100));
+					}
 					
 					boolean update = openService.update(map);
 					if(!update){

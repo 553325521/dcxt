@@ -74,7 +74,7 @@
 						//获取当前服务类型id
 						scope.form.SERVICE_ID = scope.current_service.SERVICE_PK;
 						//获取当前选择的购买期数
-						scope.buy_time = $("#buying_select").val();
+//						scope.buy_time = $("#buying_select").val();
 						//转换当前选择的购买期数为月数
 						scope.form.BUY_TIME = service_rule_dictionaries[scope.buy_time]["BUYSERVICE_RULE_SJYS"];
 						//计算当前选择的总价钱，折扣前
@@ -205,7 +205,14 @@
 									values : buying_select,
 									displayValues : buying_select
 								}
-							]
+							],
+							onChange : function(e) {
+								if (e != undefined && e.value[0] != undefined) {
+									var value = e.value[0]
+									scope.buy_time = value;
+									scope.refreshPage();
+								}
+							}
 						});
 						
 						$(".dcxt-shopselects").on('click','.dcxt-shopselect',function(){
@@ -229,10 +236,6 @@
 							scope.refreshPage();
 						})
 						
-						document.getElementById("buying_select").onchange = function(event) {
-							scope.refreshPage();
-						};
-					
 					}
 				}
 			];

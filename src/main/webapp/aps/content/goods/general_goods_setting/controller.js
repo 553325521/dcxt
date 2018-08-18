@@ -61,7 +61,9 @@
 									
 									//分转换成元
 									scope.form.GOODS_PRICE = Number(scope.form.GOODS_PRICE)/100;
-									scope.form.GOODS_TRUE_PRICE = Number(scope.form.GOODS_TRUE_PRICE)/100;
+									if(scope.form.GOODS_TRUE_PRICE != ""){
+										scope.form.GOODS_TRUE_PRICE = Number(scope.form.GOODS_TRUE_PRICE)/100;
+									}
 									//解决下拉选择框默认是第一个的问题
 									$("#pxxh_select").val(scope.form.GOODS_PXXH);
 									$("#unit_select").val(scope.form.GOODS_DW);
