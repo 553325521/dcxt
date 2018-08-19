@@ -9,7 +9,6 @@
 					//初始化form表单
 					scope.form = {},
 					scope.form.GTYPE_ID = params.GTYPE_PK;
-					console.info("编辑界面传回来的:"+scope.form.GTYPE_ID);
 					// 定义页面标题
 					scope.pageTitle = '商品列表';	
 					scope.goods_list = [];
@@ -33,7 +32,7 @@
 				
 					scope.toHref = function(path,goods_id) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&goods_id=" + goods_id+"&gtype_id=" + scope.form.GTYPE_ID+"&goods_count="+scope.goods_list.length,
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&goods_id=" + goods_id+"&gtype_id=" + params.GTYPE_PK+"&goods_count="+scope.goods_list.length,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}
@@ -49,7 +48,7 @@
 						scope.del={}
 						scope.del.GOODS_ID = goods_id;
 						var m2 = {
-							"url" : "aps/content/goods/goods_show/config.json",
+							"url" : "aps/content/DailyManagement/goods/goods_show/config.json",
 							"title" : "提示",
 							"contentName" : "modal",
 							"text" : "是否删除?"

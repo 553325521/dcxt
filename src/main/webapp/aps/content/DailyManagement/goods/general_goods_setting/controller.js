@@ -163,7 +163,7 @@
 							
 							//弹出保存询问
 							var m2 = {
-								"url" : "aps/content/goods/general_goods_setting/config.json",
+								"url" : "aps/content/DailyManagement/goods/general_goods_setting/config.json",
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : "是否保存?"
@@ -194,7 +194,7 @@
 									"title" : "提示",
 									"contentName" : "modal",
 									"text" : data.data,
-									"toUrl" : "aps/content/goods/goods_show/config.json"
+									"toUrl" : "aps/content/DailyManagement/goods/goods_show/config.json?GTYPE_PK="+params.gtype_id,
 								 }
 							 }
 							eventBusService.publish(controllerName, 'appPart.load.modal', m2);

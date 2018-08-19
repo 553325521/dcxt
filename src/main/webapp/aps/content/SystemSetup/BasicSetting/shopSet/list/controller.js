@@ -104,80 +104,11 @@
 						}
 					});
 					
-					
-					/*$("#SHOP_TYPE_2").picker({
-						title : "商铺类型",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '火锅', '鲁菜','湘菜' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								if (value == '火锅') {
-									$scope.form.SHOP_TYPE_2_VALUE = '1'
-								} else if (value == '鲁菜') {
-									$scope.form.SHOP_TYPE_2_VALUE = '2'
-								}else if (value == '湘菜') {
-									$scope.form.SHOP_TYPE_2_VALUE = '3'
-								}
-							}
-						}
-					});*/
 
-					$("#SHOP_AREA_1").picker({
-						title : "省",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '山东省', '北京市','上海市' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								
-							}
-						}
-					});
-					
-					$("#SHOP_AREA_2").picker({
-						title : "市",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '潍坊市', '青岛市','济南市' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								console.info(value)
-							}
-						}
-					});
-					
-					$("#SHOP_AREA_3").picker({
-						title : "区",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '潍城区', '高新区','奎文区' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								
-							}
-						}
-					});
+					$("#ssx").cityPicker({
+				        title: "选择省市县",
+				        toolbarCloseText : '完成'
+				     });
 				}
 				comboboxInit();
 				
