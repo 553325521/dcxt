@@ -34,7 +34,7 @@
 					scope.form.GOODS_TYPE = "2"
 					var init = function(){
 						//判断
-						if(scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
+						if(scope.form.GOODS_ID != undefined && scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
 							//是修改
 							// 定义页面标题
 							scope.pageTitle = '修改商品';
@@ -116,9 +116,9 @@
 					init();
 						
 					
-					scope.toHref = function(path,shopid) {
+					scope.toHref = function(path) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&shopid=" + shopid,
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl +"&GTYPE_PK="+params.gtype_id,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}

@@ -1,7 +1,7 @@
 {
 	"name": "general_goods_setting",
-	"viewUrl": "aps/content/goods/general_goods_setting/template.html",
-	"controllerUrl": "aps/content/goods/general_goods_setting/controller.js",
+	"viewUrl": "aps/content/DailyManagement/goods/general_goods_setting/template.html",
+	"controllerUrl": "aps/content/DailyManagement/goods/general_goods_setting/controller.js",
 	"config": {
 		"saveURL":"json/Goods_insert_insertGoods.json",
 		"findURL":"json/Goods_query_queryGoods.json",

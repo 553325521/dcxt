@@ -1,7 +1,7 @@
 {
 	"name": "type_setting_update",
-	"viewUrl": "aps/content/goods/updateGoodsType/template.html",
-	"controllerUrl": "aps/content/goods/updateGoodsType/controller.js",
+	"viewUrl": "aps/content/DailyManagement/goods/updateGoodsType/template.html",
+	"controllerUrl": "aps/content/DailyManagement/goods/updateGoodsType/controller.js",
 	"config": {
 		"loadGoodsTypeOrderURL":"json/GoodsType_select_loadGoodsTypeOrder.json",
 		"addURL":"json/GoodsType_insert_insertGoodsType.json",

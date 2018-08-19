@@ -1,7 +1,7 @@
 {
 	"name": "Goods_show",
-	"viewUrl": "aps/content/goods/goods_show/template.html",
-	"controllerUrl": "aps/content/goods/goods_show/controller.js",
+	"viewUrl": "aps/content/DailyManagement/goods/goods_show/template.html",
+	"controllerUrl": "aps/content/DailyManagement/goods/goods_show/controller.js",
 	"config": {
 		"findURL":"json/Goods_query_findBaseGoosList.json",
 		"removeURL":"json/Goods_delete_removeGoodsById.json",

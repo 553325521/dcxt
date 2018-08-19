@@ -20,7 +20,7 @@
 				
 				scope.toHref = function(path,GTYPE_PK) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+scope.lastPage+"&GTYPE_PK="+GTYPE_PK,
+						"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+scope.lastPage+"&GTYPE_PK="+GTYPE_PK+ "&gtype_id=" + scope.form.GTYPE_PID+"&goods_count=0",
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
@@ -119,7 +119,8 @@
 								/*下面有商品没有商品分类*/
 							}else if(data.data == '01'){
 								
-								/*scope.toHref("goods/goods_show");*/
+								scope.toHref("DailyManagement/goods/goods_show",GTYPE_PK);
+								$scope.$apply();
 								/*下面有商品有商品分类(不可能)*/
 							}else{
 								console.info("error");

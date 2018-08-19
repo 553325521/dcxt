@@ -8,18 +8,18 @@
 </style>
    <div class="weui-header" style="background-color:#FFFFFF">
 		<div class="weui-header-left">
-			<a class="icon icon-109"  ng-click="toHref('goods')"></a>
+			<a class="icon icon-109"  ng-click="toHref('DailyManagement/goods')"></a>
 		</div>
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area">
-				<div class="bom-radio" id="attend2" style="width:70px;" ng-click="toHref('goods/general_goods_setting')">添加商品</div>
+				<div class="bom-radio" id="attend2" style="width:70px;" ng-click="toHref('DailyManagement/goods/general_goods_setting')">添加商品</div>
 			</div>
 		</div>
 	</div>
 	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
 		<div class="weui_cell slidelefts" ng-repeat="item in goods_list">
-			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated"  style="display:flex;transform: translateX(0px);" ng-click="toHref('goods/general_goods_setting',item.GOODS_PK)">
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated"  style="display:flex;transform: translateX(0px);" ng-click="toHref('DailyManagement/goods/general_goods_setting',item.GOODS_PK)">
 				<div class="weui_cell_bd " style="margin-right:10px;">
 					<span>{{$index+1}}</span>
 				</div>
@@ -37,7 +37,7 @@
 				</div>
 			</div>
 			<div class="slideleft">
-	        <span style="background:#ccc;color:#fff" ng-click="toHref('goods/general_goods_setting',item.GOODS_PK)">修改</span>
+	        <span style="background:#ccc;color:#fff" ng-click="toHref('DailyManagement/goods/general_goods_setting',item.GOODS_PK)">修改</span>
 	        <span class="bg-red f-white dels" id="delete-table-cate" ng-click="tablesDelete(item.GOODS_PK)">删除</span>
        	</div>	
 		</div>

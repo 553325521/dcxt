@@ -12,12 +12,12 @@
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
 				
-				<div class="bom-radio showAddGoodsTypeBtn" style="width:70px" id="attend2" ng-click="toHref('goods/addGoodsType')">添加类别</div>
+				<div class="bom-radio showAddGoodsTypeBtn" style="width:70px" id="attend2" ng-click="toHref('DailyManagement/goods/addGoodsType')">添加类别</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="weui_cells showGoodsType"  style="margin-top:0;display:block">
+	<div class="weui_cells showGoodsType"  style="margin-top:1px;display:block">
 		<div class="weui_cell slidelefts" ng-repeat="item in GoodsType_List">
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd"  ng-click="goodsTypeClick(item.GTYPE_PK,'next')">
 				<div class="weui_cell_bd " style="float:left;width:2%;">
@@ -38,7 +38,7 @@
 				</div>
 			</div>
 			<div class="slideleft">
-				<span style="background:#ccc;color:#fff" ng-click="toHref('goods/updateGoodsType',item.GTYPE_PK)">编辑</span> 
+				<span style="background:#ccc;color:#fff" ng-click="toHref('DailyManagement/goods/updateGoodsType',item.GTYPE_PK)">编辑</span> 
 				<span class="bg-red f-white dels" ng-click="deleteGoodsType(item.GTYPE_PK)">删除</span>
 			</div>
 		</div>
@@ -52,12 +52,12 @@
 		</div>
 		<div  class="weui_cell noBorder">
 				 <div style="width:60%;margin-left: 20%">
-					<a href="javascript:;" class="weui_btn weui_btn_default" ng-click="toHref('goods/addGoodsType')">添加类别</a>
+					<a href="javascript:;" class="weui_btn weui_btn_default" ng-click="toHref('DailyManagement/goods/addGoodsType')">添加类别</a>
 				</div>
 		</div>
 		<div  class="weui_cell noBorder">
 				<div style="width:60%;margin-left: 20%;margin-bottom: 30%;">
-					<a href="javascript:;" class="weui_btn weui_btn_default">添加商品</a>
+					<a href="javascript:;" class="weui_btn weui_btn_default" ng-click="toHref('DailyManagement/goods/general_goods_setting')">添加商品</a>
 				</div>
 		</div>
 	</div>

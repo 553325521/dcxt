@@ -5,7 +5,7 @@
 </style>
    <div class="weui-header" style="background-color:#FFFFFF">
 		<div class="weui-header-left">
-			<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="toHref('goods')"></a>
+			<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="toHref('DailyManagement/goods')"></a>
 		</div>
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
@@ -24,17 +24,17 @@
         <div class="weui_cell">
            <div class="weui_cell" style="padding-left:0">
 			<div class="weui_cell_hd">
-				<label class="weui_label label">选择分类</label>
+				<label class="weui_label label">分类</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input label-input"   type="text"
+				<input class="weui_input label-input"  type="text"
 					value="" ng-model="form.GTYPE_PNAME" readonly>
 			</div>
 		</div>
           <div class="weui_cell noBorder">
             <div class="weui_cell_hd"><label class="weui_label label">排序序号</label></div>
             <div class="weui_cell_bd">
-                <input class="weui_input label-input" type="text" id="order_select"  readonly  ng-model="form.GTYPE_ORDER">
+                <input class="weui_input label-input" type="text" readonly  ng-model="form.GTYPE_ORDER">
             </div>
           </div>
         </div>

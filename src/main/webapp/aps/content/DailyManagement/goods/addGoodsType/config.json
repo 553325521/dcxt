@@ -1,7 +1,7 @@
 {
 	"name": "type_setting_add",
-	"viewUrl": "aps/content/goods/addGoodsType/template.html",
-	"controllerUrl": "aps/content/goods/addGoodsType/controller.js",
+	"viewUrl": "aps/content/DailyManagement/goods/addGoodsType/template.html",
+	"controllerUrl": "aps/content/DailyManagement/goods/addGoodsType/controller.js",
 	"config": {
 		"loadGoodsTypeOrderURL":"json/GoodsType_select_loadGoodsTypeOrder.json",
 		"addURL":"json/GoodsType_insert_insertGoodsType.json",
