@@ -1,0 +1,22 @@
+{
+	"name": "type_setting_update",
+	"viewUrl": "aps/content/goods/updateGoodsType/template.html",
+	"controllerUrl": "aps/content/goods/updateGoodsType/controller.js",
+	"config": {
+		"loadGoodsTypeOrderURL":"json/GoodsType_select_loadGoodsTypeOrder.json",
+		"addURL":"json/GoodsType_insert_insertGoodsType.json",
+		"selectGoodsTypePNameByPIDURL":"json/GoodsType_select_selectGoodsTypePNameByPID.json",
+		"loadGoodsTypeNameURL":"json/GoodsType_select_selectGTypeNameButNoGoodsByPID.json",
+		"loadGoosTypeOrderDataURL":"json/GoodsType_select_selectGTypeOrderByPID.json",
+		"updateGoodsTypeURL":"json/GoodsType_update_updateGoodsType.json",
+		"menu":{
+			"buttons":[{
+				"buttonName":"取消",
+				"buttonLink":"type_setting_update.close"
+			},{
+				"buttonName":"确定",
+				"buttonLink":"type_setting_update.confirm"
+			}]
+		}
+	}
+}

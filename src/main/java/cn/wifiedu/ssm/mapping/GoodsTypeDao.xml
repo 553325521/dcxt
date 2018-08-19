@@ -57,14 +57,59 @@
 <!-- 	根据ID查询商品分类名称 -->
 	<select id="selectGoodsTypePNameByPID" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		SELECT  GTYPE_NAME
+		SELECT  *
 		FROM sc_goods_type 
 		WHERE GTYPE_PK = #{GTYPE_PID}
 	</select>
-	
-	<!-- 根据类别id查询 -->
-	<select id="selectGtypeNameById"  parameterMap="BaseParameterMap"
+	<!-- 查询跟父分类同级且没有商品的分类 -->
+	<select id="selectGTypeNameButNoGoodsByPID" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		SELECT GTYPE_NAME, GTYPE_AREA FROM sc_goods_type WHERE GTYPE_PK = #{GTYPE_ID};
+		SELECT sgt.GTYPE_NAME
+		FROM sc_goods_type sgt 
+		WHERE  sgt.GTYPE_PID  = (SELECT sgt1.GTYPE_PID from sc_goods_type sgt1  where sgt1.GTYPE_PK = #{GTYPE_PID}) 
+		AND (SELECT COUNT(*) FROM sc_goods WHERE GTYPE_FK = sgt.GTYPE_PK) = 0
 	</select>
+	<!-- 根据PID查询该类下的排序序号(从小到大排序) -->
+	<select id="selectGTypeOrderByPID" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT sgt.GTYPE_ORDER
+		FROM sc_goods_type sgt
+		WHERE sgt.GTYPE_PID = 	#{GTYPE_PID}
+		order by sgt.GTYPE_ORDER
+	</select>
+	<!-- 根据分类ID更新某个分类 -->
+	<update id="updateGoodsType" parameterMap="BaseParameterMap">
+		UPDATE SC_GOODS_TYPE SET
+		GTYPE_NAME = #{GTYPE_NAME},
+		GTYPE_ORDER = #{GTYPE_ORDER},
+		GTYPE_AREA = #{GTYPE_AREA},
+		GTYPE_STATE = #{GTYPE_STATE},
+		GTYPE_BZ = #{GTYPE_BZ},
+		UPDATE_BY = #{UPDATE_BY},
+		UPDATE_TIME = NOW()
+		WHERE GTYPE_PK = #{GTYPE_PK}
+	</update>
+	<!-- 商品分类编辑时更新商品分类的排序序号(当序号往前移动变小) -->
+	<update id="updateGoodsTypeOrderChangeSmall" parameterMap="BaseParameterMap">
+		UPDATE SC_GOODS_TYPE SET
+		GTYPE_ORDER = GTYPE_ORDER +1
+		WHERE GTYPE_ORDER &lt; #{GTYPE_OLD_ORDER} AND GTYPE_ORDER &gt;= #{GTYPE_ORDER}  AND GTYPE_PID = #{PID}
+	</update>
+	<!-- 商品分类编辑时更新商品分类的排序序号(当序号往前移动变大) -->
+	<update id="updateGoodsTypeOrderChangeLarge" parameterMap="BaseParameterMap">
+			UPDATE SC_GOODS_TYPE SET
+			GTYPE_ORDER = GTYPE_ORDER -1
+			WHERE GTYPE_ORDER &lt;= #{GTYPE_ORDER} AND GTYPE_ORDER &gt; #{GTYPE_OLD_ORDER}  AND GTYPE_PID = #{PID}
+	</update>
+	<!-- 更新商品分类的路径 -->
+	<update id="updateGoodsTypePath" parameterMap="BaseParameterMap">
+			UPDATE SC_GOODS_TYPE SET
+			GTYPE_PATH = #{GTYPE_PATH}
+			WHERE  GTYPE_PK = #{GTYPE_PK}
+	</update>
+	<!-- 删除商品分类 -->
+	<delete id="deleteGoodsTypeByID" parameterMap="BaseParameterMap">
+		DELETE FROM SC_GOODS_TYPE
+		WHERE GTYPE_PATH  like '%${GTYPE_PK}%'
+	</delete>
 </mapper>

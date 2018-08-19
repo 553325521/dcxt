@@ -4,6 +4,16 @@
 	"controllerUrl": "aps/content/goods/controller.js",
 	"config": {
 		"loadGoodsTypeListByPIDURL":"json/GoodsType_select_loadGoodsTypeListByPID.json",
-		"selectLastRecordCountByPIDURL":"json/GoodsType_select_selectLastRecordCountByPID.json"	
+		"selectLastRecordCountByPIDURL":"json/GoodsType_select_selectLastRecordCountByPID.json",
+		"deleteGoodsTypeUrl":"json/GoodsType_delete_deleteGoodsTypeByID.json",
+		"menu":{
+			"buttons":[{
+				"buttonName":"取消",
+				"buttonLink":"type_list.close"
+			},{
+				"buttonName":"确定",
+				"buttonLink":"type_list.confirm"
+			}]
+		}
 	}
 }

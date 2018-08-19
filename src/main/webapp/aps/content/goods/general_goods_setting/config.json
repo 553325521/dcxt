@@ -4,9 +4,6 @@
 	"controllerUrl": "aps/content/goods/general_goods_setting/controller.js",
 	"config": {
 		"saveURL":"json/Goods_insert_insertGoods.json",
-		"findURL":"json/Goods_query_queryGoods.json",
-		"initURL":"json/GoodsType_select_findGoodsNameById.json",
-		"updateURL":"json/Goods_update_updateGoodsById.json",
 		"menu":{	
 	            "buttons":[
 		        	{

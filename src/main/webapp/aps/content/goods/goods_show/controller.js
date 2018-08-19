@@ -9,7 +9,7 @@
 					//初始化form表单
 					scope.form = {}
 					scope.form.GTYPE_ID = params.gtype_id;
-					scope.form.GTYPE_ID = "ee7c54e866d7428586954d0a3a77f966";
+					scope.form.GTYPE_ID = "912bd2a503de44be8051ae1d5c3db650";
 					
 					
 					// 定义页面标题
@@ -36,7 +36,7 @@
 				
 					scope.toHref = function(path,goods_id) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&goods_id=" + goods_id+"&gtype_id=" + scope.form.GTYPE_ID+"&goods_count="+scope.goods_list.length,
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&goods_id=" + goods_id+"&gtype_id=" + scope.form.GTYPE_ID+"&goods_count="+goods_list.length,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}

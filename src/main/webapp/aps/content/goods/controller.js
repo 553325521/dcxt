@@ -14,18 +14,52 @@
 				
 				scope.lastPage = [0];
 				
-				
+				scope.form.GTYPE_PK = "";
 				/*判断是否进入选择添加商品或者类别界面(返回按钮的时候使用)*/
 				scope.methodType = 0;
 				
-				scope.toHref = function(path) {
+				scope.toHref = function(path,GTYPE_PK) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+scope.lastPage,
+						"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+scope.lastPage+"&GTYPE_PK="+GTYPE_PK,
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
+				
+				/*删除按钮调用方法*/
+				scope.deleteGoodsType = function(GTYPE_PK){
+					console.info(GTYPE_PK);
+					scope.form.GTYPE_PK  = GTYPE_PK;
+					 var m2 = {
+				        		"url":"aps/content/goods/config.json",
+				        		"title":"提示",
+				        		"contentName":"modal",
+				        		"text":"是否删除"
+				        	 }
+				    eventBusService.publish(controllerName,"appPart.load.modal",m2);
+				}
+				
+				// 弹窗默认事件
+				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					$httpService.post(config.deleteGoodsTypeUrl, $scope.form).success(function(data) {
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data,
+								"toUrl" : "aps/content/goods/config.json?fid=" + scope.form.fid
+							}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				});
+				// 弹窗取消事件
+				eventBusService.subscribe(controllerName, controllerName + '.close', function(event, btn) {
+					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+						contentName : "modal"
+					});
+				});
 				
 				/*初始化商品分类数据源*/
 				scope.GoodsType_List = [];
@@ -84,6 +118,8 @@
 								loadGoodsTypeListByPID();
 								/*下面有商品没有商品分类*/
 							}else if(data.data == '01'){
+								
+								/*scope.toHref("goods/goods_show");*/
 								/*下面有商品有商品分类(不可能)*/
 							}else{
 								console.info("error");
