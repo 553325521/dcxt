@@ -9,8 +9,7 @@
 					//初始化form表单
 					scope.form = {}
 					scope.form.GTYPE_ID = params.gtype_id;
-					scope.form.GTYPE_ID = "ee7c54e866d7428586954d0a3a77f966";
-					
+					scope.form.GTYPE_ID = "213481da43d242c0921dfac15098bac6";
 					
 					// 定义页面标题
 					scope.pageTitle = '商品列表';	
