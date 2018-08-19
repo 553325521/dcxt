@@ -2,7 +2,7 @@
 .cancelBorder:before{
 	width:0;
 }
-.hide-inpit{
+.hide-input{
 	float: left;
 	position: relative;
 	margin-right: 9px;
@@ -22,16 +22,17 @@
 			</div>
 		</div>
 	</div>
-	 <div class="weui_cells weui_cells_form" style="margin-top:0" id="form">
+	 <div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow">
 	 		 <div class="weui_cell">
-                <div class="weui_cell_hd"><label class="weui_label label">商品名称</label></div>
+                <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">商品名称</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <input class="weui_input label-input" type="text"  placeholder="输入商品名称" ng-model="form.GOODS_NAME" required emptyTips="请输入商品名称"/>
                 </div>
+                <i class="weui_icon_warn"></i>
             </div>
-            <div class="weui_cell">
+            <div class="weui_cell dcxt_active">
 			<div class="weui_cell_hd">
-				<label class="weui_label label">是否启用</label>
+				<label class="weui_label label tablessetting-label">是否启用</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
 				<div class="weui-form">
@@ -60,23 +61,23 @@
 			</div>
 		</div>
 		 <div class="weui_cell" style="width:48%;float:left;margin-left:0;">
-                <div class="weui_cell_hd"><label class="weui_label label">商品编码</label></div>
+                <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">商品编码</label></div>
                 <div class="weui_cell_bd">
                     <input class="weui_input label-input" type="text" placeholder="输入商品编码" ng-model="form.GOODS_CODE"/>
                 </div>
          </div>
          <div class="weui_cell">
 			<div class="weui_cell_hd">
-				<label class="weui_label label" style="color:#04be02">分类</label>
+				<label class="weui_label label " style="color:#04be02">分类</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input label-input" id="fs_select" type="text"
-					value=""  ng-model = "form.GTYPE_ID">
+				<input class="weui_input label-input" id="fs_select" type="text" ng-readonly="true"
+					value=""  ng-model = "form.GTYPE_NAME">
 			</div>
 		</div>
 		<div class="weui_cell" style="width:30%;float:left;margin-left:0;">
 			<div class="weui_cell_hd">
-				<label class="weui_label label" style="color:#04be02">单位</label>
+				<label class="weui_label label tablessetting-label" style="color:#04be02">单位</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
 				<input class="weui_input label-input" id="unit_select" type="text"
@@ -84,14 +85,14 @@
 			</div>
 		</div>
 		 <div class="weui_cell">
-                <div class="weui_cell_hd"><label class="weui_label label">序号</label></div>
+                <div class="weui_cell_hd"><label class="weui_label label ">序号</label></div>
                 <div class="weui_cell_bd">
                     <input class="weui_input label-input" type="text" id="pxxh_select" ng-model="form.GOODS_PXXH" required/>
                 </div>
          </div>
-          <div class="weui_cell">
+          <div class="weui_cell dcxt_active">
 			<div class="weui_cell_hd">
-				<label class="weui_label label">类型</label>
+				<label class="weui_label label tablessetting-label">类型</label>
 			</div>
 			<div class="weui_cell_bd">
 				<div class="weui-form">
@@ -117,30 +118,30 @@
 			</div>
 		</div>
 		<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
-			 <div class="weui_cell_hd"><label class="weui_label label">原价</label></div>
+			 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">原价</label></div>
              <div class="weui_cell_bd">
                     <input class="weui_input label-input" style="float:left" type="text"  placeholder="输入原价" ng-model="form.GOODS_PRICE" required emptyTips="请输入商品价格"
-                    	notMatchTips="请输入正确价格" pattern="^[0-9|.]*$"/>
+                    	notMatchTips="请输入正确价格" pattern="^[0-9]+(.{1}[0-9]{1,2})?$"/>
              </div>
              <div class="weui_cell_bd"><span class="label-input">元</span></div>
 		</div>
 		 <div class="weui_cell">
                 <div class="weui_cell_hd"><label class="weui_label label">特价</label></div>
                 <div class="weui_cell_bd">
-                    <input class="weui_input label-input" type="text"  placeholder="输入特价" ng-model="form.GOODS_TRUE_PRICE" notMatchTips="请输入正确价格" pattern="^[0-9|.]*$"/>
+                    <input class="weui_input label-input" type="text"  placeholder="输入特价" ng-model="form.GOODS_TRUE_PRICE" notMatchTips="请输入正确价格" pattern="^([0-9]+(.{1}[0-9]{1,2})?)?$"/>
                 </div>
                  <div class="weui_cell_bd"><span class="label-input">元</span></div>
          </div>
-         <div class="weui_cell " style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;padding:0">
+         <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;width:46%;height:44px;float:left;margin-left:2%;padding:0">
 			 <div class="weui_cell_bd"><label class="weui_label label">规格</label></div>
 		</div>
-		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-right:2%;padding:0">
+		 <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;height:44px;margin-right:2%;padding:0">
                 <div class="weui_cell_hd"><label class="weui_label label">价格增减</label></div>
                 <div class="weui_cell_bd" style="margin-left:20%" ng-click="add(1)">
                 	<i class="icon-plus-sign" style="color:#04be02"></i>
                 </div>
          </div>
-         <div ng-repeat="item in GOODS_SPECIFICATION track by $index" ng-init="initsize_selects($index,item.name)">
+         <div ng-repeat="item in GOODS_SPECIFICATION track by $index" ng-init="initsize_selects($index,item.name)" class="dcxt_active">
 	        <div class="weui_cell" style="width:46%;height:44px;float:left;margin-left:6%;padding-right:0">
 				<div class="weui_cell_bd" style="width:20%">
 					<input class="weui_input label-input size_select" type="text" 
@@ -159,21 +160,22 @@
 	         </div>
          </div>
          
-          <div class="weui_cell" style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
+          <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
 			 <div class="weui_cell_bd"><label class="weui_label label">做法</label></div>
 		</div>
-		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-right:2%;margin-top:4%;padding:0">
+		 <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;height:44px;margin-right:2%;margin-top:4%;padding:0">
                 <div class="weui_cell_hd"><label class="weui_label label">价格增减</label></div>
                 <div class="weui_cell_bd" style="margin-left:20%" ng-click="add(2)">
                 	<i class="icon-plus-sign" style="color:#04be02"></i>
                 </div>
          </div>
-         <div ng-repeat="item in GOODS_RECIPE track by $index">
+         <div ng-repeat="item in GOODS_RECIPE track by $index" class="dcxt_active">
 	        <div class="weui_cell" style="width:46%;height:44px;float:left;margin-left:6%;padding-right:0">
 				<div class="weui_cell_bd" style="width:40%">
 					<input class="weui_input label-input" type="text" placeholder="输入做法" required emptyTips="请输入做法"
 						value=""  ng-model="item.name">
 				</div>
+				 <i class="weui_icon_warn"></i>
 			</div>
 			 <div class="weui_cell cancelBorder" style="height:44px;">
 	                <input class="weui_cell_hd weui_input weui_label label" ng-model="item.price" placeholder="例：+10.00" required emptyTips="输入价格增减"
@@ -186,21 +188,22 @@
          
          
          
-          <div class="weui_cell" style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
+          <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
 			 <div class="weui_cell_bd"><label class="weui_label label">口味</label></div>
 		</div>
-		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-top:4%;margin-right:2%;padding:0">
+		 <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;height:44px;margin-top:4%;margin-right:2%;padding:0">
                 <div class="weui_cell_hd"><label class="weui_label label">价格增减</label></div>
                 <div class="weui_cell_bd" style="margin-left:20%" ng-click="add(3)">
                 	<i class="icon-plus-sign" style="color:#04be02"></i>
                 </div>
          </div>
-          <div ng-repeat="item in GOODS_TASTE track by $index">
+          <div ng-repeat="item in GOODS_TASTE track by $index" class="dcxt_active">
 	        <div class="weui_cell" style="width:46%;height:44px;float:left;margin-left:6%;padding-right:0">
 				<div class="weui_cell_bd" style="width:40%">
 					<input class="weui_input label-input" type="text" placeholder="输入口味" required emptyTips="请输入口味"
 						value=""  ng-model="item.name">
 				</div>
+				 <i class="weui_icon_warn"></i>
 			</div>
 			 <div class="weui_cell cancelBorder" style="height:44px;">
 	                <input class="weui_cell_hd weui_input weui_label label" ng-model="item.price" placeholder="例：+10.00" required emptyTips="输入价格增减"
@@ -211,10 +214,10 @@
 	         </div>
          </div>
          
-        <div class="weui_cell" style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
-			 <div class="weui_cell_bd"><label class="weui_label label">商品备注</label></div>
+        <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label tablessetting-label">商品备注</label></div>
 		</div>
-		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-top:4%;margin-right:2%;padding:0">
+		 <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;height:44px;margin-top:4%;margin-right:2%;padding:0">
                 <div class="weui_cell_bd" style="margin-left:60%">
                 </div>
          </div>
@@ -222,10 +225,10 @@
          	<textarea id="textarea" ng-model="form.GOODS_DESC" class="weui_textarea" placeholder="请输入商品备注(选填)" rows="3"></textarea>
          </div>
          
-          <div class="weui_cell" style="background-color:#eeeeee;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
-			 <div class="weui_cell_bd"><label class="weui_label label">商品标签</label></div>
+          <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;width:46%;height:44px;float:left;margin-left:2%;margin-top:4%;padding:0">
+			 <div class="weui_cell_bd"><label class="weui_label label tablessetting-label">商品标签</label></div>
 		</div>
-		 <div class="weui_cell cancelBorder" style="background-color:#eeeeee;height:44px;margin-top:4%;margin-right:2%;padding:0">
+		 <div class="weui_cell cancelBorder" style="background-color:#F2F2F2;height:44px;margin-top:4%;margin-right:2%;padding:0">
                 <div class="weui_cell_bd" style="margin-left:60%">
                 </div>
          </div>
@@ -233,9 +236,9 @@
          	<textarea id="textarea" ng-model="form.GOODS_LABEL" class="weui_textarea" placeholder="用于给用户选择，多个标签用逗号分开(选填)" rows="3"></textarea>
          </div>
          
-          <div class="weui_cell" style="top:20px">
+          <div class="weui_cell dcxt_active" style="top:20px">
 			<div class="weui_cell_hd">
-				<label class="weui_label label">显示范围</label>
+				<label class="weui_label label tablessetting-label">显示范围</label>
 			</div>
 			<div class="weui_cell_bd">
 				<div class="weui-form">
@@ -253,9 +256,9 @@
 				</div>
 			</div>
 		</div>
-		 <div class="weui_cell" style="top:20px">
+		 <div class="weui_cell dcxt_active" style="top:20px">
 			<div class="weui_cell_hd">
-				<label class="weui_label label">图片</label>
+				<label class="weui_label label tablessetting-label">图片</label>
 			</div>
             <div class="weui_uploader_bd weui_cell_primary">
             	<ul class="weui_uploader_files" id="img2x">
@@ -270,10 +273,16 @@
              	</div>
             </div>
 		</div>
-		<div class="weui_cell cancelBorder" style="background-color:#eeeeee;width:95%;height:44px;margin-left:2%;margin-top:4%;padding:0">
+		<div class="weui_cell cancelBorder" style="background-color:#F2F2F2;width:95%;height:44px;margin-left:2%;margin-top:4%;padding:0">
 			<div class="weui_cell_bd"><label class="weui_label label">商品介绍</label></div>
 		</div>
 		<div class="weui_cell cancelBorder" style="top:20px;margin-bottom:20px;">
 		 	<p style="font-size:14px;">&nbsp;&nbsp;说明:原价必填，特价可填，如特价已填，该商品为特价商品，不享受任何折扣优惠。</p>
 		</div>
 	 </div>
+	 
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	

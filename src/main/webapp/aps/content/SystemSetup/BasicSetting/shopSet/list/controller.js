@@ -1,5 +1,5 @@
 (function() {
-	define(['jqueryweui'], function() {
+	define(['jqueryweui','pickercity'], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
@@ -8,15 +8,57 @@
 				$scope.fenzi = 0;
 				$scope.fenmu = 1000;
 				
+				//初始化店铺类型
+				shop_type = {
+					"中餐":["川菜", "鲁菜","湘菜"],
+					"西餐":["西餐1","西餐2","西餐3"]
+				}
+				
+				//初始化店铺类型
+				shop_type_first = [];
+				for(var key in shop_type){
+					shop_type_first.push(key)
+				}
+				
+				scope.form.SHOP_TYPE_1 = shop_type_first[0]
+				
+				//刷新第二个下拉框
+				var flushShopType2 = function(){
+					$("#SHOP_TYPE_2").picker({
+						title : "商铺类型",
+						toolbarCloseText : '确定',
+						cols : [
+							{
+								textAlign : 'center',
+								values : shop_type[scope.form.SHOP_TYPE_1]
+							}
+						],
+						onChange : function(e) {
+							if (e != undefined && e.value[0] != undefined) {
+								var value = e.value[0]
+								scope.form.SHOP_TYPE_2 = value
+							}
+						}
+					});
+					$("#SHOP_TYPE_2").val(shop_type[scope.form.SHOP_TYPE_1][0])
+				} 
+				
+				
+				
+				flushShopType2(shop_type[shop_type_first[0]])
+				
 				$scope.updateNum = function(){
 					$scope.fenzi = $scope.form.SHOP_REMARK.length;
 					//$scope.fenmu = 1000 - $scope.fenzi;
 				}
 				
+				
+				
 				$scope.doSave = function(){
-					$scope.form.SHOP_TYPE = $("#SHOP_TYPE_1").val() + " " + $("#SHOP_TYPE_2").val();
-					$scope.form.SHOP_AREA = $("#SHOP_AREA_1").val() + " " + $("#SHOP_AREA_2").val() + " " + $("#SHOP_AREA_3").val();
-					if($scope.form.SHOP_REMARK != undefined && $scope.form.SHOP_REMARK.length > 1000){
+//					$scope.form.SHOP_TYPE = scope.form.SHOP_TYPE_1 + " " + scope.form.SHOP_TYPE_2;
+//					$scope.form.SHOP_AREA = $("#SHOP_AREA_1").val() + " " + $("#SHOP_AREA_2").val() + " " + $("#SHOP_AREA_3").val();
+					console.info(scope.form)
+					/*if($scope.form.SHOP_REMARK != undefined && $scope.form.SHOP_REMARK.length > 1000){
 						return;
 					}
 					$httpService.post(config.saveShopInfoURL, $scope.form).success(function(data) {
@@ -28,7 +70,7 @@
 						
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
-					});
+					});*/
 				}
 				
 				$scope.toHref = function(path) {
@@ -40,6 +82,9 @@
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
 				
+				
+			
+				
 				var comboboxInit = function() {
 					$("#SHOP_TYPE_1").picker({
 						title : "商铺类型",
@@ -47,23 +92,20 @@
 						cols : [
 							{
 								textAlign : 'center',
-								values : [ '中餐', '西餐' ]
+								values : shop_type_first
 							}
 						],
 						onChange : function(e) {
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
-								if (value == '中餐') {
-									$scope.form.SHOP_TYPE_1_VALUE = '1'
-								} else if (value == '西餐') {
-									$scope.form.SHOP_TYPE_1_VALUE = '2'
-									
-								}
+								scope.form.SHOP_TYPE_1 = value
+								flushShopType2(shop_type[value]);
 							}
 						}
 					});
 					
-					$("#SHOP_TYPE_2").picker({
+					
+					/*$("#SHOP_TYPE_2").picker({
 						title : "商铺类型",
 						toolbarCloseText : '确定',
 						cols : [
@@ -84,7 +126,7 @@
 								}
 							}
 						}
-					});
+					});*/
 
 					$("#SHOP_AREA_1").picker({
 						title : "省",
@@ -115,7 +157,7 @@
 						onChange : function(e) {
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
-								
+								console.info(value)
 							}
 						}
 					});
