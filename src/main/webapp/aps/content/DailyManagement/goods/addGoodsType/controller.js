@@ -94,7 +94,7 @@
 				
 				scope.doSave = function() {
 					 var m2 = {
-				        		"url":"aps/content/goods/addGoodsType/config.json",
+				        		"url":"aps/content/DailyManagement/goods/addGoodsType/config.json",
 				        		"title":"提示",
 				        		"contentName":"modal",
 				        		"text":"是否保存"

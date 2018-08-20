@@ -269,6 +269,13 @@ public class ShopController extends BaseController {
 					param.put("SHOP_STATE", 1);
 					param.put("sqlMapId", "UpdateShopState");
 					boolean updateResult = openService.update(param);
+					param.clear();
+					param.put("SHOP_ID", state);
+					param.put("sqlMapId", "insertFuntionForShop");
+					String insertStr = openService.insert(param);
+					if(insertStr == null || insertStr.equals("")){
+						throw new Exception();
+					}
 					if (updateResult) {
 						String token = WxUtil.getToken();
 						if (token != null) {
