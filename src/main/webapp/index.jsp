@@ -34,6 +34,8 @@
 	href="<%=basePath%>assets/weui/css/jquery-weui.min.css">
 <link rel="stylesheet"
 	href="<%=basePath%>assets/weui/css/other.css?v=20180715000000">
+	<link rel="stylesheet" href="<%=basePath%>assets/wangEditor/css/wangEditor-1.1.0-min.css">
+	<link rel="stylesheet" href="<%=basePath%>assets/wangEditor/css/font-awesome.min.css">
 <script src="<%=basePath%>js/weui/zepto.min.js"></script>
 <script src="<%=basePath%>js/jquery/1.11.3/jquery.min.js"></script>
 </head>

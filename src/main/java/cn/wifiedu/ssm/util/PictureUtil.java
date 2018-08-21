@@ -65,6 +65,15 @@ public class PictureUtil {
          //生成图片
 		 String picPath = filePath + "/" + UUID.randomUUID() + "." + extName;//生成的图片相对路径和名字
 		 String imgFilePath = projectPath +  picPath;
+		 
+		 File file = new File(imgFilePath);
+		 if(!file.getParentFile().exists()){
+			 boolean result = file.getParentFile().mkdirs();
+			 if (!result) {
+				 return null;
+	         }
+		 }
+		 
          System.out.println(imgFilePath);
          OutputStream out = null;
          try {
@@ -78,8 +87,8 @@ public class PictureUtil {
 				return null;
 			} catch (IOException e1) {
 				e1.printStackTrace();
+				return null;
 			}
-			 e.printStackTrace();
 		}   
 		return picPath;
 	}

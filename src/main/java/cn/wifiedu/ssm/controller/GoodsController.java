@@ -423,7 +423,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					if(base64Pic.indexOf("data:image/") != -1){//说明该位置被更换，
 						onePicSize = base64Pic.length()*3/4;
 						if(onePicSize > ONE_PIC_MAXSIZE){
-							return "单张图片大小不允许超过2M";
+							return "单张图片大小不允许超过" + Math.floor(ONE_PIC_MAXSIZE/1000000) + "M";
 						}
 					}else{
 						onePicSize = Long.parseLong(entry.getValue()+"");
@@ -438,14 +438,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						base64Pic = newPicList.get(index);
 						onePicSize = base64Pic.length()*3/4;
 						if(onePicSize > ONE_PIC_MAXSIZE){
-							return "单张图片大小不允许超过2M";
+							return "单张图片大小不允许超过" + Math.floor(ONE_PIC_MAXSIZE/1000000) + "M";
 						}
 						allPicSize += onePicSize;
 					}
 				}
 				
 				if(allPicSize > ALL_PICMAX_SIZE){
-					return "图片总大小不允许超过6M";
+					return "图片总大小不允许超过" + Math.floor(ALL_PICMAX_SIZE/1000000) + "M";
 				}
 				return null;
 			}
@@ -463,7 +463,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 */
 			private String checkUploadPic(String picURLStr) {
 				if(StringUtils.isNotBlank(picURLStr) && picURLStr.length()*3/4 > ALL_PICMAX_SIZE){//根据base64字符填充规则，base64大小*（3/4）即为原图片大小
-					return "图片总大小不允许超过6M";
+					return "图片总大小不允许超过" + Math.floor(ALL_PICMAX_SIZE/1000000) + "M";
 				}
 				JSONArray base64Pic = JSON.parseArray(picURLStr);
 				if(base64Pic.size() > MAX_PIC_NUM){
@@ -474,7 +474,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					String picStr = (String)pic;
 					long picSize = picStr.length()*3/4;
 					if(picSize > ONE_PIC_MAXSIZE){
-						return "单张图片大小不允许超过2M";
+						return "单张图片大小不允许超过" + Math.floor(ONE_PIC_MAXSIZE/1000000) + "M";
 					}
 				}
 				return null;

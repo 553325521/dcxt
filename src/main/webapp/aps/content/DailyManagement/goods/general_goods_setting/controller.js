@@ -295,7 +295,7 @@
 	}).call(this);
 	
 	//添加或更换图片
-	function previewImage(file,index) {
+	function previewImage(file) {
 		index = angular.element(file).scope().$index  //onchange里边获取不到$index，只能这么获取了
 	    for(var i=0;i<file.files.length;i++){
 		    if (file.files && file.files[i]) {

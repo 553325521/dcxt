@@ -1,7 +1,43 @@
-
+<style>
+	.weui_cell .weui_cell_bd{
+		margin-left: 10px;
+	}
+	.city-picker .picker-items-col {
+		text-align:center;
+	}
+	 .weui-picker-container-visible{
+		pointer-events: auto;
+	} 
+	
+	.hide-input{
+		float: left;
+		position: relative;
+		margin-right: 9px;
+		margin-bottom: 9px;
+		width: 77px;
+		height: 77px;
+	}
+	
+	.weui_uploader_files li{
+	 	width:79px;
+	 	float:left;
+	 	margin-bottom:9px;
+	 	margin-right: 9px;
+	}
+	
+	.textarea img{
+		width:80vw;
+		padding:0 10vw;
+	}
+	
+	.wangEditor .textarea {
+     	margin: 0; 
+	}
+	
+</style>
 <div class="weui-header" style="background-color:#FFFFFF">
-	<div class="weui-header-left" ng-click="toHref('welcome');">
-		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	<div class="weui-header-left" ng-click="toHref('SystemSetup/BasicSetting');">
+		<a class="icon icon-109" style="color: #0D0D0D !important;" id="aa"></a>
 	</div>
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 	<div class="weui-header-right" style="top: 0;">
@@ -11,21 +47,23 @@
 	</div>
 </div>
 
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+<div class="weui_cells weui_cells_form" style="margin-top: 0;" id="form">
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">商铺名称</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary" >
-			<input class="weui_input label-input" ng-model="form.SHOP_NAME" type="text" id="SHOP_NAME">
+			<input class="weui_input label-input" ng-model="form.SHOP_NAME" type="text" id="SHOP_NAME" placeholder="输入商铺名称" required 
+						emptyTips="请输入商铺名称">
 		</div>
+		<i class="weui_icon_warn"></i>
 	</div>
 	<div class="weui_cell" >
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">商铺类型</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			 <input class="weui_input label-input" style="float: left;width: 35%;margin-left: 10px" ng-model="form.SHOP_TYPE_1" type="text" id="SHOP_TYPE_1">
+			 <input class="weui_input label-input" style="float: left;width: 35%;margin-left: 10px;" ng-model="form.SHOP_TYPE_1" type="text" id="SHOP_TYPE_1">
              <input class="weui_input label-input" style="float: left;width: 35%"  ng-model="form.SHOP_TYPE_2" type="text" id="SHOP_TYPE_2">
 		</div>
 	</div>
@@ -34,9 +72,7 @@
 			<label class="weui_label label  tablessetting-label">商铺区域</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			 <input class="weui_input label-input" style="float: left;width: 30%;margin-left: 10px" ng-model="form.SHOP_AREA_1" type="text" id="SHOP_AREA_1">
-             <input class="weui_input label-input" style="float: left;width: 30%" ng-model="form.SHOP_AREA_2" type="text" id="SHOP_AREA_2">
-             <input class="weui_input label-input" style="float: left;width: 30%" ng-model="form.SHOP_AREA_3" type="text" id="SHOP_AREA_3">
+			 <input class="weui_input label-input" style="float: left;margin-left: 10px;" ng-model="form.SHOP_AREA" value="" type="text" id="ssx">
 		</div>
 	</div>
 	<div class="weui_cell">
@@ -44,66 +80,93 @@
 			<label class="weui_label label  tablessetting-label">商铺位置</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" ng-model="form.SHOP_GPS">
+			<input class="weui_input label-input" type="text" ng-model="form.SHOP_GPS" placeholder="自动定位" required
+						emptyTips="请自动定位位置">
 		</div>
+		<div style="margin-right:15px;" ng-click="getLocation()">
+			<span class="icon icon-68 f-green"></span>
+		</div>
+		<i class="weui_icon_warn"></i>
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">商铺地址</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" ng-model="form.SHOP_ADDRESS">
+			<input class="weui_input label-input" type="text" ng-model="form.SHOP_ADDRESS" placeholder="输入商铺地址" required 
+						emptyTips="请输入商铺地址">
 		</div> 
+		<i class="weui_icon_warn"></i>
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">营业时间</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" ng-model="form.SHOP_HOURS">
+			<input class="weui_input label-input" type="text" ng-model="form.SHOP_HOURS" placeholder="例：08:00-22:00" required 
+						emptyTips="请输入营业时间">
 		</div>
+		<i class="weui_icon_warn"></i>
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">联系电话</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" ng-model="form.SHOP_TEL">
+			<input class="weui_input label-input" type="text" ng-model="form.SHOP_TEL" placeholder="输入联系电话"  required 
+						emptyTips="请输入联系电话" notMatchTips="请输入正确联系电话" pattern="^[0-9|-]{5,}$">
 		</div>
+		<i class="weui_icon_warn"></i>
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">配套设置</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" ng-model="form.SUPPORT">
+			<input class="weui_input label-input" type="text" ng-model="form.SUPPORT" placeholder="例：免费停车场、WIFI">
 		</div>
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">形象图片</label>
 		</div>
-		<div class="weui_cell_bd weui_cell_primary">
-			<div class="weui_uploader_bd">
-               <ul class="weui_uploader_files">
-                   <li class="weui_uploader_file" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/)"></li>
-                   <li class="weui_uploader_file weui_uploader_status" style="background-image:url(http://shp.qpic.cn/weixinsrc_pic/pScBR7sbqjOBJomcuvVJ6iacVrbMJaoJZkFUIq4nzQZUIqzTKziam7ibg/)">
-                       <div class="weui_uploader_status_content">50%</div>
-                   </li>
-               </ul>
-               <div class="weui_uploader_input_wrp">
-                   <input class="weui_uploader_input" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" multiple />
-               </div>
-           </div>
-		</div>
+		 <div class="weui_uploader_bd weui_cell_primary">
+            <ul class="weui_uploader_files" id="img2x">
+           	 <li>
+            	<div class="weui_uploader_file" style="background-image:url({{form.IMG_LOGO}})">
+	            	<div class="hide-input {{form.IMG_LOGO == null || form.IMG_LOGO == ''?'weui_uploader_input_wrp':''}}">
+		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i1">
+	             	</div>
+            	</div>
+            	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;">店铺LOGO</div>
+            </li>
+            <li>
+            	<div class="weui_uploader_file" style="background-image:url({{form.IMG_BODAY}})">
+	            	<div class="hide-input {{form.IMG_BODAY == null || form.IMG_BODAY == ''?'weui_uploader_input_wrp':''}}">
+		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i2">
+	             	</div>
+            	</div>
+            	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;width:79px;">店铺形象</div>
+             </li>
+             <li>
+            	<div class="weui_uploader_file" style="background-image:url({{form.IMG_HEAD}})">
+	            	<div class="hide-input {{form.IMG_HEAD == null || form.IMG_HEAD == ''?'weui_uploader_input_wrp':''}}">
+		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i3">
+	             	</div>
+            	</div>
+            	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;">店铺门头</div>
+            </li>
+            </ul>
+    	</div>
 	</div>
-	<div class="weui_cell">
+	<div class="weui_cell"  style="flex-wrap:wrap;background-color:#F8F8F8;">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">店铺介绍</label>
 		</div>
-		<div class="weui_cell_bd weui_cell_primary">
-			<textarea class="weui_textarea"  ng-change="updateNum()" ng-model="form.SHOP_REMARK" placeholder="1000字以内的图文说明" rows="3"></textarea>
-            <div class="weui_textarea_counter"><span>{{fenzi}}</span>/{{fenmu}}</div>
-		</div>
+		<label style="font-size:13px;color:#888;">（1000字以内的图文介绍）</label>
 	</div>
+	
+	<div id="txtDiv" style="border:1px solid #cccccc; height:100vh;" class="wangEditor"></div>
+	
+	
 </div>

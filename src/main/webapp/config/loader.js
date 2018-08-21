@@ -44,6 +44,7 @@
 			jqueryweui : "js/weui/jquery-weui.min",
 			slideleft : 'js/weui/slideleft2',
 			pickercity : 'js/weui/picker-city',
+			wangEditor : 'js/wangEditor/wangEditor-1.1.0',
 		},
 		shim : {
 			highchartsGridLight : {

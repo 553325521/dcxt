@@ -32,7 +32,7 @@
 					console.info(GTYPE_PK);
 					scope.form.GTYPE_PK  = GTYPE_PK;
 					 var m2 = {
-				        		"url":"aps/content/goods/config.json",
+				        		"url":"aps/content/DailyManagement/goods/config.json",
 				        		"title":"提示",
 				        		"contentName":"modal",
 				        		"text":"是否删除"
