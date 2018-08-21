@@ -114,11 +114,19 @@
 					
 					
 					init();
-						
+					
+					/*返回按钮点击方法*/
+					scope.returnClick = function(){
+						if(params.Last_Page == undefined){
+							scope.toHref('DailyManagement/goods/goods_show');
+						}else{
+							scope.toHref('DailyManagement/goods');
+						}
+					}
 					
 					scope.toHref = function(path) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl +"&GTYPE_PK="+params.gtype_id,
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl +"&GTYPE_PK="+params.gtype_id+"&Last_Page="+params.Last_Page,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}
