@@ -206,6 +206,7 @@ public class StaffController extends BaseController {
 	 */
 	@RequestMapping("/Staff_add_addStaff")
 	public void addStaff(HttpServletRequest request, HttpSession session) {
+		txManagerController.createTxManager();
 		try {
 			String code = request.getParameter("code");
 			String appid = request.getParameter("appid");

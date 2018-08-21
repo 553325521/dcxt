@@ -1,0 +1,286 @@
+
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/BasicSetting');">
+			<a class="icon icon-109"></a>
+		</div>
+
+		<h1 class="weui-header-title weui-header-self">
+			{{pageTitle}}
+		</h1>
+ 
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
+		</div>
+	</div>
+	
+
+		<div class="weui_cells weui_cells_form" style="margin-top: 0;" ng-show="pageShow" id="form">
+			<div class="weui_cell dcxt_active">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">微信支付</label>
+				</div>
+				<div class="weui_cell_bd tablessetting-weui_hd_self weui_cell_primary ">
+					<div class="weui-form">
+						<div class="weui-form-li iblock li-checkbox-self">
+							<input class="weui-form-checkbox" name="f2" id="g1" value="1"
+									type="radio" ng-model="form.WX_STATUS"> 
+							<label for="g1"> 
+								<i class="weui-icon-radio icon-checkbox-self"
+												style="margin: 0;">
+								</i>
+								<div class="weui-form-text label-input" style="margin: 0;">
+									<p>是</p>
+								</div>
+							</label>
+						</div>
+						<div class="weui-form-li iblock li-checkbox-self"
+							style="margin-left: 15px;">
+							<input class="weui-form-checkbox" name="f2" id="g2" value="0"
+								type="radio" ng-model="form.WX_STATUS"> 
+							<label for="g2"> 
+								<i class="weui-icon-radio icon-checkbox-self"
+										style="margin: 0;">	
+								</i>
+								<div class="weui-form-text label-input" style="margin: 0;">
+									<p>否</p>
+								</div>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">原始ID</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" type="text"
+						 ng-model="form.ORIGINAL_ID" required emptyTips="请输入原始ID">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">appid</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" type="text"
+						 ng-model="form.WX_APPID" required emptyTips="请输入appid">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">商户ID</label>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" type="text"
+						 ng-model="form.WX_SHOP_ID" required emptyTips="请输入商户ID">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
+				 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label" style="min-width:105px">子商户公众号ID</label></div>
+	             <div class="weui_cell_bd">
+	                    <input class="weui_input label-input"  type="text"   ng-model="form.SUB_SHOP_APPID" required emptyTips="请输入子商户公众号ID"/>
+	             </div>
+			</div>
+			 <div class="weui_cell">
+	                <div class="weui_cell_hd"><label class="weui_label label">子商户ID</label></div>
+	                <div class="weui_cell_bd">
+	                    <input class="weui_input label-input" type="text"   ng-model="form.SUB_SHOPID" required emptyTips="请输入子商户ID"/>
+	                </div>
+	         </div>
+         
+         
+			<div class="weui_cell dcxt_active">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">支付宝支付</label>
+				</div>
+				<div class="weui_cell_bd tablessetting-weui_hd_self weui_cell_primary ">
+					<div class="weui-form">
+						<div class="weui-form-li iblock li-checkbox-self">
+							<input class="weui-form-checkbox" name="f3" id="g3" value="1"
+									type="radio" ng-model="form.ALIPAY_STATUS"> 
+							<label for="g3"> 
+								<i class="weui-icon-radio icon-checkbox-self"
+												style="margin: 0;">
+								</i>
+								<div class="weui-form-text label-input" style="margin: 0;">
+									<p>是</p>
+								</div>
+							</label>
+						</div>
+						<div class="weui-form-li iblock li-checkbox-self"
+							style="margin-left: 15px;">
+							<input class="weui-form-checkbox" name="f3" id="g4" value="0"
+								type="radio" ng-model="form.ALIPAY_STATUS"> 
+							<label for="g4"> 
+								<i class="weui-icon-radio icon-checkbox-self"
+										style="margin: 0;">	
+								</i>
+								<div class="weui-form-text label-input" style="margin: 0;">
+									<p>否</p>
+								</div>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">支付宝注册邮箱</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input" id="rs_select" type="text" ng-model="form.ALIPAY_EMAIL"
+						 value="" required 
+						emptyTips="请输入支付宝注册邮箱" notMatchTips="请输入正确邮箱" pattern="^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			
+			<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
+				 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">PID</label></div>
+	             <div class="weui_cell_bd">
+	                    <input class="weui_input label-input"  type="text"   ng-model="form.ALIPAY_PID" required emptyTips="请输入PID"/>
+	             </div>
+			</div>
+			 <div class="weui_cell">
+	                <div class="weui_cell_hd"><label class="weui_label label">KEY</label></div>
+	                <div class="weui_cell_bd">
+	                    <input class="weui_input label-input" type="text"   ng-model="form.ALIPAY_KEY" required emptyTips="请输入KEY"/>
+	                </div>
+	         </div>
+	         
+	         
+	         <div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
+				 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">APP_ID</label></div>
+	             <div class="weui_cell_bd">
+	                    <input class="weui_input label-input"  type="text"   ng-model="form.ALIPAY_APP_ID" required emptyTips="请输入APP_ID"/>
+	             </div>
+			</div>
+			 <div class="weui_cell">
+	                <div class="weui_cell_hd"><label class="weui_label label">RSA</label></div>
+	                <div class="weui_cell_bd">
+	                    <input class="weui_input label-input" type="text"   ng-model="form.ALIPAY_RSA" required emptyTips="请输入RSA"/>
+	                </div>
+	         </div>
+	         
+	         
+	         
+			<div class="weui_cell dcxt_active">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">星POS支付通道</label>
+				</div>
+				<div class="weui_cell_bd tablessetting-weui_hd_self weui_cell_primary ">
+					<div class="weui-form">
+						<div class="weui-form-li iblock li-checkbox-self">
+							<input class="weui-form-checkbox" name="f4" id="g5" value="1"
+									type="radio" ng-model="form.POSPAY_STATUS"> 
+							<label for="g5"> 
+								<i class="weui-icon-radio icon-checkbox-self"
+												style="margin: 0;">
+								</i>
+								<div class="weui-form-text label-input" style="margin: 0;">
+									<p>是</p>
+								</div>
+							</label>
+						</div>
+						<div class="weui-form-li iblock li-checkbox-self"
+							style="margin-left: 15px;">
+							<input class="weui-form-checkbox" name="f4" id="g6" value="0"
+								type="radio" ng-model="form.POSPAY_STATUS"> 
+							<label for="g6"> 
+								<i class="weui-icon-radio icon-checkbox-self"
+										style="margin: 0;">	
+								</i>
+								<div class="weui-form-text label-input" style="margin: 0;">
+									<p>否</p>
+								</div>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">商户识别号</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input"  type="text" ng-model="form.SHOP_IDENTIFY_NUMBER"
+						 value="" required 
+						emptyTips="请输入商户识别号">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">商户门店号</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input"  type="text" ng-model="form.SHOP_STORE_NUMBER"
+						 value="" required 
+						emptyTips="请输入商户门店号">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">小票商户号</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input"  type="text" ng-model="form.RECEIPT_SHOP_NUMBER"
+						 value="" required 
+						emptyTips="请输入小票商户号">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">台牌终端号</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input"  type="text" ng-model="form.PLATFORM_TERMINAL_NUMBER"
+						 value="" required 
+						emptyTips="请输入台牌终端号">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			
+			
+			<div class="weui_cell">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">微信APPID</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input"  type="text" ng-model="form.POS_WX_APPID"
+						 value="" required 
+						emptyTips="请输入微信APPID">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+		</div>
+		<div class="weui-loadmore" ng-hide="pageShow">
+			<i class="weui-loading"></i>
+			<span class="weui-loadmore-tips">正在加载</span>
+		</div>
+	

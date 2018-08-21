@@ -1,0 +1,23 @@
+{
+	"name": "pay_setting",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/pay/setting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/pay/setting/controller.js",
+	"config": {
+		"pageTitle": "支付设置",
+		"loadPaySettingInfo":"json/PaySetting_select_selectByShopFK.json",
+		"insertURL":"json/PaySetting_insert_insertRecord.json",
+		"updateURL":"json/PaySetting_update_updateRecord.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"pay_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"pay_setting.confirm"
+		        	}
+				]
+			}
+	}
+}

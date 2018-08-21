@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="PaySettingDao">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+
+	<!-- 根据商户FK查询支付设置信息 -->
+	<select id="selectByShopFK" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+	SELECT * 
+	FROM sc_pay_setting
+	WHERE SHOP_FK = #{SHOP_FK}
+	</select>
+	
+	<!-- 插入支付设置记录 -->
+	<insert id="insertRecord" parameterMap="BaseParameterMap">
+		INSERT INTO sc_pay_setting
+		(
+		PAYSETTING_PK,
+		WX_STATUS,
+		ORIGINAL_ID,
+		WX_APPID,
+		WX_SHOP_ID,
+		SUB_SHOP_APPID,
+		SUB_SHOPID,
+		ALIPAY_STATUS,
+		ALIPAY_EMAIL,
+		ALIPAY_PID,
+		ALIPAY_KEY,
+		ALIPAY_APP_ID,
+		ALIPAY_RSA,
+		POSPAY_STATUS,
+		SHOP_IDENTIFY_NUMBER,
+		SHOP_STORE_NUMBER,
+		RECEIPT_SHOP_NUMBER,
+		PLATFORM_TERMINAL_NUMBER,
+		POS_WX_APPID,
+		SHOP_FK,
+		CREATE_BY,
+		CREATE_TIME
+		)
+		VALUES
+		(
+		#{UUID},
+		#{WX_STATUS},
+		#{ORIGINAL_ID},
+		#{WX_APPID},
+		#{WX_SHOP_ID},
+		#{SUB_SHOP_APPID},
+		#{SUB_SHOPID},
+		#{ALIPAY_STATUS},
+		#{ALIPAY_EMAIL},
+		#{ALIPAY_PID},
+		#{ALIPAY_KEY},
+		#{ALIPAY_APP_ID},
+		#{ALIPAY_RSA},
+		#{POSPAY_STATUS},
+		#{SHOP_IDENTIFY_NUMBER},
+		#{SHOP_STORE_NUMBER},
+		#{RECEIPT_SHOP_NUMBER},
+		#{PLATFORM_TERMINAL_NUMBER},
+		#{POS_WX_APPID},
+		#{SHOP_FK},
+		#{CREATE_BY},
+		NOW()
+		)
+	</insert>
+	<!-- 更新支付设置记录 -->
+	<update id="updateRecord" parameterMap="BaseParameterMap">
+		UPDATE sc_pay_setting SET
+		WX_STATUS = #{WX_STATUS},
+		ORIGINAL_ID = #{ORIGINAL_ID},
+		WX_APPID = #{WX_APPID},
+		WX_SHOP_ID = #{WX_SHOP_ID},
+		SUB_SHOP_APPID = #{SUB_SHOP_APPID},
+		SUB_SHOPID = #{SUB_SHOPID},
+		ALIPAY_STATUS = #{ALIPAY_STATUS},
+		ALIPAY_EMAIL = #{ALIPAY_EMAIL},
+		ALIPAY_PID = #{ALIPAY_PID},
+		ALIPAY_KEY = #{ALIPAY_KEY},
+		ALIPAY_APP_ID = #{ALIPAY_APP_ID},
+		ALIPAY_RSA = #{ALIPAY_RSA},
+		POSPAY_STATUS = #{POSPAY_STATUS},
+		SHOP_IDENTIFY_NUMBER = #{SHOP_IDENTIFY_NUMBER},
+		SHOP_STORE_NUMBER = #{SHOP_STORE_NUMBER},
+		RECEIPT_SHOP_NUMBER = #{RECEIPT_SHOP_NUMBER},
+		PLATFORM_TERMINAL_NUMBER = #{PLATFORM_TERMINAL_NUMBER},
+		POS_WX_APPID = #{POS_WX_APPID},
+		UPDATE_BY = #{UPDATE_BY},
+		UPDATE_TIME = NOW()
+		WHERE PAYSETTING_PK = #{PAYSETTING_PK}
+	</update>
+<!-- 
+	<update id="updateScUserTag" parameterMap="BaseParameterMap">
+		UPDATE SC_USER SET
+		FK_USER_TAG = #{ROLE_PK}
+		WHERE USER_WX = #{OPENID}
+	</update>
+	
+	<select id="checkUserWx" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT
+		USER_PK,
+		USER_NAME,
+		USER_SN,
+		USER_SEX,
+		USER_HEAD_IMG
+		FROM SC_USER
+		WHERE USER_WX = #{OPENID}
+	</select>
+	<insert id="insertUserInitOpenId" parameterMap="BaseParameterMap">
+		INSERT INTO SC_USER
+		(
+		USER_PK,
+		USER_WX,
+		USER_SN,
+		USER_SEX,
+		USER_HEAD_IMG,
+		USER_WX_REFRESH_TOKEN,
+		USER_STATUS,
+		CREATE_TIME,
+		USER_TYPE
+		)
+		VALUES
+		(
+		#{UUID},
+		#{OPENID},
+		#{USER_SN},
+		#{USER_SEX},
+		#{USER_HEAD_IMG},
+		#{USER_WX_REFRESH_TOKEN},
+		0,
+		NOW(),
+		0
+		)
+	</insert>
+	<select id="checkUserExits" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT
+		USER_PK
+		FROM SC_USER WHERE USER_WX = #{OPENID}
+	</select>
+	保存token
+	<insert id="saveAccessToken" parameterMap="BaseParameterMap">
+		INSERT INTO WX_TOKEN
+		(
+		ACCESS_TOKEN,
+		EXPIRES_IN,
+		CREATE_TIME
+		)
+		VALUES
+		(
+		#{TOKEN},
+		'7200',
+		NOW()
+		)
+	</insert>
+
+	<select id="getAccessToken" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT
+		ACCESS_TOKEN
+		FROM WX_TOKEN
+		ORDER BY ID DESC
+		LIMIT 0,1
+	</select> -->
+
+
+
+</mapper>
