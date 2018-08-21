@@ -236,7 +236,7 @@ public class GoodsTypeController extends BaseController {
 			map.put("UPDATE_BY", userObj.get("USER_NAME"));
 			map.put("sqlMapId", "updateGoodsType");
 			boolean result = openService.update(map);
-			if(result&&updateOrderResult){
+			if(result){
 				output("0000", "修改成功");
 			}else{
 				output("9999","修改失败");

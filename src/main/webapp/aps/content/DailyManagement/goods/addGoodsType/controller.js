@@ -131,7 +131,7 @@
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : data.data,
-								"toUrl" : "aps/content/goods/config.json?fid=" + scope.form.fid
+								"toUrl" : "aps/content/DailyManagement/goods/config.json?fid=" + scope.form.fid
 							}
 						}
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);

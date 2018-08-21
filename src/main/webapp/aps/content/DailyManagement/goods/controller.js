@@ -59,6 +59,8 @@
 					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
 						contentName : "modal"
 					});
+					//闭合滑块
+			    	$('.slideleft_cell_bd').css('-webkit-transform', 'translateX(0px)');
 				});
 				
 				/*初始化商品分类数据源*/
