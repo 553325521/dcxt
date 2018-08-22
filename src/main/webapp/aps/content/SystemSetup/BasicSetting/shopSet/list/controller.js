@@ -9,6 +9,8 @@
 				$scope.fenzi = 0;
 				$scope.fenmu = 1000;
 				const MAX_PIC_SIZE = 2097152;//单张图片上传最大大小
+				//显示菜单关闭
+				scope.pageShow = "False"
 				
 				//初始化店铺类型
 				scope.form.SHOP_TYPE_1=""
@@ -129,41 +131,26 @@
 				
 				
 				var init = function(){
-					/*$scope.form.SHOP_TYPE_1 = "中餐";
-					$scope.form.SHOP_TYPE_1_VALUE = '1';
-					
-					$scope.form.SHOP_TYPE_2 = "火锅";
-					$scope.form.SHOP_TYPE_2_VALUE = '1';
-					
-					$scope.form.SHOP_AREA_1 = "山东省";
-					$scope.form.SHOP_AREA_1_VALUE = '1';
-					
-					$scope.form.SHOP_AREA_2 = "潍坊市";
-					$scope.form.SHOP_AREA_2_VALUE = '1';
-					
-					$scope.form.SHOP_AREA_3 = "潍城区";
-					$scope.form.SHOP_AREA_3_VALUE = '1';
-					
-					$scope.form.SHOP_GPS = "自动定位商铺位置";
-					$scope.form.SHOP_ADDRESS = "输入详细地址街/门牌号";
-					$scope.form.SHOP_TIME = "输入营业时间";
-					$scope.form.SHOP_TEL = "输入联系电话";
-					$scope.form.SHOP_SUPPORT = "输入相关配套，如免费停车场、WIFI";*/
-					
 					//获取用户商铺信息
 					$httpService.post(config.getShopInfoURL, $scope.form).success(function(data) {
 						if (data.code === '0000') {
-							$scope.form = data.data[0];
-							var typeStr = data.data[0].SHOP_TYPE.split(" ");
-							$scope.form.SHOP_TYPE_1 = typeStr[0];
-							$scope.form.SHOP_TYPE_2 = typeStr[1];
-							
-							$scope.form.SHOP_GPS = data.data[0].SHOP_ADDRESS;
+							scope.pageShow = "True"
+							scope.form = data.data["shopinfo"][0];
+							var typeStr = scope.form.SHOP_TYPE.split(" ");
+							scope.form.SHOP_TYPE_1 = typeStr[0];
+							scope.form.SHOP_TYPE_2 = typeStr[1];
 							console.log($scope.form);
-							$(".textarea")[0].innerHTML = scope.form.SHOP_REMARK;
-							$scope.$apply();
+							scope.$apply();
+							//初始化config信息
+							initConfig(data.data["config"])
 						} else {
 							
+						}
+						
+						if(scope.form.SHOP_REMARK !== undefined){
+							$(".textarea")[0].innerHTML = scope.form.SHOP_REMARK;
+						}else{
+							$(".textarea")[0].innerHTML = "";
 						}
 						
 					}).error(function(data) {
@@ -174,13 +161,34 @@
 				init();
 				
 				
-				
-				scope.getLocation = function(){
-//					 $.showLoading();
+				//页面调用jssdk之前所必须的config配置
+				var initConfig = function(data){
+					wx.config({
+						debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+					    appId: data.appId, // 必填，公众号的唯一标识
+					    timestamp: data.timestamp,// 必填，生成签名的时间戳
+					    nonceStr: data.nonceStr, // 必填，生成签名的随机串
+					    signature: data.signature,// 必填，签名
+					    jsApiList: ['getLocation'] // 必填，需要使用的JS接口列表
+					});
 
-				        /*setTimeout(function() {
-				          $.hideLoading();
-				        }, 3000)*/
+					wx.error(function(res){
+						console.info("config失败")
+						console.info(res)
+					});
+				}
+				
+				//获取位置信息
+				scope.getLocation = function(){
+					wx.getLocation({
+						type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+						success: function (res) {
+							var latitude = res.latitude; // 纬度，浮点数，范围为90 ~ -90
+							var longitude = res.longitude; // 经度，浮点数，范围为180 ~ -180。
+							scope.form.SHOP_GPS = "经:"+latitude+"  纬:"+longitude;
+							scope.$apply();
+						}
+					});
 				}
 				initEdit()
 				
@@ -243,3 +251,7 @@ function initEdit(){
         $textarea.hide();
     });
 };
+
+
+
+

@@ -50,6 +50,8 @@
 </body>
 
 <script type="text/javascript"
+	src="<%=basePath%>js/weixin/jweixin-1.2.0.js"></script>
+<script type="text/javascript"
 	src="<%=basePath%>js/angular/1.2.0/angular.min.js"></script>
 <script type="text/javascript"
 	src="<%=basePath%>js/angular/1.2.0/angular-route.min.js"></script>

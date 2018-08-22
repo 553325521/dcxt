@@ -15,7 +15,8 @@
 					//初始化优惠栏不显示
 					scope.show_discounts = "False";
 					scope.form.PAY_TYPE = 1;
-					pre_service_price = 0;
+					//之前购买的服务的价格
+					pre_service_price = -1;
 					scope.deduction_money = 0;
 					
 					//页面初始化
@@ -28,20 +29,20 @@
 								scope.service_type = data.data["service_type"];
 								service_rule = data.data["service_rule"];
 								pre_service_rule = data.data["pre_service_mess"];
-								if(pre_service_rule != null){
+								if(pre_service_rule !== null && pre_service_rule !== undefined){
 									pre_service_price = pre_service_rule.SERVICE_PRICE;		
 									
 								}
 								scope.pageShow = "True";
-
+								scope.current_service = scope.service_type[0];
 								//当前选择的服务类型
 								angular.forEach(scope.service_type,function(data, index, array) {
 									if(data.SERVICE_PRICE == pre_service_price){
 										scope.current_service = scope.service_type[index];
-										//form表单初始化服务类型值
-										scope.form.SERVICE_ID = scope.current_service.SERVICE_PK;
 									}
 								});
+								//form表单初始化服务类型值
+								scope.form.SERVICE_ID = scope.current_service.SERVICE_PK;
 								//初始化获取优惠之前的总价格
 								scope.total_money_before = scope.current_service.SERVICE_PRICE;
 								//初始化优惠之后的总价格
@@ -222,7 +223,7 @@
 								return;
 							}
 							
-							if(serviceMess.SERVICE_PRICE > pre_service_price){
+							if(serviceMess.SERVICE_PRICE > pre_service_price && pre_service_price != -1){
 								scope.deduction_show = "True"
 								scope.deduction_money = pre_service_rule.deduction_money
 							}else{

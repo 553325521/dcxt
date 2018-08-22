@@ -5,6 +5,7 @@
 	"config": {
 		"findURL":"json/Goods_query_findBaseGoosList.json",
 		"removeURL":"json/Goods_delete_removeGoodsById.json",
+		"currentUrl":"DailyManagement/goods/goods_show",
 		"menu":{	
 	         "buttons":[
 		        	{

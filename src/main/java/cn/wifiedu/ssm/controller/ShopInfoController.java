@@ -22,8 +22,10 @@ import com.alibaba.fastjson.JSONObject;
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
+import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.PictureUtil;
+import cn.wifiedu.ssm.util.WXJSUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 
@@ -52,6 +54,8 @@ public class ShopInfoController extends BaseController {
 
 	@Resource
 	private JedisClient jedisClient;
+	@Resource
+	private  WxController wxcontroller;
 	
 	/**
 	 * 获取用户信息
@@ -174,7 +178,6 @@ public class ShopInfoController extends BaseController {
 		try {
 			Map<String, Object> map = getParameterMap();
 
-			//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
@@ -182,13 +185,29 @@ public class ShopInfoController extends BaseController {
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("USER_ID", userObj.get("USER_PK")); 
 			map.put("ROLE_ID", userObj.get("FK_ROLE")); 
-		
 			
 			map.put("sqlMapId", "getShopInfo");
 			List<Map<String, Object>> shopInfoList = openService.queryForList(map);
 			shopInfoList.get(0).put("userPk", userObj.get("USER_PK"));
 			
-			output(shopInfoList);
+			Map<String,String> configMap = new HashMap<String,String>();
+
+			
+			String appId = CommonUtil.getPath("AppID");
+			map.put("jsapi_ticket", wxcontroller.getJsApiTicket(appId));
+			configMap = WXJSUtil.getWxConfigMess(map);
+			configMap.put("appId",appId);
+			
+			Map<String,Object> reMap = new HashMap<String,Object>();
+
+			reMap.put("shopinfo", shopInfoList);
+			if(configMap !=null){
+				reMap.put("config", configMap);
+				output("0000", reMap);
+				return;
+			}
+			
+			output("9999", "未知异常");
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}

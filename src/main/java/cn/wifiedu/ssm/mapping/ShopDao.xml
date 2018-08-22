@@ -39,9 +39,9 @@
  			
  	</select>
  	
- 	<!-- 根据shopId查询商铺信息 -->
+ 	<!-- 根据shopId查询商铺基本信息 -->
  	 <select id="SelectByPrimaryKey" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
- 	 		select si.*, st.SERVICE_TYPE from SC_SHOP_INFO si, sc_service_type st where SHOP_ID = #{SHOP_FK}  AND si.SERVICETYPE_FK = st.SERVICE_PK;
+ 	 		select SHOP_NAME,SHOP_TEL,SHOP_TYPE,SHOP_AREA,SHOP_ADDRESS  from SC_SHOP_INFO where SHOP_ID = #{SHOP_FK};
  	 </select>
  	 
  	 <!-- 更新商铺的过期时间 -->

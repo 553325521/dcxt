@@ -28,9 +28,11 @@ import com.alibaba.fastjson.JSONObject;
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.util.SessionUtil;
+import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.QRCode;
+import cn.wifiedu.ssm.util.WXJSUtil;
 import cn.wifiedu.ssm.util.WxUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
@@ -49,11 +51,17 @@ public class WxController extends BaseController {
 
 	@Resource
 	OpenService openService;
+	
+	@Resource
+	MenuController menucontroller;
+	
+	@Resource
+	InterfaceController interfaceController;
 
 	public OpenService getOpenService() {
 		return openService;
 	}
-
+	
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
@@ -644,6 +652,87 @@ public class WxController extends BaseController {
 			}
 		} catch (Exception e) {
 			output("9999", e);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @author lps
+	 * @return
+	 * @return String
+	 * @description:根据appid获取JsApiTicket
+	 */
+	public String getJsApiTicket(String appid) {
+		try {
+			if (jedisClient.isExit(RedisConstants.WX_JS_API_Ticker + appid)
+					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.WX_JS_API_Ticker + appid))) {
+				return jedisClient.get(RedisConstants.WX_JS_API_Ticker);
+			}
+			
+			String accessToken = "";
+			
+			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+				accessToken = WxUtil.getWxAccessToken(appid,
+						interfaceController.getComponentAccessToken(), menucontroller.getRefreshTokenByAppId(appid));
+				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+			} else {
+				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+			}
+			
+			
+			String url = CommonUtil.getPath("WX_GET_JSAPI_TICKET").replace("ACCESS_TOKEN", accessToken);
+			/** 发送Https请求到微信 */
+			String retStr = CommonUtil.get(url);
+
+			JSONObject resultJson = JSONObject.parseObject(retStr);
+			System.out.println("resultJson ==== " + resultJson.toString());
+
+			/** 在返回结果中获取token */
+			String jsApiTicket = resultJson.getString("ticket");
+
+			System.out.println("jsApiTicket ==== " + jsApiTicket);
+
+			jedisClient.set(RedisConstants.WX_JS_API_Ticker + appid, jsApiTicket);
+
+			// 设置jsApiTicket的过期时间1小时
+			jedisClient.expire(RedisConstants.WX_JS_API_Ticker + appid, 3600 * 1);
+
+			return jsApiTicket;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 * @author lps
+	 * @Description:  获取微信config信息
+	 * @return void 
+	 *
+	 */
+	@RequestMapping("/Wx_getWxConfigMess")
+	public void getWxConfig(HttpServletRequest request, HttpServletResponse reponse){
+		try {
+			Map<String, Object> map = getParameterMap();
+			String appId = CommonUtil.getPath("AppID");
+			map.put("jsapi_ticket", getJsApiTicket(appId));
+			map = WXJSUtil.getWxConfigMess(map);
+			map.put("appId", appId);
+			
+			output("0000", map);
+			return;
+		} catch (ExceptionVo e) {
+			e.printStackTrace();
+			output("0000", e);
 		}
 	}
 }

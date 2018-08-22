@@ -245,6 +245,7 @@
 			SHOP_TEL = #{SHOP_TEL},
 			SHOP_TYPE = #{SHOP_TYPE},
 			SHOP_AREA = #{SHOP_AREA},
+			SHOP_GPS = #{SHOP_GPS},
 			SHOP_ADDRESS = #{SHOP_ADDRESS},
 			UPDATE_BY = #{userPk},
 			UPDATE_TIME = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),

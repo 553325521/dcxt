@@ -84,7 +84,7 @@ public class FunctionController extends BaseController {
 	public void loadFunctionListByUserRole(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
-
+			
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
@@ -93,6 +93,7 @@ public class FunctionController extends BaseController {
 			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("ROLE_ID", userObj.get("FK_ROLE"));
 
+			
 			map.put("sqlMapId", "loadFunctionListByUserRole");
 			List<Map<String, Object>> reList = openService.queryForList(map);
 
