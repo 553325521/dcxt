@@ -134,7 +134,7 @@ public class ShopController extends BaseController {
 			map.put("SHOP_ID", insert);
 			map.put("ROLE_ID", "7");
 			map.put("tagName", "代理端");
-			map.put("FK_APP",  userObj.get("FK_APP"));
+			map.put("FK_APP",  "wx6041a1eff32d3c5e");
 			String insert2 = openService.insert(map);
 			if(insert2 != null){
 				transactionManager.commit(status);
@@ -232,7 +232,7 @@ public class ShopController extends BaseController {
 			param.put("SHOP_ID",request.getParameter("state"));
 			param.put("sqlMapId", "checkShopIsClaim");
 			Map<String, Object> rMap = (Map<String, Object>)openService.queryForObject(param);
-			if(rMap.get("nums").equals("0")){
+			if(Integer.parseInt(rMap.get("nums").toString()) > 0){
 				String btnToken = UUID.randomUUID().toString();
 				JSONObject obj = new JSONObject();
 				obj.put("status", 9999);
@@ -240,12 +240,9 @@ public class ShopController extends BaseController {
 				obj.put("data", new ArrayList<JSONObject>());
 				// 保存button信息
 				jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
-				try {
-					response.sendRedirect(
+				response.sendRedirect(
 							CommonUtil.getPath("project_url").replace("json/DATA.json", "#toOtherPage/msgPage/" + btnToken));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				return;
 			}else{
 				String code = request.getParameter("code");
 				if (null != code && !"".equals(code)) {
@@ -275,8 +272,9 @@ public class ShopController extends BaseController {
 					/* 添加到用户商铺中间表里 */
 					param.clear();
 					param.put("USER_ID", userId);
-					param.put("roleName", "店长");
+					param.put("ROLE_ID", 2);
 					param.put("tagName", "店员端");
+					param.put("FK_APP", "wx6041a1eff32d3c5e");
 					param.put("SHOP_ID", state);
 					param.put("sqlMapId", "insertUserShop");
 					String insertResult = openService.insert(param);
