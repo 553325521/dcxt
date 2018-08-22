@@ -110,16 +110,16 @@ public class ShopController extends BaseController {
 			}
 			
 			//是添加
-			//先查询出来商铺的服务类型
+		/*	//先查询出来商铺的服务类型
 			map.put("sqlMapId", "findServiceTypeIdByName");
 			Map serviceMap = (Map) openService.queryForObject(map);
-			String serviceId = (String) serviceMap.get("SERVICE_PK");
-			if(serviceId == null){
+			String serviceId = (String) serviceMap.get("SERVICE_PK");*/
+		/*	if(serviceId == null){
 				throw new Exception();
-			}
+			}*/
 			map.put("sqlMapId", "insertShop");
 			map.put("CREATE_BY", "admin");
-			map.put("SERVICETYPE_FK", serviceId);
+			map.put("SERVICETYPE_FK", "");
 			String insert = openService.insert(map);
 			
 			if(insert == null){
@@ -227,132 +227,153 @@ public class ShopController extends BaseController {
 		defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 		TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 		try {
-			String code = request.getParameter("code");
-			if (null != code && !"".equals(code)) {
-				String openId = wxControllerl.getOpenIdByCode(code);
-				System.out.println("商户认领获取的openid:" + openId);
-				String state = request.getParameter("state");
-				Map<String, Object> param = new HashMap<String, Object>();
-				PrintWriter out = reponse.getWriter();
-				String userId = "";
-				if (openId != null && !openId.equals("")) {
-					param.clear();
-					/* 判断当前用户openID是否存在 */
-					param.put("OPENID", openId);
-					param.put("sqlMapId", "checkUserExits");
-					List<Map<String, Object>> checkUserList = openService.queryForList(param);
-					if (checkUserList.size() == 0) {
-						/* 没存在插入到用户表 */
-						param.clear();
-						param.put("OPENID", openId);
-						wxControllerl.getWxUserInfo(openId, param);
-						param.put("sqlMapId", "insertUserInitOpenId");
-						userId = openService.insert(param);
-					} else {
-						userId = checkUserList.get(0).get("USER_PK").toString();
-					}
-				} else {
-					throw new Exception();
+			Map<String, Object> param = new HashMap<String, Object>();
+			/*判断该商户是否已被认领*/
+			param.put("SHOP_ID",request.getParameter("state"));
+			param.put("sqlMapId", "checkShopIsClaim");
+			Map<String, Object> rMap = (Map<String, Object>)openService.queryForObject(param);
+			if(rMap.get("nums").equals("0")){
+				String btnToken = UUID.randomUUID().toString();
+				JSONObject obj = new JSONObject();
+				obj.put("status", 9999);
+				obj.put("msg", "商铺已经被认领,请勿重复扫码");
+				obj.put("data", new ArrayList<JSONObject>());
+				// 保存button信息
+				jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+				try {
+					response.sendRedirect(
+							CommonUtil.getPath("project_url").replace("json/DATA.json", "#toOtherPage/msgPage/" + btnToken));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				/* 添加到用户商铺中间表里 */
-				param.clear();
-				param.put("USER_ID", userId);
-				param.put("roleName", "店长");
-				param.put("tagName", "店员端");
-				param.put("SHOP_ID", state);
-				param.put("sqlMapId", "insertUserShop");
-				String insertResult = openService.insert(param);
-				/* 插入成功修改商铺认领状态 */
-				if (insertResult != null && !insertResult.equals("")) {
-					param.clear();
-					param.put("SHOP_FK", state);
-					param.put("SHOP_STATE", 1);
-					param.put("sqlMapId", "UpdateShopState");
-					boolean updateResult = openService.update(param);
-					param.clear();
-					param.put("SHOP_ID", state);
-					param.put("sqlMapId", "insertFuntionForShop");
-					String insertStr = openService.insert(param);
-					if(insertStr == null || insertStr.equals("")){
+			}else{
+				String code = request.getParameter("code");
+				if (null != code && !"".equals(code)) {
+					String openId = wxControllerl.getOpenIdByCode(code);
+					String state = request.getParameter("state");
+					PrintWriter out = reponse.getWriter();
+					String userId = "";
+					if (openId != null && !openId.equals("")) {
+						param.clear();
+						/* 判断当前用户openID是否存在 */
+						param.put("OPENID", openId);
+						param.put("sqlMapId", "checkUserExits");
+						List<Map<String, Object>> checkUserList = openService.queryForList(param);
+						if (checkUserList.size() == 0) {
+							/* 没存在插入到用户表 */
+							param.clear();
+							param.put("OPENID", openId);
+							wxControllerl.getWxUserInfo(openId, param);
+							param.put("sqlMapId", "insertUserInitOpenId");
+							userId = openService.insert(param);
+						} else {
+							userId = checkUserList.get(0).get("USER_PK").toString();
+						}
+					} else {
 						throw new Exception();
 					}
-					if (updateResult) {
-						String token = WxUtil.getToken();
-						if (token != null) {
-							String tagAddURL = CommonUtil.getPath("user_tag_add");
-							tagAddURL = tagAddURL.replace("ACCESS_TOKEN", token);
-							JSONObject postObj = new JSONObject();
-							param.clear();
-							param.put("USER_TAG_NAME", "店员端");
-							param.put("sqlMapId", "findUserTagIdByUserTagName");
-							Map<String, Object> resMap = (Map<String, Object>) openService.queryForObject(param);
-							postObj.put("tagid", "148");
-							postObj.put("openid_list", new ArrayList<String>() {
-								{
-									add(openId);
-								}
-							});
-							String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
-							JSONObject resObj = JSONObject.parseObject(resCont);
-							if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
-								// 重定向成功页面
-								String btnToken = UUID.randomUUID().toString();
-								JSONObject obj = new JSONObject();
-								Map<String, Object> userMap = new HashMap<>();
-								userMap.put("USER_WX", openId);
-								userMap.put("OPENID", openId);
-								wxControllerl.getWxUserInfo(openId, userMap);
-								obj.put("status", 0000);
-								obj.put("msg", "商户认领成功！");
-								obj.put("data", new ArrayList<JSONObject>() {
+					/* 添加到用户商铺中间表里 */
+					param.clear();
+					param.put("USER_ID", userId);
+					param.put("roleName", "店长");
+					param.put("tagName", "店员端");
+					param.put("SHOP_ID", state);
+					param.put("sqlMapId", "insertUserShop");
+					String insertResult = openService.insert(param);
+					/* 插入成功修改商铺认领状态 */
+					if (insertResult != null && !insertResult.equals("")) {
+						param.clear();
+						param.put("SHOP_FK", state);
+						param.put("SHOP_STATE", 1);
+						param.put("sqlMapId", "UpdateShopState");
+						boolean updateResult = openService.update(param);
+						param.clear();
+						param.put("SHOP_ID", state);
+						param.put("sqlMapId", "insertFuntionForShop");
+						String insertStr = openService.insert(param);
+						if(insertStr == null || insertStr.equals("")){
+							throw new Exception();
+						}
+						if (updateResult) {
+							String token = WxUtil.getToken();
+							if (token != null) {
+								String tagAddURL = CommonUtil.getPath("user_tag_add");
+								tagAddURL = tagAddURL.replace("ACCESS_TOKEN", token);
+								JSONObject postObj = new JSONObject();
+								param.clear();
+								param.put("USER_TAG_NAME", "店员端");
+								param.put("sqlMapId", "findUserTagIdByUserTagName");
+								Map<String, Object> resMap = (Map<String, Object>) openService.queryForObject(param);
+								postObj.put("tagid", "148");
+								postObj.put("openid_list", new ArrayList<String>() {
 									{
-										JSONObject btn1 = new JSONObject();
-										btn1.put("buttonName", "");
-										btn1.put("buttonLink",
-												CommonUtil.getPath("project_url").replace("json/DATA.json", "")
-														+ "/index.jsp");
-										add(btn1);
+										add(openId);
 									}
 								});
-								// 保存button信息
-								jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+								String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
+								JSONObject resObj = JSONObject.parseObject(resCont);
+								if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
+									// 重定向成功页面
+									String btnToken = UUID.randomUUID().toString();
+									JSONObject obj = new JSONObject();
+									Map<String, Object> userMap = new HashMap<>();
+									userMap.put("USER_WX", openId);
+									userMap.put("OPENID", openId);
+									wxControllerl.getWxUserInfo(openId, userMap);
+									obj.put("status", 0000);
+									obj.put("msg", "商户认领成功！");
+									obj.put("data", new ArrayList<JSONObject>() {
+										{
+											JSONObject btn1 = new JSONObject();
+											btn1.put("buttonName", "");
+											btn1.put("buttonLink",
+													CommonUtil.getPath("project_url").replace("json/DATA.json", "")
+															+ "/index.jsp");
+											add(btn1);
+										}
+									});
+									// 保存button信息
+									jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
 
-								// redis存储用户登录信息
-								jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId,
-										JSONObject.toJSONString(userMap));
+									// redis存储用户登录信息
+									jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId,
+											JSONObject.toJSONString(userMap));
 
-								// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
-								CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
+									// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
+									CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
 
-								response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
-										"#toOtherPage/msgPage/" + btnToken));
-								transactionManager.commit(status);
-								return;
-							} else if (WxConstants.ERRORCODE_1.equals(resObj.getString("errcode"))) {
-								throw new RuntimeException("1");
-							} else if (WxConstants.ERRORCODE_40032.equals(resObj.getString("errcode"))) {
-								throw new RuntimeException("40032");
-							} else if (WxConstants.ERRORCODE_49003.equals(resObj.getString("errcode"))) {
-								throw new RuntimeException("49003");
-							} else if (WxConstants.ERRORCODE_45159.equals(resObj.getString("errcode"))) {
-								throw new RuntimeException("45159");
-							} else if (WxConstants.ERRORCODE_45059.equals(resObj.getString("errcode"))) {
-								throw new RuntimeException("45059");
-							} else if (WxConstants.ERRORCODE_40003.equals(resObj.getString("errcode"))) {
-								throw new RuntimeException("40003");
-							} else if (WxConstants.ERRORCODE_50005.equals(resObj.getString("errcode"))) {
-								// 重定向成功页面
-								String btnToken = UUID.randomUUID().toString();
-								JSONObject obj = new JSONObject();
-								obj.put("status", 9999);
-								obj.put("msg", "请先关注公众号后再认领！");
-								obj.put("data", new ArrayList<JSONObject>());
-								// 保存button信息
-								jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
+									response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+											"#toOtherPage/msgPage/" + btnToken));
+									transactionManager.commit(status);
+									return;
+								} else if (WxConstants.ERRORCODE_1.equals(resObj.getString("errcode"))) {
+									throw new RuntimeException("1");
+								} else if (WxConstants.ERRORCODE_40032.equals(resObj.getString("errcode"))) {
+									throw new RuntimeException("40032");
+								} else if (WxConstants.ERRORCODE_49003.equals(resObj.getString("errcode"))) {
+									throw new RuntimeException("49003");
+								} else if (WxConstants.ERRORCODE_45159.equals(resObj.getString("errcode"))) {
+									throw new RuntimeException("45159");
+								} else if (WxConstants.ERRORCODE_45059.equals(resObj.getString("errcode"))) {
+									throw new RuntimeException("45059");
+								} else if (WxConstants.ERRORCODE_40003.equals(resObj.getString("errcode"))) {
+									throw new RuntimeException("40003");
+								} else if (WxConstants.ERRORCODE_50005.equals(resObj.getString("errcode"))) {
+									// 重定向成功页面
+									String btnToken = UUID.randomUUID().toString();
+									JSONObject obj = new JSONObject();
+									obj.put("status", 9999);
+									obj.put("msg", "请先关注公众号后再认领！");
+									obj.put("data", new ArrayList<JSONObject>());
+									// 保存button信息
+									jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
 
-								response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
-										"#toOtherPage/msgPage/" + btnToken));
-								return;
+									response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
+											"#toOtherPage/msgPage/" + btnToken));
+									return;
+								}
+							} else {
+								throw new Exception();
 							}
 						} else {
 							throw new Exception();
@@ -360,8 +381,6 @@ public class ShopController extends BaseController {
 					} else {
 						throw new Exception();
 					}
-				} else {
-					throw new Exception();
 				}
 			}
 		} catch (Exception e) {

@@ -36,7 +36,18 @@
 		AND a.FK_ROLE != '2' AND a.FK_ROLE != '7' ORDER BY
 		CREATE_TIME DESC
 	</select>
-
+	
+	<!-- 根据roleID和shopID查询商铺是否已被认领 -->
+	<select id="checkShopIsClaim" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT
+			COUNT(*) AS nums  
+		FROM SC_USER_SHOP 
+		WHERE 
+		FK_ROLE = (select ROLE_PK from sc_sys_role where ROLE_NAME = '店长') 
+		AND FK_SHOP=#{SHOP_ID}
+	</select>
+	
 	<!--插入user shop role对应关系 -->
 	<insert id="insertUserShop" parameterMap="BaseParameterMap">
 		INSERT INTO
