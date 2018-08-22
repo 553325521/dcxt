@@ -341,6 +341,8 @@ public class WxController extends BaseController {
 			url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
 
 			String res = CommonUtil.get(url);
+			logger.error("获取用户基本信息时候accessToken:"+accessToken);
+			logger.error("获取用户基本信息时候res:"+res);
 			if (res != null && res.indexOf("errcode") <= 0) {
 				logger.info("userInfo====" + res);
 				res = new String(res.getBytes("ISO-8859-1"), "UTF-8");
@@ -410,22 +412,18 @@ public class WxController extends BaseController {
 		String refresh_token = result.get("refresh_token").toString();
 
 		String access_token = result.get("access_token").toString();
-
+		
+		logger.info("openId:" + openId);
+		logger.info("refresh_token:" + refresh_token);
+		logger.info("access_token:" + access_token);
 		// redis存储refresh_token
-		if (!jedisClient.isExit(RedisConstants.WX_REFRESH_TOKEN + openId)
-				&& StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_REFRESH_TOKEN + openId))) {
-			jedisClient.set(RedisConstants.WX_REFRESH_TOKEN + openId, refresh_token);
-			// 保存数据库
-		}
+		jedisClient.set(RedisConstants.WX_REFRESH_TOKEN + openId, refresh_token);
 
 		// redis存储access_token信息
-		if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + openId)
-				&& StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + openId))) {
-			jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
-			// 设置access_token的过期时间2小时
-			jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
-		}
-		System.out.println(openId);
+		jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
+		// 设置access_token的过期时间2小时
+		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
+
 		return openId;
 	}
 
