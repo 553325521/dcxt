@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 
 import cn.wifiedu.ssm.controller.InterfaceController;
-import cn.wifiedu.ssm.starpos.pay.StrUtils;
 
 /**
  * 
@@ -54,7 +54,7 @@ public class WXJSUtil {
 			
 			for(String key : keys){
 				Object value=newMap.get(key);
-				if(StrUtils.isEmpty(value)){
+				if(StringUtils.isEmpty(value)){
 					continue;
 				}
 	

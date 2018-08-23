@@ -67,7 +67,8 @@
 				}
 				
 				
-				
+				var $form = $("#SHOPFORM");
+				$form.form();
 				$scope.doSave = function(){
 //					$scope.form.SHOP_TYPE = scope.form.SHOP_TYPE_1 + " " + scope.form.SHOP_TYPE_2;
 					scope.form.SHOP_REMARK = $(".textarea")[0].innerHTML
