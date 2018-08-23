@@ -232,7 +232,7 @@ public class InterfaceController extends BaseController {
 	public String getComponentPreAuthCode() {
 		try {
 			if (jedisClient.isExit(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE)
-					&& StringUtils.isNoneBlank(jedisClient.get(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE))) {
+					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE))) {
 				return jedisClient.get(RedisConstants.WX_COMPONENT_PRE_AUTH_CODE);
 			}
 
@@ -346,7 +346,7 @@ public class InterfaceController extends BaseController {
 					openService.insert(map);
 					
 					// 创建店员端标签
-					userTagCtrl.createTagForAppId(authorizer_appid, authorizer_access_token);
+					String tagId = userTagCtrl.createTagForAppId(authorizer_appid, authorizer_access_token);
 					
 					// TODO 创建店员端菜单 用户端菜单
 					

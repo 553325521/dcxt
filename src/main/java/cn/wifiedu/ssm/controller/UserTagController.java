@@ -297,7 +297,7 @@ public class UserTagController extends BaseController {
 	 * @date 2018年8月9日 - 下午2:45:06
 	 * @description:创建app对应的店员端标签 限定标签名称必须为店员端
 	 */
-	public void createTagForAppId(String appid, String token) {
+	public String createTagForAppId(String appid, String token) {
 		try {
 			logger.info("appid:" + appid + ",token:" + token + ",create userTag");
 			String url = CommonUtil.getPath("userTagCreate").toString();
@@ -319,10 +319,10 @@ public class UserTagController extends BaseController {
 					String result = openService.insert(map);
 					if (result != null) {
 						logger.info("appid:" + appid + ",token:" + token + ", create userTag success");
-						return;
+						return object.get("id").toString();
 					}
 					logger.error("appid:" + appid + ",token:" + token + ",create userTag error, insert to DB error");
-					return;
+					return null;
 				}
 				JSONObject obj = JSON.parseObject(resMsg);
 				String errcode = obj.get("errcode").toString();
@@ -337,13 +337,13 @@ public class UserTagController extends BaseController {
 					errMsg = WxConstants.ERRORCODE_45056_MSG;
 				}
 				logger.error("appid:" + appid + ",token:" + token + ",create userTag error, errormsg:" + errMsg);
-				return;
+				return null;
 			}
 			logger.error("appid:" + appid + ",token:" + token + ",create userTag error");
-			return;
+			return null;
 		} catch (Exception e) {
 			logger.error("appid:" + appid + ",token:" + token + ",create userTag error", e);
-			return;
+			return null;
 		}
 	}
 

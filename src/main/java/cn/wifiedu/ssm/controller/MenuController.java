@@ -161,7 +161,16 @@ public class MenuController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月22日 - 下午4:20:51 
+	 * @description:更新菜单至对应的公众号
+	 */
 	@RequestMapping("/Menu_update_updateWxMenuForTagId")
 	public void updateWxMenuForTagId(HttpServletRequest request, HttpSession session) {
 		try {
@@ -231,7 +240,7 @@ public class MenuController extends BaseController {
 						String stype = "view";
 						smap.put("type", stype);
 						smap.put("url",
-								CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data") + "?params="
+								CommonUtil.getPath("project_url1").replace("DATA", "Wxcode_ymsqCommon_data") + "?params="
 										+ sMap.get("MENU_LINK").toString() + "&appid=" + userObj.getString("FK_APP"));
 						smap.put("name", sMap.get("MENU_NAME"));
 						sonMapList.add(smap);
@@ -243,7 +252,7 @@ public class MenuController extends BaseController {
 				}
 				fmap.put("name", fMap.get("MENU_NAME"));
 				if ("view".equals(ftype)) {
-					fmap.put("url", CommonUtil.getPath("project_url").replace("DATA", "Wxcode_ymsqCommon_data")
+					fmap.put("url", CommonUtil.getPath("project_url1").replace("DATA", "Wxcode_ymsqCommon_data")
 							+ "?params=" + fMap.get("MENU_LINK").toString() + "&appid=" + userObj.getString("FK_APP"));
 				}
 				postMap2ToBtn.add(fmap);
@@ -377,21 +386,34 @@ public class MenuController extends BaseController {
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			
-			Map<String, Object> map = getParameterMap();
-			map.put("SHOP_ID", userObj.getString("FK_SHOP"));
-			map.put("sqlMapId", "insertFuntionForShop");
-			// String url = CommonUtil.getPath("menuWxGetList").toString();
-			// String token = WxUtil.getToken();
-			// url = url.replace("ACCESS_TOKEN", token);
-			// String res = CommonUtil.get(url);
-//			String url = CommonUtil.getPath("deleteconditionalURL").toString();
-//			String token = WxUtil.getToken();
-//			url = url.replace("ACCESS_TOKEN", token);
-//			String res = CommonUtil.posts(url, "{\"menuid\":\"430283769\"}", "utf-8");
-			output("0000", openService.queryForObject(map));
+//			Map<String, Object> map = getParameterMap();
+//			map.put("SHOP_ID", userObj.getString("FK_SHOP"));
+//			map.put("sqlMapId", "insertFuntionForShop");
+//			// String url = CommonUtil.getPath("menuWxGetList").toString();
+//			// String token = WxUtil.getToken();
+//			// url = url.replace("ACCESS_TOKEN", token);
+//			// String res = CommonUtil.get(url);
+			String url = CommonUtil.getPath("deleteconditionalURL").toString();
+			String token = WxUtil.getToken();
+			url = url.replace("ACCESS_TOKEN", token);
+			String res = CommonUtil.posts(url, "{\"menuid\":\"430283769\"}", "utf-8");
+//			output("0000", openService.queryForObject(map));
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
+	}
+
+	/**
+	 * @author kqs
+	 * @param authorizer_appid
+	 * @param authorizer_access_token
+	 * @param tagId
+	 * @return void
+	 * @date 2018年8月22日 - 下午4:12:56 
+	 * @description:创建店员端菜单(逻辑完善) 用户端菜单(后期完善)
+	*/
+	public void createMenuForApp(String authorizer_appid, String authorizer_access_token, String tagId) {
+		
 	}
 
 }

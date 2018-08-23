@@ -332,9 +332,11 @@ public class WxController extends BaseController {
 			map.put("FK_APP", userMap.get("FK_APP"));
 			map.put("sqlMapId", "selectUserInfo");
 			map = (Map<String, Object>) openService.queryForObject(map);
-			map.remove("OPENID");
-			map.remove("sqlMapId");
-			userMap.putAll(map);
+			if (map != null) {
+				map.remove("OPENID");
+				map.remove("sqlMapId");
+				userMap.putAll(map);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -396,13 +398,14 @@ public class WxController extends BaseController {
 
 		// redis存储refresh_token
 		jedisClient.set(RedisConstants.WX_REFRESH_TOKEN + openId, refresh_token);
-		//jedisClient.expire(RedisConstants.WX_REFRESH_TOKEN + openId, 1000 * 60 * 60 * 24 * 30);
+		// jedisClient.expire(RedisConstants.WX_REFRESH_TOKEN + openId, 1000 *
+		// 60 * 60 * 24 * 30);
 
 		// redis存储access_token信息
 		jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
 		// 设置access_token的过期时间2小时
 		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
-		
+
 		System.out.println(appid + "====" + openId);
 		return openId;
 	}
@@ -431,7 +434,6 @@ public class WxController extends BaseController {
 		jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
 		// 设置access_token的过期时间2小时
 		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
-
 		return openId;
 	}
 
