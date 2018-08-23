@@ -8,7 +8,7 @@
 				$scope.form = {};
 				$scope.fenzi = 0;
 				$scope.fenmu = 1000;
-				const MAX_PIC_SIZE = 2097152;//单张图片上传最大大小
+				
 				//显示菜单关闭
 				scope.pageShow = "False"
 				
@@ -58,7 +58,7 @@
 					scope.form.SHOP_TYPE_2 = shop_type[scope.form.SHOP_TYPE_1][0]
 					$("#SHOP_TYPE_2").val(scope.form.SHOP_TYPE_2)
 				} 
-				
+				//刷新商铺类型第二个下拉框
 				flushShopType2()
 				
 				$scope.updateNum = function(){
@@ -67,26 +67,57 @@
 				}
 				
 				
-				var $form = $("#SHOPFORM");
+				var $form = $("#form");
 				$form.form();
 				$scope.doSave = function(){
-//					$scope.form.SHOP_TYPE = scope.form.SHOP_TYPE_1 + " " + scope.form.SHOP_TYPE_2;
 					scope.form.SHOP_REMARK = $(".textarea")[0].innerHTML
 					scope.form.SHOP_AREA = $("#ssx").val();
-					/*if($scope.form.SHOP_REMARK != undefined && $scope.form.SHOP_REMARK.length > 1000){
-						return;
-					}*/
-					$httpService.post(config.saveShopInfoURL, scope.form).success(function(data) {
-						if (data.code === '0000') {
-							$scope.toHref("welcome");
-						} else {
-							$scope.toHref("welcome");
-						}
-						$scope.$apply()
-					}).error(function(data) {
-						loggingService.info('获取测试信息出错');
-					});
+					console.info(scope.form)
+					$form.validate(function(error) {
+						if (!error) {
+							//弹出保存询问
+							var m2 = {
+								"url" : "aps/content/SystemSetup/BasicSetting/shopSet/list/config.json",
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : "是否保存?"
+							}
+							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+					}
+					})
 				}
+				
+				// 弹窗确认事件
+				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					 $httpService.post(config.saveShopInfoURL,scope.form).success(function(data){
+						 if(data.code != "0000"){
+							 var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data
+							}
+						 }else{
+							 var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data,
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/config.json"
+							 }
+						 }
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+					    }).error(function(data){
+					    	loggingService.info('获取测试信息出错');
+					    });
+				});
+				
+				// 弹窗取消事件
+				eventBusService.subscribe(controllerName, controllerName + '.close', function(event, btn) {
+					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+						contentName : "modal"
+					});
+				});
+				
+				
 				
 				$scope.toHref = function(path) {
 					var m2 = {
@@ -99,7 +130,7 @@
 				
 				
 			
-				
+				//初始化商铺类型第一个下拉框
 				var comboboxInit = function() {
 					$("#SHOP_TYPE_1").picker({
 						title : "商铺类型",
@@ -193,11 +224,43 @@
 				}
 				initEdit()
 				
+				
+				
+				
+					
+
+				function initEdit(){
+				    //一句话，即可把一个div 变为一个富文本框！o(∩_∩)o 
+				   
+					var $editor = $('#txtDiv').wangEditor();
+				    //显示 html / text
+				    var $textarea = $('#textarea'),
+				        $btnHtml = $('#btnHtml'),
+				        $btnText = $('#btnText'),
+				        $btnHide = $('#btnHide');
+				    $textarea.hide();
+				    $btnHtml.click(function(){
+				        $textarea.show();
+				        $textarea.val( $editor.html() );
+				    });
+				    $btnText.click(function(){
+				        $textarea.show();
+				        $textarea.val( $editor.text() );
+				    });
+				    $btnHide.click(function(){
+				        $textarea.hide();
+				    });
+				};
+
+				
+				
+				
 			}
 		];
 	});
 }).call(this);
 
+var MAX_PIC_SIZE = 2097152;//单张图片上传最大大小
 //添加或更换图片
 function previewImage(file) {
 	index = file.id
@@ -222,37 +285,7 @@ function previewImage(file) {
 	       };
 	        reader.readAsDataURL(file.files[0]);
 	   }
-}	
-//滑到底部
-function scrollBottom(){
-	window.scrollTo(0, document.documentElement.clientHeight);
 }
-
-
-
-function initEdit(){
-    //一句话，即可把一个div 变为一个富文本框！o(∩_∩)o 
-   
-	var $editor = $('#txtDiv').wangEditor();
-    //显示 html / text
-    var $textarea = $('#textarea'),
-        $btnHtml = $('#btnHtml'),
-        $btnText = $('#btnText'),
-        $btnHide = $('#btnHide');
-    $textarea.hide();
-    $btnHtml.click(function(){
-        $textarea.show();
-        $textarea.val( $editor.html() );
-    });
-    $btnText.click(function(){
-        $textarea.show();
-        $textarea.val( $editor.text() );
-    });
-    $btnHide.click(function(){
-        $textarea.hide();
-    });
-};
-
 
 
 

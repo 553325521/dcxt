@@ -481,7 +481,7 @@
        		            		}
        		            		if(url !== ''){
        		            			console.info($("#false"))
-       		            			$(".textarea")[0].innerHTML+='<img src="'+ url +'">'
+       		            			$(".textarea")[0].innerHTML+='<img src="'+ url +'"><br>'
        		            		}
                				};
            					reader.readAsDataURL(file.currentTarget.files[i]);

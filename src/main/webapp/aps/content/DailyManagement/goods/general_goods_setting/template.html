@@ -264,13 +264,12 @@
             	<ul class="weui_uploader_files" id="img2x">
             		<li class="weui_uploader_file" ng-repeat="item in PICTURE_URL" style="background-image:url({{item}})">
 	            		<div class="hide-input">
-		                	<input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i1">
+		                	<input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif">
 	             		</div>
             		</li>
             		</ul>
              	<div class="weui_uploader_input_wrp">
-                	<input class="weui_uploader_input" type="file"  onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i1">
-                    <input type="hidden" id="i4">
+                	<input class="weui_uploader_input" type="file"  onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" multiple>
              	</div>
             </div>
 		</div>

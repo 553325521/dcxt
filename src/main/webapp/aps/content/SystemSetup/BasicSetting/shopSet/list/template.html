@@ -135,7 +135,7 @@
            	 <li>
             	<div class="weui_uploader_file" style="background-image:url({{form.IMG_LOGO}})">
 	            	<div class="hide-input {{form.IMG_LOGO == null || form.IMG_LOGO == ''?'weui_uploader_input_wrp':''}}">
-		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i1">
+		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i1" >
 	             	</div>
             	</div>
             	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;">店铺LOGO</div>
@@ -143,7 +143,8 @@
             <li>
             	<div class="weui_uploader_file" style="background-image:url({{form.IMG_BODAY}})">
 	            	<div class="hide-input {{form.IMG_BODAY == null || form.IMG_BODAY == ''?'weui_uploader_input_wrp':''}}">
-		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i2">
+		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" value="{{form.IMG_BODAY}}" accept="image/jpg,image/jpeg,image/png,image/gif" id="i2" 
+						>
 	             	</div>
             	</div>
             	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;width:79px;">店铺形象</div>
@@ -151,7 +152,8 @@
              <li>
             	<div class="weui_uploader_file" style="background-image:url({{form.IMG_HEAD}})">
 	            	<div class="hide-input {{form.IMG_HEAD == null || form.IMG_HEAD == ''?'weui_uploader_input_wrp':''}}">
-		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i3">
+		                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" value="{{form.IMG_HEAD}}" accept="image/jpg,image/jpeg,image/png,image/gif" id="i3" 
+						>
 	             	</div>
             	</div>
             	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;">店铺门头</div>
