@@ -22,23 +22,36 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
+				
+				$scope.loadFunctionList = function () {
+					scope.isShow = true
+					$httpService.post(config.findURL, $scope.form).success(function(data) {
+						if (data.code != '0000') {
+							loggingService.info(data.data);
+						} else {
+							$.each(data.data.functionList, function(index, value) {
+								value.FUNCTION_ICON = realurl + "/assets/weui/images/" + value.FUNCTION_ICON + ".png"
+							})
 
+							$scope.functionList = data.data.functionList;
+							$scope.$apply();
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+				
 				var init = function() {
 					if ($routeParams.LOCALPATH != undefined && $routeParams.LOCALPATH != null) {
 						scope.toHref($routeParams.LOCALPATH);
 						return;
 					} else {
-						scope.isShow = true
-						$httpService.post(config.findURL, $scope.form).success(function(data) {
+						$httpService.post(config.findShopListURL, $scope.form).success(function(data) {
 							if (data.code != '0000') {
-								loggingService.info(data.data);
-							} else {
-								$.each(data.data.functionList, function(index, value) {
-									value.FUNCTION_ICON = realurl + "/assets/weui/images/" + value.FUNCTION_ICON + ".png"
-								})
-
-								$scope.functionList = data.data.functionList;
+								scope.toHref(data.data);
 								$scope.$apply();
+							} else {
+								$scope.loadFunctionList()
 							}
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
@@ -47,6 +60,7 @@
 				}
 
 				init()
+				
 			}
 		];
 	});

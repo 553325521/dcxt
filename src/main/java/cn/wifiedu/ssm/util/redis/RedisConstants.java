@@ -11,7 +11,11 @@ package cn.wifiedu.ssm.util.redis;
 public class RedisConstants {
 
 	public final static String REDIS_USER_SESSION_KEY = "redis_user_session_key:";// 存储用户信息
-
+	
+	public final static String REDIS_USER_SHOP_SESSION_KEY = "redis_user_shop_session_key:";// 存储用户对应的唯一商铺信息
+	
+	public final static String REDIS_USER_SHOP_LIST_KEY = "redis_user_shop_list_key:";// 存储用户对应的所有商铺信息
+	
 	public final static String WX_REFRESH_TOKEN = "wx_refresh_token:";// 用户刷新access_token
 	
 	public final static String WX_ACCESS_TOKEN = "wx_access_token:";// 网页授权接口调用凭证

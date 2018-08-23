@@ -1,87 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="shop" >
-  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
-  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
-  <!--添加到商户信息表  -->
+<mapper namespace="shop">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+	<!--添加到商户信息表 -->
 	<insert id="insertShop" parameterMap="BaseParameterMap">
-		insert into 
-			SC_SHOP_INFO
-			(
-			SHOP_ID,
-			SHOP_NAME,
-			SHOP_TEL,
-			SHOP_TYPE,
-			SHOP_AREA,
-			SHOP_ADDRESS,
-			SERVICETYPE_FK,
-			CREATE_TIME,
-			CREATE_BY
-			)
-	values(
-			#{UUID},
-			#{SHOP_NAME},
-			#{SHOP_TEL},
-			#{SHOP_TYPE},
-			#{SHOP_AREA},
-			#{SHOP_ADDRESS},
-			#{SERVICETYPE_FK},
-			NOW(),
-			#{CREATE_BY}
-			
-	)
+		insert into
+		SC_SHOP_INFO
+		(
+		SHOP_ID,
+		SHOP_NAME,
+		SHOP_TEL,
+		SHOP_TYPE,
+		SHOP_AREA,
+		SHOP_ADDRESS,
+		SERVICETYPE_FK,
+		CREATE_TIME,
+		CREATE_BY
+		)
+		values(
+		#{UUID},
+		#{SHOP_NAME},
+		#{SHOP_TEL},
+		#{SHOP_TYPE},
+		#{SHOP_AREA},
+		#{SHOP_ADDRESS},
+		#{SERVICETYPE_FK},
+		NOW(),
+		#{CREATE_BY}
+
+		)
 	</insert>
 	<!-- 查询当前登录代理商的商铺信息 -->
-	 <select id="findAgentShopInfo" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
- 			select u.USER_NAME,u.USER_SN,s.* from (SELECT su.USER_SN,su.USER_NAME,sus1.FK_SHOP from sc_user as su INNER JOIN sc_user_shop sus1 on su.USER_PK = sus1.FK_USER where sus1.FK_ROLE = (select ssr.ROLE_PK from sc_sys_role ssr where ssr.ROLE_NAME = '店长' )) as u RIGHT JOIN (
-				select ssi.*,sst.SERVICE_TYPE from sc_shop_info ssi LEFT JOIN sc_service_type  sst on ssi.SERVICETYPE_FK = sst.SERVICE_PK where ssi.SHOP_ID IN(
-					SELECT sus.FK_SHOP FROM sc_user_shop as sus WHERE sus.FK_USER = #{USER_ID})) s on s.SHOP_ID = u.FK_SHOP;
- 			
- 	</select>
- 	
- 	<!-- 根据shopId查询商铺基本信息 -->
- 	 <select id="SelectByPrimaryKey" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
- 	 		select SHOP_NAME,SHOP_TEL,SHOP_TYPE,SHOP_AREA,SHOP_ADDRESS  from SC_SHOP_INFO where SHOP_ID = #{SHOP_FK};
- 	 </select>
- 	 
- 	 <!-- 更新商铺的过期时间 -->
+	<select id="findAgentShopInfo" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		select u.USER_NAME,u.USER_SN,s.* from (SELECT
+		su.USER_SN,su.USER_NAME,sus1.FK_SHOP from sc_user as su INNER JOIN
+		sc_user_shop sus1 on su.USER_PK = sus1.FK_USER where sus1.FK_ROLE =
+		(select ssr.ROLE_PK from sc_sys_role ssr where ssr.ROLE_NAME = '店长' ))
+		as u RIGHT JOIN (
+		select ssi.*,sst.SERVICE_TYPE from sc_shop_info ssi
+		LEFT JOIN
+		sc_service_type sst on ssi.SERVICETYPE_FK = sst.SERVICE_PK
+		where
+		ssi.SHOP_ID IN(
+		SELECT sus.FK_SHOP FROM sc_user_shop as sus WHERE
+		sus.FK_USER = #{USER_ID}))
+		s on s.SHOP_ID = u.FK_SHOP;
+
+	</select>
+
+	<!-- 根据shopId查询商铺基本信息 -->
+	<select id="SelectByPrimaryKey" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		select
+		SHOP_NAME,SHOP_TEL,SHOP_TYPE,SHOP_AREA,SHOP_ADDRESS from SC_SHOP_INFO
+		where SHOP_ID = #{SHOP_FK};
+	</select>
+
+	<!-- 更新商铺的过期时间 -->
 	<update id="UpdateOverDateAndServiceType" parameterMap="BaseParameterMap">
-		update SC_SHOP_INFO
-			set 
-				OVER_DATA = #{OVER_DATA},
-				SERVICETYPE_FK = #{SERVICE_ID}
-		where SHOP_ID = #{SHOP_FK} 
-	</update> 
-	
+		update
+		SC_SHOP_INFO
+		set
+		OVER_DATA = #{OVER_DATA},
+		SERVICETYPE_FK = #{SERVICE_ID}
+		where SHOP_ID = #{SHOP_FK}
+	</update>
+
 	<!-- 更新店铺基本信息操作 -->
 	<update id="updateShopBaseInfoById" parameterMap="BaseParameterMap">
-		UPDATE sc_shop_info SET SHOP_NAME = #{SHOP_NAME}, SHOP_TEL = #{SHOP_TEL}, SHOP_TYPE = #{SHOP_TYPE}, SHOP_AREA = #{SHOP_AREA}, SHOP_ADDRESS = #{SHOP_ADDRESS}, UPDATE_TIME = NOW(),
-			UPDATE_BY = #{UPDATE_BY}
-		WHERE SHOP_ID = #{SHOP_ID};
-	</update>	 
- 	
- 	<!-- 更新商铺的认领状态 -->
- 	<update id="UpdateShopState" parameterMap="BaseParameterMap">
+		UPDATE
+		sc_shop_info SET SHOP_NAME = #{SHOP_NAME}, SHOP_TEL = #{SHOP_TEL},
+		SHOP_TYPE = #{SHOP_TYPE}, SHOP_AREA = #{SHOP_AREA}, SHOP_ADDRESS =
+		#{SHOP_ADDRESS}, UPDATE_TIME = NOW(),
+		UPDATE_BY = #{UPDATE_BY}
+		WHERE
+		SHOP_ID = #{SHOP_ID};
+	</update>
+
+	<!-- 更新商铺的认领状态 -->
+	<update id="UpdateShopState" parameterMap="BaseParameterMap">
 		update SC_SHOP_INFO
-			set 
-				SHOP_STATE = #{SHOP_STATE}
-		where SHOP_ID = #{SHOP_FK} 
-	</update> 	
-	
+		set
+		SHOP_STATE = #{SHOP_STATE}
+		where SHOP_ID = #{SHOP_FK}
+	</update>
+
 	<!-- 查询 用户是否已经关联该店铺 -->
 	<select id="checkUserShop" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT
-			COUNT(*) AS nums  
-		FROM SC_USER_SHOP WHERE FK_USER = #{USER_ID} AND FK_SHOP=#{SHOP_ID}
+		COUNT(*) AS nums
+		FROM SC_USER_SHOP WHERE FK_USER =
+		#{USER_ID} AND FK_SHOP=#{SHOP_ID}
 	</select>
-	
+
 	<!-- 根据shopId查询未到期的商店购买的服务信息的价格的过期时间 -->
-	<select id="selectNODSTAndODByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+	<select id="selectNODSTAndODByShopId" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
 		SELECT st.SERVICE_PRICE, si.OVER_DATA
-		FROM sc_shop_info si, sc_service_type st 
-		WHERE si.SHOP_ID = #{SHOP_ID} AND si.SERVICETYPE_FK = st.SERVICE_PK AND si.OVER_DATA > NOW();
-	
+		FROM sc_shop_info si,
+		sc_service_type st
+		WHERE si.SHOP_ID = #{SHOP_ID} AND si.SERVICETYPE_FK
+		= st.SERVICE_PK AND
+		si.OVER_DATA > NOW();
+
 	</select>
-	
+
+	<select id="loadShopListByUser" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT a.FK_SHOP, a.FK_ROLE, a.FK_USER_TAG, b.SHOP_NAME,
+		b.IMG_BODAY, b.IMG_HEAD, b.IMG_LOGO, b.SERVICETYPE_FK, b.SHOP_ADDRESS,
+		b.SHOP_AREA, b.SHOP_GPS, b.SHOP_HOURS, b.SHOP_REMARK, b.SHOP_STATE,
+		b.SHOP_TEL, b.SHOP_TYPE, b.SERVICETYPE_FK, b.SUPPORT, b.OVER_DATA,
+		c.FK_APP FROM
+		sc_user_shop a LEFT JOIN sc_shop_info b ON a.FK_SHOP =
+		b.SHOP_ID
+		LEFT JOIN sc_shop_app c ON a.FK_SHOP = c.FK_SHOP
+		WHERE
+		a.FK_USER = #{USER_PK}
+	</select>
 </mapper>

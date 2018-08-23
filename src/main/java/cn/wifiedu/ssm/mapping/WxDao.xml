@@ -7,16 +7,9 @@
 	<select id="selectUserInfo" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT
-		user_info.*
-		FROM (
-		SELECT
-		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_SN, a.USER_SEX, a.USER_HEAD_IMG,
-		b.FK_ROLE, b.FK_SHOP, b.FK_USER_TAG
+		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_SN, a.USER_SEX, a.USER_HEAD_IMG
 		FROM SC_USER a
-		LEFT JOIN SC_USER_SHOP b
-		ON a.USER_PK = b.FK_USER
-		WHERE a.USER_WX = #{OPENID} AND b.FK_SHOP = (
-		SELECT FK_SHOP FROM SC_SHOP_APP WHERE FK_APP = #{FK_APP})) user_info
+		WHERE a.USER_WX = #{OPENID}
 	</select>
 
 	<update id="updateScUserTag" parameterMap="BaseParameterMap">

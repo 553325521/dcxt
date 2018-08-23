@@ -3,6 +3,7 @@
 	"viewUrl": "aps/content/welcome/template.html",
 	"controllerUrl": "aps/content/welcome/controller.js",
 	"config": {
-		"findURL": "json/Function_queryForList_loadFunctionListByUserRole.json"
+		"findURL": "json/Function_queryForList_loadFunctionListByUserRole.json",
+		"findShopListURL": "json/Shop_queryForList_loadShopListByUser.json"
 	}
 }
