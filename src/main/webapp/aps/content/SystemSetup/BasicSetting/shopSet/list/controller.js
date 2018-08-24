@@ -101,7 +101,7 @@
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : data.data,
-								"toUrl" : "aps/content/SystemSetup/BasicSetting/config.json"
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/config.json?fid=" + params.fid
 							 }
 						 }
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
@@ -176,7 +176,7 @@
 							//初始化config信息
 							initConfig(data.data["config"])
 						} else {
-							
+							return;
 						}
 						
 						if(scope.form.SHOP_REMARK !== undefined){
@@ -222,9 +222,6 @@
 						}
 					});
 				}
-				initEdit()
-				
-				
 				
 				
 					
@@ -253,7 +250,7 @@
 				};
 
 				
-				
+				initEdit()
 				
 			}
 		];
