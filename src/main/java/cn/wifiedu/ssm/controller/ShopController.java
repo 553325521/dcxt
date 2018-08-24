@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -53,6 +55,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 @Controller
 @Scope("prototype")
 public class ShopController extends BaseController {
+
+	private static Logger logger = Logger.getLogger(ShopController.class);
 
 	@Resource
 	OpenService openService;
@@ -501,6 +505,17 @@ public class ShopController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
+			if (jedisClient.isExit(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token)
+					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token))) {
+				Map<String, Object> map = (Map<String, Object>) JSONObject
+						.parse(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token));
+				userObj.put("FK_APP", map.get("FK_APP"));
+				userObj.put("FK_SHOP", map.get("FK_SHOP"));
+				userObj.put("FK_ROLE", map.get("FK_ROLE"));
+				userObj.put("FK_USER_TAG", map.get("FK_USER_TAG"));
+				output("0000", "success");
+				return;
+			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("USER_PK", userObj.getString("USER_PK"));
 			map.put("sqlMapId", "loadShopListByUser");
@@ -523,6 +538,57 @@ public class ShopController extends BaseController {
 				return;
 			}
 		} catch (Exception e) {
+			logger.error("error", e);
+		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @return void
+	 * @date 2018年8月23日 - 上午10:35:41
+	 * @description:查询用户所有关联的店铺
+	 */
+	@RequestMapping("/Shop_queryForList_loadShopListByRedis")
+	public void loadShopListByRedis() {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			List<Map<String, Object>> reList = (List<Map<String, Object>>) JSONObject
+					.parse(jedisClient.get(RedisConstants.REDIS_USER_SHOP_LIST_KEY + token));
+			output("0000", reList);
+			return;
+		} catch (Exception e) {
+			logger.error("error", e);
+		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @return void
+	 * @date 2018年8月23日 - 上午10:35:41
+	 * @description:查询用户所有关联的店铺
+	 */
+	@RequestMapping("/Shop_queryForList_selectShop")
+	public void selectShop() {
+		try {
+			Map<String, Object> map = getParameterMap();
+
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			userObj.put("FK_APP", map.get("FK_APP"));
+			userObj.put("FK_SHOP", map.get("FK_SHOP"));
+			userObj.put("FK_ROLE", map.get("FK_ROLE"));
+			userObj.put("FK_USER_TAG", map.get("FK_USER_TAG"));
+			// 重新对用户redis赋值
+			jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + token, userObj.toJSONString());
+			// 存储用户对应的shop信息
+			jedisClient.set(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token, JSONObject.toJSONString(map));
+			output("0000", "welcome");
+			return;
+		} catch (Exception e) {
+			logger.error("error", e);
 		}
 	}
 

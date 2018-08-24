@@ -34,6 +34,7 @@
 							})
 
 							$scope.functionList = data.data.functionList;
+							$scope.shopName = data.data.shopName;
 							$scope.$apply();
 						}
 					}).error(function(data) {

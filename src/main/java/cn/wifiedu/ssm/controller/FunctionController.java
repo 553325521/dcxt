@@ -88,16 +88,20 @@ public class FunctionController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-
+			
+			// 存储用户对应的shop信息
+			String shopJson = jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token);
+			JSONObject shopObj = JSONObject.parseObject(shopJson);
+			
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("ROLE_ID", userObj.get("FK_ROLE"));
 
-			
 			map.put("sqlMapId", "loadFunctionListByUserRole");
 			List<Map<String, Object>> reList = openService.queryForList(map);
 
 			map.put("functionList", reList);
+			map.put("shopName", shopObj.getString("SHOP_NAME"));
 			output("0000", map);
 			return;
 		} catch (Exception e) {

@@ -1,0 +1,10 @@
+{
+	"name": "shoplist_index",
+	"viewUrl": "aps/content/shopList/template.html",
+	"controllerUrl": "aps/content/shopList/controller.js",
+	"config": {
+		"pageTitle": "店铺列表",
+		"findURL": "json/Shop_queryForList_loadShopListByRedis.json",
+		"selectShopURL": "json/Shop_queryForList_selectShop.json"
+	}
+}

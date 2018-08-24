@@ -1,18 +1,19 @@
 
-<div class="weui-header" style="background-color:#FFFFFF" ng-show="isShow">
-	<!-- <div class="weui-header-left">
-		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
-	</div> -->
+<div class="weui-header" style="background-color:#FFFFFF"
+	ng-show="isShow">
 	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
-	<!-- <div class="weui-header-right" style="top: 0;">
-		<div class="button_sp_area" style="padding: 12px 0;">
-			<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
-		</div>
-	</div> -->
 </div>
 <div class="weui_cells weui_cells_form" style="margin-top: 0;">
+	<div class="weui_cells_title">
+		所在商铺:{{shopName}}
+		<div style="float: right;">
+			<a ng-click="toHref('shopList')">切换店铺</a>
+		</div>
+	</div>
 	<div class="weui_grids grids-small">
-		<a href="javascript:;" class="grid" ng-click="toHref('{{item.FUNCTION_URL}}', '{{item.FUNCTION_PK}}')" ng-repeat="item in functionList"> 
+		<a href="javascript:;" class="grid"
+			ng-click="toHref('{{item.FUNCTION_URL}}', '{{item.FUNCTION_PK}}')"
+			ng-repeat="item in functionList">
 			<div class="weui_grid_icon">
 				<img src="{{item.FUNCTION_ICON}}" alt="">
 			</div>

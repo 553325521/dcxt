@@ -119,6 +119,6 @@
 		b.SHOP_ID
 		LEFT JOIN sc_shop_app c ON a.FK_SHOP = c.FK_SHOP
 		WHERE
-		a.FK_USER = #{USER_PK}
+		a.FK_USER = #{USER_PK} AND a.FK_ROLE != '7'
 	</select>
 </mapper>
