@@ -310,6 +310,16 @@ public class ShopController extends BaseController {
 								String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
 								JSONObject resObj = JSONObject.parseObject(resCont);
 								if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
+									
+									/*插入到shopApp表*/
+									param.clear();
+									param.put("FK_APP", "wx6041a1eff32d3c5e");
+									param.put("FK_SHOP", state);
+									param.put("sqlMapId", "insertShopApp");
+									String insertShopAppStr = openService.insert(param);
+									if (insertShopAppStr == null || insertShopAppStr.equals("")) {
+										throw new Exception();
+									}
 									// 重定向成功页面
 									String btnToken = UUID.randomUUID().toString();
 									JSONObject obj = new JSONObject();

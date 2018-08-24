@@ -26,6 +26,23 @@
 		)
 	</insert>
 	
+	<insert id="insertShopApp" parameterMap="BaseParameterMap">
+		insert into SC_SHOP_APP
+		(
+		SHOP_APP_PK,
+		FK_APP,
+		FK_SHOP,
+		INSERT_TIME
+		)
+		values
+		(
+		#{UUID},
+		#{FK_APP},
+		#{FK_SHOP},
+		NOW()
+		)
+	</insert>
+	
 	<select id="getRefreshTokenByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT APP_REFRESH_TOKEN
