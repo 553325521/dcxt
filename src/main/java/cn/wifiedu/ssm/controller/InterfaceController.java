@@ -200,12 +200,12 @@ public class InterfaceController extends BaseController {
 				String retStr = CommonUtil.posts(url, json.toString(), "utf-8");
 
 				JSONObject resultJson = JSONObject.parseObject(retStr);
-				System.out.println("resultJson ==== " + resultJson.toString());
+				logger.info("resultJson ==== " + resultJson.toString());
 
 				/** 在返回结果中获取token */
 				String componentAccessToken = resultJson.getString("component_access_token");
 
-				System.out.println("componentAccessToken ==== " + componentAccessToken);
+				logger.info("componentAccessToken ==== " + componentAccessToken);
 
 				jedisClient.set(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, componentAccessToken);
 

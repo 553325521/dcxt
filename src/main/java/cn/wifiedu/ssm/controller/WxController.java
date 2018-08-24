@@ -112,10 +112,10 @@ public class WxController extends BaseController {
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
 				String openId = getOpenIdByCode(code);
-				System.out.println("WeChart openId : " + openId);
+				logger.info("WeChart openId : " + openId);
 
 				String state = request.getParameter("state");
-				System.out.println("WeChart params : " + state);
+				logger.info("WeChart params : " + state);
 
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
@@ -171,7 +171,7 @@ public class WxController extends BaseController {
 				String url = CommonUtil.getPath("Auth-wx-qrcode-url");
 				url = url.replace("STATE", request.getParameter("params")).replace("REDIRECT_URI", URLEncoder.encode(
 						CommonUtil.getPath("project_url").replace("DATA", "Qrcode_qrCommonAuth_data"), "UTF-8"));
-				System.out.println("qrcodeURL:" + url);
+				logger.info("qrcodeURL:" + url);
 				response.sendRedirect(url);
 			} else {
 				output("无效二维码");
@@ -190,7 +190,7 @@ public class WxController extends BaseController {
 			String url = CommonUtil.getPath("Auth-wx-qrcode-url-plat");
 			url = url.replace("APPID", request.getParameter("appid")).replace("REDIRECT_URI", URLEncoder.encode(
 					CommonUtil.getPath("project_url").replace("DATA", request.getParameter("params")), "UTF-8"));
-			System.out.println("qrcodeURL:" + url);
+			logger.info("qrcodeURL:" + url);
 			response.sendRedirect(url);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -207,7 +207,7 @@ public class WxController extends BaseController {
 			String appid = request.getParameter("appid");
 			if (null != code && !"".equals(code)) {
 				String openId = getOpenIdByCode2(code, appid);
-				System.out.println("WeChart openId : " + openId);
+				logger.info("WeChart openId : " + openId);
 
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
@@ -267,7 +267,7 @@ public class WxController extends BaseController {
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
 				String openId = getOpenIdByCode(code);
-				System.out.println("WeChart openId : " + openId);
+				logger.info("WeChart openId : " + openId);
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
 				map.put("sqlMapId", "checkUserWx");
@@ -386,8 +386,9 @@ public class WxController extends BaseController {
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL-plat");
 		url = url.replace("CODE", code).replace("APPID", appid).replace("COMPONENT_ACCESS_TOKEN",
 				interCtrl.getComponentAccessToken());
-		System.out.println("getOpenIdByCode=" + url);
+		logger.info("getOpenIdByCode url:" + url);
 		String res = CommonUtil.get(url);
+		logger.info("getOpenIdByCode response:" + res);
 		JSONObject succesResponse = JSONObject.parseObject(res);
 
 		String openId = succesResponse.getString("openid");
@@ -406,14 +407,14 @@ public class WxController extends BaseController {
 		// 设置access_token的过期时间2小时
 		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
 
-		System.out.println(appid + "====" + openId);
+		logger.info(appid + "====" + openId);
 		return openId;
 	}
 
 	public String getOpenIdByCode(String code) {
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL");
 		url = url.replace("CODE", code);
-		System.out.println("getOpenIdByCode=" + url);
+		logger.info("getOpenIdByCode=" + url);
 		String res = CommonUtil.get(url);
 		Object succesResponse = JSON.parse(res);
 		Map result = (Map) succesResponse;
@@ -446,10 +447,10 @@ public class WxController extends BaseController {
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
 				String openId = getOpenIdByCode(code);
-				System.out.println("WeChart openId : " + openId);
+				logger.info("WeChart openId : " + openId);
 
 				String state = request.getParameter("state");
-				System.out.println("WeChart COURSE : " + state);
+				logger.info("WeChart COURSE : " + state);
 
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
@@ -555,7 +556,7 @@ public class WxController extends BaseController {
 				String url = CommonUtil.getPath("Auth-wx-qrcode-url");
 				url = url.replace("STATE", request.getParameter("role_pk")).replace("REDIRECT_URI", URLEncoder
 						.encode(CommonUtil.getPath("project_url").replace("DATA", "Qrcode_qrauth_data"), "UTF-8"));
-				System.out.println("qrcodeURL:" + url);
+				logger.info("qrcodeURL:" + url);
 				response.sendRedirect(url);
 			} else {
 				String redirect_qrcode = session.getId();
@@ -565,7 +566,7 @@ public class WxController extends BaseController {
 				}
 				Map<String, Object> map = getParameterMap();
 
-				System.out.println("qrcodeMap:" + map);
+				logger.info("qrcodeMap:" + map);
 
 				BufferedImage image = QRCode
 						.genBarcode(
@@ -702,12 +703,12 @@ public class WxController extends BaseController {
 			String retStr = CommonUtil.get(url);
 
 			JSONObject resultJson = JSONObject.parseObject(retStr);
-			System.out.println("resultJson ==== " + resultJson.toString());
+			logger.info("resultJson ==== " + resultJson.toString());
 
 			/** 在返回结果中获取token */
 			String jsApiTicket = resultJson.getString("ticket");
 
-			System.out.println("jsApiTicket ==== " + jsApiTicket);
+			logger.info("jsApiTicket ==== " + jsApiTicket);
 
 			jedisClient.set(RedisConstants.WX_JS_API_Ticker + appid, jsApiTicket);
 
