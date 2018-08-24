@@ -219,7 +219,54 @@ public class InterfaceController extends BaseController {
 		}
 		return null;
 	}
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param session
+	 * @return
+	 * @return String
+	 * @date 2018年8月1日 - 下午11:09:05
+	 * @description:获取ComponentAccessToken
+	 */
+	public String getComponentToken() {
+		try {
+			Map<String, Object> map = new HashMap<>();
+			map.put("sqlMapId", "getNewTicket");
+			map = (Map<String, Object>) openService.queryForObject(map);
+			String ticket = map.get("TICKET_CODE").toString();
+			if (StringUtils.isNotBlank(ticket)) {
+				JSONObject json = new JSONObject();
+				json.put("component_appid", component_appid);
+				json.put("component_appsecret", component_secret);
+				json.put("component_verify_ticket", ticket);
 
+				String url = CommonUtil.getPath("getWxPlatFormTokenUrl").toString();
+
+				/** 发送Https请求到微信 */
+				String retStr = CommonUtil.posts(url, json.toString(), "utf-8");
+
+				JSONObject resultJson = JSONObject.parseObject(retStr);
+				logger.info("resultJson ==== " + resultJson.toString());
+
+				/** 在返回结果中获取token */
+				String componentAccessToken = resultJson.getString("component_access_token");
+
+				logger.info("componentAccessToken ==== " + componentAccessToken);
+
+				jedisClient.set(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, componentAccessToken);
+
+				// 设置componentAccessToken的过期时间1小时
+				jedisClient.expire(RedisConstants.WX_COMPONENT_ACCESS_TOKEN, 3600 * 1);
+
+				return componentAccessToken;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * 
 	 * @author kqs

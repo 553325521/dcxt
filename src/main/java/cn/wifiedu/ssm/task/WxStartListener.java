@@ -7,6 +7,8 @@ import javax.servlet.ServletContextListener;
 
 public class WxStartListener implements ServletContextListener {
 
+	private Timer wxComponentTokenTimer;
+	
 	/**
 	 * 监听开始销毁
 	 */
@@ -21,6 +23,9 @@ public class WxStartListener implements ServletContextListener {
 		// 当监听开始执行时,设置一个TIME
 		Timer timer = new Timer();
 		WxStartTask task = new WxStartTask();
-		timer.schedule(task, 0, 60 * 1000);
+		timer.schedule(task, 0, 3600 * 1000);
+		
+		wxComponentTokenTimer = new Timer();
+		timer.schedule(new WxComponentTokenTask(sce), 0, 3600 * 1000);
 	}
 }
