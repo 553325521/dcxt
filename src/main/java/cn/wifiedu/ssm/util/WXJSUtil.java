@@ -40,6 +40,7 @@ public class WXJSUtil {
 			}else{
 				newMap.put("url", map.get("url"));
 			}
+			newMap.put("jsapi_ticket",  map.get("jsapi_ticket"));
 			
 			//排序进行微信签名
 			StringBuilder sb=new StringBuilder();
@@ -111,11 +112,11 @@ public class WXJSUtil {
 		return null;
 	}
 	
-	public static void main(String[] args) {
-		Map map = new HashMap<String, String>();
-		map.put("jsapi_ticket", "HoagFKDcsGMVCIY2vOjf9sjtkNba1fYGaaDPJ37_eN-aqqvlvuC8vS0SeK6I9-iGmwmOeeQ2ZUfFydu6rq9gTw");
-		map.put("timestamp", 1534885752);
-		map.put("noncestr", "10b3354e26006ea");
-		System.out.println(getWxConfigMess(map));
-	}
+//	public static void main(String[] args) {
+//		Map map = new HashMap<String, String>();
+//		map.put("jsapi_ticket", "gdzxN2g622vVfv3lEXnBsnhKVsdgGwRkGg6in-fSSz-26Nbn8uj-bhga4qMbxAoNLiLo7cVG4FBryOleP7LB2w");
+//		map.put("timestamp", 1535097394);
+//		map.put("noncestr", "8b80fb540a17c12");
+//		System.out.println(getWxConfigMess(map));
+//	}
 }
