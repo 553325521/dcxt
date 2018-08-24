@@ -683,7 +683,7 @@ public class WxController extends BaseController {
 		try {
 			if (jedisClient.isExit(RedisConstants.WX_JS_API_Ticker + appid)
 					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.WX_JS_API_Ticker + appid))) {
-				return jedisClient.get(RedisConstants.WX_JS_API_Ticker);
+				return jedisClient.get(RedisConstants.WX_JS_API_Ticker + appid);
 			}
 			
 			String accessToken = "";
