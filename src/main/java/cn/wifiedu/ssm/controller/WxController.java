@@ -510,6 +510,19 @@ public class WxController extends BaseController {
 							logger.info("add user tag success: " + resMsg.trim());
 						}
 
+						//插入agent
+						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + CookieUtils.getCookieValue(request, "DCXT_TOKEN"));
+						JSONObject userObj = JSONObject.parseObject(userJson);
+
+						map.put("sqlMapId", "insertAgentInfoById");
+						map.put("USER_ID", checkList.get(0).get("USER_PK").toString());
+						map.put("CREATE_BY", userObj.get("USER_PK")+"");
+						if(openService.insert(map).length() > 0) {
+							logger.info("add user agent success");
+						}else{
+							logger.info("add user agent error");
+						};
+						
 						// 返回到成功页面
 						response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json", "")
 								+ "/qrcode_success.jsp");
