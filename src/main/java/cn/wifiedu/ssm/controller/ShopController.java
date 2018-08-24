@@ -367,6 +367,7 @@ public class ShopController extends BaseController {
 									throw new RuntimeException("40003");
 								} else if (WxConstants.ERRORCODE_50005.equals(resObj.getString("errcode"))) {
 									// 重定向成功页面
+									transactionManager.rollback(status);
 									String btnToken = UUID.randomUUID().toString();
 									JSONObject obj = new JSONObject();
 									obj.put("status", 9999);
