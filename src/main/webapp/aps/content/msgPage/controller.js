@@ -36,7 +36,7 @@
 				$scope.clickButton = function(btn) {
 					// 跳转页面
 					scope.toHref(btn.buttonLink);
-					console.info(btn);
+					scope.$apply();
 				};
 				
 			}

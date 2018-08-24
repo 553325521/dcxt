@@ -46,7 +46,7 @@ public class StaffController extends BaseController {
 
 	@Resource
 	OpenService openService;
-	
+
 	public OpenService getOpenService() {
 		return openService;
 	}
@@ -66,17 +66,17 @@ public class StaffController extends BaseController {
 
 	@Autowired
 	private MenuController menuCtrl;
-	
+
 	@Autowired
 	private TransactionManagerController txManagerController;
-	
+
 	/**
 	 * 
 	 * @author kqs
 	 * @param request
 	 * @param session
 	 * @return void
-	 * @date 2018年8月13日 - 下午9:58:44 
+	 * @date 2018年8月13日 - 下午9:58:44
 	 * @description:更新员工信息
 	 */
 	@RequestMapping("/User_update_updateStaffInfo")
@@ -114,7 +114,7 @@ public class StaffController extends BaseController {
 	 * @param request
 	 * @param session
 	 * @return void
-	 * @date 2018年8月13日 - 下午9:59:04 
+	 * @date 2018年8月13日 - 下午9:59:04
 	 * @description:根据员工id获取具体信息
 	 */
 	@RequestMapping("/User_queryForObject_findUserInfoById")
@@ -132,14 +132,14 @@ public class StaffController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
 	 * @param request
 	 * @param session
 	 * @return void
-	 * @date 2018年8月13日 - 下午9:59:33 
+	 * @date 2018年8月13日 - 下午9:59:33
 	 * @description:获取店铺所有员工
 	 */
 	@RequestMapping("/Staff_queryForList_findStaffList")
@@ -164,7 +164,7 @@ public class StaffController extends BaseController {
 	 * @param request
 	 * @param session
 	 * @return void
-	 * @date 2018年8月13日 - 下午9:59:49 
+	 * @date 2018年8月13日 - 下午9:59:49
 	 * @description:员工添加二维码
 	 */
 	@RequestMapping("/Staff_add_getCodeToRes")
@@ -201,7 +201,7 @@ public class StaffController extends BaseController {
 	 * @param request
 	 * @param session
 	 * @return void
-	 * @date 2018年8月13日 - 下午10:00:01 
+	 * @date 2018年8月13日 - 下午10:00:01
 	 * @description:员工添加逻辑
 	 */
 	@RequestMapping("/Staff_add_addStaff")
@@ -305,7 +305,7 @@ public class StaffController extends BaseController {
 
 								// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 								CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
-
+								txManagerController.commit();
 								response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
 										"#toOtherPage/msgPage/" + btnToken));
 								return;
@@ -356,6 +356,7 @@ public class StaffController extends BaseController {
 		} catch (Exception e) {
 			logger.error(e);
 			e.printStackTrace();
+			txManagerController.rollback();
 		}
 		String btnToken = UUID.randomUUID().toString();
 		JSONObject obj = new JSONObject();

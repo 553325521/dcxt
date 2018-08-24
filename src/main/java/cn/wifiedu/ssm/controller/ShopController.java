@@ -505,21 +505,12 @@ public class ShopController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-			if (jedisClient.isExit(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token)
-					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token))) {
-				Map<String, Object> map = (Map<String, Object>) JSONObject
-						.parse(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token));
-				userObj.put("FK_APP", map.get("FK_APP"));
-				userObj.put("FK_SHOP", map.get("FK_SHOP"));
-				userObj.put("FK_ROLE", map.get("FK_ROLE"));
-				userObj.put("FK_USER_TAG", map.get("FK_USER_TAG"));
-				output("0000", "success");
-				return;
-			}
 			Map<String, Object> map = new HashMap<>();
 			map.put("USER_PK", userObj.getString("USER_PK"));
 			map.put("sqlMapId", "loadShopListByUser");
 			List<Map<String, Object>> reList = openService.queryForList(map);
+			// 更新 店铺列表数据
+			jedisClient.set(RedisConstants.REDIS_USER_SHOP_LIST_KEY + token, JSONObject.toJSONString(reList));
 			if (reList != null && reList.size() == 1) {
 				userObj.put("FK_APP", reList.get(0).get("FK_APP"));
 				userObj.put("FK_SHOP", reList.get(0).get("FK_SHOP"));
@@ -533,9 +524,22 @@ public class ShopController extends BaseController {
 				output("0000", "success");
 				return;
 			} else {
-				jedisClient.set(RedisConstants.REDIS_USER_SHOP_LIST_KEY + token, JSONObject.toJSONString(reList));
-				output("9999", "shopList");
-				return;
+				if (jedisClient.isExit(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token)
+						&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token))) {
+					Map<String, Object> mapp = (Map<String, Object>) JSONObject
+							.parse(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token));
+					userObj.put("FK_APP", mapp.get("FK_APP"));
+					userObj.put("FK_SHOP", mapp.get("FK_SHOP"));
+					userObj.put("FK_ROLE", mapp.get("FK_ROLE"));
+					userObj.put("FK_USER_TAG", mapp.get("FK_USER_TAG"));
+					// 重新对用户redis赋值
+					jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + token, userObj.toJSONString());
+					output("0000", "success");
+					return;
+				} else {
+					output("9999", "shopList");
+					return;
+				}
 			}
 		} catch (Exception e) {
 			logger.error("error", e);
