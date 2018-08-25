@@ -228,8 +228,20 @@ public class ShopInfoController extends BaseController {
 			Map<String, Object> map = getParameterMap();
 			
 			String imgLogo = (String) map.get("IMG_LOGO");	//店铺logo base64码
+			if(imgLogo == null){
+				output("9999", "请添加一个店铺LOGO");
+				return;
+			}
 			String imgHead = (String) map.get("IMG_HEAD");	//店铺门头	base64码
+			if(imgHead == null){
+				output("9999", "请添加一个店铺门头图片");
+				return;
+			}
 			String imgBoday = (String) map.get("IMG_BODAY");	//店铺形象	base64码
+			if(imgBoday == null){
+				output("9999", "请添加一个店铺形象图片");
+				return;
+			}
 			//判断图片是否超出大小
 			if(imgLogo.length()*3/4 > ONE_PIC_MAXSIZE || imgHead.length()*3/4 > ONE_PIC_MAXSIZE || imgBoday.length()*3/4 > ONE_PIC_MAXSIZE){
 				output("9999", "单张图片不允许超出" + Math.floor(ONE_PIC_MAXSIZE/1000000) + "M");

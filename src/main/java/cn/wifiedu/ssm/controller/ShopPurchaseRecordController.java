@@ -1,15 +1,10 @@
 package cn.wifiedu.ssm.controller;
 
 
-	import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
-import java.lang.reflect.Field;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+	import java.lang.reflect.Field;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,11 +81,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 */
 			@RequestMapping("/ShopPurchaseRecord_insert_insertShopPurchaseRecord")
 			public void addTransactionRecord(HttpServletRequest request,HttpSession seesion){
-				DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-			    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-			    TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
-		
-				try {
+				TransactionStatus status = null;
+				try {	
 					Map<String, Object> map = getParameterMap();
 					
 					/**数据验证*/
@@ -150,6 +142,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 					JSONObject userObj = JSONObject.parseObject(userJson);
 					
+					//准备插入操作，开启事务
+					DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+				    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+				    status = transactionManager.getTransaction(defaultTransactionDefinition);
+					
 					/**数据验证结束*/
 					//TODO
 					//判断支付方式
@@ -171,9 +168,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						String insert2 = openService.insert(map);
 						
 					}
+				
 					
-					
-					
+				    	
 					/*检验完毕，开始插入流程*/
 					//先获取当前过期时间
 					map.put("sqlMapId", "SelectByPrimaryKey");
@@ -279,7 +276,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					throw new Exception("系统异常");
 				} catch (Exception e) {
 					transactionManager.rollback(status);
-					output("9999", " Exception ", e);
+					output("9999", e);
 					return;
 				}
 			}

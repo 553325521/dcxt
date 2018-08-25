@@ -1,32 +1,19 @@
 package cn.wifiedu.ssm.controller;
 
 
-	import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+	import java.util.LinkedHashMap;
 import java.util.List;
-	import java.util.Map;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.json.Json;
 import javax.servlet.http.HttpServletRequest;
-	import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.log4j.chainsaw.Main;
-import org.apache.poi.ss.usermodel.Picture;
 import org.springframework.context.annotation.Scope;
-	import org.springframework.stereotype.Controller;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
@@ -35,13 +22,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 
 import cn.wifiedu.core.controller.BaseController;
-	import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.ssm.util.CommonUtil;
-import cn.wifiedu.ssm.util.CookieUtils;
+import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.PictureUtil;
-import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.redis.JedisClient;
-import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 		/**
 		 * 
