@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="shopMoLingDao">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+
+	<insert id="insertShopMoLing" parameterMap="BaseParameterMap">
+		insert into
+		SC_SHOP_MOLING
+		(
+		SHOP_MOLING_PK,
+		FK_SHOP,
+		SHOP_MOLING_VALUE,
+		INSERT_TIME
+		)
+		values
+		(
+		#{UUID},
+		#{FK_SHOP},
+		#{SHOP_MOLING_VALUE},
+		#{INSERT_TIME}
+		)
+	</insert>
+
+	<update id="updateShopMoLing" parameterMap="BaseParameterMap">
+		update
+		SC_SHOP_MOLING
+		set SHOP_MOLING_VALUE = #{SHOP_MOLING_VALUE}, UPDATE_TIME =
+		#{UPDATE_TIME}
+		WHERE SHOP_MOLING_PK = #{SHOP_MOLING_PK}
+	</update>
+
+	<select id="loadShopMoLingByShopId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT SHOP_MOLING_PK, SHOP_MOLING_VALUE
+		FROM
+		SC_SHOP_MOLING WHERE FK_SHOP = #{FK_SHOP}
+	</select>
+
+</mapper>

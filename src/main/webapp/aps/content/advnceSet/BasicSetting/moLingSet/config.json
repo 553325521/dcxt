@@ -1,0 +1,22 @@
+{
+	"name": "moling_setting",
+	"viewUrl": "aps/content/advnceSet/BasicSetting/moLingSet/template.html",
+	"controllerUrl": "aps/content/advnceSet/BasicSetting/moLingSet/controller.js",
+	"config": {
+		"pageTitle": "抹零设置",
+		"findURL": "json/Shop_queryForObject_loadShopMoLingByShopId.json",
+		"updateShopMoLingURL": "json/Shop_update_updateShopMoLing.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"moling_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"moling_setting.confirm"
+		        	}
+				]
+			}
+	}
+}
