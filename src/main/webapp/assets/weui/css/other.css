@@ -142,9 +142,10 @@
 	color: #aaa;
 }
 
-.dcxt_active:active {
+.dcxt_active:active, .bom-radio:active{
 	background-color: #ececec;
 }
+
 
 .weui_btn_self {
 	border-radius: 50px;

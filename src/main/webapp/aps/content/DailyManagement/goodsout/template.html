@@ -1,0 +1,35 @@
+<style>
+</style>
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('welcome')">
+			<a class="icon icon-109" ></a>
+		</div>
+
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+ 
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="goodsOut()">估清</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
+		<div class="weui_cell">
+			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
+			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
+			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
+			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
+			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
+		</div>
+		
+		
+	</div>
+	
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	
+
+		

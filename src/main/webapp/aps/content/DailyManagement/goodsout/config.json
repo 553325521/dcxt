@@ -1,0 +1,22 @@
+{
+	"name": "goods_out",
+	"viewUrl": "aps/content/DailyManagement/goodsout/template.html",
+	"controllerUrl": "aps/content/DailyManagement/goodsout/controller.js",
+	"config": {
+		"pageTitle": "商品估清",
+		"findURL":"json/Shop_query_findGoodsList.json",
+		"updateURL":"json/Shop_update_updateGoodsNumByGoodsId.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"goods_out.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"goods_out.confirm"
+		        	}
+				]
+			}
+	}
+}

@@ -48,6 +48,7 @@
 								} else {
 									scope.pageShow = "True";
 									scope.form = data.data;
+									scope.form.GOODS_ID = scope.form.GOODS_PK
 									//字符串转json
 									scope.SHOW_RANGE = angular.fromJson(scope.form.SHOW_RANGE);
 									scope.GOODS_RECIPE = angular.fromJson(scope.form.GOODS_RECIPE);
@@ -184,10 +185,10 @@
 					// 弹窗确认事件
 					eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 						//判断是修改还是添加
-						if(scope.form.GOODS_ID == 'undefined' || scope.form.GOODS_ID == ''){
-							url = config.saveURL;
-						}else{
+						if(scope.form.GOODS_ID != undefined && scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
 							url = config.updateURL;
+						}else{
+							url = config.saveURL;
 						}
 						 $httpService.post(url,scope.form).success(function(data){
 							 
