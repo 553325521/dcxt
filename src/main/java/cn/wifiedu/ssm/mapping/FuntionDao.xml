@@ -84,11 +84,11 @@
 		SELECT COUNT(FUNCTION_PK) as FUNCTION_SORT
 		FROM SC_FUNCTION
 		<where>
-			<if test="FUNCTION_ISPID == '2'">
+			<if test="FUNCTION_ISPID == '2'.toString()">
 				FUNCTION_PK_PID IS NOT
 				NULL
 			</if>
-			<if test="FUNCTION_ISPID == '1'">
+			<if test="FUNCTION_ISPID == '1'.toString()">
 				FUNCTION_PK_PID IS
 				NULL
 			</if>
@@ -103,7 +103,7 @@
 		FUNCTION_URL,
 		FUNCTION_ICON,
 		FUNCTION_SORT,
-		<if test="FUNCTION_ISPID == '2'">
+		<if test="FUNCTION_ISPID == '2'.toString()">
 			FUNCTION_PK_PID,
 		</if>
 		FUNCTION_SWITCH,
@@ -117,7 +117,7 @@
 		#{FUNCTION_URL},
 		#{FUNCTION_ICON},
 		#{FUNCTION_SORT},
-		<if test="FUNCTION_ISPID == '2'">
+		<if test="FUNCTION_ISPID == '2'.toString()">
 			#{FUNCTION_PK_PID},
 		</if>
 		#{FUNCTION_SWITCH},

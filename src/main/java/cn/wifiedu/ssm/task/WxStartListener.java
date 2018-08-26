@@ -26,7 +26,7 @@ public class WxStartListener implements ServletContextListener {
 		WxStartTask task = new WxStartTask();
 		timer.schedule(task, 0, 3600 * 1000);
 		
-		wxComponentTokenTimer = new Timer();
-		timer.schedule(new WxComponentTokenTask(sce), 0, 3600 * 1000);
+//		wxComponentTokenTimer = new Timer();
+//		timer.schedule(new WxComponentTokenTask(sce), 0, 3600 * 1000);
 	}
 }

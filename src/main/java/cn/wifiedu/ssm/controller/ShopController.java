@@ -231,6 +231,7 @@ public class ShopController extends BaseController {
 			param.put("SHOP_ID", request.getParameter("state"));
 			param.put("sqlMapId", "checkShopIsClaim");
 			Map<String, Object> rMap = (Map<String, Object>) openService.queryForObject(param);
+			logger.info("rMap:" + rMap);
 			if (Integer.parseInt(rMap.get("nums").toString()) > 0) {
 				String btnToken = UUID.randomUUID().toString();
 				JSONObject obj = new JSONObject();
@@ -246,8 +247,8 @@ public class ShopController extends BaseController {
 				String code = request.getParameter("code");
 				if (null != code && !"".equals(code)) {
 					String openId = wxControllerl.getOpenIdByCode(code);
+					logger.info("openId:" + openId);
 					String state = request.getParameter("state");
-					PrintWriter out = reponse.getWriter();
 					String userId = "";
 					if (openId != null && !openId.equals("")) {
 						param.clear();
@@ -255,6 +256,7 @@ public class ShopController extends BaseController {
 						param.put("OPENID", openId);
 						param.put("sqlMapId", "checkUserExits");
 						List<Map<String, Object>> checkUserList = openService.queryForList(param);
+						logger.info("checkUserList:" + checkUserList);
 						if (checkUserList.size() == 0) {
 							/* 没存在插入到用户表 */
 							param.clear();
@@ -277,6 +279,7 @@ public class ShopController extends BaseController {
 					param.put("SHOP_ID", state);
 					param.put("sqlMapId", "insertUserShop");
 					String insertResult = openService.insert(param);
+					logger.info("insertResult:" + insertResult);
 					/* 插入成功修改商铺认领状态 */
 					if (insertResult != null && !insertResult.equals("")) {
 						param.clear();
