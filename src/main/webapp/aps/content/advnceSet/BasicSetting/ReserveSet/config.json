@@ -1,0 +1,22 @@
+{
+	"name": "reserve_setting",
+	"viewUrl": "aps/content/advnceSet/BasicSetting/ReserveSet/template.html",
+	"controllerUrl": "aps/content/advnceSet/BasicSetting/ReserveSet/controller.js",
+	"config": {
+		"pageTitle": "预订设置",
+		"findURL": "json/Shop_queryForObject_loadShopReserveByShopId.json",
+		"updateShopReserveURL": "json/Shop_update_updateShopReserve.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"reserve_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"reserve_setting.confirm"
+		        	}
+				]
+			}
+	}
+}

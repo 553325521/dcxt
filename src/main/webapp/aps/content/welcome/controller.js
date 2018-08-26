@@ -8,9 +8,9 @@
 
 				// 定义页面标题
 				$scope.pageTitle = '后台系统'
-					
-				scope.isShow = false	
-				
+
+				scope.isShow = false
+
 				//初始化 form 表单
 				scope.form = {};
 
@@ -22,8 +22,8 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
-				
-				$scope.loadFunctionList = function () {
+
+				$scope.loadFunctionList = function() {
 					scope.isShow = true
 					$httpService.post(config.findURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
@@ -41,12 +41,13 @@
 						loggingService.info('获取测试信息出错');
 					});
 				}
-				
+
 				var init = function() {
 					if ($routeParams.LOCALPATH != undefined && $routeParams.LOCALPATH != null) {
 						scope.toHref($routeParams.LOCALPATH);
 						return;
 					} else {
+						$('#mainLoder').show();
 						$httpService.post(config.findShopListURL, $scope.form).success(function(data) {
 							if (data.code != '0000') {
 								scope.toHref(data.data);
@@ -54,14 +55,16 @@
 							} else {
 								$scope.loadFunctionList()
 							}
+							$('#mainLoder').hide();
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
+							$('#mainLoder').hide();
 						});
 					}
 				}
 
 				init()
-				
+
 			}
 		];
 	});

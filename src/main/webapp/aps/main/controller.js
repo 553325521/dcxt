@@ -51,7 +51,6 @@
 
 				// alert 确认弹窗事件
 				eventBusService.subscribe(controllerName, 'appPart.load.modal', function(event, m2) {
-
 					if (m2.contentName === config.modalName) {
 						$scope.modal = m2;
 						if (m2.url == undefined) {

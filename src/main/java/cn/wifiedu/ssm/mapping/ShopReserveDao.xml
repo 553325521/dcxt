@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="shopReserveDao">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+
+	<insert id="insertShopReserve" parameterMap="BaseParameterMap">
+		insert into
+		SC_SHOP_RESERVE
+		(
+		SHOP_RESERVE_PK,
+		FK_SHOP,
+		SHOP_RESERVE_VALUE,
+		SHOP_RESERVE_AMOUNT,
+		INSERT_TIME
+		)
+		values
+		(
+		#{UUID},
+		#{FK_SHOP},
+		#{SHOP_RESERVE_VALUE},
+		#{SHOP_RESERVE_AMOUNT},
+		#{INSERT_TIME}
+		)
+	</insert>
+
+	<update id="updateShopReserve" parameterMap="BaseParameterMap">
+		update
+		SC_SHOP_RESERVE set SHOP_RESERVE_VALUE = #{SHOP_RESERVE_VALUE},
+		SHOP_RESERVE_AMOUNT = #{SHOP_RESERVE_AMOUNT}, UPDATE_TIME =
+		#{UPDATE_TIME}
+		WHERE SHOP_RESERVE_PK = #{SHOP_RESERVE_PK}
+	</update>
+
+	<select id="loadShopReserveByShopId" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT SHOP_RESERVE_PK, SHOP_RESERVE_VALUE,
+		SHOP_RESERVE_AMOUNT
+		FROM SC_SHOP_RESERVE WHERE FK_SHOP = #{FK_SHOP}
+	</select>
+
+</mapper>

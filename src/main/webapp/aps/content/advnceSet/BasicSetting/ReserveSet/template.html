@@ -1,0 +1,54 @@
+
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left"
+		ng-click="toHref('advnceSet/BasicSetting');">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	<div class="weui-header-right" style="top: 0;">
+		<div class="button_sp_area" style="padding: 12px 0;">
+			<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+		</div>
+	</div>
+</div>
+<div class="weui_cells weui_cells_form" style="margin-top: 0;"
+	id="menuAddForm">
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label" style="width: 125px;">是否支付定金</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self">
+					<input class="weui-form-checkbox" name="f2" id="g1" value="1"
+						type="radio" ng-model="form.SHOP_RESERVE_VALUE"> <label for="g1">
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>支付</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: 10px;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="0"
+						type="radio" ng-model="form.SHOP_RESERVE_VALUE"> <label for="g2">
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>不支付</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label" style="width: 125px;">支付定金金额</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<input class="weui_input label-input" type="text"
+				ng-model="form.SHOP_RESERVE_AMOUNT" required emptyTips="请输入金额"
+				notMatchTips="请输入正确金额" pattern="^[\s\S]*.*[^\s][\s\S]*$">
+		</div>
+	</div>
+</div>
