@@ -20,7 +20,7 @@
 		
 	<div class="weui_cells  tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
 		<div class="weui_cell slidelefts"  ng-repeat="item in tables_list">
-			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="display:flex;;transform: translateX(0px);">
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="display:flex;;transform: translateX(0px);" ng-click="toHref('DailyManagement/tables/catelist/tableslist/setting',item.TABLES_PK)">
 				<div class="weui_cell_bd " style="margin-right:10px;">
 					{{$index+1}}
 				</div>
@@ -37,7 +37,7 @@
 			</div>
 
 		     <div class="slideleft">
-                <span class="switch_stop" style="background:#ccc;color:#fff" ng-click="toHref('DailyManagement/tables/catelist/tableslist/setting',item.TABLES_PK)">修改</span>
+               <!--  <span class="switch_stop" style="background:#ccc;color:#fff" >修改</span> -->
                 <span class="bg-red f-white dels" id="delete-table-list" ng-click="tablesDelete(item.TABLES_PK)">删除</span>
              </div>
 		</div>

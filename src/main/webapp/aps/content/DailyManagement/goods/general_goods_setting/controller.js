@@ -146,6 +146,7 @@
 //						scope.form.GTYPE_ID = $("#fs_select").val();
 						scope.form.GOODS_DW = $("#unit_select").val();
 						scope.form.GOODS_PXXH = $("#pxxh_select").val();
+						scope.form.GOODS_ID = scope.form.GOODS_ID === undefined ? "":scope.form.GOODS_ID;
 						
 						//至少选择一个，不然return;
 						a=false
@@ -263,7 +264,7 @@
 					}
 					
 					function comboboxInit() {
-						$("#pxxh_select").picker({
+					/*	$("#pxxh_select").picker({
 							title : "选择排序序号",
 							toolbarCloseText : '确定',
 							cols : [
@@ -273,7 +274,7 @@
 									displayValues : pxxh_select
 								}
 								]
-						});
+						});*/
 					/*	$("#fs_select").picker({
 							title : "选择分类",
 							toolbarCloseText : '确定',

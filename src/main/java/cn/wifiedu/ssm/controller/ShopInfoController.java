@@ -227,6 +227,8 @@ public class ShopInfoController extends BaseController {
 		try {
 			Map<String, Object> map = getParameterMap();
 			
+			map.put("SHOP_TYPE", map.get("SHOP_TYPE_1") + " " + map.get("SHOP_TYPE_2"));
+			
 			String imgLogo = (String) map.get("IMG_LOGO");	//店铺logo base64码
 			if(imgLogo == null){
 				output("9999", "请添加一个店铺LOGO");

@@ -201,6 +201,15 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 					Map reMap = (Map)openService.queryForObject(map);
 					long areaCount = (long) reMap.get("tables_count");
 					Integer pxxh = Integer.parseInt((String) map.get("TABLES_PXXH"));
+					//判断序号如果小于0或大于总数，返回错误
+					if(pxxh <= 0){
+						output("9999", "排序序号不允许为负数！");
+						return;
+					}else if(pxxh > areaCount + 1){
+						output("9999", "排序序号不允许大于桌位总数量！");
+						return;
+					}
+					
 					//判断，如果当前排序序号不是最后一个，开始把当前序号后边的依次加一
 					if(pxxh - 1 != areaCount){
 						map.put("sqlMapId", "updateTablesPxxhById");

@@ -87,7 +87,7 @@
 		 <div class="weui_cell">
                 <div class="weui_cell_hd"><label class="weui_label label ">序号</label></div>
                 <div class="weui_cell_bd">
-                    <input class="weui_input label-input" type="text" id="pxxh_select" ng-model="form.GOODS_PXXH" required/>
+                    <input class="weui_input label-input" type="text" id="pxxh_select" ng-model="form.GOODS_PXXH" required placeholder="输入排序序号" emptyTips="请输入排序序号"/>
                 </div>
          </div>
           <div class="weui_cell dcxt_active">
@@ -276,6 +276,11 @@
 		<div class="weui_cell cancelBorder" style="background-color:#F2F2F2;width:95%;height:44px;margin-left:2%;margin-top:4%;padding:0">
 			<div class="weui_cell_bd"><label class="weui_label label">商品介绍</label></div>
 		</div>
+		<div class="weui_cell no-broder">
+	       <div class="weui_cell_bd weui_cell_primary">
+	          <textarea style="padding:0 12px;" id="textarea" class="weui_textarea" placeholder="请输入商品介绍（选填）" rows="3" ng-model="form.GOODS_INTRODUCTION"></textarea>
+	       </div>
+	    </div>
 		<div class="weui_cell cancelBorder" style="top:20px;margin-bottom:20px;">
 		 	<p style="font-size:14px;">&nbsp;&nbsp;说明:原价必填，特价可填，如特价已填，该商品为特价商品，不享受任何折扣优惠。</p>
 		</div>

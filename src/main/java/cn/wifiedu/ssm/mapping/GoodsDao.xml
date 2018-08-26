@@ -14,7 +14,7 @@
 	<!-- 根据商品id查询单个商品详细信息 -->
 	<select id="selectGoosByGid" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 
-				GOODS_PK, GTYPE_FK, GOODS_NAME, GOODS_TYPE, GOODS_PRICE, GOODS_TRUE_PRICE, GOODS_CODE, IS_USE, GOODS_DW, GOODS_PXXH, GOODS_SPECIFICATION, GOODS_RECIPE, GOODS_TASTE, GOODS_DESC ,GOODS_LABEL, SHOW_RANGE, PICTURE_URL, GTYPE_NAME, GTYPE_AREA  
+				GOODS_PK, GTYPE_FK, GOODS_NAME, GOODS_TYPE, GOODS_PRICE, GOODS_TRUE_PRICE, GOODS_CODE, IS_USE, GOODS_DW, GOODS_PXXH, GOODS_SPECIFICATION, GOODS_RECIPE, GOODS_TASTE, GOODS_DESC ,GOODS_LABEL, SHOW_RANGE, PICTURE_URL, GTYPE_NAME, GTYPE_AREA, GOODS_INTRODUCTION  
 			FROM 
 				sc_goods g,sc_goods_type gt 
 			WHERE 
@@ -102,6 +102,7 @@
 			GOODS_LABEL,
 			SHOW_RANGE,
 			PICTURE_URL,
+			GOODS_INTRODUCTION,
 			CREATE_BY,
 			CREATE_TIME
 		)
@@ -124,6 +125,7 @@
 			#{GOODS_LABEL},
 			#{SHOW_RANGE},
 			#{PICTURE_URL},
+			#{GOODS_INTRODUCTION},
 			#{CREATE_BY},
 			NOW()
 		);
@@ -132,6 +134,11 @@
 	<!-- 根据类别商品类别ID查询当前类别下商品的总数量  -->
 	<select id="findGoodsCountByGtypeId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT COUNT(GOODS_PK) as goodsCount FROM sc_goods WHERE GTYPE_FK = #{GTYPE_ID};
+	</select>
+	
+	<!-- 根据商品ID查询该商品类别下有有多少商品 -->
+	<select id="findGoodsCountByGoodsId" parameterMap="BaseParameterMap" resultMap="BaseResultMap"> 
+		SELECT COUNT(GOODS_PK) as goodsCount FROM sc_goods WHERE GTYPE_FK = (SELECT GTYPE_FK FROM sc_goods WHERE GOODS_PK = #{GOODS_ID});
 	</select>
 	
 	<update id="updateGoodsById" parameterMap="BaseParameterMap">
@@ -152,6 +159,7 @@
 			GOODS_DESC = #{GOODS_DESC},
 			GOODS_LABEL = #{GOODS_LABEL},
 			PICTURE_URL = #{PICTURE_URL},
+			GOODS_INTRODUCTION = #{GOODS_INTRODUCTION},
 			UPDATE_BY = #{UPDATE_BY},
 			UPDATE_TIME = NOW()
 		WHERE

@@ -18,10 +18,10 @@
 			//获取传过来的数据
 			tables_id = params.tables_id
 			//判断
-			if(tables_id != null && tables_id != ''){
+			if(tables_id != undefined && tables_id != 'undefined' && tables_id != ''){
 				//是修改
 				// 定义页面标题
-				scope.pageTitle = config.pageTitle;
+				scope.pageTitle = "修改餐桌";
 				//初始化排序序号列表
 				tables_pxxh = Array(Number(params.tables_num)).fill().map((v,i) => i+1);//填充排序列表 1-n
 				
@@ -112,7 +112,7 @@
 		// 弹窗确认事件
 		eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 			//判断是修改还是添加
-			if(tables_id != null && tables_id != ''){
+			if(tables_id != undefined && tables_id != 'undefined' && tables_id != ''){
 				url = config.updateURL;
 			}else{
 				url = config.saveURL;
@@ -159,7 +159,7 @@
 
 function comboboxInit() {
 	
-	$("#pxxh_select").picker({
+/*	$("#pxxh_select").picker({
 		title : "排序序号",
 		toolbarCloseText : '确定',
 		cols : [
@@ -169,7 +169,7 @@ function comboboxInit() {
 				displayValues : tables_pxxh
 			}
 		]
-	});
+	});*/
 	
 /*	$("#qy_select").picker({
 		title : "选择区域",

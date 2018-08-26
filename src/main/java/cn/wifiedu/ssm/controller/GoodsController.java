@@ -164,6 +164,20 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 		
 				try {
 					Map<String, Object> map = getParameterMap();
+					//先查询当前类别下所有商品的总数量
+					map.put("sqlMapId", "findGoodsCountByGtypeId");
+					Map reMap = (Map)openService.queryForObject(map);
+					long goodsCount = (long) reMap.get("goodsCount");
+					Integer pxxh = Integer.parseInt((String) map.get("GOODS_PXXH"));
+					//判断序号如果小于0或大于总数，返回错误
+					if(pxxh <= 0){
+						output("9999", "排序序号不允许为负数！");
+						return;
+					}else if(pxxh > goodsCount + 1){
+						output("9999", "排序序号不允许大于商品总数量！");
+						return;
+					}
+					
 					//元转换成分存数据库
 					map.put("GOODS_PRICE", (long)(Double.parseDouble((String)map.get("GOODS_PRICE"))*100));
 					String true_price = (String)map.get("GOODS_TRUE_PRICE");
@@ -193,12 +207,7 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 					map.put("PICTURE_URL", JSONArray.toJSONString(picMap));
 					
 					/**排序序号操作*/
-					//先查询当前商品的类别下所有商品的总数量
-					map.put("sqlMapId", "findGoodsCountByGtypeId");
 					
-					Map reMap = (Map)openService.queryForObject(map);
-					long goodsCount = (long) reMap.get("goodsCount");
-					Integer pxxh = Integer.parseInt((String) map.get("GOODS_PXXH"));
 					//判断，如果当前排序序号不是最后一个，开始把当前序号后边的依次加一
 					if(pxxh - 1 != goodsCount){
 						map.put("sqlMapId", "updateGoodsPxxhById");
@@ -283,6 +292,21 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 					//判断是否设置已启用而父节点未启用
 					if("0".equals(reMap.get("GTYPE_STATE")) && "1".equals(map.get("IS_USE"))){
 						output("9999", "该分类已停用，不允许启用该商品！");
+						return;
+					}
+					//判断序号如果小于0，返回错误
+					if(after_pxxh <= 0){
+						output("9999", "排序序号不允许为负数！");
+						return;
+					}
+					
+					//查询该类别下商品总数量
+					map.put("sqlMapId", "findGoodsCountByGoodsId");
+					Map reMap2 = (Map)openService.queryForObject(map);
+					long goodsCount = (long) reMap2.get("goodsCount");
+					//判断序号如果大于总数，返回错误
+					if(after_pxxh > goodsCount){
+						output("9999", "排序序号不允许大于商品总数量！");
 						return;
 					}
 					

@@ -9,10 +9,42 @@
 				//初始化form表单
 				scope.form={}
 				
-				//商铺类型
+				/*//商铺类型
 				shop_type_first = ['餐饮行业','水果行业'];
-				shop_type_second = ['火锅','垃圾'];
+				shop_type_second = ['火锅','垃圾'];*/
 				
+				//初始化店铺类型
+				shop_type_list = {
+					"中式":["大牌档", "云吞面店/粉面店","茶楼","酒楼","菜馆","斋菜馆","其他"],
+					"西式":["咖啡室","西餐厅","其他"],
+					"混合式":["冰室/饮冰室", "快餐厅", "茶餐厅", "美食广场", "食堂", "其他"]
+				}
+				
+				
+				//初始化店铺类型1
+				shop_type_first = [];
+				for(var key in shop_type_list){
+					shop_type_first.push(key)
+				}
+				
+				//刷新第二个下拉框
+				var flushShopType2 = function(){
+					//给第二个下拉框赋默认值
+					scope.form.SHOP_TYPE_SECOND = shop_type_list[scope.form.SHOP_TYPE_FIRSET][0]
+					$("#SHOP_TYPE_2").val(scope.form.SHOP_TYPE_SECOND)
+					
+					//填充下拉框
+					$("#SHOP_TYPE_2").picker({
+						title : "商铺类型",
+						toolbarCloseText : '确定',
+						cols : [
+							{
+								textAlign : 'center',
+								values : shop_type_list[scope.form.SHOP_TYPE_FIRSET]
+							}
+						],
+					});
+				} 
 				
 				
 				var init = function() {
@@ -36,8 +68,8 @@
 								scope.form.SHOP_TYPE_SECOND = shop_type[1];
 								
 								//这几行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
-								$("#fs_select").val(scope.form.SHOP_TYPE_FIRSET);
-								$("#fs_select1").val(scope.form.SHOP_TYPE_FIRSET);
+								$("#SHOP_TYPE_1").val(scope.form.SHOP_TYPE_FIRSET);
+								$("#SHOP_TYPE_2").val(scope.form.SHOP_TYPE_SECOND);
 								
 								//初始化地区
 								//这一行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
@@ -55,52 +87,26 @@
 						// 定义页面标题
 						scope.pageTitle = '添加商户';	
 						scope.form.SHOP_AREA="北京 北京 东城区"
-						//商类型初始化
-						scope.form.SHOP_TYPE_FIRSET = shop_type_first[0];
-						scope.form.SHOP_TYPE_SECOND = shop_type_second[0];
+							
+						//初始化商铺类型下拉框
+						scope.form.SHOP_TYPE_FIRSET = shop_type_first[0]
+						scope.form.SHOP_TYPE_SECOND = shop_type_list[scope.form.SHOP_TYPE_FIRSET][0]
+						$("#SHOP_TYPE_2").val(scope.form.SHOP_TYPE_SECOND)
+						$("#SHOP_TYPE_1").val(scope.form.SHOP_TYPE_FIRSET)
 						
-						//这几行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
-						$("#fs_select").val(shop_type_first[0]);
-						$("#fs_select1").val(shop_type_second[0]);
 						
-						//初始化店铺类型
-//						initShopVersion();
 						//初始化下拉框
 						comboboxInit();
+						
+						//刷新商铺类型第二个下拉框
+						flushShopType2()
 					}
-					
 				}
 				//页面初始化
 				init();
 				
-				
 				scope.shop_version_value = new Array();
 				scope.shop_version_text = new Array();
-				
-				/*function initShopVersion(){
-					$httpService.post(config.findVersionURL, null).success(function(data) {
-						scope.shop_version = data.data[];
-						for(var i = 0;i< scope.shop_version.length;i++){
-							scope.shop_version_value[i] = scope.shop_version[i].SERVICE_PK;
-							scope.shop_version_text[i] = scope.shop_version[i].SERVICE_TYPE;
-						}
-						scope.form.VERSION = scope.shop_version_text[1];
-						$("#version_select").val(scope.shop_version_text[0]);
-						$("#version_select").picker({
-							title : "选择类型",
-							toolbarCloseText : '确定',
-							cols : [
-								{
-									textAlign : 'center',
-									values : scope.shop_version_text,
-									displayValues : scope.shop_version_text
-								}
-							]
-						});
-					})
-				}*/
-				
-				
 				
 				scope.toHref = function(path,cid) {
 					var m2 = {
@@ -117,8 +123,8 @@
 					
 					//解决下拉框数据不同步
 					scope.form.SHOP_AREA = $("#ssx").val();
-					scope.form.SHOP_TYPE_FIRSET = $("#fs_select").val();
-					scope.form.SHOP_TYPE_SECOND = $("#fs_select1").val();
+					scope.form.SHOP_TYPE_FIRSET = $("#SHOP_TYPE_1").val();
+					scope.form.SHOP_TYPE_SECOND = $("#SHOP_TYPE_2").val();
 //					scope.form.SERVICE_TYPE = $("#version_select").val();
 					
 					 $form.validate(function(error){
@@ -176,7 +182,7 @@
 				        toolbarCloseText : '完成'
 				     });
 					
-					$("#fs_select").picker({
+					$("#SHOP_TYPE_1").picker({
 						title : "选择类型",
 						toolbarCloseText : '确定',
 						cols : [
@@ -185,18 +191,22 @@
 								values : shop_type_first,
 								displayValues : shop_type_first
 							}
-						]
-					});
-					$("#fs_select1").picker({
-						title : "选择类型",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : shop_type_second,
-								displayValues : shop_type_second
+						],
+						onChange : function(e) {
+							if (e != undefined && e.value[0] != undefined) {
+								var value = e.value[0]
+								console.info(value)
+								scope.form.SHOP_TYPE_FIRSET = value
+								
+								if(shop_type_list[value].indexOf(scope.form.SHOP_TYPE_SECOND) == -1){
+									//刷新商铺类型第二个下拉框
+									flushShopType2()
+								}
+									
 							}
-						]
+						}
+						
+						
 					});
 				}
 				

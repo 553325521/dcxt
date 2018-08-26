@@ -18,11 +18,12 @@
 				
 				//初始化店铺类型
 				shop_type = {
-					"中餐":["川菜", "鲁菜","湘菜"],
-					"西餐":["西餐1","西餐2","西餐3"]
+					"中式":["大牌档", "云吞面店/粉面店","茶楼","酒楼","菜馆","斋菜馆","其他"],
+					"西式":["咖啡室","西餐厅","其他"],
+					"混合式":["冰室/饮冰室", "快餐厅", "茶餐厅", "美食广场", "食堂", "其他"]
 				}
 				
-				//初始化店铺类型
+				//初始化店铺类型1
 				shop_type_first = [];
 				for(var key in shop_type){
 					shop_type_first.push(key)
@@ -39,6 +40,11 @@
 				
 				//刷新第二个下拉框
 				var flushShopType2 = function(){
+					//给第二个下拉框赋默认值
+					scope.form.SHOP_TYPE_2 = shop_type[scope.form.SHOP_TYPE_1][0]
+					$("#SHOP_TYPE_2").val(scope.form.SHOP_TYPE_2)
+					
+					//填充下拉框
 					$("#SHOP_TYPE_2").picker({
 						title : "商铺类型",
 						toolbarCloseText : '确定',
@@ -48,15 +54,7 @@
 								values : shop_type[scope.form.SHOP_TYPE_1]
 							}
 						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								scope.form.SHOP_TYPE_2 = value
-							}
-						}
 					});
-					scope.form.SHOP_TYPE_2 = shop_type[scope.form.SHOP_TYPE_1][0]
-					$("#SHOP_TYPE_2").val(scope.form.SHOP_TYPE_2)
 				} 
 				//刷新商铺类型第二个下拉框
 				flushShopType2()
@@ -70,6 +68,7 @@
 				var $form = $("#form");
 				$form.form();
 				$scope.doSave = function(){
+					scope.form.SHOP_TYPE_2 = $("#SHOP_TYPE_2").val()
 					scope.form.SHOP_REMARK = $(".textarea")[0].innerHTML
 					scope.form.SHOP_AREA = $("#ssx").val();
 					console.info(scope.form)
@@ -144,9 +143,12 @@
 						onChange : function(e) {
 							if (e != undefined && e.value[0] != undefined) {
 								var value = e.value[0]
+								console.info(value)
 								scope.form.SHOP_TYPE_1 = value
+								
 								if(shop_type[value].indexOf(scope.form.SHOP_TYPE_2) == -1){
-									flushShopType2(shop_type[value]);
+									//刷新商铺类型第二个下拉框
+									flushShopType2()
 								}
 									
 							}

@@ -7,8 +7,6 @@
 
 		scope = $scope;
 	
-		// 定义页面标题
-		scope.pageTitle = config.pageTitle
 		scope.showPage = "False"
 		dw_select = ['桌','间'];
 		
@@ -19,8 +17,10 @@
 			//获取传过来的数据
 			area_id = params.area_id
 			//判断
-			if(area_id != null && area_id != ''){
+			if(area_id != undefined && area_id != 'undefined' && area_id != ''){
 				//是修改
+				// 定义页面标题
+				scope.pageTitle = "修改区域"
 				//初始化排序序号列表
 				catesetting_pxxh = Array(Number(params.area_num)).fill().map((v,i) => i+1);//填充排序列表 1-n
 				
@@ -41,6 +41,8 @@
 					loggingService.info('获取测试信息出错');
 				});
 			}else{
+				// 定义页面标题
+				scope.pageTitle = "添加区域"
 				scope.pageShow = "True";
 				//初始化排序序号列表
 				catesetting_pxxh = Array(Number(params.area_num)+1).fill().map((v,i) => i+1);//填充排序列表 1-n
@@ -91,7 +93,7 @@
 		// 弹窗确认事件
 		eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 			//判断是修改还是添加
-			if(area_id != null && area_id != ''){
+			if(area_id != undefined && area_id != 'undefined' && area_id != ''){
 				url = config.updateURL;
 			}else{
 				url = config.saveURL;
@@ -139,7 +141,7 @@
 
 function comboboxInit(){
 	
-	$("#pxxh_select").picker({
+	/*$("#pxxh_select").picker({
 		title : "排序序号",
 		toolbarCloseText : '确定',
 		cols : [
@@ -149,7 +151,7 @@ function comboboxInit(){
 				displayValues : catesetting_pxxh
 			}
 		]
-	});
+	});*/
 	
 	$("#dw_select").picker({
 		title : "单位",
