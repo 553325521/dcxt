@@ -27,14 +27,14 @@
 				//初始化form表单
 				scope.form = {};
 				
-				/*初始化排序序号*/
-				scope.form.GTYPE_ORDER = 1;
+			/*	初始化排序序号
+				scope.form.GTYPE_ORDER = 1;*/
 				
 				/*	初始化上一级分类ID*/
 				scope.form.GTYPE_PID = params.GTYPE_PID;
 				
 				/*选择分类初始化*/
-				scope.form.GTYPE_PNAME = "顶级类";
+				scope.form.GTYPE_PNAME = "一级分类";
 				
 				/*是否启用初始化*/
 				scope.form.GTYPE_STATE = 1;
@@ -47,6 +47,8 @@
 				
 				/*初始化商品类别等级*/
 				scope.form.GTYPE_LEVEL = 1;
+				
+				console.info(params.Last_Page);
 				
 				/*根据PID查询更新要添加分类的上一级分类名称*/
 				function loadLastGoodsTypeName(){
@@ -73,7 +75,7 @@
 				
 				scope.toHref = function(path) {
 					var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+params.Last_Page,
+							"url" : "aps/content/" + path + "/config.json?fid=" + params.fid+"&fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+params.Last_Page,
 							"size" : "modal-lg",
 							"contentName" : "content"
 					}
@@ -101,11 +103,11 @@
 				        	 }
 				    eventBusService.publish(controllerName,"appPart.load.modal",m2);
 				}
-				/*加载排序序号*/
+				/*加载排序序号
 				function loadGoodsTypeOrder(){
 					//发送post请求
 					$httpService.post(config.loadGoodsTypeOrderURL,params).success(function(data) {
-						/*$scope.$apply();*/
+						$scope.$apply();
 						if(data.code == '0000' && data.data !=null){
 							scope.form.GTYPE_ORDER = parseInt(data.data.GTYPE_ORDER)+1;
 							$scope.$apply();
@@ -114,8 +116,8 @@
 						loggingService.info('获取测试信息出错');
 					});
 				}
-				/*调用加载排序序号方法*/
-				loadGoodsTypeOrder();
+				调用加载排序序号方法
+				loadGoodsTypeOrder();*/
 				
 				// 弹窗默认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {

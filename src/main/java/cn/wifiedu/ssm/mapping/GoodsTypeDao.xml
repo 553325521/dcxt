@@ -10,6 +10,7 @@
 		GTYPE_ORDER  
 		FROM sc_goods_type 
 		WHERE GTYPE_PID = #{GTYPE_PID}
+		AND SHOP_FK = #{SHOP_FK}
 		ORDER BY GTYPE_ORDER DESC
 		LIMIT 1
 	</select>
@@ -19,6 +20,7 @@
 		SELECT * 
 		FROM sc_goods_type 
 		WHERE GTYPE_PID = #{GTYPE_PID}
+		AND SHOP_FK = #{SHOP_FK}
 		ORDER BY GTYPE_ORDER
 	</select>
 	 <!--添加商品类别表  -->
@@ -93,13 +95,13 @@
 	<update id="updateGoodsTypeOrderChangeSmall" parameterMap="BaseParameterMap">
 		UPDATE SC_GOODS_TYPE SET
 		GTYPE_ORDER = GTYPE_ORDER +1
-		WHERE GTYPE_ORDER &lt; #{GTYPE_OLD_ORDER} AND GTYPE_ORDER &gt;= #{GTYPE_ORDER}  AND GTYPE_PID = #{PID}
+		WHERE GTYPE_ORDER &lt; #{GTYPE_OLD_ORDER} AND GTYPE_ORDER &gt;= #{GTYPE_ORDER}  AND GTYPE_PID = #{PID} AND SHOP_FK = #{SHOP_FK}
 	</update>
 	<!-- 商品分类编辑时更新商品分类的排序序号(当序号往前移动变大) -->
 	<update id="updateGoodsTypeOrderChangeLarge" parameterMap="BaseParameterMap">
 			UPDATE SC_GOODS_TYPE SET
 			GTYPE_ORDER = GTYPE_ORDER -1
-			WHERE GTYPE_ORDER &lt;= #{GTYPE_ORDER} AND GTYPE_ORDER &gt; #{GTYPE_OLD_ORDER}  AND GTYPE_PID = #{PID}
+			WHERE GTYPE_ORDER &lt;= #{GTYPE_ORDER} AND GTYPE_ORDER &gt; #{GTYPE_OLD_ORDER}  AND GTYPE_PID = #{PID} AND SHOP_FK = #{SHOP_FK}
 	</update>
 	<!-- 更新商品分类的路径 -->
 	<update id="updateGoodsTypePath" parameterMap="BaseParameterMap">

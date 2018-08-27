@@ -20,7 +20,7 @@
 				
 				scope.toHref = function(path,GTYPE_PK) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+scope.lastPage+"&GTYPE_PK="+GTYPE_PK+ "&gtype_id=" + scope.form.GTYPE_PID+"&goods_count=0",
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid+"&fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+scope.lastPage+"&GTYPE_PK="+GTYPE_PK+ "&gtype_id=" + scope.form.GTYPE_PID+"&goods_count=0",
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
@@ -134,7 +134,9 @@
 				}
 			/*	若接收的数组存在*/
 				if(params.Last_Page != undefined){
+					console.info("主页接收的lastPage:"+params.Last_Page);
 					scope.lastPage = params.Last_Page.split(",");
+					console.info("主页接收的lastPage1:"+scope.lastPage);
 					scope.goodsTypeClick(scope.lastPage[scope.lastPage.length-1],"last");
 				}
 			}

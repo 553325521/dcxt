@@ -40,7 +40,7 @@
 				console.info("编辑里边的array:"+params.Last_Page);
 				console.info("编辑里边的:"+scope.form.GTYPE_PID);
 				/*选择分类初始化*/
-				scope.form.GTYPE_PNAME = "顶级类";
+				scope.form.GTYPE_PNAME = "一级分类";
 				
 				/*是否启用初始化*/
 				scope.form.GTYPE_STATE = 1;
@@ -54,8 +54,8 @@
 				/*初始化商品类别等级*/
 				scope.form.GTYPE_LEVEL = 1;
 				
-				/*排序序号数据源*/
-				scope.select_order = [];
+				/*排序序号数据源
+				scope.select_order = [];*/
 				
 				/*初始化商品分类备注*/
 				scope.form.GTYPE_BZ = "";
@@ -63,7 +63,8 @@
 				scope.form.GTYPE_PK ="";
 				
 				scope.form.GTYPE_OLD_ORDER = 1;
-				//下拉框的初始化
+				
+				/*//下拉框的初始化
 				function comboboxInit() {
 					$("#order_select").picker({
 						title : "选择分类",
@@ -76,7 +77,7 @@
 							}
 						]
 					});
-				}
+				}*/
 				/*根据PID查询更新要添加分类的上一级分类名称*/
 				function loadLastGoodsTypeName(){
 					$httpService.post(config.selectGoodsTypePNameByPIDURL,params).success(function(data) {
@@ -125,7 +126,7 @@
 				loadLastGoodsTypeName();
 				scope.toHref = function(path) {
 					var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+params.Last_Page,
+							"url" : "aps/content/" + path + "/config.json?fid=" + params.fid+"&fromUrl=" + config.currentUrl + "&GTYPE_PID=" + scope.form.GTYPE_PID+"&Last_Page="+params.Last_Page,
 							"size" : "modal-lg",
 							"contentName" : "content"
 					}
@@ -153,8 +154,8 @@
 				        	 }
 				    eventBusService.publish(controllerName,"appPart.load.modal",m2);
 				}
-				/*加载排序序号*/
-				function loadGoodsTypeOrder(){
+				/*初始化GoodsType*/
+				function loadGoodsType(){
 					params.GTYPE_PID = params.GTYPE_PK;
 					//发送post请求
 					$httpService.post(config.selectGoodsTypePNameByPIDURL,params).success(function(data) {
@@ -171,7 +172,7 @@
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
-					$httpService.post(config.loadGoosTypeOrderDataURL,scope.form).success(function(data) {
+					/*$httpService.post(config.loadGoosTypeOrderDataURL,scope.form).success(function(data) {
 						if(data.code == '0000' && data.data !=null){
 							for(var i = 0;i< data.data.length;i++){
 								scope.select_order.push(data.data[i].GTYPE_ORDER);
@@ -184,15 +185,14 @@
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
-					});
+					});*/
 				}
 				/*调用加载排序序号方法*/
-				loadGoodsTypeOrder();
+				loadGoodsType();
 				
 				
 				// 弹窗默认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
-					scope.form.GTYPE_ORDER = $("#order_select").val();
 					$httpService.post(config.updateGoodsTypeURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
 							var m2 = {
@@ -205,7 +205,7 @@
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : data.data,
-								"toUrl" : "aps/content/goods/config.json?fid=" + scope.form.fid
+								"toUrl" : "aps/content/DailyManagement/goods/config.json?fid=" + scope.form.fid
 							}
 						}
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);

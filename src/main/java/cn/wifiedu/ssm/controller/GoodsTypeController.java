@@ -55,6 +55,10 @@ public class GoodsTypeController extends BaseController {
 		// 如果未认证，跳转完善信息界面
 		try {
 			Map<String, Object> map  = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("SHOP_FK",userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "loadGoodsTypeOrder");
 			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
 			output("0000",reMap);
@@ -74,30 +78,44 @@ public class GoodsTypeController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
-			map.put("GTYPE_ATTACH", 0);
 			map.put("SHOP_FK", userObj.get("FK_SHOP"));
-			map.put("CREATE_BY", userObj.get("USER_NAME"));
-			map.put("sqlMapId", "insertGoodsType");
-			String resultStr = openService.insert(map);
-			if(resultStr!=null){
-				if(map.get("GTYPE_PID").toString().equals("0")){
-					map.put("GTYPE_PATH",0+"/"+resultStr);
-				}else{
-					map.put("GTYPE_PID",map.get("GTYPE_PID"));
-					map.put("sqlMapId", "selectGoodsTypePNameByPID");
-					Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
-					map.put("GTYPE_PATH",reMap.get("GTYPE_PATH")+"/"+resultStr);
+			map.put("sqlMapId", "loadGoodsTypeOrder");
+			Map<String, Object> reMapOrder = (Map<String, Object>) openService.queryForObject(map);
+			int maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
+			int userSROrder =  Integer.parseInt(map.get("GTYPE_ORDER").toString());
+			if(userSROrder <= 0 || userSROrder > maxOrder +1){
+				output("5555","输入的序号不合法");
+			}else{
+				if(userSROrder < maxOrder+1){
+					map.put("PID", map.get("GTYPE_PID"));
+					map.put("GTYPE_OLD_ORDER",maxOrder+1);
+					map.put("sqlMapId", "updateGoodsTypeOrderChangeSmall");
+					openService.update(map);
 				}
-				map.put("GTYPE_PK",resultStr);
-				map.put("sqlMapId", "updateGoodsTypePath");
-				boolean updateResult = openService.update(map);
-				if(updateResult){
-					output("0000", "保存成功");
+				map.put("GTYPE_ATTACH", 0);
+				map.put("CREATE_BY", userObj.get("USER_NAME"));
+				map.put("sqlMapId", "insertGoodsType");
+				String resultStr = openService.insert(map);
+				if(resultStr!=null){
+					if(map.get("GTYPE_PID").toString().equals("0")){
+						map.put("GTYPE_PATH",0+"/"+resultStr);
+					}else{
+						map.put("GTYPE_PID",map.get("GTYPE_PID"));
+						map.put("sqlMapId", "selectGoodsTypePNameByPID");
+						Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
+						map.put("GTYPE_PATH",reMap.get("GTYPE_PATH")+"/"+resultStr);
+					}
+					map.put("GTYPE_PK",resultStr);
+					map.put("sqlMapId", "updateGoodsTypePath");
+					boolean updateResult = openService.update(map);
+					if(updateResult){
+						output("0000", "保存成功");
+					}else{
+						output("9999","保存失败");
+					}
 				}else{
 					output("9999","保存失败");
 				}
-			}else{
-				output("9999","保存失败");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -113,6 +131,10 @@ public class GoodsTypeController extends BaseController {
 	public void loadGoodsTypeListByPID() {
 		try {
 			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("SHOP_FK",userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "loadGoodsTypeListByPID");
 			List<Map<String, Object>> reList = openService.queryForList(map);
 			for(int i = 0;i<reList.size();i++){
@@ -148,6 +170,10 @@ public class GoodsTypeController extends BaseController {
 	public void selectLastRecordCountByPID() {
 		try {
 			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("SHOP_FK",userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "loadGoodsTypeListByPID");
 			List<Map<String, Object>> reList = openService.queryForList(map);
 			map.put("sqlMapId", "selectGoodsByGoodsType");
@@ -225,21 +251,31 @@ public class GoodsTypeController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("SHOP_FK",userObj.get("FK_SHOP"));
 			boolean updateOrderResult = false;
-			if(Integer.parseInt(map.get("GTYPE_OLD_ORDER").toString()) < Integer.parseInt(map.get("GTYPE_ORDER").toString())){
-				map.put("sqlMapId", "updateGoodsTypeOrderChangeLarge");
-				updateOrderResult = openService.update(map);
+			int oldOrder = Integer.parseInt(map.get("GTYPE_OLD_ORDER").toString());
+			int userSROrder =  Integer.parseInt(map.get("GTYPE_ORDER").toString());
+			map.put("sqlMapId", "loadGoodsTypeOrder");
+			Map<String, Object> reMapOrder = (Map<String, Object>) openService.queryForObject(map);
+			int maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
+			if(userSROrder <= 0 || userSROrder > maxOrder){
+				output("5555","输入的序号不合法");
 			}else{
-				map.put("sqlMapId", "updateGoodsTypeOrderChangeSmall");
-				updateOrderResult = openService.update(map);
-			}
-			map.put("UPDATE_BY", userObj.get("USER_NAME"));
-			map.put("sqlMapId", "updateGoodsType");
-			boolean result = openService.update(map);
-			if(result){
-				output("0000", "修改成功");
-			}else{
-				output("9999","修改失败");
+				if(Integer.parseInt(map.get("GTYPE_OLD_ORDER").toString()) < Integer.parseInt(map.get("GTYPE_ORDER").toString())){
+					map.put("sqlMapId", "updateGoodsTypeOrderChangeLarge");
+					updateOrderResult = openService.update(map);
+				}else{
+					map.put("sqlMapId", "updateGoodsTypeOrderChangeSmall");
+					updateOrderResult = openService.update(map);
+				}
+				map.put("UPDATE_BY", userObj.get("USER_NAME"));
+				map.put("sqlMapId", "updateGoodsType");
+				boolean result = openService.update(map);
+				if(result){
+					output("0000", "修改成功");
+				}else{
+					output("9999","修改失败");
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
