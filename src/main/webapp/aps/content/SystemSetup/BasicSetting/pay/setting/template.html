@@ -53,7 +53,7 @@
 			</div>
 			
 			
-			<div class="weui_cell">
+			<div class="weui_cell"  ng-show="wxShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">原始ID</label>
 				</div>
@@ -64,7 +64,7 @@
 				 <i class="weui_icon_warn"></i>
 			</div>
 			
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="wxShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">appid</label>
 				</div>
@@ -75,7 +75,7 @@
 				 <i class="weui_icon_warn"></i>
 			</div>
 			
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="wxShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">商户ID</label>
 				</div>
@@ -86,13 +86,13 @@
 				 <i class="weui_icon_warn"></i>
 			</div>
 			
-			<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
+			<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0" ng-show="wxShow">
 				 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label" style="min-width:105px">子商户公众号ID</label></div>
 	             <div class="weui_cell_bd">
 	                    <input class="weui_input label-input"  type="text"   ng-model="form.SUB_SHOP_APPID" required emptyTips="请输入子商户公众号ID"/>
 	             </div>
 			</div>
-			 <div class="weui_cell">
+			 <div class="weui_cell" ng-show="wxShow">
 	                <div class="weui_cell_hd"><label class="weui_label label">子商户ID</label></div>
 	                <div class="weui_cell_bd">
 	                    <input class="weui_input label-input" type="text"   ng-model="form.SUB_SHOPID" required emptyTips="请输入子商户ID"/>
@@ -138,7 +138,7 @@
 
 
 
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="alipayShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">支付宝注册邮箱</label>
 				</div>
@@ -151,13 +151,13 @@
 			</div>
 			
 			
-			<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
+			<div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0" ng-show="alipayShow">
 				 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">PID</label></div>
 	             <div class="weui_cell_bd">
 	                    <input class="weui_input label-input"  type="text"   ng-model="form.ALIPAY_PID" required emptyTips="请输入PID"/>
 	             </div>
 			</div>
-			 <div class="weui_cell">
+			 <div class="weui_cell" ng-show="alipayShow">
 	                <div class="weui_cell_hd"><label class="weui_label label">KEY</label></div>
 	                <div class="weui_cell_bd">
 	                    <input class="weui_input label-input" type="text"   ng-model="form.ALIPAY_KEY" required emptyTips="请输入KEY"/>
@@ -165,13 +165,13 @@
 	         </div>
 	         
 	         
-	         <div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0">
+	         <div class="weui_cell" style="width:44%;float:left;margin-left:0;padding-right:0" ng-show="alipayShow">
 				 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">APP_ID</label></div>
 	             <div class="weui_cell_bd">
 	                    <input class="weui_input label-input"  type="text"   ng-model="form.ALIPAY_APP_ID" required emptyTips="请输入APP_ID"/>
 	             </div>
 			</div>
-			 <div class="weui_cell">
+			 <div class="weui_cell" ng-show="alipayShow">
 	                <div class="weui_cell_hd"><label class="weui_label label">RSA</label></div>
 	                <div class="weui_cell_bd">
 	                    <input class="weui_input label-input" type="text"   ng-model="form.ALIPAY_RSA" required emptyTips="请输入RSA"/>
@@ -215,7 +215,7 @@
 				</div>
 			</div>
 			
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="pospayShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">商户识别号</label>
 				</div>
@@ -228,7 +228,7 @@
 			</div>
 			
 			
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="pospayShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">商户门店号</label>
 				</div>
@@ -241,7 +241,7 @@
 			</div>
 			
 			
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="pospayShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">小票商户号</label>
 				</div>
@@ -254,7 +254,7 @@
 			</div>
 			
 			
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="pospayShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">台牌终端号</label>
 				</div>
@@ -267,7 +267,7 @@
 			</div>
 			
 			
-			<div class="weui_cell">
+			<div class="weui_cell" ng-show="pospayShow">
 				<div class="weui_cell_hd">
 					<label class="weui_label label tablessetting-label">微信APPID</label>
 				</div>
