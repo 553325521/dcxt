@@ -80,8 +80,11 @@ public class GoodsTypeController extends BaseController {
 			JSONObject userObj = JSON.parseObject(userJson);
 			map.put("SHOP_FK", userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "loadGoodsTypeOrder");
+			int maxOrder = 0;
 			Map<String, Object> reMapOrder = (Map<String, Object>) openService.queryForObject(map);
-			int maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
+			if(reMapOrder!=null){
+				 maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
+			}
 			int userSROrder =  Integer.parseInt(map.get("GTYPE_ORDER").toString());
 			if(userSROrder <= 0 || userSROrder > maxOrder +1){
 				output("5555","输入的序号不合法");
@@ -289,7 +292,29 @@ public class GoodsTypeController extends BaseController {
 	@RequestMapping(value="/GoodsType_delete_deleteGoodsTypeByID",method = RequestMethod.POST)
 	public void deleteGoodsTypeByID() {
 		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
 			Map<String, Object> map = getParameterMap();
+			map.put("SHOP_FK",userObj.get("FK_SHOP"));
+			map.put("GTYPE_PID",map.get("GTYPE_PK"));
+			map.put("sqlMapId", "selectGoodsTypePNameByPID");
+			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
+			int olderOrder = Integer.parseInt(reMap.get("GTYPE_ORDER").toString());
+			map.put("GTYPE_PID",reMap.get("GTYPE_PID"));
+			map.put("sqlMapId", "loadGoodsTypeOrder");
+			Map<String, Object> reMapOrder = (Map<String, Object>) openService.queryForObject(map);
+			int maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
+			if(olderOrder < maxOrder){
+				map.put("GTYPE_ORDER",maxOrder);
+				map.put("GTYPE_OLD_ORDER",olderOrder);
+				map.put("PID",reMap.get("GTYPE_PID"));
+				map.put("sqlMapId", "updateGoodsTypeOrderChangeLarge");
+				openService.update(map);
+			}
+			/*删除商品*/
+			map.put("sqlMapId", "deleteGoodsByGTypePK");
+			openService.delete(map);
 			map.put("sqlMapId", "deleteGoodsTypeByID");
 			boolean deleteResult = openService.delete(map);
 			if(deleteResult){

@@ -19,7 +19,7 @@
 					//初始默认值
 					scope.GOODS_SPECIFICATION = [];
 					//做法初始化
-					scope.GOODS_RECIPE = []
+					scope.GOODS_RECIPE = [];
 					//新添做法和口味的初始值
 					new_recipe = {name:"",price:"+0.00"}
 					//口味初始化
@@ -127,7 +127,7 @@
 					
 					scope.toHref = function(path) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl +"&GTYPE_PK="+params.gtype_id+"&Last_Page="+params.Last_Page,
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl +"&GTYPE_PK="+params.gtype_id+"&Last_Page="+params.Last_Page+"&Last_Array="+params.Last_Array,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}

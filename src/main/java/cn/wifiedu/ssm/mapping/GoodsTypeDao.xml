@@ -114,7 +114,7 @@
 		DELETE FROM SC_GOODS_TYPE
 		WHERE GTYPE_PATH  like '%${GTYPE_PK}%'
 	</delete>
-
+	
 		<!-- 根据类别id查询 -->
 	<select id="selectGtypeNameById"  parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">

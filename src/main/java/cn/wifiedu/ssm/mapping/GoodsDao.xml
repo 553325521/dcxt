@@ -170,5 +170,13 @@
 	<select id="selectGoodsPartMessById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT gt.GTYPE_STATE, g.GOODS_PXXH, g.PICTURE_URL, COUNT(g2.GOODS_PK) as goodsCount FROM sc_goods g, sc_goods g2, sc_goods_type gt WHERE g.GOODS_PK= #{GOODS_ID} AND g.GTYPE_FK = g2.GTYPE_FK AND gt.GTYPE_PK = g.GTYPE_FK;
 	</select>
+	
+	<!-- 删除商品类别的时候删除商品 -->
+	<delete id="deleteGoodsByGTypePK" parameterMap="BaseParameterMap">
+		DELETE FROM sc_goods
+		WHERE GTYPE_FK IN (
+			SELECT GTYPE_PK FROM SC_GOODS_TYPE WHERE GTYPE_PATH  LIKE '%${GTYPE_PK}%'
+		)
+	</delete>
 
 </mapper>

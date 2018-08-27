@@ -13,6 +13,14 @@
 					scope.pageTitle = '商品列表';	
 					scope.goods_list = [];
 					
+					scope.Last_Array = "";
+					
+					if(params.Last_Page == undefined || params.Last_Page == "undefined"){
+						scope.Last_Array = params.Last_Array;
+					}else{
+						scope.Last_Array = params.Last_Page.split(",");
+						scope.Last_Array.pop();
+					}
 					var init = function() {
 						$httpService.post(config.findURL, scope.form).success(function(data) {
 							if (data.code != '0000') {
@@ -29,10 +37,20 @@
 					
 					init();
 					
-				
+					/*返回按钮点击事件*/
+					scope.returnClick = function(){
+						
+						var m2 = {
+								"url" : "aps/content/DailyManagement/goods/config.json?fromUrl=" + config.currentUrl +"&gtype_id=" + params.GTYPE_PK+"&goods_count="+scope.goods_list.length+"&Last_Page="+scope.Last_Array,
+								"size" : "modal-lg",
+								"contentName" : "content"
+							}
+						eventBusService.publish(controllerName, 'appPart.load.content', m2);
+					}
+					
 					scope.toHref = function(path,goods_id) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&goods_id=" + goods_id+"&gtype_id=" + params.GTYPE_PK+"&goods_count="+scope.goods_list.length,
+							"url" : "aps/content/" + path + "/config.json?fromUrl=" + config.currentUrl + "&goods_id=" + goods_id+"&gtype_id=" + params.GTYPE_PK+"&goods_count="+scope.goods_list.length+"&Last_Array="+scope.Last_Array,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}

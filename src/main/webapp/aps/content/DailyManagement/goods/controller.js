@@ -15,6 +15,7 @@
 				scope.lastPage = [0];
 				
 				scope.form.GTYPE_PK = "";
+				
 				/*判断是否进入选择添加商品或者类别界面(返回按钮的时候使用)*/
 				scope.methodType = 0;
 				
