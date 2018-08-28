@@ -33,6 +33,15 @@
 	.wangEditor .textarea {
      	margin: 0; 
 	}
+	.dcxt_select_span {
+	    margin: 8px 10px 12px 0;
+	    border-radius:25px;
+	    border: 1px solid rgba(0, 0, 0, .2);
+	    padding: 3px 9px;
+	    font-size:12px;
+	    float:left;
+	}
+	
 	
 </style>
 <div class="weui-header" style="background-color:#FFFFFF">
@@ -118,12 +127,17 @@
 		</div>
 		<i class="weui_icon_warn"></i>
 	</div>
-	<div class="weui_cell">
+	<div class="weui_cell no-broder" style="flex-wrap:wrap;background-color:#F8F8F8;">
 		<div class="weui_cell_hd">
 			<label class="weui_label label  tablessetting-label">配套设施</label>
 		</div>
-		<div class="weui_cell_bd weui_cell_primary">
+		<!-- <div class="weui_cell_bd weui_cell_primary">
 			<input class="weui_input label-input" type="text" ng-model="form.SUPPORT" placeholder="例：免费停车场、WIFI">
+		</div> -->
+	</div>
+	<div class="weui_cell no-broder" style="display: -webkit-box;display: -webkit-flex; padding-right:0px;padding-bottom:4px;">
+		<div class="weui_cell_bd" style="padding:4px 0;">
+			<span class="{{value ? 'bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="(key,value) in support_library" ng-click="clickSupport(key)">{{key}}</span>
 		</div>
 	</div>
 	<div class="weui_cell">

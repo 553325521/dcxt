@@ -161,7 +161,6 @@ public class GoodsTypeController extends BaseController {
 				output("9999","查询失败");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -191,7 +190,6 @@ public class GoodsTypeController extends BaseController {
 				output("0000","11");
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -239,7 +237,6 @@ public class GoodsTypeController extends BaseController {
 			List<Map<String, Object>> reList = openService.queryForList(map);
 			output("0000",reList);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

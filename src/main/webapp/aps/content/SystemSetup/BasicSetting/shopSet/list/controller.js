@@ -23,6 +23,21 @@
 					"混合式":["冰室/饮冰室", "快餐厅", "茶餐厅", "美食广场", "食堂", "其他"]
 				}
 				
+				//设施库
+				scope.support_library = {
+						"免费wifi" : false,
+						"停车场" : false,
+						"无烟区" : false,
+						"包厢" : false,
+						"儿童椅" : false,
+						"免费游乐场" : false,
+						"游泳池" : false,
+						"健身房" : false,
+				}
+				
+				//已选中的设施
+				scope.SUPPORT = [];
+				
 				//初始化店铺类型1
 				shop_type_first = [];
 				for(var key in shop_type){
@@ -64,6 +79,21 @@
 					//$scope.fenmu = 1000 - $scope.fenzi;
 				}
 				
+				//点击了设施
+				scope.clickSupport = function(text){
+					console.info(scope.SUPPORT)
+					if(scope.support_library[text] != undefined){
+						scope.support_library[text] = scope.support_library[text] ? false : true;
+						if(scope.support_library[text]){
+							scope.SUPPORT.push(text);
+						}else{
+							scope.SUPPORT.splice(scope.SUPPORT.indexOf(text), 1)
+						}
+					}
+					console.info(scope.SUPPORT)
+				}
+				
+				
 				
 				var $form = $("#form");
 				$form.form();
@@ -71,6 +101,7 @@
 					scope.form.SHOP_TYPE_2 = $("#SHOP_TYPE_2").val()
 					scope.form.SHOP_REMARK = $(".textarea")[0].innerHTML
 					scope.form.SHOP_AREA = $("#ssx").val();
+					scope.form.SUPPORT = JSON.stringify(scope.SUPPORT);
 					console.info(scope.form)
 					$form.validate(function(error) {
 						if (!error) {
@@ -174,6 +205,13 @@
 							scope.form.SHOP_TYPE_1 = typeStr[0];
 							scope.form.SHOP_TYPE_2 = typeStr[1];
 							console.log($scope.form);
+							scope.SUPPORT = JSON.parse(scope.form.SUPPORT);
+							angular.forEach(scope.SUPPORT,function(data,index,array){
+								if(scope.support_library[data] !== undefined && scope.support_library[data] == false){
+									 scope.support_library[data] = true
+								}
+							})
+							
 							scope.$apply();
 							//初始化config信息
 							initConfig(data.data["config"])

@@ -33,6 +33,7 @@
 				</div>
 				<div class="weui_cell_bd " style="width: 30%;display: flex;align-items: center; flex-direction:row-reverse;" ng-switch="item.GOODS_TRUE_PRICE">
 					<span ng-switch-when="" style="float:right;">{{item.GOODS_PRICE/100 | number:2}}元/{{item.GOODS_DW}}</span>
+					<span ng-switch-when="undefined" style="float:right;">{{item.GOODS_PRICE/100 | number:2}}元/{{item.GOODS_DW}}</span>
 					<span ng-switch-default style="float:right;">{{item.GOODS_TRUE_PRICE/100 | number:2}}元/{{item.GOODS_DW}}</span>
 				</div>
 			</div>

@@ -32,6 +32,26 @@
 					goods_count = Number(params.goods_count);
 					scope.form.IS_USE = "1"
 					scope.form.GOODS_TYPE = "2"
+					//标签库
+					scope.label_library = {
+							"不吃辣" : true,
+							"少放辣" : true,
+							"多放辣" : true,
+							"不吃醋" : true,
+							"少放醋" : true,
+							"多放醋" : true,
+							"不吃蒜" : true,
+							"不吃香菜" : true,
+							"少放盐" : true,
+							"多放饭" : true,
+						}
+					//当前选择的标签
+					scope.LABEL = []
+					
+					angular.forEach(scope.label_library, function(data, index, array) {
+						scope.LABEL.push(index)
+					})
+						
 					var init = function(){
 						//判断
 						if(scope.form.GOODS_ID != undefined && scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
@@ -59,6 +79,13 @@
 									angular.forEach(scope.picMap, function(data,index,array){
 										scope.PICTURE_URL.push(index)
 									});
+									//标签赋值
+									scope.LABEL = JSON.parse(scope.form.GOODS_LABEL);
+									angular.forEach(scope.label_library,function(data,index,array){
+										if(scope.LABEL.indexOf(index) == -1){
+											 scope.label_library[index] = false
+										}
+									})
 									
 									//分转换成元
 									scope.form.GOODS_PRICE = Number(scope.form.GOODS_PRICE)/100;
@@ -116,6 +143,23 @@
 					
 					init();
 					
+					
+					
+					//点击了标签
+					scope.clickLabel = function(text){
+						console.info(scope.LABEL)
+						if(scope.label_library[text] != undefined){
+							scope.label_library[text] = scope.label_library[text] ? false : true;
+							if(scope.label_library[text]){
+								scope.LABEL.push(text);
+							}else{
+								scope.LABEL.splice(scope.LABEL.indexOf(text), 1)
+							}
+						}
+						console.info(scope.LABEL)
+					}
+					
+					
 					/*返回按钮点击方法*/
 					scope.returnClick = function(){
 						if(params.Last_Page == undefined){
@@ -158,12 +202,13 @@
 							return;
 						}
 						
-						//数组和Map都转换成json，不然会解析失败
+						//数组和Map都转换成String，不然会解析失败
 						scope.form.SHOW_RANGE = JSON.stringify(scope.SHOW_RANGE);
 						scope.form.GOODS_RECIPE = JSON.stringify(scope.GOODS_RECIPE);
 						scope.form.GOODS_SPECIFICATION = JSON.stringify(scope.GOODS_SPECIFICATION);
 						scope.form.GOODS_TASTE = JSON.stringify(scope.GOODS_TASTE);
 						scope.form.PICTURE_URL = JSON.stringify(scope.PICTURE_URL);
+						scope.form.GOODS_LABEL = JSON.stringify(scope.LABEL);
 						
 						console.info(scope.form)
 						$form.validate(function(error) {
