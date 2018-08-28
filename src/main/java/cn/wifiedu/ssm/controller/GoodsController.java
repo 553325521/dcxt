@@ -1,10 +1,12 @@
 package cn.wifiedu.ssm.controller;
 
 
-	import java.util.LinkedHashMap;
+	import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +25,10 @@ import com.alibaba.fastjson.parser.Feature;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.PictureUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 
 		/**
 		 * 
@@ -312,7 +316,7 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 					
 					//取出新的pic信息和旧的pic信息
 					List<String> newPicList = (List<String>)JSONObject.parse((String) map.get("PICTURE_URL"));
-					Map<String,Long> picUrlMap = (Map)JSON.parseObject((String) reMap.get("PICTURE_URL"), LinkedHashMap.class,Feature.OrderedField);
+					Map<String,Long> picUrlMap = JSON.parseObject((String) reMap.get("PICTURE_URL"), LinkedHashMap.class,Feature.OrderedField);
 					if(newPicList != null && newPicList.size() > MAX_PIC_NUM){
 						output("9999", "上传图片不能超过"+ MAX_PIC_NUM +"张");
 						return;
@@ -404,6 +408,109 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 				}
 				
 			}
+			
+			
+			
+			
+			/**
+			 * 
+			 * @date 2018年8月27日 下午12:30:51 
+			 * @author lps
+			 * 
+			 * @Description:  根据shopid获取该店铺所有商品
+			 * @return void 
+			 *
+			 */
+			@RequestMapping("Shop_query_findAllGoodsBySopIdGradeByCate")
+			public void findAllGoodsByShopId(){
+				try {
+					
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
+					
+					Map map = getParameterMap();
+					map.put("SHOP_ID", userObj.get("FK_SHOP"));
+					//先根据shopId查询出该店铺所有商品
+					map.put("sqlMapId", "findAllGoodsByShopId");
+					map.put("IS_USE", true);
+					List<Map<String,String>> goodsList =  openService.queryForList(map);
+					
+					if(goodsList == null || goodsList.size() == 0){
+						output("9999", "该商铺还没有商品");
+						return;
+					}
+					//list转Map，Key为类别id
+					Map<Object, List<Map<String, String>>> goodsMap = goodsList.stream().
+							collect(Collectors.groupingBy(Map->Map.get("GTYPE_FK")));
+					
+					//查询该店铺所有类别
+					map.put("sqlMapId", "findAllGtypeIdByShopId");
+					List<Map<String,String>> catesList =  openService.queryForList(map);
+					//list转map，key为类别id
+					Map<String, Map<String, String>> collect = catesList.stream().collect(Collectors.toMap(Map->Map.get("GTYPE_PK"), a->a,(k1,k2)->k1));
+					
+					//遍历商品map,把新数据放到新Map中,新map的key转换成所有父类别集合名字
+					Map newGoodsMap = new HashMap<String, List<Map<String, String>>>();
+					goodsMap.forEach((key,value)->{
+						String cateName = "";
+						String CatePath = collect.get(key).get("GTYPE_PATH");//类别路径
+						String[] cates = CatePath.split("/");
+						
+						for(int i=1; i<cates.length;i++){
+							cateName += collect.get(cates[i]).get("GTYPE_NAME") + "/";
+						}
+						cateName = cateName.substring(0, cateName.length()-1);
+						
+						newGoodsMap.put(cateName, value);
+					});
+					
+					
+					output("0000", newGoodsMap);
+					
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.error("error", e);
+					output("9999", " Exception ", e);
+				}
+				
+			}
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * 
+			 * @Description:  通过商品Id修改商品数量
+			 * @return void 
+			 *
+			 */
+			@RequestMapping("Shop_update_updateGoodsNumByGoodsId")
+			public void updateGoodsNumByGoodsId(){
+				try {
+					Map map = getParameterMap();
+					map.put("sqlMapId", "updateGoodsNumByGoodId");
+					map.put("GOODS_NUM", "0");
+					map.put("GOODS_ID", map.get("CURRENT_CLICK"));
+					
+					boolean b = openService.update(map);
+					
+					if(b){
+						output("0000", "操作成功");
+						return;
+					}
+					output("9999", "操作失败");
+					return;
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+					output("9999", "操作失败");
+					return;
+					
+				}
+			}
+			
 			
 			/**
 			 * 
@@ -500,7 +607,7 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 			 *
 			 */
 			private boolean deletePicByGoodId(Map<String, Object> goodsMap) throws Exception {
-				Map<String,Long> picUrlMap = (Map)JSON.parseObject((String) goodsMap.get("PICTURE_URL"), LinkedHashMap.class,Feature.OrderedField);
+				Map<String,Long> picUrlMap = JSON.parseObject((String) goodsMap.get("PICTURE_URL"), LinkedHashMap.class,Feature.OrderedField);
 				
 				for (Entry<String, Long> entry : picUrlMap.entrySet()) {
 					//删除图片
@@ -509,4 +616,9 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 				}
 				return true;
 			}
+			
+			
+			
+			
+			
 		}

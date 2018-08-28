@@ -1,4 +1,28 @@
 <style>
+.dcxt_select_span {
+    margin: 8px 10px 12px 0;
+    border-radius:25px;
+    border: 1px solid rgba(0, 0, 0, .2);
+    padding: 3px 9px;
+    font-size:12px;
+    float:left;
+}
+
+
+.ng-scope:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    border-top: 1px solid #d9d9d9;
+    color: #d9d9d9;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    left: 15px;
+}
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
 		<div href="#" class="weui-header-left" ng-click="toHref('welcome')">
@@ -13,17 +37,19 @@
 			</div>
 		</div>
 	</div>
-
-	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
-		<div class="weui_cell">
-			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
-			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
-			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
-			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
-			<button data-ani="swing" class="weui_btn  weui_btn_mini f-white">swing</button>
+	<div class="weui_cells tablessetting-font-style" ng-show="pageShow"  style="margin-top:-1px;">
+		<div ng-repeat="(key, value) in all_goods">
+			<div class="weui_cell dcxt_active" >
+				<div class="weui_cell_bd" style="padding:5px 0;">
+					<label class="weui_label label tablessetting-label">{{key}}（{{value.length}}种）</label>
+				</div>
+			</div>
+			<div class="weui_cell" style="display: -webkit-box;display: -webkit-flex; padding-right:0px;padding-bottom:4px;">
+				<div class="weui_cell_bd" style="padding:4px 0;">
+					<span class="{{form.CURRENT_CLICK == item.GOODS_PK ? ' bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="item in value" ng-click="clickGoods(item.GOODS_PK)">{{item.GOODS_NAME}}</span>
+				</div>
+			</div>
 		</div>
-		
-		
 	</div>
 	
 	<div class="weui-loadmore" ng-hide="pageShow">

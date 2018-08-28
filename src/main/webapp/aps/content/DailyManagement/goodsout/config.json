@@ -4,7 +4,7 @@
 	"controllerUrl": "aps/content/DailyManagement/goodsout/controller.js",
 	"config": {
 		"pageTitle": "商品估清",
-		"findURL":"json/Shop_query_findGoodsList.json",
+		"findURL":"json/Shop_query_findAllGoodsBySopIdGradeByCate.json",
 		"updateURL":"json/Shop_update_updateGoodsNumByGoodsId.json",
 		"menu":{	
 	            "buttons":[

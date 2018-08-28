@@ -7,23 +7,32 @@
 
 				scope = $scope;
 				scope.pageShow = "False";
-
 				// 定义页面标题
 				scope.pageTitle = config.pageTitle;
-
-				// 餐桌区域数据源
-				scope.tables_area_list = [];
+				scope.form = {}
+				scope.all_goods = {};
+				
+				scope.form.CURRENT_CLICK = "";
+				
+				//点击事件
+				scope.clickGoods = function(goods_id){
+					if(scope.form.CURRENT_CLICK != goods_id){
+						scope.form.CURRENT_CLICK = goods_id;
+					}else{
+						scope.form.CURRENT_CLICK = ""
+					}
+				}
+				
 				
 				var init = function() {
 					$httpService.post(config.findURL).success(function(data) {
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
-							console.info(data.data)
-//							scope.tables_area_list = data.data;
-//							scope.pageShow = "True";
-//							scope.$apply();
+							scope.all_goods = data.data;
 						}
+						scope.pageShow = "True";
+						scope.$apply();
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
@@ -40,12 +49,11 @@
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
 				
-				/*scope.update={}
-				scope.update.goods_id = goods_id;*/
-				
-				
 				//估清按钮
 				scope.goodsOut = function(){
+					if(scope.form.CURRENT_CLICK === ""){
+						return;
+					}
 					var m2 = {
 						"url" : "aps/content/DailyManagement/goodsout/config.json",
 						"title" : "提示",
@@ -57,8 +65,11 @@
 				
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
-					 $httpService.post(config.updateURL,scope.update).success(function(data){
+					 $httpService.post(config.updateURL,scope.form).success(function(data){
 						 if(data.code == "0000"){
+							 scope.all_goods = {};
+							 //估清完清除当前点击对象
+							 scope.form.CURRENT_CLICK = "";
 							 scope.pageShow = "False";
 							 init();
 						 }
@@ -82,8 +93,6 @@
 						contentName : "modal"
 					});
 				});
-				
-				
 				
 			}
 		];
