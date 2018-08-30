@@ -65,9 +65,6 @@ public class StaffController extends BaseController {
 	private WxController wxCtrl;
 
 	@Autowired
-	private MenuController menuCtrl;
-
-	@Autowired
 	private TransactionManagerController txManagerController;
 
 	/**
@@ -179,7 +176,7 @@ public class StaffController extends BaseController {
 			if (!userObj.containsKey("FK_APP")) {
 				userObj.put("FK_APP", CommonUtil.getPath("AppID"));
 			}
-			params += "&ROLE_ID=6";
+			params += "&ROLE_ID=4";
 			String url = CommonUtil.getPath("Auth-wx-qrcode-url-plat");
 			url = url.replace("APPID", userObj.getString("FK_APP")).replace("REDIRECT_URI", URLEncoder
 					.encode(CommonUtil.getPath("project_url").replace("DATA", "Staff_add_addStaff") + params, "UTF-8"));
@@ -257,7 +254,7 @@ public class StaffController extends BaseController {
 						String token = "";
 						if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
 							token = WxUtil.getWxAccessToken(appid, interCtrl.getComponentAccessToken(),
-									menuCtrl.getRefreshTokenByAppId(appid));
+									interCtrl.getRefreshTokenByAppId(appid));
 							jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, token);
 							jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
 						} else {

@@ -146,6 +146,7 @@ Array.prototype.remove = function(val) {
 								}
 							})
 							scope.nameList[0].outer = true;
+							scope.form.PRINT_PK = '1';
 							scope.checkList(scope.nameList[0].PRINT_RELEVANT_PK);
 
 							scope.$apply();
@@ -158,11 +159,29 @@ Array.prototype.remove = function(val) {
 				init();
 
 				scope.doSave = function() {
+					var m2 = {
+						"title" : "提示",
+						"contentName" : "modal"
+					}
+
+					if (scope.form.PRINT_WIDTH == undefined || scope.form.PRINT_WIDTH == '') {
+						m2.text = "请选择出纸宽度!"
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						return;
+					}
+
+					if (scope.form.PRINT_TYPE == undefined || scope.form.PRINT_TYPE == '') {
+						m2.text = "请选择网络类型!"
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						return;
+					}
+
 					$httpService.post(config.addPrintPriceURL, scope.form).success(function(data) {
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
-							console.info(data);
+							m2.text = "购买成功!"
+							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');

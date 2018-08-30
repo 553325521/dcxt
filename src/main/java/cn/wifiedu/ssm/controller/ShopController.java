@@ -2,7 +2,6 @@ package cn.wifiedu.ssm.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,6 +65,10 @@ public class ShopController extends BaseController {
 
 	@Autowired
 	WxController wxControllerl;
+
+	@Autowired
+	private InterfaceController interCtrl;
+
 	@Resource
 	private JedisClient jedisClient;
 
@@ -198,9 +201,17 @@ public class ShopController extends BaseController {
 	public void createShopClaimQrCode() {
 		try {
 			Map<String, Object> map = getParameterMap();
-			String url = CommonUtil.getPath("Auth-wx-qrcode-url");
-			url = url.replace("STATE", map.get("SHOPID").toString()).replace("REDIRECT_URI",
-					URLEncoder.encode(CommonUtil.getPath("project_url").replace("DATA", "responseShopClaim"), "UTF-8"));
+
+			String url = CommonUtil.getPath("Auth-wx-qrcode-url-plat");
+			url = url.replace("APPID", CommonUtil.getPath("AppID")).replace("STATE", map.get("SHOPID").toString())
+					.replace("REDIRECT_URI", URLEncoder
+							.encode(CommonUtil.getPath("project_url").replace("DATA", "responseShopClaim"), "UTF-8"));
+
+			// String url = CommonUtil.getPath("Auth-wx-qrcode-url");
+			// url = url.replace("STATE",
+			// map.get("SHOPID").toString()).replace("REDIRECT_URI",
+			// URLEncoder.encode(CommonUtil.getPath("project_url").replace("DATA",
+			// "responseShopClaim"), "UTF-8"));
 			BufferedImage image = QRCode.genBarcode(url, 200, 200);
 			response.setContentType("image/png");
 			response.setHeader("pragma", "no-cache");
@@ -245,8 +256,9 @@ public class ShopController extends BaseController {
 				return;
 			} else {
 				String code = request.getParameter("code");
+				String appid = request.getParameter("appid");
 				if (null != code && !"".equals(code)) {
-					String openId = wxControllerl.getOpenIdByCode(code);
+					String openId = wxControllerl.getOpenIdByCode2(code, appid);
 					logger.info("openId:" + openId);
 					String state = request.getParameter("state");
 					String userId = "";
@@ -295,7 +307,16 @@ public class ShopController extends BaseController {
 							throw new Exception();
 						}
 						if (updateResult) {
-							String token = WxUtil.getToken();
+							String token = "";
+							if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+								token = WxUtil.getWxAccessToken(appid,
+										interCtrl.getComponentAccessToken(),
+										interCtrl.getRefreshTokenByAppId(appid));
+								jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, token);
+								jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+							} else {
+								token = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+							}
 							if (token != null) {
 								String tagAddURL = CommonUtil.getPath("user_tag_add");
 								tagAddURL = tagAddURL.replace("ACCESS_TOKEN", token);
@@ -313,8 +334,8 @@ public class ShopController extends BaseController {
 								String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
 								JSONObject resObj = JSONObject.parseObject(resCont);
 								if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
-									
-									/*插入到shopApp表*/
+
+									/* 插入到shopApp表 */
 									param.clear();
 									param.put("FK_APP", "wx6041a1eff32d3c5e");
 									param.put("FK_SHOP", state);
@@ -538,8 +559,8 @@ public class ShopController extends BaseController {
 				output("0000", "success");
 				return;
 			} else {
-				if (jedisClient.isExit(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token)
-						&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token))) {
+				if (jedisClient.isExit(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token) && StringUtils
+						.isNotBlank(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token))) {
 					Map<String, Object> mapp = (Map<String, Object>) JSONObject
 							.parse(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token));
 					userObj.put("FK_APP", mapp.get("FK_APP"));

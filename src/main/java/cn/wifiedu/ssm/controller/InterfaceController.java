@@ -49,13 +49,13 @@ public class InterfaceController extends BaseController {
 	private static Logger logger = Logger.getLogger(InterfaceController.class);
 
 	// 第三方平台组件加密密钥
-	private final String encodingAesKey = "hj4yOdwhgrhLQIkYPrm7It1idg3arP92Q59lA65z3HE";
+	public final String encodingAesKey = "hj4yOdwhgrhLQIkYPrm7It1idg3arP92Q59lA65z3HE";
 	// 第三方平台组件token
-	private final String component_token = "ddera";
+	public final String component_token = "ddera";
 	// 第三方平台组件appid
-	private final String component_appid = "wx623296bf9fc03f81";
+	public final String component_appid = "wx623296bf9fc03f81";
 	// 第三方平台组件secret
-	private final String component_secret = "cfe18cc292ad99b2a3c44eb0b3c88938";
+	public final String component_secret = "cfe18cc292ad99b2a3c44eb0b3c88938";
 
 	@Resource
 	OpenService openService;
@@ -439,6 +439,30 @@ public class InterfaceController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * @author kqs
+	 * @param string
+	 * @return
+	 * @return String
+	 * @date 2018年8月8日 - 上午11:43:43
+	 * @description:根据appid 获取 refresh_token
+	 */
+	public String getRefreshTokenByAppId(String appid) {
+		try {
+			Map<String, Object> obj = (Map<String, Object>) openService.queryForObject(new HashMap<String, Object>() {
+				{
+					put("APP_PK", appid);
+					put("sqlMapId", "getRefreshTokenByAppId");
+				}
+			});
+
+			return obj.get("APP_REFRESH_TOKEN").toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**

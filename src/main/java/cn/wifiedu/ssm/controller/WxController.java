@@ -196,7 +196,63 @@ public class WxController extends BaseController {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * 小程序授权
+	 */
+	@RequestMapping("/toSmallProgram")
+	public void toSmallProgram() {
+		try {
+			String code = request.getParameter("code");
+			String appid = request.getParameter("appid");
+			if (StringUtils.isBlank(appid)) {
+				appid = CommonUtil.getPath("AppID");
+			}
+			logger.info("request params:" + getParameterMap());
+			logger.info("request code:" + code + ", request appid:" + appid);
+			if (null != code && !"".equals(code)) {
+				String openId = getOpenIdByCode2(code, appid);
+				logger.info("WeChart openId : " + openId);
+				Map<String, Object> map = getParameterMap();
+				map.put("OPENID", openId);
+				map.put("sqlMapId", "checkUserWx");
 
+				List<Map<String, Object>> checkList = openService.queryForList(map);
+				logger.info("checkList: " + checkList);
+				Map<String, Object> userMap = new HashMap<>();
+				userMap.put("USER_WX", openId);
+				userMap.put("FK_APP", appid);
+				if (checkList != null && checkList.size() == 0) {
+					// 查询 openId 根据 用户详细信息
+					getWxUserInfo(openId, userMap);
+
+					map.put("sqlMapId", "insertUserInitOpenId");
+
+					String USER_PK = openService.insert(map);
+
+					userMap.put("USER_PK", USER_PK);
+				} else {
+					// 根据openId 获取 系统中的 商铺、权限、功能
+					getUserInfo(openId, userMap);
+				}
+				// redis存储用户登录信息
+				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
+
+				// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
+				CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
+
+				output("0000", "success");
+				return;
+			}
+			output("9999", "error");
+			return;
+		} catch (Exception e) {
+			logger.error("error", e);
+			output("9999", e);
+		}
+		return;
+	}
+	
 	/**
 	 * 跳转店员页面
 	 */
@@ -690,7 +746,7 @@ public class WxController extends BaseController {
 			
 			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
 				accessToken = WxUtil.getWxAccessToken(appid,
-						interfaceController.getComponentAccessToken(), menucontroller.getRefreshTokenByAppId(appid));
+						interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
 				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
 				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
 			} else {

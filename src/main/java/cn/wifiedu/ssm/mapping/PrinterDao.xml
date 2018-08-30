@@ -32,7 +32,7 @@
 		#{INSERT_TIME}
 		)
 	</insert>
-	
+
 	<insert id="addPirntBug" parameterMap="BaseParameterMap">
 		insert into SC_PRINT_BUG
 		(
@@ -59,7 +59,7 @@
 		#{CREATER}
 		)
 	</insert>
-	
+
 	<!-- 查询打印机相关信息 -->
 	<select id="loadPrintRelevantList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
@@ -72,8 +72,17 @@
 	<select id="findPriceURL" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT PRINT_PRICE FROM SC_PRINT_PRICR WHERE
-		PRINT_PK = #{PRINT_PK} AND PRINT_WIDTH = #{PRINT_WIDTH}
-		AND PRINT_TYPE = #{PRINT_TYPE}
+		PRINT_PK =
+		#{PRINT_PK} AND PRINT_WIDTH = #{PRINT_WIDTH}
+		AND PRINT_TYPE =
+		#{PRINT_TYPE}
+	</select>
+
+	<!-- 查询已购打印机列表 -->
+	<select id="loadPrintList" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT PRINT_BUG_PK, PRINT_WIDTH FROM SC_PRINT_BUG WHERE
+		FK_SHOP = #{FK_SHOP} AND IS_USE = '0'
 	</select>
 
 </mapper>

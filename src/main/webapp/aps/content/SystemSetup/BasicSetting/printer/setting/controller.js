@@ -3,7 +3,7 @@
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
-				
+
 				Array.prototype.indexOf = function(val) {
 					for (var i = 0; i < this.length; i++) {
 						if (this[i] == val)
@@ -17,10 +17,10 @@
 						this.splice(index, 1);
 					}
 				};
-				
+
 				scope = $scope;
 
-				scope.noCheckArr = [ 1, 2, 3, 4, 5 ];
+				scope.noCheckArr = [];
 
 				// 定义页面标题
 				scope.pageTitle = config.pageTitle
@@ -60,30 +60,6 @@
 					}
 				];
 
-				// 菜品数据源
-				scope.printer_dishes_list = [
-					{
-						title : "荤菜",
-						value : 1
-					},
-					{
-						title : "素菜",
-						value : 2
-					},
-					{
-						title : "凉菜",
-						value : 3
-					},
-					{
-						title : "汤类",
-						value : 4
-					},
-					{
-						title : "酒水",
-						value : 5
-					}
-				];
-
 				//初始化 form 表单
 				scope.form = {};
 
@@ -108,12 +84,12 @@
 						if (newValue == 'all') {
 							scope.noCheckArr = []
 						} else {
-							scope.noCheckArr = [ 1, 2, 3, 4, 5 ]
+							initNoCheckArr()
 						}
 					} else {
 						scope.form.KIND_OF_DISHES = true;
 
-						scope.noCheckArr = [ 1, 2, 3, 4, 5 ]
+						initNoCheckArr()
 					}
 				}, true);
 
@@ -162,7 +138,7 @@
 								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 								return;
 							}
-							
+
 							if (scope.form.PRINTER_LEVEL == undefined || scope.form.PRINTER_LEVEL == '') {
 								var m2 = {
 									"title" : "提示",
@@ -172,7 +148,7 @@
 								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 								return;
 							}
-							
+
 							// 定义菜品字段
 							scope.form.PRINTER_DISHES = []
 
@@ -181,7 +157,7 @@
 									scope.form.PRINTER_DISHES.push(item.value)
 								}
 							})
-							
+
 							if (scope.form.PRINTER_DISHES.length <= 0) {
 								var m2 = {
 									"title" : "提示",
@@ -191,7 +167,7 @@
 								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 								return;
 							}
-							
+
 							var m2 = {
 								"url" : "aps/content/SystemSetup/BasicSetting/printer/setting/config.json",
 								"title" : "提示",
@@ -202,7 +178,7 @@
 						}
 					})
 				}
-				
+
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 					scope.form.PRINTER_DISHES_STR = scope.form.PRINTER_DISHES.join(',');
@@ -211,21 +187,20 @@
 							var m2 = {
 								"title" : "提示",
 								"contentName" : "modal",
-								"text" : data.data,
-								"toUrl" : "aps/content/SystemSetup/BasicSetting/printer/config.json?fid=" + params.fid
+								"text" : data.data
 							}
 						} else {
 							var m2 = {
 								"title" : "提示",
 								"contentName" : "modal",
-								"text" : data.data
+								"text" : data.data,
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/printer/config.json?fid=" + params.fid
 							}
 						}
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
-
 				});
 
 				// 弹窗取消事件
@@ -234,6 +209,65 @@
 						contentName : "modal"
 					});
 				});
+
+				var init = function() {
+					$httpService.post(config.findURL, {}).success(function(data) {
+						if (data.code != '0000') {
+						} else {
+							var ids = [];
+							$.each(data.data, function(index, value) {
+								ids.push(value.PRINT_BUG_PK);
+							})
+
+							$("#key_select").picker({
+								title : "选择打印机",
+								toolbarCloseText : '确定',
+								cols : [
+									{
+										textAlign : 'center',
+										values : ids,
+										displayValues : ids
+									}
+								],
+								onChange : function(e) {
+									var value = e.value[0]
+									$scope.form.PRINTER_KEY = value
+								}
+							});
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+
+					$httpService.post(config.findGoodTypeURL, {
+						GTYPE_PID : 0
+					}).success(function(data) {
+						if (data.code != '0000') {
+						} else {
+							// 菜品数据源
+							scope.printer_dishes_list = [];
+							scope.goodTypes = data.data;
+							$.each(scope.goodTypes, function(index, value) {
+								scope.printer_dishes_list.push({
+									title : value.GTYPE_NAME,
+									value : value.GTYPE_PK
+								});
+								scope.noCheckArr.push(value.GTYPE_PK);
+							})
+						}
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+				}
+
+				init()
+
+				function initNoCheckArr() {
+					scope.noCheckArr = []
+					$.each(scope.goodTypes, function(index, value) {
+						scope.noCheckArr.push(value.GTYPE_PK);
+					})
+				}
 
 				function comboboxInit() {
 					$("#fs_select").picker({

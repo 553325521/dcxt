@@ -82,20 +82,36 @@ public class PrinterController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月27日 - 下午2:42:35 
+	 * @description:查询已购打印机
+	 */
 	@RequestMapping("/Print_queryForList_loadPrintList")
 	public void loadPrintList(HttpServletRequest request, HttpSession session) {
 		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+
 			Map<String, Object> map = getParameterMap();
-			map.put("INSERT_TIME", StringDeal.getStringDate());
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
 			map.put("sqlMapId", "loadPrintList");
 			List<Map<String, Object>> res = openService.queryForList(map);
 			if (res != null) {
-				output("0000", "保存成功!");
+				output("0000", res);
+				return;
 			}
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
+		output("9999", "");
+		return;
 	}
 
 	/**
@@ -170,12 +186,6 @@ public class PrinterController extends BaseController {
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
-	}
-
-	@Test
-	public void test1() {
-		String ll = "A*123456*0*AS01#";
-		System.out.println(ll.indexOf("*AS0"));
 	}
 
 	// @RequestMapping("/Print_insert_doPrint")
