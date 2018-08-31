@@ -99,52 +99,44 @@
 						scope.$apply();
 					}
 					
-					//支付函数
-					function onBridgeReady(){
+					//微信支付函数
+					function onBridgeReady(data){
 						   WeixinJSBridge.invoke(
 						      'getBrandWCPayRequest', {
-						         "appId":"wx6041a1eff32d3c5e",     //公众号名称，由商户传入     
-						         "timeStamp":"1534099971",         //时间戳，自1970年以来的秒数     
-						         "nonceStr":"L2BYxPB7tg4n8cK2", //随机串     
-						         "package":"prepay_id=wx13025152173868bc37da7bfc2764005572",     
-						         "signType":"MD5",         //微信签名方式：     
-						         "paySign":"2013CB1B826A6AD28FF85FA82A428C51" //微信签名 
+						         "appId": data.apiAppid,     //公众号名称，由商户传入     
+						         "timeStamp": data.apiTimestamp,         //时间戳，自1970年以来的秒数     
+						         "nonceStr": data.apiNoncestr, //随机串     
+						         "package": data.apiPackage,     
+						         "signType": data.apiSigntype, //微信签名方式：     
+						         "paySign": data.apiPaysign //微信签名 
 						      },
 						      function(res){
 						      if(res.err_msg == "get_brand_wcpay_request:ok" ){
 						      // 使用以上方式判断前端返回,微信团队郑重提示：
 						            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+						    		var m2 = {
+											"title" : "提示",
+											"contentName" : "modal",
+											"text" : "支付成功",
+											"toUrl" : "aps/content/ActingCustomerManagement/config.json"
+										}
+								
+								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 						      } 
 						      console.info(res)
 						   }); 
-						}
+					}
 					
 					//支付按钮
 					scope.confirmPayment = function(){
-						
-				
-					if (typeof WeixinJSBridge == "undefined"){
-					   if( document.addEventListener ){
-					       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-					   }else if (document.attachEvent){
-					       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
-					       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-					   }
-					}else{
-					   onBridgeReady();
-					}
-						
-						
-						
-						
-//						console.info(scope.form)
-//						var m2 = {
-//							"url" : "aps/content/ActingCustomerManagement/buyService/config.json",
-//							"title" : "提示",
-//							"contentName" : "modal",
-//							"text" : "是否支付?"
-//						}
-//						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						console.info(scope.form)
+						var m2 = {
+							"url" : "aps/content/ActingCustomerManagement/buyService/config.json",
+							"title" : "提示",
+							"contentName" : "modal",
+							"text" : "是否支付?"
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 					}
 					
 					scope.toHref = function(path) {
@@ -171,9 +163,23 @@
 										"text" : data.data,
 										"toUrl" : "aps/content/ActingCustomerManagement/config.json"
 									}
-							} else if(data.code == '1111'){
+							} else if(data.code == '5555'){
+								//取消弹窗
+								eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+									contentName : "modal"
+								});
 								//发起微信支付
-								
+								if (typeof WeixinJSBridge == "undefined"){
+									   if( document.addEventListener ){
+									       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+									   }else if (document.attachEvent){
+									       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+									       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+									   }
+									}else{
+									   onBridgeReady(data.data);
+									}
+								return;
 							}else{
 								var m2 = {
 										"title" : "提示",

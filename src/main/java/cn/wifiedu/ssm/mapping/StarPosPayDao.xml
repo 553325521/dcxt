@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="starPosPay" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+	
+	<insert id="insertStarPosPayOrder" parameterMap="BaseParameterMap" >
+		INSERT INTO starpos_pay_order
+		(
+			ORDER_PK,
+			USER_FK,
+			MERC_ID,
+			TRM_NO,
+			ORG_NO,
+			AMOUNT,
+			TOTAL_AMOUNT,
+			CHARACTERSET,
+			AUTH_CODE,
+			TRADE_NO,
+			SUBJECT,
+			SEL_ORDER_NO,
+			ORDER_CREATE_TIME,
+			REQUEST_PAY_CHANNEL,
+			GOODS_TAG,
+			ATTACH,
+			LATITUDE,
+			LONGITUDE,
+			OPRID,
+			TRM_TYPE,
+			ADD_FIELD,
+			RETURN_CODE,
+			RETURN_RESULT,
+			LOG_NO,
+			RETURN_MESSAGE,
+			ORDER_NO,
+			OPEN_ID,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		VALUES
+		(
+			#{UUID},
+			#{USER_ID},
+		 	#{MERC_ID},
+			#{TRM_NO},
+			#{ORG_NO},
+			#{AMOUNT},
+			#{TOTAL_AMOUNT},
+			#{CHARACTERSET},
+			#{AUTH_CODE},
+			#{TRADE_NO},
+			#{SUBJECT},
+			#{SEL_ORDER_NO},
+			#{ORDER_CREATE_TIME},
+			#{REQUEST_PAY_CHANNEL},
+			#{GOODS_TAG},
+			#{ATTACH},
+			#{LATITUDE},
+			#{LONGITUDE},
+			#{OPRID},
+			#{TRM_TYPE},
+			#{ADD_FIELD},
+			#{RETURN_CODE},
+			#{RETURN_RESULT},
+			#{LOG_NO},
+			#{RETURN_MESSAGE},
+			#{ORDER_NO},
+			#{OPEN_ID},
+			NOW(),
+			#{CREATE_BY}
+		)
+	
+	</insert>
+	
+	<update id="updateStarPosPayByLogNo"  parameterMap="BaseParameterMap" >
+		UPDATE starpos_pay_order SET NOTIFY_BAL_DATE = #{NOTIFY_BAL_DATE}, NOTIFY_TRADING_TIME = #{NOTIFY_TRADING_TIME}, TRADE_NO = #{TRADE_NO}, MERC_ID = #{MERC_ID}, TRM_NO = #{TRM_NO}, NOTIFY_TXN_CODE = #{NOTIFY_TXN_CODE}, 
+			NOTIFY_PAY_CHANNEL = #{NOTIFY_PAY_CHANNEL}, NOTIFY_TXNAMT = #{NOTIFY_TXNAMT}, NOTIFY_TXN_STATUS = #{NOTIFY_TXN_STATUS}, BANK_TYPE = #{BANK_TYPE}, OFFICE_ID = #{OFFICE_ID}, SEL_ORDER_NO = #{SEL_ORDER_NO}, 
+			<if test="OPEN_ID != null and OPEN_ID != ''">
+				OPEN_ID = #{OPEN_ID},
+			</if>
+			CRD_FLG = #{CRD_FLG}
+			WHERE LOG_NO = #{LOG_NO};
+	</update>
+
+</mapper>

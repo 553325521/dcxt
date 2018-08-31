@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.starpos.pay.StarPosPay;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.DateUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -53,6 +54,10 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			
 			@Resource
 			private JedisClient jedisClient;
+			
+			@Resource
+			private StarPosPay starPosPay;
+			
 			
 			@Resource
 			PlatformTransactionManager transactionManager;
@@ -142,18 +147,31 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 					JSONObject userObj = JSONObject.parseObject(userJson);
 					
-					//准备插入操作，开启事务
-					DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-				    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-				    status = transactionManager.getTransaction(defaultTransactionDefinition);
 					
 					/**数据验证结束*/
-					//TODO
 					//判断支付方式
 					String payType = (String) map.get("PAY_TYPE");
 					if("1".equals(payType)){//微信支付
 						//微信生成订单
-					}else{//余额支付
+						map.put("USER_ID", userObj.get("USER_PK"));//发起订单的用户
+						map.put("openid", userObj.get("USER_WX"));//发起订单的用户openid
+						map.put("amount", 1);
+						Map<String, Object> pubSigPay = starPosPay.pubSigPay(map, "aaa_aaa_aaa", userObj);
+						
+						if("000000".equals(pubSigPay.get("returnCode"))){
+							output("5555", pubSigPay);
+							return;
+						}
+						output("9999", "微信支付失败");
+						return;
+					}else{
+						
+						//准备插入操作，开启事务
+						DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+					    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+					    status = transactionManager.getTransaction(defaultTransactionDefinition);
+						
+						//余额支付
 						//判断当前用户余额够不够付款的
 						map.put("sqlMapId", "selectUserByPrimaryKey");
 						map.put("USER_PK", userObj.get("USER_PK"));

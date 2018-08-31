@@ -27,5 +27,7 @@ public class RedisConstants {
 	public static final String WX_BUTTON_TOKEN = "wx_button_token:";
 	
 	public static final String WX_JS_API_Ticker = "wx_js_api_ticker:";
+
+	public static final String STARPOS_PAY_CALLBACK_URL = "starpos_pay_callback_url:";
 	
 }
