@@ -2,9 +2,11 @@ package cn.wifiedu.ssm.controller;
 
 
 	import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +21,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSONObject;
+import com.thoughtworks.xstream.converters.collections.MapConverter;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
@@ -86,7 +90,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 */
 			@RequestMapping("/ShopPurchaseRecord_insert_insertShopPurchaseRecord")
 			public void addTransactionRecord(HttpServletRequest request,HttpSession seesion){
-				TransactionStatus status = null;
 				try {	
 					Map<String, Object> map = getParameterMap();
 					
@@ -151,12 +154,25 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					/**数据验证结束*/
 					//判断支付方式
 					String payType = (String) map.get("PAY_TYPE");
+					
+					//要传递给下个函数的数据
+					map.put("USER_PK", userObj.get("USER_PK"));
+					map.put("needMoney", needMoney);
+					map.put("isUpdateService", isUpdateService);
+					map.put("buyTime", buyTime);
+					map.put("roleId", userObj.get("FK_ROLE"));
+					
 					if("1".equals(payType)){//微信支付
+						
+						Map<String, Object> newMap = new HashMap<String, Object>();
+						newMap.putAll(map);
+						
 						//微信生成订单
 						map.put("USER_ID", userObj.get("USER_PK"));//发起订单的用户
 						map.put("openid", userObj.get("USER_WX"));//发起订单的用户openid
 						map.put("amount", 1);
-						Map<String, Object> pubSigPay = starPosPay.pubSigPay(map, "aaa_aaa_aaa", userObj);
+						
+						Map<String, Object> pubSigPay = starPosPay.pubSigPay(map, "aaa_aaa_aaa", newMap);
 						
 						if("000000".equals(pubSigPay.get("returnCode"))){
 							output("5555", pubSigPay);
@@ -164,18 +180,34 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						}
 						output("9999", "微信支付失败");
 						return;
-					}else{
-						
-						//准备插入操作，开启事务
-						DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
-					    defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-					    status = transactionManager.getTransaction(defaultTransactionDefinition);
-						
+					}
+					
+					//由于微信支付是异步操作，所以需要把一个函数可以做的截成两个函数
+					addTransactionRecordNextPart(map);
+					
+					
+				} catch (Exception e) {
+					output("9999", e);
+					return;
+				}
+			}
+			
+			
+			@RequestMapping("/starPosPayCallBack_insert_insertShopPurchaseRecord")
+			private void addTransactionRecordNextPart(Map<String, Object> map) {
+				TransactionStatus status = null;
+				try {
+					//准备插入操作，开启事务
+					DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+					defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+					status = transactionManager.getTransaction(defaultTransactionDefinition);
+					Integer needMoney = null;
+					if(map != null){
 						//余额支付
+						needMoney = Integer.parseInt((String) map.get("needMoney"));
 						//判断当前用户余额够不够付款的
 						map.put("sqlMapId", "selectUserByPrimaryKey");
-						map.put("USER_PK", userObj.get("USER_PK"));
-						Map userMap = (java.util.Map) openService.queryForObject(map);
+						Map userMap = (Map) openService.queryForObject(map);
 						Double USER_BALANCE = Double.parseDouble((String) userMap.get("USER_BALANCE"));
 						if(USER_BALANCE - needMoney < 0){
 							throw new Exception("余额不足");
@@ -184,33 +216,43 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						map.put("sqlMapId", "updateUserBalance");
 						map.put("USER_BALANCE", (int)(USER_BALANCE - needMoney));
 						String insert2 = openService.insert(map);
-						
-					}
+						if(insert2 == null){
+							throw new Exception("购买失败");
+						}
+							
+					}else{
+						//微信支付异步通知
+						map = getParameterMap();
+						needMoney = Integer.parseInt((String) map.get("needMoney"));
+						if(!"1".equals(map.get("notifyTxnStatus"))){
+							throw new Exception("微信支付失败");
+						}
+					}	
 				
-					
-				    	
 					/*检验完毕，开始插入流程*/
 					//先获取当前过期时间
 					map.put("sqlMapId", "SelectByPrimaryKey");
+					String shopId = (String) map.get("SHOP_ID");
 					map.put("SHOP_FK",shopId);
 					//从数据库获取当前店铺信息
 					Map shopMap = (Map)openService.queryForObject(map);
 					String overDateStr = (String)shopMap.get("OVER_DATA");
 					
 					Date overDate = null;
-					if(overDateStr == null || isUpdateService){//如果为空或者是升级服务，那就重新计算日期
+					if(overDateStr == null || Boolean.parseBoolean((String) map.get("isUpdateService"))){//如果为空或者是升级服务，那就重新计算日期
 						overDate = new Date();
 					}else{
 						//解析日期字符串
 						overDate = DateUtil.parseDate(overDateStr);
-				        if (overDate.before(new Date())){
-				        	//如果过期时间在今天之前，说明早过期了，不必进行在原来的时间基础上计算
-				        	overDate = new Date();
-				        }
+					    if (overDate.before(new Date())){
+					    	//如果过期时间在今天之前，说明早过期了，不必进行在原来的时间基础上计算
+					    	overDate = new Date();
+					    }
 					}
 					
-			        //计算购买后的日期
-			        Date buyAfterData = DateUtil.calculateDate(overDate, buyTime, Calendar.MONTH);
+					//计算购买后的日期
+					Integer buyTime = Integer.parseInt((String)map.get("buyTime"));
+					Date buyAfterData = DateUtil.calculateDate(overDate, buyTime, Calendar.MONTH);
 					map.put("sqlMapId","UpdateOverDateAndServiceType");
 					map.put("OVER_DATA",buyAfterData);
 					boolean buyResult = openService.update(map);
@@ -222,14 +264,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//判断是代理支付还是商家续费
 					//获取当前购买店铺的代理商的userid
 					String agentUserId = "";
-					String roleId = (String) userObj.get("FK_ROLE");
 					map.put("SHOP_ID",shopId);
+					String roleId = (String) map.get("roleId");
 					Boolean isAgent = "7".equals(roleId) ? true : false;
 					String TRANSACTION_TYPE = "1";
 					if(isAgent){
 						//是代理
 						TRANSACTION_TYPE = "2";
-						agentUserId = (String) userObj.get("USER_PK");
+						agentUserId = (String) map.get("USER_PK");;
 					}else{					
 						//如果不是代理商支付，通过商铺id获取代理商信息
 						map.put("sqlMapId","selectAgentIdByShopId");
@@ -279,14 +321,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//更新代理余额
 					map.put("sqlMapId", "selectUserByPrimaryKey");
 					map.put("USER_PK", agentUserId);
-					Map userMap = (Map) openService.queryForObject(map);
-					Double USER_BALANCE = Double.parseDouble((String) userMap.get("USER_BALANCE"));
+					Map agentMap = (Map) openService.queryForObject(map);
+					Double AGENT_BALANCE = Double.parseDouble((String) agentMap.get("USER_BALANCE"));
 					//插入新的余额
 					map.put("sqlMapId", "updateUserBalance");
-					map.put("USER_BALANCE", (int)(USER_BALANCE + commissionMoney));
-					String insert2 = openService.insert(map);
+					map.put("USER_BALANCE", (int)(AGENT_BALANCE + commissionMoney));
+					String insert3 = openService.insert(map);
 					
-					if (insert2 != null) {
+					if (insert3 != null) {
 						transactionManager.commit(status);
 						output("0000", "支付成功!");
 						return;
@@ -294,12 +336,10 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					throw new Exception("系统异常");
 				} catch (Exception e) {
 					transactionManager.rollback(status);
-					output("9999", e);
-					return;
+					e.printStackTrace();
 				}
 			}
-			
-			
+
 			/**
 			 * 
 			 * @date 2018年8月12日 下午10:44:08 
