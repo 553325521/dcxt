@@ -1,0 +1,58 @@
+<style>
+	.dcxt_active .weui_cells{
+		background-color: inherit;
+	}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0
+	}
+	
+</style>
+   <div class="weui-header" style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109"  ng-click="toHref('SystemSetup/ActivityDraw')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area">
+				<div class="bom-radio" id="attend2" style="width:70px;" ng-click="toHref('SystemSetup/ActivityDraw/CardVoucher_Setting/Card_Voucher_Add')">添加</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
+		<div class="weui_cell dcxt_active border_left" style="padding-left:50px;padding-top:5px;" ng-repeat="item in CardVoucher_LIST">
+			<div class="weui_cells cancelBorder cancelBorderBottom tablessetting-font-style"">
+				<div class="weui_cell cancelBorder cancelPadding">
+					<div class="weui_cell_bd" style="margin-right:10px">
+						<span>{{$index+1}}</span>
+					</div>
+					<div class="weui_cell_bd " style="width:80%">
+							<span>{{item.ACTIVITY_NAME}}</span>
+					</div>
+					<div class="weui_cell_bd weui_cell_primary">
+							<span>{{item.ISSTART}}</span>
+					</div>
+				</div>
+				<div class="weui_cell cancelBorder cancelPadding">
+					<div class="weui_cell_bd weui_cell_primary">
+							<span style="font-size:12px;color:#999">{{item.DESCRIPTION}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	
+   <!-- body 最后 -->

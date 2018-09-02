@@ -1,0 +1,445 @@
+<style>
+.cancelBorder:before{
+	width:0;
+}
+.hide-input{
+	float: left;
+	position: relative;
+	margin-right: 9px;
+	margin-bottom: 9px;
+	width: 77px;
+	height: 77px;
+}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0
+	}
+</style>
+   <div class="weui-header" style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109"  ng-click="toHref('SystemSetup/ActivityDraw/CardVoucher_Setting')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<!-- <div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
+		</div> -->
+		<div class="weui-header-right" style="top: 0;right:95px">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" style="width:80px"  ng-click="toHref('')">中奖记录</div>
+			</div>
+		</div>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio"   ng-click="toHref('')">保存</div>
+			</div>
+		</div>
+	</div>
+	 <div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow">
+	 		 <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">活动名称</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input class="weui_input label-input" type="text" placeholder="请输入活动名称"  ng-model="form.ACTIVITY_NAME" required emptyTips="请输入活动名称"/>
+                </div>
+                <i class="weui_icon_warn"></i>
+            </div>
+            <div class="weui_cell dcxt_active">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">是否启用</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+						<input class="weui-form-checkbox" name="f2" id="g1" value="1"
+							type="radio" ng-model="form.IS_USE"> <label
+							for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>启用</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: 10%;">
+						<input class="weui-form-checkbox" name="f2" id="g2" value="0"
+							type="radio" ng-model="form.IS_USE"> <label
+							for="g2"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>禁用</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cell dcxt_active">
+               	<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">有效期限</label>
+				</div>
+               	<div class="weui_cell_bd weui_cell_primary">
+					<div class="weui-form">
+							<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+								<input class="weui-form-checkbox" name="f1" id="g3" value="0"
+									type="radio" ng-model="form.EXPIRY_DATE"> <label
+									for="g3"> <i class="weui-icon-radio icon-checkbox-self"
+									style="margin: 0;"></i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>永久</p>
+									</div>
+								</label>
+							</div>
+							<div class="weui-form-li iblock li-checkbox-self"
+								style="margin-left: 10%;">
+								<input class="weui-form-checkbox" name="f1" id="g4" value="1"
+									type="radio" ng-model="form.EXPIRY_DATE"> <label
+									for="g4"> <i class="weui-icon-radio icon-checkbox-self"
+									style="margin: 0;"></i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>期间</p>
+									</div>
+								</label>
+							</div>
+							<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+								<input class="weui-form-checkbox" name="f1" id="g5" value="2"
+									type="radio" ng-model="form.EXPIRY_DATE"> <label
+									for="g5"> <i class="weui-icon-radio icon-checkbox-self"
+									style="margin: 0;"></i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>天数</p>
+									</div>
+								</label>
+							</div>
+						</div>
+				</div>
+         </div>
+         <div class="weui_cell  border_left" style="padding-left:20px;padding-top:5px;" ng-show="yjShow">
+			<div class="weui_cells cancelBorder cancelBorderBottom tablessetting-font-style"">
+				<div class="weui_cell cancelBorder cancelPadding" ng-show="qjShow">
+					 <div class="weui_cell_hd">
+						<label class="weui_label label">期限</label>
+					</div>
+					<div class="weui_cell_bd weui_cell_primary">
+						<input class="weui_input" id="start_time" style="float: left;width:40%" type="text" readonly value="" />
+						<div style="float:left;width:5%;">——</div>
+						<input class="weui_input" id="end_time" style="float: left;width:40%;padding-left: 30px;" readonly type="text" value="" />	
+					</div>
+				</div>
+				<div class="weui_cell cancelBorder cancelPadding"  ng-show="tsShow">
+					<div class="weui_cell_bd weui_cell_primary">
+						<div style="width: 17%;float: left;margin-left: 5%;">从下发第 </div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.START_DAY"/>
+						<div style="width: 17%;float: left;">日起,</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.DAY_COUNT"/>
+						<div>天内可用</div>
+					</div>
+				</div>
+			</div>
+		</div>
+         <div class="weui_cell tablessetting-font-style">
+                <div class="weui_cell_bd weui_cell_primary">
+                	<div style="width: 20%;float: left;margin-left: 2%;">预发数量</div>
+                    <input style="width: 17%;float: left;" class="weui_input label-input" type="text" ng-model="form.PREVIEW_COUNT" required emptyTips="预发数量"/>
+                    <div style="width: 17%;float: left;">张,到期</div>
+                     <input style="width: 17%;float: left;" class="weui_input label-input" type="text" ng-model="form.REMIND_DAYS" required emptyTips="提前提醒天数"/>
+                    <div style="width: 17%;float: left;">天提醒</div>
+                </div>
+        </div>
+		<div class="weui_cell dcxt_active">
+               	<div class="weui_cell_hd" style="width:18%">
+					<label class="weui_label label tablessetting-label">卡券类型</label>
+				</div>
+               	<div class="weui_cell_bd weui_cell_primary">
+					<div class="weui-form">
+							<div class="weui-form-li iblock li-checkbox-self" style="margin-left:2%">
+								<input class="weui-form-checkbox" name="f3" id="g6" value="0"
+									type="radio" ng-model="form.CARD_VOUCHER_TYPE"> <label
+									for="g6"> <i class="weui-icon-radio icon-checkbox-self"
+									style="margin: 0;"></i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>代金券</p>
+									</div>
+								</label>
+							</div>
+							<div class="weui-form-li iblock li-checkbox-self"
+								style="margin-left: 0;">
+								<input class="weui-form-checkbox" name="f3" id="g7" value="1"
+									type="radio" ng-model="form.CARD_VOUCHER_TYPE"> <label
+									for="g7"> <i class="weui-icon-radio icon-checkbox-self"
+									style="margin: 0;"></i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>折扣券</p>
+									</div>
+								</label>
+							</div>
+							<div class="weui-form-li iblock li-checkbox-self" style="margin-left:0">
+								<input class="weui-form-checkbox" name="f3" id="g8" value="2"
+									type="radio" ng-model="form.CARD_VOUCHER_TYPE"> <label
+									for="g8"> <i class="weui-icon-radio icon-checkbox-self"
+									style="margin: 0;"></i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>抵扣券</p>
+									</div>
+								</label>
+							</div>
+							<div class="weui-form-li iblock li-checkbox-self"
+								style="margin-left: 0;">
+								<input class="weui-form-checkbox" name="f3" id="g9" value="3"
+									type="radio" ng-model="form.CARD_VOUCHER_TYPE"> <label
+									for="g9"> <i class="weui-icon-radio icon-checkbox-self"
+									style="margin: 0;"></i>
+									<div class="weui-form-text label-input" style="margin: 0;">
+										<p>兑换券</p>
+									</div>
+								</label>
+							</div>
+						</div>
+				</div>
+         </div>
+        <!--  	抵扣类型 -->
+        <div class="weui_cell dcxt_active" ng-show="DKTYPE_ISSHOW">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">抵扣类型</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+						<input class="weui-form-checkbox" name="f4" id="g10" value="0"
+							type="radio" ng-model="form.DUDUCTION_TYPE"> <label
+							for="g10"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>抵扣次数</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: 10%;">
+						<input class="weui-form-checkbox" name="f4" id="g11" value="1"
+							type="radio" ng-model="form.DUDUCTION_TYPE"> <label
+							for="g11"> <i class="weui-icon-radio icon-checkbox-self"
+							style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>抵扣金额</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 根据卡券类型显示的cell -->
+		 <div class="weui_cell  border_left" style="padding-top:15px;" ng-show="KQCELL_ISSHOW">
+			<div class="weui_cells cancelBorder cancelBorderBottom tablessetting-font-style">
+				<div class="weui_cell cancelBorder cancelPadding" style="padding-top:5px;" ng-show="DJQ_ISSHOW">
+					<div class="weui_cell_bd weui_cell_primary">
+						<div style="width: 17%;float: left;margin-left: 5%;">券面金额</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.CARD_VOUCHER_MONEY"/>
+						<div style="width: 18%;float: left;">元,消费满</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.DAY_COUNT"/>
+						<div>元可用</div>
+					</div>
+				</div>
+				<div class="weui_cell cancelBorder cancelPadding" style="padding-top:5px;" ng-show="ZKQ_ISSHOW">
+					<div class="weui_cell_bd weui_cell_primary">
+						<div style="width: 17%;float: left;margin-left: 5%;">券面折扣</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.START_DAY"/>
+						<div style="width: 18%;float: left;">元,消费满</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.DAY_COUNT"/>
+						<div>元可用</div>
+					</div>
+				</div>
+				<div class="weui_cell cancelBorder cancelPadding" style="padding-top:5px;" ng-show="DKQ_ISSHOW">
+					<div class="weui_cell_bd weui_cell_primary">
+						<div style="width: 17%;float: left;margin-left: 5%;">券面次数</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.START_DAY"/>
+						<div style="width: 18%;float: left;">次,限</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.DAY_COUNT"/>
+						<div>次用完</div>
+					</div>
+				</div>
+				<div class="weui_cell cancelBorder cancelPadding" style="padding-top:5px;" ng-show="DKQ_MONEY_ISSHOW">
+					<div class="weui_cell_bd weui_cell_primary">
+						<div style="width: 17%;float: left;margin-left: 5%;">券面金额</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.START_DAY"/>
+						<div style="width: 22%;float: left;">元,每次抵消</div>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.DAY_COUNT"/>
+						<div>元</div>
+					</div>
+				</div>
+			</div>
+		</div>
+          <div class="weui_cell dcxt_active">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">共享类型</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f5" id="g12" value="0"
+							type="radio" ng-model="form.SHARE_TYPE"> 
+							<label for="g12"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>朋友券</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="f5" id="g13" value="1"
+							type="radio" ng-model="form.SHARE_TYPE"> 
+							<label for="g13"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>普通券</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		 <div class="weui_cell dcxt_active">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">优惠共享</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f6" id="g14" value="0"
+							type="radio" ng-model="form.FAVOURABLE_SHARE"> 
+							<label for="g14"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>不与其他优惠共享</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="f6" id="g15" value="1"
+							type="radio" ng-model="form.FAVOURABLE_SHARE"> 
+							<label for="g15"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>可优惠共享</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		 <div class="weui_cell dcxt_active">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">有效时段</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f7" id="g16" value="0"
+							type="radio" ng-model="form.EFFECTIVE_TIME"> 
+							<label for="g16"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>不限时段</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="f7" id="g17" value="1"
+							type="radio" ng-model="form.EFFECTIVE_TIME"> 
+							<label for="g17"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>限星期</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="f7" id="g18" value="2"
+							type="radio" ng-model="form.EFFECTIVE_TIME"> 
+							<label for="g18"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>限时段</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cell" ng-show="time_week">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">限星期</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: {{$index == 0 ? 0 : 10}}px;"
+						ng-repeat="item in TIME_WEEK">
+						<input class="weui-form-checkbox" name="time_week" id="time_week{{$index + 1}}"
+							value="{{item.value}}" type="checkbox" ng-model="item.checked"
+							ng-change="selectWeek(item)"> <label
+							for="time_week{{$index + 1}}"> <i
+							class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>{{item.name}}</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+	</div>
+		<div class="weui_cell" ng-show="time_time">
+			<div class="weui_cell_hd">
+				<label class="weui_label label">限时段</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary">
+				<div class="weui-form">
+				<div class="weui-form-li iblock li-checkbox-self"
+					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
+					ng-repeat="item in TIME_TIME">
+					<input style="text-align: right" class="weui-form-checkbox" name="time_time" id="time_time{{$index + 1}}"
+						value="{{item.value}}" type="checkbox" ng-model="item.checked"
+						ng-change="selectTime(item)"> <label
+						for="time_time{{$index + 1}}"> <i
+						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>{{item.name}}</p>
+						</div>
+					</label>
+				</div>
+			</div>
+			</div>
+		</div>
+		 <div class="weui_cell dcxt_active" style="top:20px">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">形象图片</label>
+			</div>
+            <div class="weui_uploader_bd weui_cell_primary">
+            	<ul class="weui_uploader_files" id="img2x">
+            		<li class="weui_uploader_file" ng-repeat="item in PICTURE_URL" style="background-image:url({{item}})">
+	            		<div class="hide-input">
+		                	<input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif">
+	             		</div>
+            		</li>
+            		</ul>
+             	<div class="weui_uploader_input_wrp">
+                	<input class="weui_uploader_input" type="file"  onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" multiple>
+             	</div>
+            </div>
+		</div>
+		<div class="weui_cell"  style="flex-wrap:wrap;background-color:#F8F8F8;top:20px">
+				<div class="weui_cell_hd">
+					<label class="weui_label label  tablessetting-label">备注说明</label>
+				</div>
+				<label style="font-size:13px;color:#888;">（1000字以内的图文介绍）</label>
+		</div>
+	
+	<div id="txtDiv" style="border:1px solid #cccccc; height:100vh;margin-top:20px" class="wangEditor"></div>
+	 </div>
+	 
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	

@@ -1,0 +1,9 @@
+{
+	"name": "ActivityDraw",
+	"viewUrl": "aps/content/SystemSetup/ActivityDraw/template.html",
+	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/controller.js",
+	"config": {
+		"pageTitle": "活动抽奖",
+		"findURL": "json/Function_queryForList_loadFunctionListByUserRole.json"
+	}
+}

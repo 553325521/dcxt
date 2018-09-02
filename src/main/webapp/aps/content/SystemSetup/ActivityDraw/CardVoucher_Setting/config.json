@@ -1,0 +1,19 @@
+{
+	"name": "CardVoucher_Setting",
+	"viewUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/controller.js",
+	"config": {
+		"menu":{	
+	         "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"CardVoucher_Setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"CardVoucher_Setting.confirm"
+		        	}
+				]
+			}
+	}
+}
