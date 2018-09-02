@@ -1,6 +1,6 @@
 
 	(function() {
-		define(['jqueryweui','wangEditor'], function() {
+		define(['picker','select','wangEditor'], function() {
 			return [
 				'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 				function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
@@ -203,12 +203,8 @@
 					}, true);
 					
 					var init = function(){
-						$("#start_time").datetimePicker({title:"选择日期",toolbarCloseText:'确定',times: function () {
-					          return [];
-					          },});
-						$("#end_time").datetimePicker({title:"选择日期",toolbarCloseText:'确定',times: function () {
-					          return [];
-					    },});
+						$("#start_time").datetimePicker({title:"选择日期",m:1});
+						$("#end_time").datetimePicker({title:"选择日期",m:1});
 						scope.pageShow = "True";
 					}
 					init();
@@ -270,32 +266,31 @@
 							contentName : "modal"
 						});
 					});
-				
+					/*初始化商铺选择数据源*/
+					scope.shopArray = [];
 					function comboboxInit() {
-						$("#pxxh_select").picker({
-							title : "选择排序序号",
-							toolbarCloseText : '确定',
-							cols : [
-								{
-									textAlign : 'center',
-									values : pxxh_select,
-									displayValues : pxxh_select
+							$httpService.post(config.loadShopDataURL,scope.form).success(function(data){
+								console.info(data.data);
+								for(var i = 0;i < data.data.length;i++){
+									scope.shopArray.push({title:data.data[i].SHOP_NAME,value:data.data[i].FK_SHOP});
 								}
-								]
-						});
-						$("#unit_select").picker({
-							title : "选择单位",
-							toolbarCloseText : '确定',
-							cols : [
-								{
-									textAlign : 'center',
-									values : goods_dw,
-									displayValues : goods_dw
-								}
-							]
-						});
+								scope.$apply();
+								console.info("shopArray:"+scope.shopArray);
+								$("#d3").select({
+							        title: "选择门店",
+							        multi: true,
+							        split:',',
+							        closeText:'完成',
+							        items:scope.shopArray,
+							        onChange: function(d) {
+							          $.alert("你选择了"+d.values+d.titles);
+							        }
+							      });
+						    }).error(function(data){
+						    	loggingService.info('获取测试信息出错');
+						    });
 					}
-					
+					comboboxInit();
 				}
 			];
 		});

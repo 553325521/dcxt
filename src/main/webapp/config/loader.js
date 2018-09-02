@@ -43,6 +43,8 @@
 
 			jqueryweui : "js/weui/jquery-weui.min",
 			slideleft : 'js/weui/slideleft2',
+			picker:'js/weui/picker',
+			select:'js/weui/select',
 			pickercity : 'js/weui/picker-city',
 			wangEditor : 'js/wangEditor/wangEditor-1.1.0',
 		},
