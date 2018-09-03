@@ -249,7 +249,7 @@
 									"title" : "提示",
 									"contentName" : "modal",
 									"text" : data.data,
-									"toUrl" : "aps/content/DailyManagement/goods/goods_show/config.json?GTYPE_PK="+params.gtype_id,
+									"toUrl" : "aps/content/DailyManagement/goods/goods_show/config.json?GTYPE_PK="+params.gtype_id+"&Last_Page="+params.Last_Page+"&Last_Array="+params.Last_Array,
 								 }
 							 }
 							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
