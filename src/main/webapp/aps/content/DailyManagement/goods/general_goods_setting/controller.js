@@ -139,12 +139,7 @@
 							});
 						}
 					}
-					
-					
 					init();
-					
-					
-					
 					//点击了标签
 					scope.clickLabel = function(text){
 						console.info(scope.LABEL)
@@ -291,8 +286,6 @@
 						}
 						
 					}
-					
-				
 					scope.initsize_selects = function(index,value){
 						$(".size_select:eq(" + index + ")").val(value);
 						$(".size_select").picker({
@@ -361,7 +354,7 @@
 		        		$.toptips('单张图片上传大小最大为2M')
 		        		return;
 		        	}
-		        	if(index == undefined || index == ''){
+		        	if(index === undefined || index === ''){
 		        		//添加图片
 		        		scope.PICTURE_URL.push(evt.target.result);
 		        	}else{

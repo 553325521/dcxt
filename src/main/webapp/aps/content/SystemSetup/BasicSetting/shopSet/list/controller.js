@@ -310,10 +310,10 @@ function previewImage(file) {
 		        return;
 		       }
 		       if(index == 'i1'){
-		        //添加图片
+		        //添加店铺LOGO
 		    	   scope.form.IMG_LOGO = evt.target.result;
 		       }else if(index == 'i2'){
-		        //更换图片
+		        //添加店铺形象
 		    	   scope.form.IMG_BODAY = evt.target.result;
 		       }else if(index == 'i3'){
 		        	scope.form.IMG_HEAD = evt.target.result;

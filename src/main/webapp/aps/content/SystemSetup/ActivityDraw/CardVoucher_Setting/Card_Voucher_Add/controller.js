@@ -51,6 +51,62 @@
 					
 					scope.time_time ="False";
 					
+					/*初始化图文介绍*/
+					scope.introduceArray = [];
+					
+					scope.form.confirmColor = "#63b359";
+					
+					scope.form.confirmName="Color010";
+					
+					/*初始化颜色数据源*/
+					scope.colorArray = [
+						{'colorName':'Color010','colorNumber':'	#63b359'},
+						{'colorName':'Color020','colorNumber':'	#2c9f67'},
+						{'colorName':'Color030','colorNumber':'	#509fc9'},
+						{'colorName':'Color040','colorNumber':'	#5885cf'},
+						{'colorName':'Color050','colorNumber':'	#9062c0'},
+						{'colorName':'Color060','colorNumber':'	#d09a45'},
+						{'colorName':'Color070','colorNumber':'	#e4b138'},
+						{'colorName':'Color080','colorNumber':'	#ee903c'},
+						{'colorName':'Color081','colorNumber':'	#f08500'},
+						{'colorName':'Color082','colorNumber':'	#a9d92d'},
+						{'colorName':'Color090','colorNumber':'	#dd6549'},
+						{'colorName':'Color100','colorNumber':'	#cc463d'},
+						{'colorName':'Color100','colorNumber':'	#cf3e36'},
+						{'colorName':'Color102','colorNumber':'	#5E6671'},
+					]
+					
+					scope.switchColor = function(){
+						$("#switchColorDiv").toggle();
+					}
+					/*选择颜色调用方法*/
+					scope.selectColor = function(currentSelect){
+						
+						console.info(currentSelect);
+						
+						console.info($(currentSelect.this).attr("user-attr"));
+						
+						console.info($("div[user-attr='"+currentSelect.item.colorName+"']"));
+						$("i").remove(".singleColor");
+						$("div[user-attr='"+currentSelect.item.colorName+"']").after(`<i class="icon-caret-up singleColor" style="margin-left:15%"></i>`);
+						scope.form.confirmColor = currentSelect.item.colorNumber;
+						
+						scope.form.confirmName=currentSelect.item.colorName;
+					}
+					
+					//添加
+					scope.add = function(){
+						if(scope.introduceArray.length>=3){
+							return;
+						}
+						scope.introduceArray.push({"img":"","text":""});//拷贝数组，防止改一个全改了
+						console.info(scope.introduceArray)
+					}
+					//删除
+					scope.del = function(index){
+						scope.introduceArray.splice(index,1);
+					}
+					
 					/*监听有效时段选择值*/
 					$scope.$watch('form.EFFECTIVE_TIME', function(newValue, oldValue) {
 						if (newValue === '0') {
@@ -64,31 +120,6 @@
 							scope.time_time ="True";
 						}
 					}, true);
-					
-					/*初始化文本编辑器*/
-					function initEdit(){
-					    //一句话，即可把一个div 变为一个富文本框！o(∩_∩)o 
-					   
-						var $editor = $('#txtDiv').wangEditor();
-					    //显示 html / text
-					    var $textarea = $('#textarea'),
-					        $btnHtml = $('#btnHtml'),
-					        $btnText = $('#btnText'),
-					        $btnHide = $('#btnHide');
-					    $textarea.hide();
-					    $btnHtml.click(function(){
-					        $textarea.show();
-					        $textarea.val( $editor.html() );
-					    });
-					    $btnText.click(function(){
-					        $textarea.show();
-					        $textarea.val( $editor.text() );
-					    });
-					    $btnHide.click(function(){
-					        $textarea.hide();
-					    });
-					};
-					initEdit();
 					
 					// 初始化限星期数据源
 					$scope.TIME_WEEK = [
@@ -218,16 +249,22 @@
 						}
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
 					}
-					
+					scope.form.SHOPID = [];
 					var $form = $("#form");
 					$form.form();
 					//保存
 					scope.doSave = function(){
-						$form.validate(function(error) {
+						/*$form.validate(function(error) {
 							if (!error) {
 							
 							}
-						})
+						})*/
+						scope.form.SHOPID = $("#d3").val();
+						$httpService.post(config.createCardURL,scope.form).success(function(data){
+							console.info(data);
+						    }).error(function(data){
+						    	loggingService.info('获取测试信息出错');
+						    });
 					}
 					
 					// 弹窗确认事件
@@ -295,32 +332,29 @@
 			];
 		});
 	}).call(this);
+	var MAX_PIC_SIZE = 2097152;//单张图片上传最大大小
 	//添加或更换图片
 	function previewImage(file) {
-		index = angular.element(file).scope().$index  //onchange里边获取不到$index，只能这么获取了
-	    for(var i=0;i<file.files.length;i++){
-		    if (file.files && file.files[i]) {
-		        var reader = new FileReader();
-		        reader.onload = function (evt) {
-		        	console.info(evt.loaded)
-		        	if(evt.loaded > 2097152){
-		        		$.toptips('单张图片上传大小最大为2M')
-		        		return;
-		        	}
-		        	if(index == undefined || index == ''){
-		        		//添加图片
-		        		scope.PICTURE_URL.push(evt.target.result);
-		        	}else{
-		        		//更换图片
-		        		scope.PICTURE_URL[index] = evt.target.result;
-		        	}
-		        	console.info(scope.PICTURE_URL)
-		        	scope.$apply();
-		        };
-		        reader.readAsDataURL(file.files[i]);
-		    }
-	    
-	    }
-	}	
+		index = file.id
+		 if (file.files && file.files[0]) {
+		      var reader = new FileReader();
+		      reader.onload = function (evt) {
+			       console.info(evt.loaded)
+			       if(evt.loaded > MAX_PIC_SIZE){
+			        $.toptips('单张图片上传大小最大为'+Math.floor(MAX_PIC_SIZE/1000000)+'M')
+			        return;
+			       }
+			       if(index == 'i1'){
+			        //添加图片
+			    	   scope.form.IMG_LOGO = evt.target.result;
+			       }else if(index == 'i2'){
+			        //更换图片
+			    	   scope.form.IMG_BODAY = evt.target.result;
+			       }
+			        scope.$apply();
+		       };
+		        reader.readAsDataURL(file.files[0]);
+		   }
+	}
 	$(function() {
 	})
