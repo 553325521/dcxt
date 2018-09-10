@@ -70,10 +70,10 @@ public class InterfaceController extends BaseController {
 
 	@Resource
 	private JedisClient jedisClient;
-	
+
 	@Autowired
 	private UserTagController userTagCtrl;
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -219,7 +219,7 @@ public class InterfaceController extends BaseController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -266,7 +266,7 @@ public class InterfaceController extends BaseController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -308,7 +308,7 @@ public class InterfaceController extends BaseController {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -326,8 +326,17 @@ public class InterfaceController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-			if (userObj.containsKey("FK_APP")) {
-				output("0000", "have app");
+			//
+			if (userObj.containsKey("FK_APP") && !(CommonUtil.getPath("AppID")).equals(userObj.getString("FK_APP"))) {
+				Map<String, Object> map = new HashMap<>();
+				map.put("FK_APP", userObj.getString("FK_APP"));
+				map.put("sqlMapId", "chechSmallAppByApp");
+				map = (Map<String, Object>) openService.queryForObject(map);
+				if (map == null || !map.containsKey("SMALL_APP")) {
+					output("0000", getPlatFormAuthorizedCodeSmall());
+					return;
+				}
+				output("0000", "");
 				return;
 			} else {
 				output("9999", getPlatFormAuthorizedCode());
@@ -337,7 +346,7 @@ public class InterfaceController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -352,8 +361,8 @@ public class InterfaceController extends BaseController {
 
 			String url = CommonUtil.getPath("AuthWxPlatFormUrl").toString();
 
-			url = url.replace("componentAppid", component_appid)
-					.replace("preAuthCode", getComponentPreAuthCode())
+			url = url.replace("componentAppid", component_appid).replace("preAuthCode", getComponentPreAuthCode())
+					.replace("authType", "3")
 					.replace("redirectUri", CommonUtil.getPath("project_url").toString().replace("DATA", "getRes"));
 			return url;
 		} catch (Exception e) {
@@ -361,14 +370,51 @@ public class InterfaceController extends BaseController {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月5日 - 上午11:19:18
+	 * @description:获取小程序授权连接
+	 */
+	public String getPlatFormAuthorizedCodeSmall() {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			String url = CommonUtil.getPath("AuthWxPlatFormUrl").toString();
+
+			url = url.replace("componentAppid", component_appid).replace("preAuthCode", getComponentPreAuthCode())
+					.replace("authType", "2")
+					.replace("redirectUri", CommonUtil.getPath("project_url").toString().replace("DATA", "getRes")
+							+ "?appid=" + userObj.getString("FK_APP"));
+			return url;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @return void
+	 * @date 2018年9月3日 - 上午10:31:56
+	 * @description:微信、小程序授权逻辑
+	 */
 	@RequestMapping(value = "/getRes")
 	@ResponseBody
 	public void getRes(HttpServletRequest request) {
 		try {
 			String authorization_code = request.getParameter("auth_code");
+			String appid = request.getParameter("appid");
 			logger.info("status app authorization");
 			logger.info("authorization_code:" + authorization_code);
+			logger.info("type:" + appid);
 			if (StringUtils.isNotBlank(authorization_code)) {
 				String url = CommonUtil.getPath("getWxPlatFormInfoURL").toString();
 				url = url.replace("componentAccessToken", getComponentAccessToken());
@@ -387,16 +433,19 @@ public class InterfaceController extends BaseController {
 
 					Map<String, Object> map = getParameterMap();
 					map.put("APP_PK", authorizer_appid);
+					if (StringUtils.isNotBlank(appid)) {
+						map.put("FK_APP", appid);
+					}
 					map.put("APP_REFRESH_TOKEN", authorizer_refresh_token);
 					map.put("CREATE_TIME", StringDeal.getStringDate());
 					map.put("sqlMapId", "insertApp");
 					openService.insert(map);
-					
-					// 创建店员端标签
-					String tagId = userTagCtrl.createTagForAppId(authorizer_appid, authorizer_access_token);
-					
-					// TODO 创建店员端菜单 用户端菜单
-					
+					if (StringUtils.isBlank(appid)) {
+						// 创建店员端标签
+						String tagId = userTagCtrl.createTagForAppId(authorizer_appid, authorizer_access_token);
+
+						// TODO 创建店员端菜单 用户端菜单
+					}
 					String btnToken = UUID.randomUUID().toString();
 					JSONObject objj = new JSONObject();
 					objj.put("status", 0000);
@@ -407,6 +456,7 @@ public class InterfaceController extends BaseController {
 					output2(response, "success");
 					response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
 							"#toOtherPage/msgPage/" + btnToken));
+
 					return;
 				} else {
 					String btnToken = UUID.randomUUID().toString();
@@ -423,11 +473,11 @@ public class InterfaceController extends BaseController {
 				}
 			} else {
 				logger.warn("获取授权码失败");
-				
+
 				String btnToken = UUID.randomUUID().toString();
 				JSONObject obj = new JSONObject();
 				obj.put("status", 9999);
-				obj.put("msg", "该获取授权码失败！请重试！");
+				obj.put("msg", "获取授权码失败！请重试！");
 				obj.put("data", new ArrayList<JSONObject>());
 				// 保存button信息
 				jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
@@ -437,10 +487,12 @@ public class InterfaceController extends BaseController {
 				return;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error", e);
 		}
+		output2(response, "success");
+		return;
 	}
-	
+
 	/**
 	 * @author kqs
 	 * @param string
@@ -482,6 +534,29 @@ public class InterfaceController extends BaseController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月1日 - 下午6:06:01
+	 * @description:接受小程序用户认证
+	 */
+	@RequestMapping(value = "/getSmallUserInfo")
+	@ResponseBody
+	public void getSmallUserInfo(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			String code = request.getParameter("code");
+			String appid = request.getParameter("appid");
+			logger.info("微信小程序用户认证---------获取到临时code:" + code + ", 接收时间:" + StringDeal.getStringDate());
+			// processAuthorizeEvent(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		output2(response, "success");
 	}
 
 }

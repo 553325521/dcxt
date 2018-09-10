@@ -39,7 +39,11 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
-
+				
+				scope.toHref1 = function() {
+					window.location.href = scope.authorizerURL;
+				}
+				
 				scope.updateToWxPlat = function() {
 					if (scope.form.MENU_PLAT == undefined || scope.form.MENU_PLAT == '') {
 						var modal = {
@@ -148,6 +152,7 @@
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
+
 				}
 
 				var initt = function() {
@@ -157,8 +162,12 @@
 							scope.pageTitle = '设备授权'
 
 							scope.isList = false;
-							
+
+							scope.isSmall = true;
+
 							scope.authorizerURL = data.data;
+							
+							scope.authorize = false;
 							
 						} else {
 							init()
@@ -166,6 +175,13 @@
 							scope.pageTitle = config.pageTitle
 
 							scope.isList = true;
+
+							if (data.data != "" && data.data != null && data.data != undefined) {
+								
+								scope.authorize = true;
+								
+								scope.authorizerURL = data.data;
+							}
 						}
 						scope.$apply()
 					}).error(function(data) {

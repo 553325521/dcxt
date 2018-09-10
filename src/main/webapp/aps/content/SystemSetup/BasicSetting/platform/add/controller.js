@@ -10,11 +10,11 @@
 				scope.pageTitle = config.pageTitle
 
 				scope.form = {}
-				
+
 				scope.form.MENU_PLAT = params.plattype;
-				
+
 				scope.form.FK_APP = params.AppId;
-				
+
 				scope.toHref = function(path) {
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid + "&AppId=" + params.AppId + "&plattype=" + params.plattype,
@@ -23,7 +23,7 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
-				
+
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 					$httpService.post(config.saveURL, $scope.form).success(function(data) {
@@ -55,7 +55,7 @@
 						contentName : "modal"
 					});
 				});
-				
+
 				scope.doSave = function() {
 					var $form = $("#menuAddForm");
 					$form.form();
@@ -89,12 +89,12 @@
 								scope.MenuList = data.data
 							}
 							comboboxInit(values)
-							
+
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
-					
+
 					$httpService.post(config.findAllFunctionURL, scope.form).success(function(data) {
 						if (data.code != '0000') {
 							loggingService.info(data.data);
@@ -109,7 +109,7 @@
 								}
 								scope.FunList = data.data
 							}
-							
+
 							$("#gnxz_select").picker({
 								title : "请选择功能",
 								toolbarCloseText : '确定',
@@ -130,12 +130,12 @@
 									}
 								}
 							});
-							
+
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
-					
+
 				}
 
 				init()
@@ -164,6 +164,23 @@
 						}
 					});
 
+					$("#cdlx_select").picker({
+						title : "选择菜单类型",
+						toolbarCloseText : '确定',
+						cols : [
+							{
+								textAlign : 'center',
+								values : [ '小程序', '页面' ]
+							}
+						],
+						onChange : function(e) {
+							if (e != undefined && e.value[0] != undefined) {
+								var value = e.value[0]
+								scope.form.VIEW_TYPE = value
+							}
+						}
+					});
+
 					$("#gnlx_select").picker({
 						title : "选择功能类型",
 						toolbarCloseText : '确定',
@@ -188,7 +205,7 @@
 							}
 						}
 					});
-					
+
 					$("div#gnxz").hide();
 					$("div#ljdz").hide();
 				}

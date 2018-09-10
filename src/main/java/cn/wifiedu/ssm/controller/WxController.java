@@ -51,17 +51,17 @@ public class WxController extends BaseController {
 
 	@Resource
 	OpenService openService;
-	
+
 	@Resource
 	MenuController menucontroller;
-	
+
 	@Resource
 	InterfaceController interfaceController;
 
 	public OpenService getOpenService() {
 		return openService;
 	}
-	
+
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
@@ -196,7 +196,7 @@ public class WxController extends BaseController {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * 小程序授权
 	 */
@@ -205,13 +205,10 @@ public class WxController extends BaseController {
 		try {
 			String code = request.getParameter("code");
 			String appid = request.getParameter("appid");
-			if (StringUtils.isBlank(appid)) {
-				appid = CommonUtil.getPath("AppID");
-			}
 			logger.info("request params:" + getParameterMap());
 			logger.info("request code:" + code + ", request appid:" + appid);
 			if (null != code && !"".equals(code)) {
-				String openId = getOpenIdByCode2(code, appid);
+				String openId = getOpenIdByCodeForMini(code, appid);
 				logger.info("WeChart openId : " + openId);
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
@@ -224,9 +221,9 @@ public class WxController extends BaseController {
 				userMap.put("FK_APP", appid);
 				if (checkList != null && checkList.size() == 0) {
 					// 查询 openId 根据 用户详细信息
-					getWxUserInfo(openId, userMap);
-
-					map.put("sqlMapId", "insertUserInitOpenId");
+					//getWxUserInfo(openId, userMap);
+					map.put("USER_UNIONID", jedisClient.get(RedisConstants.WX_UNIONID + openId));
+					map.put("sqlMapId", "insertUserInitOpenIdMini");
 
 					String USER_PK = openService.insert(map);
 
@@ -241,7 +238,7 @@ public class WxController extends BaseController {
 				// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 				CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
 
-				output("0000", "success");
+				output("0000", openId);
 				return;
 			}
 			output("9999", "error");
@@ -252,7 +249,7 @@ public class WxController extends BaseController {
 		}
 		return;
 	}
-	
+
 	/**
 	 * 跳转店员页面
 	 */
@@ -407,8 +404,8 @@ public class WxController extends BaseController {
 			url = url.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openId);
 
 			String res = CommonUtil.get(url);
-			logger.error("获取用户基本信息时候accessToken:"+accessToken);
-			logger.error("获取用户基本信息时候res:"+res);
+			logger.error("获取用户基本信息时候accessToken:" + accessToken);
+			logger.error("获取用户基本信息时候res:" + res);
 			if (res != null && res.indexOf("errcode") <= 0) {
 				logger.info("userInfo====" + res);
 				res = new String(res.getBytes("ISO-8859-1"), "UTF-8");
@@ -467,6 +464,43 @@ public class WxController extends BaseController {
 		return openId;
 	}
 
+	/**
+	 * 
+	 * @author kqs
+	 * @param code
+	 * @param appid
+	 * @return
+	 * @return String
+	 * @date 2018年9月7日 - 上午10:54:43
+	 * @description:小程序用户授权
+	 */
+	public String getOpenIdByCodeForMini(String code, String appid) {
+		// String url = CommonUtil.getPath("wxSmallLoginURL");
+		// url = url.replace("JSCODE", code).replace("APPID",
+		// appid).replace("COMPONENT_ACCESS_TOKEN",
+		// interCtrl.getComponentAccessToken());
+		String url = CommonUtil.getPath("wxSmallLoginURLtemp");
+		url = url.replace("JSCODE", code).replace("APPID", appid).replace("COMPONENT_ACCESS_TOKEN",
+				interCtrl.getComponentAccessToken());
+		logger.info("getOpenIdByCode url:" + url);
+		String res = CommonUtil.get(url);
+		logger.info("getOpenIdByCode response:" + res);
+		JSONObject succesResponse = JSONObject.parseObject(res);
+
+		String openId = succesResponse.getString("openid");
+
+		String session_key = succesResponse.getString("session_key");
+
+		String unionid = succesResponse.getString("unionid");
+
+		jedisClient.set(RedisConstants.WX_UNIONID + openId, unionid);
+
+		jedisClient.set(RedisConstants.WX_SESSION_KEY + openId, session_key);
+
+		logger.info(appid + "====" + openId);
+		return openId;
+	}
+
 	public String getOpenIdByCode(String code) {
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL");
 		url = url.replace("CODE", code);
@@ -480,7 +514,7 @@ public class WxController extends BaseController {
 		String refresh_token = result.get("refresh_token").toString();
 
 		String access_token = result.get("access_token").toString();
-		
+
 		logger.info("openId:" + openId);
 		logger.info("refresh_token:" + refresh_token);
 		logger.info("access_token:" + access_token);
@@ -567,19 +601,21 @@ public class WxController extends BaseController {
 							logger.info("add user tag success: " + resMsg.trim());
 						}
 
-						//插入agent
-						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + CookieUtils.getCookieValue(request, "DCXT_TOKEN"));
+						// 插入agent
+						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY
+								+ CookieUtils.getCookieValue(request, "DCXT_TOKEN"));
 						JSONObject userObj = JSONObject.parseObject(userJson);
 
 						map.put("sqlMapId", "insertAgentInfoById");
 						map.put("USER_ID", checkList.get(0).get("USER_PK").toString());
-						map.put("CREATE_BY", userObj.get("USER_PK")+"");
-						if(openService.insert(map).length() > 0) {
+						map.put("CREATE_BY", userObj.get("USER_PK") + "");
+						if (openService.insert(map).length() > 0) {
 							logger.info("add user agent success");
-						}else{
+						} else {
 							logger.info("add user agent error");
-						};
-						
+						}
+						;
+
 						// 返回到成功页面
 						response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json", "")
 								+ "/qrcode_success.jsp");
@@ -726,8 +762,7 @@ public class WxController extends BaseController {
 			output("9999", e);
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 * @author lps
@@ -741,19 +776,18 @@ public class WxController extends BaseController {
 					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.WX_JS_API_Ticker + appid))) {
 				return jedisClient.get(RedisConstants.WX_JS_API_Ticker + appid);
 			}
-			
+
 			String accessToken = "";
-			
+
 			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
-				accessToken = WxUtil.getWxAccessToken(appid,
-						interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+				accessToken = WxUtil.getWxAccessToken(appid, interfaceController.getComponentAccessToken(),
+						interfaceController.getRefreshTokenByAppId(appid));
 				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
 				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
 			} else {
 				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
 			}
-			
-			
+
 			String url = CommonUtil.getPath("WX_GET_JSAPI_TICKET").replace("ACCESS_TOKEN", accessToken);
 			/** 发送Https请求到微信 */
 			String retStr = CommonUtil.get(url);
@@ -772,34 +806,29 @@ public class WxController extends BaseController {
 			jedisClient.expire(RedisConstants.WX_JS_API_Ticker + appid, 3600 * 1);
 
 			return jsApiTicket;
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	
-	
-	
-	
-	
+
 	/**
 	 * 
 	 * @author lps
-	 * @Description:  获取微信config信息
-	 * @return void 
+	 * @Description: 获取微信config信息
+	 * @return void
 	 *
 	 */
 	@RequestMapping("/Wx_getWxConfigMess")
-	public void getWxConfig(HttpServletRequest request, HttpServletResponse reponse){
+	public void getWxConfig(HttpServletRequest request, HttpServletResponse reponse) {
 		try {
 			Map<String, Object> map = getParameterMap();
 			String appId = CommonUtil.getPath("AppID");
 			map.put("jsapi_ticket", getJsApiTicket(appId));
 			map = WXJSUtil.getWxConfigMess(map);
 			map.put("appId", appId);
-			
+
 			output("0000", map);
 			return;
 		} catch (ExceptionVo e) {

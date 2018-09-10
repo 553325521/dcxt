@@ -20,6 +20,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -228,6 +229,9 @@ public class MenuController extends BaseController {
 			for (Map<String, Object> fMap : fatherMap) {
 				Map<String, Object> fmap = new HashMap<>();
 				String ftype = "view";
+				if ("小程序".equals(fMap.get("VIEW_TYPE").toString())) {
+					ftype = "miniprogram";
+				}
 				String MENU_PK = fMap.get("MENU_PK").toString();
 				map.put("sqlMapId", "loadSonMenusByAppId");
 				map.put("MENU_FATHER_PK", MENU_PK);
@@ -238,11 +242,21 @@ public class MenuController extends BaseController {
 					for (Map<String, Object> sMap : sonMap) {
 						Map<String, Object> smap = new HashMap<>();
 						String stype = "view";
+						if ("小程序".equals(sMap.get("VIEW_TYPE").toString())) {
+							stype = "miniprogram";
+						}
 						smap.put("type", stype);
-						smap.put("url",
-								CommonUtil.getPath("project_url1").replace("DATA", "Wxcode_ymsqCommon_data")
-										+ "?params=" + sMap.get("MENU_LINK").toString() + "&appid="
-										+ userObj.getString("FK_APP"));
+						if (!"小程序".equals(sMap.get("VIEW_TYPE").toString())) {
+							smap.put("url",
+									CommonUtil.getPath("project_url1").replace("DATA", "Wxcode_ymsqCommon_data")
+											+ "?params=" + sMap.get("MENU_LINK").toString() + "&appid="
+											+ userObj.getString("FK_APP"));
+						} else {
+							smap.put("url", "http://mp.weixin.qq.com");
+							smap.put("appid", "wx3326999f88e7077a");
+							smap.put("pagepath", "pages/indent/indent?appid=wx3326999f88e7077a");
+						}
+
 						smap.put("name", sMap.get("MENU_NAME"));
 						sonMapList.add(smap);
 					}
@@ -255,6 +269,10 @@ public class MenuController extends BaseController {
 				if ("view".equals(ftype)) {
 					fmap.put("url", CommonUtil.getPath("project_url1").replace("DATA", "Wxcode_ymsqCommon_data")
 							+ "?params=" + fMap.get("MENU_LINK").toString() + "&appid=" + userObj.getString("FK_APP"));
+				} else {
+					fmap.put("url", "http://mp.weixin.qq.com");
+					fmap.put("appid", "wx3326999f88e7077a");
+					fmap.put("pagepath", "pages/indent/indent?appid=wx3326999f88e7077a");
 				}
 				postMap2ToBtn.add(fmap);
 			}
@@ -372,8 +390,26 @@ public class MenuController extends BaseController {
 			// // url = url.replace("ACCESS_TOKEN", token);
 			// // String res = CommonUtil.get(url);
 
-			String url = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN";
+			// String buttonStr = "";
+			// JSONObject jsonObject = new JSONObject();
+			// JSONArray jsonArray = new JSONArray();
+			// jsonArray.add(new JSONObject() {
+			// {
+			// put("type", "view");
+			// put("name", "菜单1");
+			// put("url", CommonUtil.getPath("project_url1").replace("DATA",
+			// "Wxcode_ymsqCommon_data")
+			// + "?params=123");
+			// }
+			// });
+			// jsonObject.put("button", jsonArray);
+			// buttonStr = jsonObject.toJSONString();
 
+			// String url =
+			// "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN";
+			String url = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN";
+			// String url =
+			// "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
 			// String url =
 			// CommonUtil.getPath("deleteconditionalURL").toString();
 			String token = "";
@@ -387,11 +423,10 @@ public class MenuController extends BaseController {
 			} else {
 				token = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + userObj.getString("FK_APP"));
 			}
-			
+
 			url = url.replace("ACCESS_TOKEN", token);
 			String res = CommonUtil.get(url);
-			// String res = CommonUtil.posts(url, "{\"menuid\":\"430283769\"}",
-			// "utf-8");
+			// String res = CommonUtil.posts(url, buttonStr, "utf-8");
 			output("0000", res);
 		} catch (Exception e) {
 			output("9999", " Exception ", e);

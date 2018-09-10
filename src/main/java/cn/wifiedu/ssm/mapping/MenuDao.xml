@@ -7,7 +7,7 @@
 	<select id="loadTopMenusByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
-		MENU_LINK, MENU_SORT,
+		MENU_LINK, MENU_SORT, VIEW_TYPE,
 		MENU_FATHER_PK
 		FROM SC_MENU
 		<where>
@@ -23,7 +23,7 @@
 	<select id="loadSonMenusByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
-		MENU_LINK, MENU_SORT,
+		MENU_LINK, MENU_SORT, VIEW_TYPE,
 		MENU_FATHER_PK
 		FROM SC_MENU
 		<where>
@@ -38,7 +38,7 @@
 	<select id="loadAllMenusByAppId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT MENU_PK, MENU_NAME, MENU_TYPE,
-		MENU_LINK, MENU_SORT,
+		MENU_LINK, MENU_SORT, VIEW_TYPE,
 		MENU_FATHER_PK
 		FROM SC_MENU
 		<where>
@@ -70,6 +70,7 @@
 		MENU_TYPE,
 		MENU_LINK,
 		MENU_PLAT,
+		VIEW_TYPE,
 		CREATE_BY,
 		CREATE_TIME,
 		<if test="MENU_FATHER_PK != null">
@@ -85,6 +86,7 @@
 		#{MENU_TYPE},
 		#{MENU_LINK},
 		#{MENU_PLAT},
+		#{VIEW_TYPE},
 		#{CREATE_BY},
 		#{CREATE_TIME},
 		<if test="MENU_FATHER_PK != null">

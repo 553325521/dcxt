@@ -49,4 +49,10 @@
 		FROM SC_APP WHERE APP_PK = #{APP_PK}
 	</select>
 	
+	<select id="chechSmallAppByApp" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT APP_PK AS SMALL_APP
+		FROM SC_APP WHERE FK_APP = #{FK_APP}
+	</select>
+	
 </mapper>

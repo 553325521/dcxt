@@ -1,123 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="goodsType" >
-  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
-  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
+<mapper namespace="goodsType">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
 	<!-- 根据PID查询当前级别商品分类序号 -->
 	<select id="loadGoodsTypeOrder" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		SELECT 
-		GTYPE_ORDER  
-		FROM sc_goods_type 
-		WHERE GTYPE_PID = #{GTYPE_PID}
+		SELECT
+		GTYPE_ORDER
+		FROM sc_goods_type
+		WHERE GTYPE_PID =
+		#{GTYPE_PID}
 		AND SHOP_FK = #{SHOP_FK}
-		ORDER BY GTYPE_ORDER DESC
+		ORDER BY GTYPE_ORDER
+		DESC
 		LIMIT 1
 	</select>
 	<!-- 根据PID查询当前商品类别 -->
 	<select id="loadGoodsTypeListByPID" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		SELECT * 
-		FROM sc_goods_type 
+		SELECT *
+		FROM sc_goods_type
 		WHERE GTYPE_PID = #{GTYPE_PID}
-		AND SHOP_FK = #{SHOP_FK}
+		AND
+		SHOP_FK = #{SHOP_FK}
 		ORDER BY GTYPE_ORDER
 	</select>
-	 <!--添加商品类别表  -->
+	<!--添加商品类别表 -->
 	<insert id="insertGoodsType" parameterMap="BaseParameterMap">
-		insert into 
-			SC_GOODS_TYPE
-			(
-			GTYPE_PK,
-			GTYPE_NAME,
-			GTYPE_PID,
-			GTYPE_ORDER,
-			GTYPE_AREA,
-			GTYPE_STATE,
-			GTYPE_ATTACH,
-			GTYPE_LEVEL,
-			GTYPE_BZ,
-			SHOP_FK,
-			CREATE_BY,
-			CREATE_TIME
-			)
-	values(
-			#{UUID},
-			#{GTYPE_NAME},
-			#{GTYPE_PID},
-			#{GTYPE_ORDER},
-			#{GTYPE_AREA},
-			#{GTYPE_STATE},
-			#{GTYPE_ATTACH},
-			#{GTYPE_LEVEL},
-			#{GTYPE_BZ},
-			#{SHOP_FK},
-			#{CREATE_BY},
-			NOW()
-	)
+		insert into
+		SC_GOODS_TYPE
+		(
+		GTYPE_PK,
+		GTYPE_NAME,
+		GTYPE_PID,
+		GTYPE_ORDER,
+		GTYPE_AREA,
+		GTYPE_STATE,
+		GTYPE_ATTACH,
+		GTYPE_LEVEL,
+		GTYPE_BZ,
+		SHOP_FK,
+		CREATE_BY,
+		CREATE_TIME
+		)
+		values(
+		#{UUID},
+		#{GTYPE_NAME},
+		#{GTYPE_PID},
+		#{GTYPE_ORDER},
+		#{GTYPE_AREA},
+		#{GTYPE_STATE},
+		#{GTYPE_ATTACH},
+		#{GTYPE_LEVEL},
+		#{GTYPE_BZ},
+		#{SHOP_FK},
+		#{CREATE_BY},
+		NOW()
+		)
 	</insert>
-<!-- 	根据ID查询商品分类名称 -->
+	<!-- 根据ID查询商品分类名称 -->
 	<select id="selectGoodsTypePNameByPID" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		SELECT  *
-		FROM sc_goods_type 
+		SELECT *
+		FROM sc_goods_type
 		WHERE GTYPE_PK = #{GTYPE_PID}
 	</select>
 	<!-- 查询跟父分类同级且没有商品的分类 -->
 	<select id="selectGTypeNameButNoGoodsByPID" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT sgt.GTYPE_NAME
-		FROM sc_goods_type sgt 
-		WHERE  sgt.GTYPE_PID  = (SELECT sgt1.GTYPE_PID from sc_goods_type sgt1  where sgt1.GTYPE_PK = #{GTYPE_PID}) 
-		AND (SELECT COUNT(*) FROM sc_goods WHERE GTYPE_FK = sgt.GTYPE_PK) = 0
+		FROM sc_goods_type sgt
+		WHERE
+		sgt.GTYPE_PID = (SELECT sgt1.GTYPE_PID from sc_goods_type sgt1 where
+		sgt1.GTYPE_PK = #{GTYPE_PID})
+		AND (SELECT COUNT(*) FROM sc_goods WHERE
+		GTYPE_FK = sgt.GTYPE_PK) = 0
 	</select>
 	<!-- 根据PID查询该类下的排序序号(从小到大排序) -->
 	<select id="selectGTypeOrderByPID" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT sgt.GTYPE_ORDER
 		FROM sc_goods_type sgt
-		WHERE sgt.GTYPE_PID = 	#{GTYPE_PID}
+		WHERE
+		sgt.GTYPE_PID = #{GTYPE_PID}
 		order by sgt.GTYPE_ORDER
 	</select>
 	<!-- 根据分类ID更新某个分类 -->
 	<update id="updateGoodsType" parameterMap="BaseParameterMap">
-		UPDATE SC_GOODS_TYPE SET
+		UPDATE SC_GOODS_TYPE
+		SET
 		GTYPE_NAME = #{GTYPE_NAME},
 		GTYPE_ORDER = #{GTYPE_ORDER},
-		GTYPE_AREA = #{GTYPE_AREA},
+		GTYPE_AREA
+		= #{GTYPE_AREA},
 		GTYPE_STATE = #{GTYPE_STATE},
 		GTYPE_BZ = #{GTYPE_BZ},
 		UPDATE_BY = #{UPDATE_BY},
 		UPDATE_TIME = NOW()
-		WHERE GTYPE_PK = #{GTYPE_PK}
+		WHERE GTYPE_PK =
+		#{GTYPE_PK}
 	</update>
 	<!-- 商品分类编辑时更新商品分类的排序序号(当序号往前移动变小) -->
 	<update id="updateGoodsTypeOrderChangeSmall" parameterMap="BaseParameterMap">
 		UPDATE SC_GOODS_TYPE SET
 		GTYPE_ORDER = GTYPE_ORDER +1
-		WHERE GTYPE_ORDER &lt; #{GTYPE_OLD_ORDER} AND GTYPE_ORDER &gt;= #{GTYPE_ORDER}  AND GTYPE_PID = #{PID} AND SHOP_FK = #{SHOP_FK}
+		WHERE GTYPE_ORDER
+		&lt; #{GTYPE_OLD_ORDER} AND GTYPE_ORDER &gt;= #{GTYPE_ORDER} AND
+		GTYPE_PID = #{PID} AND SHOP_FK = #{SHOP_FK}
 	</update>
 	<!-- 商品分类编辑时更新商品分类的排序序号(当序号往前移动变大) -->
 	<update id="updateGoodsTypeOrderChangeLarge" parameterMap="BaseParameterMap">
-			UPDATE SC_GOODS_TYPE SET
-			GTYPE_ORDER = GTYPE_ORDER -1
-			WHERE GTYPE_ORDER &lt;= #{GTYPE_ORDER} AND GTYPE_ORDER &gt; #{GTYPE_OLD_ORDER}  AND GTYPE_PID = #{PID} AND SHOP_FK = #{SHOP_FK}
+		UPDATE SC_GOODS_TYPE SET
+		GTYPE_ORDER = GTYPE_ORDER -1
+		WHERE GTYPE_ORDER
+		&lt;= #{GTYPE_ORDER} AND GTYPE_ORDER &gt;
+		#{GTYPE_OLD_ORDER} AND
+		GTYPE_PID = #{PID} AND SHOP_FK = #{SHOP_FK}
 	</update>
 	<!-- 更新商品分类的路径 -->
 	<update id="updateGoodsTypePath" parameterMap="BaseParameterMap">
-			UPDATE SC_GOODS_TYPE SET
-			GTYPE_PATH = #{GTYPE_PATH}
-			WHERE  GTYPE_PK = #{GTYPE_PK}
+		UPDATE
+		SC_GOODS_TYPE SET
+		GTYPE_PATH = #{GTYPE_PATH}
+		WHERE GTYPE_PK =
+		#{GTYPE_PK}
 	</update>
 	<!-- 删除商品分类 -->
 	<delete id="deleteGoodsTypeByID" parameterMap="BaseParameterMap">
-		DELETE FROM SC_GOODS_TYPE
-		WHERE GTYPE_PATH  like '%${GTYPE_PK}%'
+		DELETE FROM
+		SC_GOODS_TYPE
+		WHERE GTYPE_PATH like '%${GTYPE_PK}%'
 	</delete>
-	
-		<!-- 根据类别id查询 -->
-	<select id="selectGtypeNameById"  parameterMap="BaseParameterMap"
+
+	<!-- 根据类别id查询 -->
+	<select id="selectGtypeNameById" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		SELECT GTYPE_NAME, GTYPE_AREA FROM sc_goods_type WHERE GTYPE_PK = #{GTYPE_ID};
+		SELECT GTYPE_NAME, GTYPE_AREA FROM sc_goods_type WHERE
+		GTYPE_PK = #{GTYPE_ID};
+	</select>
+
+	<!-- 小程序相关页面查询 -->
+	<!-- 根据商铺id查询对应商品分类 -->
+	<select id="loadGoodTypeByShopId" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT a.GTYPE_PK, a.GTYPE_NAME, b.GOODS_PK, b.GOODS_NAME,
+		b.GOODS_TYPE, b.GOODS_PRICE,
+		b.GOODS_TRUE_PRICE, b.GOODS_CODE,
+		b.GOODS_DW, b.GOODS_PXXH,
+		b.GOODS_SPECIFICATION,
+		b.GOODS_RECIPE,
+		b.GOODS_TASTE, b.GOODS_DESC, b.GOODS_NUM,
+		b.GOODS_LABEL, b.SHOW_RANGE,
+		b.PICTURE_URL, b.GOODS_INTRODUCTION FROM
+		SC_GOODS b LEFT JOIN SC_GOODS_TYPE a ON b.GTYPE_FK = a.GTYPE_PK WHERE
+		a.GTYPE_ATTACH = '0' AND
+		a.GTYPE_STATE = '1' AND a.SHOP_FK = #{FK_SHOP} AND b.IS_USE = '1'
+		ORDER BY
+		CONVERT(a.GTYPE_ORDER, SIGNED)
 	</select>
 </mapper>

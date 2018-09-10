@@ -30,4 +30,8 @@ public class RedisConstants {
 
 	public static final String STARPOS_PAY_CALLBACK_URL = "starpos_pay_callback_url:";
 	
+	public static final String WX_UNIONID = "wx_unionid:";
+	
+	public static final String WX_SESSION_KEY = "wx_session_key:";
+	
 }

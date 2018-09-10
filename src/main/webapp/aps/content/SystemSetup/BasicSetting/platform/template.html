@@ -8,12 +8,16 @@
 	<div class="weui-header-right" style="top: 0;" ng-show="isList">
 		<div class="button_sp_area" style="padding: 12px 0;">
 			<div class="bom-radio bom-radio-big" id="attend2"
+				style="width: 80px;transform: translateX(-210%);"
+				ng-show="authorize" ng-click="toHref1()">关联小程序</div>
+			<div class="bom-radio bom-radio-big" id="attend2"
 				ng-click="toHref('SystemSetup/BasicSetting/platform/add')">新增菜单</div>
 		</div>
 	</div>
 </div>
 
-<div class="weui_cells weui_cells_form" style="margin-top: 0;" ng-show="isList">
+<div class="weui_cells weui_cells_form" style="margin-top: 0;"
+	ng-show="isList">
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">平台类型</label>
@@ -93,8 +97,7 @@
 	</div>
 	<div class="weui_opr_area">
 		<p class="weui_btn_area">
-			<a class="weui_btn weui_btn_primary"
-				ng-href="{{authorizerURL}}">授权设备</a>
+			<a class="weui_btn weui_btn_primary" ng-href="{{authorizerURL}}">授权设备</a>
 		</p>
 	</div>
 	<div class="weui_extra_area"></div>

@@ -7,7 +7,7 @@
 	<select id="selectUserInfo" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT
-		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_SN, a.USER_SEX, a.USER_HEAD_IMG
+		a.USER_PK, a.USER_NAME, a.USER_PHONE, a.USER_SN, a.USER_SEX, a.USER_HEAD_IMG, a.USER_UNIONID
 		FROM SC_USER a
 		WHERE a.USER_WX = #{OPENID}
 	</select>
@@ -39,7 +39,8 @@
 		USER_WX_REFRESH_TOKEN,
 		USER_STATUS,
 		CREATE_TIME,
-		USER_TYPE
+		USER_TYPE,
+		USER_UNIONID
 		)
 		VALUES
 		(
@@ -51,7 +52,28 @@
 		#{USER_WX_REFRESH_TOKEN},
 		0,
 		NOW(),
-		0
+		0,
+		#{USER_UNIONID}
+		)
+	</insert>
+	<insert id="insertUserInitOpenIdMini" parameterMap="BaseParameterMap">
+		INSERT INTO SC_USER
+		(
+		USER_PK,
+		USER_WX,
+		USER_STATUS,
+		CREATE_TIME,
+		USER_TYPE,
+		USER_UNIONID
+		)
+		VALUES
+		(
+		#{UUID},
+		#{OPENID},
+		0,
+		NOW(),
+		0,
+		#{USER_UNIONID}
 		)
 	</insert>
 	<select id="checkUserExits" resultMap="BaseResultMap"
