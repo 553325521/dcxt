@@ -346,6 +346,16 @@
 					}
 					init();
 					
+					/*form表单验证每一项方法*/
+					scope.validateForm = function(cellName,iconName,tip){
+						$(cellName).css("color","#f43530");
+						$(iconName).css("display","inline-block");
+						/*$.toptips(tip);*/
+					}
+					scope.returnForm = function(cellName,iconName){
+						$(cellName).css("color","#363636");
+						$(iconName).css("display","none");
+					}
 					
 					scope.toHref = function(path) {
 						var m2 = {
@@ -358,57 +368,144 @@
 					
 					scope.form.SHOPID = "";
 					
-					var $form = $("#form");
-					$form.form();
 					//保存
 					scope.doSave = function(){
-						/*$form.validate(function(error) {
-							if (!error) {
-							
-							}
-						})*/
-						 
+						
 						scope.form.INTRODUCE_STR = JSON.stringify(scope.introduceArray);
 						
 						scope.form.begin_time = $("#start_time").val();
 						
 						scope.form.end_time = $("#end_time").val();
 						
-						$httpService.post(config.createCardURL,scope.form).success(function(data){
-							console.info(data);
-						    }).error(function(data){
-						    	loggingService.info('获取测试信息出错');
-						    });
+						var flag = true;
+						
+						/*判断活动名称*/
+						if(scope.form.title == undefined){
+							flag = false;
+							scope.validateForm('.titleCell','.titleIcon','请输入活动名称');
+						}else{
+							flag = true;
+							scope.returnForm('.titleCell','.titleIcon');
+						}
+						/*期限开始时间判断*/
+						if(scope.form.begin_time =="" && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TIME_RANGE"){
+							flag = false;
+							scope.validateForm('.expiryCell','.expiryIcon','请选择开始时间');
+						}else if(scope.form.begin_time !="" && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TIME_RANGE"){
+							flag = true;
+							scope.returnForm('.expiryCell','.expiryIcon');
+						}
+						/*期限结束时间判断*/
+						if(scope.form.end_time =="" && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TIME_RANGE"){
+							flag = false;
+							scope.validateForm('.expiryCell','.expiryEndIcon','请选择结束时间');
+						}else if(scope.form.end_time !="" && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TIME_RANGE"){
+							flag = true;
+							scope.returnForm('.expiryCell','.expiryEndIcon');
+						}
+						/*选择天数的时候判断*/
+						if(scope.form.fixed_begin_term ==undefined && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TERM"){
+							flag = false;
+							scope.validateForm('.termCell','.termBeginIcon','请填写天数');
+						}else if(scope.form.fixed_begin_term !=undefined && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TERM"){
+							flag = true;
+							scope.returnForm('.termCell','.termBeginIcon');
+						}
+						if(scope.form.fixed_term ==undefined && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TERM"){
+							flag = false;
+							scope.validateForm('.termCell','.termIcon','请填写天数');
+						}else if(scope.form.fixed_term !=undefined && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TERM"){
+							flag = true;
+							scope.returnForm('.termCell','.termIcon');
+						}
+						/*判断预发数量*/
+						if(scope.form.PREVIEW_COUNT == undefined){
+							flag = false;
+							scope.validateForm('.priviewCountCell','.priviewCountIcon','请输入预发数量');
+						}else{
+							flag = true;
+							scope.returnForm('.priviewCountCell','.priviewCountIcon');
+						}
+						/*判断提醒天数*/
+						if(scope.form.REMIND_DAYS == undefined){
+							flag = false;
+							scope.validateForm('.priviewCountCell','.remindDaysIcon','请输入提醒天数');
+						}else{
+							flag = true;
+							scope.returnForm('.priviewCountCell','.remindDaysIcon');
+						}
+						/*当选择代金券的时候判断*/
+						if(scope.form.reduce_cost ==undefined && scope.form.CARD_VOUCHER_TYPE == "CASH"){
+							flag = false;
+							scope.validateForm('.djqCell','.reduceIcon','请填写金额');
+						}else if(scope.form.reduce_cost !=undefined && scope.form.CARD_VOUCHER_TYPE == "CASH"){
+							flag = true;
+							scope.returnForm('.djqCell','.reduceIcon');
+						}
+						if(scope.form.least_cost ==undefined && scope.form.CARD_VOUCHER_TYPE == "CASH"){
+							flag = false;
+							scope.validateForm('.djqCell','.leastIcon','请填写金额');
+						}else if(scope.form.least_cost !=undefined && scope.form.CARD_VOUCHER_TYPE == "CASH"){
+							flag = true;
+							scope.returnForm('.djqCell','.leastIcon');
+						}
+						/*判断适用门店*/
+						if(scope.form.SHOPID == ""){
+							flag = false;
+							scope.validateForm('.shopCell','.shopIcon','请选择适用门店');
+						}else{
+							flag = true;
+							scope.returnForm('.shopCell','.shopIcon');
+						}
+						/*判断Logo*/
+						if(scope.form.IMG_LOGO_STR == ""){
+							flag = false;
+							scope.validateForm('.logoCell','.logoIcon','请上传图片');
+						}else{
+							flag = true;
+							scope.returnForm('.logoCell','.logoIcon');
+						}
+						/*判断卡券形象*/
+						if(scope.form.IMG_BODAY_STR == ""){
+							flag = false;
+							scope.validateForm('.bodyCell','.bodyIcon','请上传图片');
+						}else{
+							flag = true;
+							scope.returnForm('.bodyCell','.bodyIcon');
+						}
+						if (flag) {
+							//弹出保存询问
+							var m2 = {
+								"url" : "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/Card_Voucher_Add/config.json",
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : "是否保存?"
+							}
+							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						}
 					}
 					
 					// 弹窗确认事件
 					eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
-						//判断是修改还是添加
-						if(scope.form.GOODS_ID == 'undefined' || scope.form.GOODS_ID == ''){
-							url = config.saveURL;
-						}else{
-							url = config.updateURL;
-						}
-						 $httpService.post(url,scope.form).success(function(data){
-							 
-							 if(data.code != "0000"){
-								 var m2 = {
-									"title" : "提示",
-									"contentName" : "modal",
-									"text" : data.data
-								}
-							 }else{
-								 var m2 = {
+						$httpService.post(config.createCardURL,scope.form).success(function(data){
+							if (data.code != '0000') {
+								var m2 = {
 									"title" : "提示",
 									"contentName" : "modal",
 									"text" : data.data,
-									"toUrl" : "aps/content/DailyManagement/goods/goods_show/config.json?GTYPE_PK="+params.gtype_id,
-								 }
-							 }
+								}
+							} else {
+								var m2 = {
+									"title" : "提示",
+									"contentName" : "modal",
+									"text" : data.data,
+									"toUrl" : "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/config.json?fid=" + scope.form.fid
+								}
+							}
 							eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 						    }).error(function(data){
 						    	loggingService.info('获取测试信息出错');
-						    });
+						 });
 					});
 					
 					// 弹窗取消事件
