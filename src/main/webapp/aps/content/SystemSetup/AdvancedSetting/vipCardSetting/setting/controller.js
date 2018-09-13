@@ -15,7 +15,6 @@
 					//初始化使用须知和特权说明
 					scope.form.VCARD_SYXZ = "";
 					scope.form.VCARD_TQSM = "";
-					
 					var init = function(){
 						$httpService.post(config.initURL).success(function(data) {
 							if (data.code != '0000') {
@@ -43,7 +42,7 @@
 					
 					var init2 = function(){
 						//判断是修改还是添加
-						if(scope.form.VCARD_PK !== 'undefined' && scope.form.VCARD_PK !== ''){
+						if(params.vcard_id != undefined && params.vcard_id != 'undefined' && params.vcard_id != ''){
 							scope.pageTitle = "修改会员卡";
 							//发送post请求查询会员卡信息
 							$httpService.post(config.findURL,scope.form).success(function(data) {
@@ -82,6 +81,7 @@
 							scope.form.VCARD_JFXS = '100.00';
 							scope.form.START_MONEY = '0.00';
 							scope.form.START_JF = '0.00';
+							scope.$apply();
 						}
 					}
 					

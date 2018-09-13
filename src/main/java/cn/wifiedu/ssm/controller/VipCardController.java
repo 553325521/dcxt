@@ -178,11 +178,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 									openService.insert(map);
 								}
 							}else{
-								output("9999","更新失败");
+								output("9999","修改失败");
 								return;
 							}
 							
-							output("0000","更新成功");
+							output("0000","修改成功");
 							return;
 						}else{
 							output("9999","更新失败");
