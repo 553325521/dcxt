@@ -36,10 +36,10 @@ public class ShopInfoController extends BaseController {
 	private static Logger logger = Logger.getLogger(FunctionController.class);
 
 	public static final long ONE_PIC_MAXSIZE = 2100000L;	//允许的单张图片最大大小
-	private static final String SHOP_PICPATH = "assets/shoppic";	//图片存储位置
+	private static final String SHOP_PICPATH = "assets/img/shoppic";	//图片存储位置
 	
 	private static final long SHOP_DESC_MAX_SIZE = 6900000L; //图文说明允许的最大大小
-	private static final String SHOP_DESC_PIC_PATH = "assets/shopdesc";
+	private static final String SHOP_DESC_PIC_PATH = "assets/img/shopdesc";
 	
 	@Resource
 	OpenService openService;

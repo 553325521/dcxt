@@ -630,5 +630,41 @@ public class ShopController extends BaseController {
 			logger.error("error", e);
 		}
 	}
-
+	
+	
+	/**
+	 * 
+	 * @date 2018年9月12日 下午10:06:37 
+	 * @author lps
+	 * 
+	 * @Description:  根据用户id查询该用户管理的店铺
+	 * @return void 
+	 *
+	 */
+	@RequestMapping("/Shop_queryForList_selectManagerShopIdAndNameByUserId")
+	public void findShopByVipManagerId() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "selectManagerShopIdAndNameByUserId");
+			
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			
+			map.put("USER_ID", userObj.get("USER_PK")); 
+			
+			List<Map<String,Object>> queryForList = openService.queryForList(map);
+			if(queryForList == null){
+				output("9999", "查询错误");
+				return;
+			}
+			output("0000", queryForList);
+			return;
+		} catch (Exception e) {
+			logger.error("error", e);
+			output("9999", "出错");
+			return;
+		}
+	}
+	
 }

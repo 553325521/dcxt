@@ -1,0 +1,9 @@
+{
+	"name": "Advanced_setting",
+	"viewUrl": "aps/content/SystemSetup/AdvancedSetting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/AdvancedSetting/controller.js",
+	"config": {
+		"pageTitle": "高级设置",
+		"findURL": "json/Function_queryForList_loadFunctionListByUserRole.json"
+	}
+}

@@ -164,7 +164,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					if("1".equals(payType)){//微信支付
 						
-						Map<String, Object> newMap = new HashMap<String, Object>();
+						/*Map<String, Object> newMap = new HashMap<String, Object>();
 						newMap.putAll(map);
 						
 						//微信生成订单
@@ -177,7 +177,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						if("000000".equals(pubSigPay.get("returnCode"))){
 							output("5555", pubSigPay);
 							return;
-						}
+						}*/
 						output("9999", "微信支付失败");
 						return;
 					}

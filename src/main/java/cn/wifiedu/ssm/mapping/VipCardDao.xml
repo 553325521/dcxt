@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="vipCard" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+	
+	<!-- 插入会员卡信息 -->
+	<insert id="insertVipCard" parameterMap="BaseParameterMap" >
+		INSERT INTO sc_vip_card 
+		(
+			VCARD_PK,
+			VCARD_IDNUMBER,
+			VCARD_NAME,
+			IS_USE,
+			ALLOTTED_TIME,
+			ALLOTTED_TIME_PERIOD,
+			VCARD_ZKXS,
+			VCARD_JFXS,
+			START_MONEY,
+			START_JF,
+			USE_SHOP,
+			VCARD_LOGO,
+			BACKGROUND_IMAGE,
+			VCARD_SYXZ,
+			VCARD_TQSM,
+			VCARD_TWJS,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		VALUES
+		(
+			#{UUID},
+			#{VCARD_IDNUMBER},
+			#{VCARD_NAME},
+			#{IS_USE},
+			#{ALLOTTED_TIME},
+			#{ALLOTTED_TIME_PERIOD},
+			#{VCARD_ZKXS},
+			#{VCARD_JFXS},
+			#{START_MONEY},
+			#{START_JF},
+			#{USE_SHOP},
+			#{VCARD_LOGO},
+			#{BACKGROUND_IMAGE},
+			#{VCARD_SYXZ},
+			#{VCARD_TQSM},
+			#{VCARD_TWJS},
+			NOW(),
+			#{CREATE_BY}
+		)
+	
+	</insert>
+	
+	<!-- 根绝会员卡id更新会员卡信息 -->
+	<update id="updaeteVipCardById" parameterMap="BaseParameterMap" >
+		UPDATE sc_vip_card SET 
+			VCARD_NAME = #{VCARD_NAME}, 
+			IS_USE = #{IS_USE}, 
+			ALLOTTED_TIME = #{ALLOTTED_TIME}, 
+			ALLOTTED_TIME_PERIOD = #{ALLOTTED_TIME_PERIOD}, 
+			VCARD_ZKXS = #{VCARD_ZKXS}, 
+			VCARD_JFXS = #{VCARD_JFXS}, 
+			START_MONEY = #{START_MONEY}, 
+			START_JF = #{START_JF}, 
+			USE_SHOP = #{USE_SHOP}, 
+			VCARD_LOGO = #{VCARD_LOGO}, 
+			BACKGROUND_IMAGE = #{BACKGROUND_IMAGE}, 
+			VCARD_SYXZ = #{VCARD_SYXZ}, 
+			VCARD_TQSM = #{VCARD_TQSM}, 
+			VCARD_TWJS = #{VCARD_TWJS}, 
+			UPDATE_TIME = NOW(), 
+			UPDATE_BY = #{UPDATE_BY}
+		WHERE 
+			VCARD_PK = #{VCARD_PK};
+	</update>
+	
+	<!-- 根绝会员卡id查询会员卡信息 -->
+	<select id="selectVipCardById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			VCARD_PK, VCARD_IDNUMBER, VCARD_NAME, IS_USE, ALLOTTED_TIME, ALLOTTED_TIME_PERIOD, VCARD_ZKXS, VCARD_JFXS, START_MONEY, START_JF, USE_SHOP, VCARD_LOGO, BACKGROUND_IMAGE, VCARD_SYXZ, VCARD_TQSM, VCARD_TWJS
+		FROM 
+			 sc_vip_card
+		WHERE 
+			VCARD_PK = #{VCARD_PK};
+	</select>
+	
+	<!-- 根绝店铺id查询该店铺所有会员卡基本信息 -->
+	<select id="selectVipCardListByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			VCARD_PK, VCARD_IDNUMBER, VCARD_NAME, IS_USE, ALLOTTED_TIME, ALLOTTED_TIME_PERIOD, VCARD_ZKXS, VCARD_JFXS, START_MONEY, START_JF, USE_SHOP, VCARD_LOGO, BACKGROUND_IMAGE, VCARD_SYXZ, VCARD_TQSM, VCARD_TWJS
+		FROM 
+			 sc_vip_card svc, sc_shop_vcard ssv
+		WHERE 
+			ssv.SHOP_FK = #{SHOP_ID}
+		AND
+			ssv.VIP_CARD_FK = svc.VCARD_PK;
+	</select>
+
+</mapper>

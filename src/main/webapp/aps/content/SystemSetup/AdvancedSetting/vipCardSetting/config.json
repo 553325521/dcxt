@@ -1,0 +1,22 @@
+{
+	"name": "vipCardSetting",
+	"viewUrl": "aps/content/SystemSetup/AdvancedSetting/vipCardSetting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/AdvancedSetting/vipCardSetting/controller.js",
+	"config": {
+		"pageTitle": "会员卡列表",
+		"findURL":"json/ShopVipCard_select_findVipCard.json",
+		"removeURL":"json/VIPCard_delete_removeVIPCardById.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"vipCardSetting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"vipCardSetting.confirm"
+		        	}
+				]
+			}
+	}
+}

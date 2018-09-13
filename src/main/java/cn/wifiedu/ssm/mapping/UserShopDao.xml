@@ -81,4 +81,10 @@
 		UPDATE SC_USER SET USER_NAME = #{USER_NAME}, USER_PHONE = #{USER_PHONE} WHERE USER_PK = #{FK_USER}
 	</update>
 	
+	<!-- 根据店长id查询所有管理的店铺名字和店铺id -->
+	<select id="selectManagerShopIdAndNameByUserId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT  SHOP_ID as value, SHOP_NAME as title FROM  sc_shop_info  WHERE  SHOP_ID IN (
+			SELECT FK_SHOP FROM sc_user_shop WHERE FK_ROLE = '2' AND FK_USER = #{USER_ID});
+	</select> 
+	
 </mapper>

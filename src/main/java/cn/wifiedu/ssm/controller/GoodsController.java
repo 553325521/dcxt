@@ -48,7 +48,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public static final long ALL_PICMAX_SIZE = 6300000L;	//允许的所有图片最大大小
 			public static final int MAX_PIC_NUM = 10;				//允许的图片最大数量
 
-			private static final String GOODS_PICPATH = "assets/goodspic";	//图片存储位置
+			private static final String GOODS_PICPATH = "assets/img/goodspic";	//图片存储位置
 			
 			@Resource
 			OpenService openService;

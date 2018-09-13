@@ -1,0 +1,22 @@
+{
+	"name": "vipCardSetting_setting",
+	"viewUrl": "aps/content/SystemSetup/AdvancedSetting/vipCardSetting/setting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/AdvancedSetting/vipCardSetting/setting/controller.js",
+	"config": {
+		"insertOrUpdate":"json/VipCard_insert_insertOrUpdateVipCard.json",
+		"findURL":"json/VipCard_select_findVipCardById.json",
+		"initURL":"json/Shop_queryForList_selectManagerShopIdAndNameByUserId.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"vipCardSetting_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"vipCardSetting_setting.confirm"
+		        	}
+				]
+			}
+	}
+}
