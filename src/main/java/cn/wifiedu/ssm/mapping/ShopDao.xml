@@ -54,7 +54,7 @@
 	<select id="SelectByPrimaryKey" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		select
-		SHOP_NAME,SHOP_TEL,SHOP_TYPE,SHOP_AREA,SHOP_ADDRESS from SC_SHOP_INFO
+		SHOP_NAME,SHOP_TEL,SHOP_TYPE,SHOP_AREA,SHOP_ADDRESS,SHOP_TEL from SC_SHOP_INFO
 		where SHOP_ID = #{SHOP_FK};
 	</select>
 

@@ -1,12 +1,20 @@
 package cn.wifiedu.ssm.util;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -14,8 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.Header;
@@ -41,7 +53,9 @@ import com.alibaba.fastjson.JSON;
 import com.google.zxing.WriterException;
 import com.thoughtworks.xstream.XStream;
 
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 import cn.wifiedu.ssm.vo.MessageVo;
+import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 public class CommonUtil {
@@ -296,6 +310,32 @@ public class CommonUtil {
 		}
 		return result;
 	}
+	public static String WxPOST(String path, String params, String charset) throws Exception {
+		HttpClient httpClient = null;
+		HttpPost httpPost = null;
+		String result = null;
+		try {
+			httpClient = new SSLClient();
+			httpPost = new HttpPost(path);
+
+			// 设置参数
+			StringEntity postEntity = new StringEntity(params,
+					ContentType.create("application/json", charset));
+
+			httpPost.setEntity(postEntity);
+			HttpResponse response = httpClient.execute(httpPost);
+			if (response != null) {
+				HttpEntity resEntity = response.getEntity();
+				if (resEntity != null) {
+					result = EntityUtils.toString(resEntity, charset);
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
 	/**
 	 * @author kqs
@@ -355,4 +395,138 @@ public class CommonUtil {
 		reMap.put("USER_WX_REFRESH_TOKEN", refresh_token);
 		return reMap;
 	}
+	/**
+	* <p>Title: uploadImg</p>
+	* <p>Description: 往微信服务器上传图片</p>
+	* @param base64
+	* @param path
+	* @param type
+	* @param accessToken
+	* @return
+	* @throws Exception
+	*/
+	public static  String uploadImg(String imgBASE64,String imgSize,String imgName ,String accessToken) throws Exception {  
+				
+				String url = CommonUtil.getPath("WX_POST_UPLOAD_IMG_URL");
+				url = url.replace("ACCESS_TOKEN",accessToken);
+		        String result =null;  
+	            URL realUrl = new URL(url);
+	            trustAllHttpsCertificates();
+	            HttpsURLConnection.setDefaultHostnameVerifier(new CommonUtil().hv);
+		        URLConnection con= realUrl.openConnection();
+		        con.setDoInput(true);  
+		        con.setDoOutput(true);  
+		        con.setUseCaches(false); // post方式不能使用缓存  
+		        // 设置请求头信息  
+		        con.setRequestProperty("Connection", "Keep-Alive");  
+		        con.setRequestProperty("Charset", "UTF-8");  
+		        // 设置边界  
+		        String BOUNDARY = "----------" + System.currentTimeMillis();  
+		        con.setRequestProperty("Content-Type",  
+		                "multipart/form-data; boundary="  
+		                + BOUNDARY);  
+		        // 请求正文信息  
+		        // 第一部分：  
+		        StringBuilder sb = new StringBuilder();  
+		        sb.append("--"); // 必须多两道线  
+		        sb.append(BOUNDARY);  
+		        sb.append("\r\n");  
+		        if(imgName.indexOf("jpeg")!=-1 || imgName.indexOf("jpg") !=-1){
+		        	imgName = UUID.randomUUID().toString().substring(0,5)+".jpg";
+		        }else{
+		        	imgName = UUID.randomUUID().toString().substring(0,5)+".png";
+		        }
+		        sb.append("Content-Disposition: form-data;name=\"media\";filelength=\""+imgSize+"\";filename=\""+imgName+"\"\r\n");  
+		        sb.append("Content-Type:application/octet-stream\r\n\r\n");
+		        byte[] head = sb.toString().getBytes("utf-8");  
+		        // 获得输出流  
+		        OutputStream out = new DataOutputStream(con.getOutputStream());  
+		        // 输出表头  
+		        out.write(head);  
+		        // 文件正文部分  
+		        // 把文件已流文件的方式 推入到url中  
+		        byte[] base64Bytes = new BASE64Decoder().decodeBuffer(imgBASE64);        
+		        DataInputStream in = new DataInputStream(new ByteArrayInputStream(base64Bytes));  
+		        int bytes = 0;  
+		        byte[] bufferOut = new byte[1024];  
+		        while ((bytes = in.read(bufferOut)) != -1) {  
+		            out.write(bufferOut, 0, bytes);  
+		        }  
+		        in.close();  
+		        // 结尾部分  
+		        byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("utf-8");// 定义最后数据分隔线  
+		        out.write(foot);  
+		        out.flush();  
+		        out.close();  
+		        StringBuffer buffer = new StringBuffer();  
+		        BufferedReader reader = null;  
+		        try {  
+		            // 定义BufferedReader输入流来读取URL的响应  
+		            reader = new BufferedReader(new InputStreamReader(con.getInputStream()));  
+		            String line = null;  
+		            while ((line = reader.readLine()) != null) {  
+		                buffer.append(line);  
+		            }  
+		            if (result == null) {  
+		                result = buffer.toString();  
+		            }  
+		        } catch (IOException e) {  
+		            System.out.println("发送POST请求出现异常！" + e);  
+		            e.printStackTrace();  
+		            throw new IOException("数据读取异常");  
+		        } finally {  
+		            if (reader != null) {  
+		                reader.close();  
+		            }  
+		        }  
+		        return result.toString();  
+		}
+		
+	 HostnameVerifier hv = new HostnameVerifier() {
+		    public boolean verify(String urlHostName, SSLSession session) {
+		        System.out.println("Warning: URL Host: " + urlHostName + " vs. "
+		                + session.getPeerHost());
+		        return true;
+		    }
+		};
+
+		private static void trustAllHttpsCertificates() throws Exception {
+		    javax.net.ssl.TrustManager[] trustAllCerts = new javax.net.ssl.TrustManager[1];
+		    javax.net.ssl.TrustManager tm = new miTM();
+		    trustAllCerts[0] = tm;
+		    javax.net.ssl.SSLContext sc = javax.net.ssl.SSLContext
+		            .getInstance("SSL");
+		    sc.init(null, trustAllCerts, null);
+		    javax.net.ssl.HttpsURLConnection.setDefaultSSLSocketFactory(sc
+		            .getSocketFactory());
+		}
+
+		static class miTM implements javax.net.ssl.TrustManager,
+		        javax.net.ssl.X509TrustManager {
+		    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+		        return null;
+		    }
+
+		    public boolean isServerTrusted(
+		            java.security.cert.X509Certificate[] certs) {
+		        return true;
+		    }
+
+		    public boolean isClientTrusted(
+		            java.security.cert.X509Certificate[] certs) {
+		        return true;
+		    }
+
+		    public void checkServerTrusted(
+		            java.security.cert.X509Certificate[] certs, String authType)
+		            throws java.security.cert.CertificateException {
+		        return;
+		    }
+
+		    public void checkClientTrusted(
+		            java.security.cert.X509Certificate[] certs, String authType)
+		            throws java.security.cert.CertificateException {
+		        return;
+		    }
+		}
 }

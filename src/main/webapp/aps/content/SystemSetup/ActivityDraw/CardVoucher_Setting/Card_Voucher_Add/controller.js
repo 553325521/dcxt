@@ -18,7 +18,6 @@
 							this.splice(index, 1);
 						}
 					};
-					
 					scope = $scope;
 					//初始化form表单
 					scope.form = {};
@@ -26,6 +25,19 @@
 					
 					scope.form.fid = params.fid;
 					
+					/*初始化店铺LOGO*/
+					 scope.IMG_LOGO = [];
+					 
+					 scope.form.IMG_LOGO_STR = "";
+					 
+					 /*初始化卡券形象图片*/
+					 scope.IMG_BODAY = [];
+					 
+					 scope.form.IMG_BODAY_STR = "";
+					 
+					 /*初始化图文介绍字符串*/
+					 scope.form.INTRODUCE_STR = "";
+					 
 					// 定义页面标题
 					scope.pageTitle = '卡券设置';	
 					
@@ -33,10 +45,10 @@
 					scope.form.IS_USE = "1";
 					
 					/*初始化有效期限*/
-					scope.form.EXPIRY_DATE = "0";
+					scope.form.EXPIRY_DATE = "DATE_TYPE_FIX_TIME_RANGE";
 					
-					scope.yjShow = "False";
-					scope.qjShow = "False";
+					scope.yjShow = "True";
+					scope.qjShow = "True";
 					scope.tsShow = "False";
 					
 					scope.PICTURE_URL = [];
@@ -49,8 +61,6 @@
 					scope.ZKQ_ISSHOW = "False";
 					scope.DKQ_ISSHOW = "False";
 					scope.DKQ_MONEY_ISSHOW = "False";
-					
-					scope.noCheckArr = ['上午','中午','晚上'];
 					
 					
 					/*初始化抵扣类型的值*/
@@ -70,7 +80,9 @@
 					scope.time_time ="False";
 					
 					/*初始化图文介绍*/
-					scope.form.introduceArray = [{"img":"","text":""}];
+					scope.introduceArray = [{"img":"","text":"","imgName":"","imgSize":""}];
+					
+					scope.form.timePeriod = "全天";
 					
 					/*初始化颜色数据源*/
 					scope.colorArray = [
@@ -107,15 +119,17 @@
 					
 					//添加
 					scope.add = function(){
-						if(scope.form.introduceArray.length>=3){
+						if(scope.introduceArray.length>=3){
 							return;
 						}
-						scope.form.introduceArray.push({"img":"","text":""});//拷贝数组，防止改一个全改了
+						scope.introduceArray.push({"img":"","text":"","imgName":"","imgSize":""});//拷贝数组，防止改一个全改了
 					}
 					//删除
 					scope.del = function(index){
-						scope.form.introduceArray.splice(index,1);
+						scope.introduceArray.splice(index,1);
 					}
+					
+					scope.SD_SHOW = "False";
 					
 					/*监听有效时段选择值*/
 					$scope.$watch('form.EFFECTIVE_TIME', function(newValue, oldValue) {
@@ -126,8 +140,17 @@
 							scope.time_week ="True";
 							scope.time_time ="False";
 						}else{
+							
 							scope.time_week ="False";
-							scope.time_time ="True";
+							scope.SD_SHOW = "True";
+							$scope.$watch('form.TIMEDUAN', function(newValue, oldValue) {
+								if (newValue === '0') {
+									scope.form.timePeriod ="全天";
+									scope.time_time ="False";
+								}else{
+									scope.time_time ="True";
+								}
+							}, true);
 						}
 					}, true);
 					
@@ -180,20 +203,19 @@
 						var action = (item.checked ? 'add' : 'remove');
 						if (action == "add") {
 							scope.form.weekArray.push({value:item.value,name:item.name,checked:item.checked});
-						/*	scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);*/
+						/*	scope.form.timePeriod  = JSON.stringify(scope.form.GTYPE_AREA_Array);*/
 						} else {
 							scope.form.weekArray.remove({value:item.value,name:item.name,checked:item.checked});
 							/*scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);*/
 						}
 					}
+					
+					scope.form.TIMEDUAN = '0';
+					
 					/*初始化限时段数据源*/
 					scope.TIME_TIME = [
 						{
-							name : '全天 ',
-							checked: true
-						},
-						{
-							name : '上午 ',
+							name : '上午',
 							checked: false
 						},
 						{
@@ -201,28 +223,27 @@
 							checked: false
 						},
 						{
-							name : '晚上 ',
+							name : '下午',
+							checked: false
+						},
+						{
+							name : '晚上',
 							checked: false
 						}
 					];
 					
-					scope.form.timeArray = [
-						{
-						name : '全天 ',
-						checked: true
-					}
-					];
+					scope.form.timeArray = [];
 					
-					/*时段选择方法*/
+				/*	时段选择方法*/
 					scope.selectTime = function(item){
 						var action = (item.checked ? 'add' : 'remove');
-						if (action == "add") {
-							scope.form.timeArray.push({value:item.value,name:item.name,checked:item.checked});
-						/*	scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);*/
-						} else {
-							scope.form.timeArray.remove({value:item.value,name:item.name,checked:item.checked});
-							/*scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);*/
-						}
+							if (action == "add") {
+								scope.form.timeArray.push({name:item.name,checked:item.checked});
+								scope.form.timePeriod = scope.form.timeArray;
+							} else {
+								scope.form.timeArray.remove({name:item.name,checked:item.checked});
+								scope.form.timePeriod = scope.form.timeArray;
+							}
 					}
 					
 					/*监听卡券类型选择值*/
@@ -347,7 +368,7 @@
 							}
 						})*/
 						 
-						console.info(scope.form.SHOPID);
+						scope.form.INTRODUCE_STR = JSON.stringify(scope.introduceArray);
 						
 						scope.form.begin_time = $("#start_time").val();
 						
@@ -415,6 +436,7 @@
 							        items:scope.shopArray,
 							        onChange: function(d) {
 							        	scope.form.SHOPID = d.values;
+							        	scope.form.SHOP_NAME = d.titles;
 							        	/*scope.$apply();*/
 							        }
 							      });
@@ -428,27 +450,34 @@
 		});
 	}).call(this);
 	var MAX_PIC_SIZE = 2097152;//单张图片上传最大大小
-	//添加或更换图片
+	//店铺LOGO和形象图片更换方法
 	function previewImage(file) {
 		index = file.id
 		 if (file.files && file.files[0]) {
 		      var reader = new FileReader();
 		      reader.onload = function (evt) {
-			       console.info(evt.loaded)
 			       if(evt.loaded > MAX_PIC_SIZE){
 			        $.toptips('单张图片上传大小最大为'+Math.floor(MAX_PIC_SIZE/1000000)+'M')
 			        return;
 			       }
 			       if(index == 'i1'){
-			    	   scope.form.IMG_LOGO = evt.target.result;
+			    	   scope.IMG_LOGO[0] = evt.target.result;
+			    	   scope.IMG_LOGO[1] = file.files[0].name;
+			    	   scope.IMG_LOGO[2] = evt.loaded;
+			    	   scope.form.IMG_LOGO_STR = JSON.stringify(scope.IMG_LOGO);
+			    	/*   scope.form.IMG_LOGO = evt.target.result;*/
 			       }else if(index == 'i2'){
-			    	   scope.form.IMG_BODAY = evt.target.result;
+			    	   scope.IMG_BODAY[0] = evt.target.result;
+			    	   scope.IMG_BODAY[1] = file.files[0].name;
+			    	   scope.IMG_BODAY[2] = evt.loaded;
+			    	   scope.form.IMG_BODAY_STR = JSON.stringify(scope.IMG_BODAY);
 			       }
 			        scope.$apply();
 		       };
 		        reader.readAsDataURL(file.files[0]);
 		   }
 	}
+	//图文介绍图片更换方法
 	function previewImage1(file) {
 		index = file.id
 		 if (file.files && file.files[0]) {
@@ -458,7 +487,9 @@
 			        $.toptips('单张图片上传大小最大为'+Math.floor(MAX_PIC_SIZE/1000000)+'M')
 			        return;
 			       }
-			    	   scope.form.introduceArray[index].img = evt.target.result;
+			       	   scope.introduceArray[index].imgName = file.files[0].name;
+			       	   scope.introduceArray[index].imgSize = evt.loaded;
+			    	   scope.introduceArray[index].img = evt.target.result;
 			    	   scope.$apply();
 		       };
 		        reader.readAsDataURL(file.files[0]);

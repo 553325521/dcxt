@@ -172,7 +172,24 @@ public class DateUtil{
     public static Period  getintervalTime(Date preDate, String afterDateStr) throws ParseException{
     	  return getintervalTime(preDate, new SimpleDateFormat(DATE_TIME_FMT).parse(afterDateStr));
     }
-    
-    
-    
+    /** 
+     * yyyy-MM-dd日期格式字符串转换成时间戳 
+     * @param date 字符串日期 
+     * @param format
+     * @return 
+     */  
+    public static String date2TimeStamp(String date_str){  
+        try {  
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_FMT);  
+            return String.valueOf(sdf.parse(date_str).getTime()/1000);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        }  
+        return "";  
+    }  
+   /* public static void main(String[] args) {
+		String a = "12321312313";
+		String [] array = a.split(",");
+		System.out.println(array.length);
+	}*/
 }

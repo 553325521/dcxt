@@ -102,7 +102,7 @@
 				</div>
                	<div class="weui_cell_bd weui_cell_primary">
 					<div class="weui-form">
-							<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+							<!-- <div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
 								<input class="weui-form-checkbox" name="f1" id="g3" value="0"
 									type="radio" ng-model="form.EXPIRY_DATE"> <label
 									for="g3"> <i class="weui-icon-radio icon-checkbox-self"
@@ -111,7 +111,7 @@
 										<p>永久</p>
 									</div>
 								</label>
-							</div>
+							</div> -->
 							<div class="weui-form-li iblock li-checkbox-self"
 								style="margin-left: 10%;">
 								<input class="weui-form-checkbox" name="f1" id="g4" value="DATE_TYPE_FIX_TIME_RANGE"
@@ -389,6 +389,33 @@
 				</div>
 			</div>
 		</div>
+		 <div class="weui_cell dcxt_active" ng-show="SD_SHOW">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">选择时段</label>
+			</div>
+			<div class="weui_cell_bd">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 0;">
+						<input class="weui-form-checkbox" name="f10" id="g20" value="0"
+							type="radio" ng-model="form.TIMEDUAN"> 
+							<label for="g20"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>全天</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="f10" id="g21" value="1"
+							type="radio" ng-model="form.TIMEDUAN"> 
+							<label for="g21"> <i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>时间段</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="weui_cell" ng-show="time_week">
 			<div class="weui_cell_hd">
 				<label class="weui_label label">限星期</label>
@@ -411,6 +438,7 @@
 				</div>
 			</div>
 	</div>
+		
 		<div class="weui_cell" ng-show="time_time">
 			<div class="weui_cell_hd">
 				<label class="weui_label label">限时段</label>
@@ -420,8 +448,8 @@
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
 					ng-repeat="item in TIME_TIME">
-					<input style="text-align: right" class="weui-form-checkbox" name="time_time" id="time_time{{$index}}"
-						value="{{item.name}}" type="checkbox" ng-model="item.checked" ng-checked="noCheckArr.indexOf(item.name)==-1" 
+					<input style="text-align: right" class="weui-form-checkbox" name="timeQuantum" id="time_time{{$index}}"
+						value="{{item.name}}" type="checkbox" ng-model="item.checked" ng-checked="item.checked" 
 						ng-change="selectTime(item)"> <label
 						for="time_time{{$index}}"> <i
 						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
@@ -446,17 +474,17 @@
             <div class="weui_uploader_bd weui_cell_primary">
             	<ul class="weui_uploader_files" id="img2x">
             		 <li>
-		            	<div class="weui_uploader_file" style="background-image:url({{form.IMG_LOGO}})">
-			            	<div class="hide-input {{form.IMG_LOGO == null || form.IMG_LOGO == ''?'weui_uploader_input_wrp':''}}">
-				                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i1" >
+		            	<div class="weui_uploader_file" style="background-image:url({{IMG_LOGO[0]}})">
+			            	<div class="hide-input {{IMG_LOGO == null || IMG_LOGO == ''?'weui_uploader_input_wrp':''}}">
+				                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png" id="i1" >
 			             	</div>
 		            	</div>
 		            	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;">店铺LOGO</div>
 		            </li>
 		            <li>
-		            	<div class="weui_uploader_file" style="background-image:url({{form.IMG_BODAY}})">
-			            	<div class="hide-input {{form.IMG_BODAY == null || form.IMG_BODAY == ''?'weui_uploader_input_wrp':''}}">
-				                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" value="{{form.IMG_BODAY}}" accept="image/jpg,image/jpeg,image/png,image/gif" id="i2">
+		            	<div class="weui_uploader_file" style="background-image:url({{IMG_BODAY[0]}})">
+			            	<div class="hide-input {{IMG_BODAY == null || IMG_BODAY == ''?'weui_uploader_input_wrp':''}}">
+				                <input class="weui_uploader_input" type="file" onchange="previewImage(this)"  accept="image/jpg,image/jpeg,image/png" id="i2">
 			             	</div>
 		            	</div>
 		            	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;width:79px;">卡券形象图片</div>
@@ -490,7 +518,7 @@
                 	<i class="icon-plus-sign" style="color:#04be02"></i>
                 </div>
 		</div>
-         <div ng-repeat="item in form.introduceArray track by $index">
+         <div ng-repeat="item in introduceArray track by $index">
 	        <div class="weui_cell" style="width:20%;float:left;margin-left:6%;padding-right:0;">
 				  <div class="weui_uploader_bd weui_cell_primary">
 		            	<ul class="weui_uploader_files" id="img2x">
