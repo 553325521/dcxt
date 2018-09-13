@@ -90,6 +90,10 @@
 					scope.addTWJS = function(){
 						scope.twjs.push({'img':'','text':''});
 					}
+					scope.delTWJS = function(index){
+						console.info(index)
+						scope.twjs.splice(index,1);
+					}
 					
 					scope.toHref = function(path) {
 						$('.close-picker').click()//如果选择框还没关闭，关闭它
