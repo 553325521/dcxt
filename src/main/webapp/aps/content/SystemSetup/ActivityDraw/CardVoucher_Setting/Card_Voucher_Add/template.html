@@ -36,6 +36,38 @@
 	.cancelPadding{
 		padding:0
 	}
+	.weui_uploader_status_content:before {
+	    content: " ";
+	    position: absolute;
+	    top: 0;
+	    right: 0;
+	    bottom: 0;
+	    left: 0;
+	}
+	.weui_uploader_status_content {
+	    position: absolute;
+	    top: 38%;
+	    left: 39%;
+	    -webkit-transform: translate(-50%,-50%);
+	    transform: translate(-50%,-50%);
+	    color: #fff;
+	}
+	.weui_uploader_status_content1:before {
+	    content: " ";
+	    position: absolute;
+	    top: 0;
+	    right: 0;
+	    bottom: 0;
+	    left: 0;
+	}
+	.weui_uploader_status_content1 {
+	    position: absolute;
+	    top: 38%;
+	    left: 71%;
+	    -webkit-transform: translate(-50%,-50%);
+	    transform: translate(-50%,-50%);
+	    color: #fff;
+	}
 </style>
    <div class="weui-header" style="background-color:#FFFFFF">
 		<div class="weui-header-left">
@@ -59,12 +91,12 @@
 		</div>
 	</div>
 	 <div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow">
-	 		 <div class="weui_cell">
+	 		 <div class="weui_cell titleCell">
                 <div class="weui_cell_hd"><label class="weui_label label tablessetting-label">活动名称</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <input class="weui_input label-input" type="text" placeholder="请输入活动名称"  ng-model="form.title" required emptyTips="请输入活动名称"/>
                 </div>
-                <i class="weui_icon_warn"></i>
+                <i class="weui_icon_warn titleIcon"></i>
             </div>
             <div class="weui_cell dcxt_active">
 			<div class="weui_cell_hd">
@@ -139,32 +171,38 @@
          <div class="weui_cell  border_left" style="padding-left:20px;padding-top:5px;" ng-show="yjShow">
 			<div class="weui_cells cancelBorder cancelBorderBottom tablessetting-font-style"">
 				<div class="weui_cell cancelBorder cancelPadding" ng-show="qjShow">
-					 <div class="weui_cell_hd">
+					 <div class="weui_cell_hd expiryCell">
 						<label class="weui_label label">期限</label>
 					</div>
 					<div class="weui_cell_bd weui_cell_primary">
-						<input class="weui_input" id="start_time" style="float: left;width:40%" type="text" ng-model="form.begin_time" readonly value="" />
-						<div style="float:left;width:5%;">——</div>
-						<input class="weui_input" id="end_time" style="float: left;width:40%;padding-left: 30px;" ng-model="form.end_time " readonly type="text" value="" />	
+						<input class="weui_input" id="start_time" style="float: left;width:30%" type="text" ng-model="form.begin_time"  readonly value="" />
+						  <i class="weui_icon_warn expiryIcon" style="display:none;float: left;"></i>
+						<div style="float:left;width:5%;padding-left:3%">——</div>
+						<input class="weui_input" id="end_time" style="float: left;width:30%;padding-left: 30px;" ng-model="form.end_time " readonly type="text" value="" />	
+						<i class="weui_icon_warn expiryEndIcon" style="display:none"></i>
 					</div>
 				</div>
 				<div class="weui_cell cancelBorder cancelPadding"  ng-show="tsShow">
-					<div class="weui_cell_bd weui_cell_primary">
+					<div class="weui_cell_bd weui_cell_primary termCell">
 						<div style="width: 17%;float: left;margin-left: 5%;">从下发第 </div>
 						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.fixed_begin_term"/>
-						<div style="width: 17%;float: left;">日起,</div>
+						 <i class="weui_icon_warn termBeginIcon" style="display:none;float: left;"></i>
+						<div style="width: 10%;float: left;">日起,</div>
 						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.fixed_term"/>
+						 <i class="weui_icon_warn termIcon" style="display:none;float: left;"></i>
 						<div>天内可用</div>
 					</div>
 				</div>
 			</div>
 		</div>
          <div class="weui_cell tablessetting-font-style">
-                <div class="weui_cell_bd weui_cell_primary">
-                	<div style="width: 20%;float: left;margin-left: 2%;">预发数量</div>
-                    <input style="width: 17%;float: left;" class="weui_input label-input" type="text" ng-model="form.PREVIEW_COUNT" required emptyTips="预发数量"/>
-                    <div style="width: 17%;float: left;">张,到期</div>
-                     <input style="width: 17%;float: left;" class="weui_input label-input" type="text" ng-model="form.REMIND_DAYS" required emptyTips="提前提醒天数"/>
+                <div class="weui_cell_bd weui_cell_primary priviewCountCell">
+                	<div style="width: 18%;float: left;margin-left: 2%;">预发数量</div>
+                    <input style="width: 10%;float: left;" class="weui_input label-input" type="text" ng-model="form.PREVIEW_COUNT" required emptyTips="预发数量"/>
+                     <i class="weui_icon_warn priviewCountIcon" style="display:none;float: left;"></i>
+                    <div style="width: 15%;float: left;">张,到期</div>
+                     <input style="width: 10%;float: left;" class="weui_input label-input" type="text" ng-model="form.REMIND_DAYS" required emptyTips="提前提醒天数"/>
+                      <i class="weui_icon_warn remindDaysIcon" style="display:none;float: left;"></i>
                     <div style="width: 17%;float: left;">天提醒</div>
                 </div>
         </div>
@@ -254,11 +292,13 @@
 		 <div class="weui_cell  border_left" style="padding-top:15px;" ng-show="KQCELL_ISSHOW">
 			<div class="weui_cells cancelBorder cancelBorderBottom tablessetting-font-style">
 				<div class="weui_cell cancelBorder cancelPadding" style="padding-top:5px;" ng-show="DJQ_ISSHOW">
-					<div class="weui_cell_bd weui_cell_primary">
+					<div class="weui_cell_bd weui_cell_primary djqCell">
 						<div style="width: 17%;float: left;margin-left: 5%;">券面金额</div>
 						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.reduce_cost"/>
+						  <i class="weui_icon_warn reduceIcon" style="display:none;float: left;"></i>
 						<div style="width: 18%;float: left;">元,消费满</div>
 						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.least_cost"/>
+						  <i class="weui_icon_warn leastIcon" style="display:none;float: left;"></i>
 						<div>元可用</div>
 					</div>
 				</div>
@@ -461,11 +501,12 @@
 			</div>
 			</div>
 		</div>
-		<div class="weui_cell">
+		<div class="weui_cell shopCell">
                 <div class="weui_cell_hd"><label for="" class="weui_label label tablessetting-label">适用门店:</label></div>
                 <div class="weui_cell_bd weui_cell_primary">
                     <input class="weui_input label tablessetting-label" type="text" value="" ng-model="form.SHOP_NAME" placeholder="请选择适用门店" id='d3'/>
                 </div>
+                 <i class="weui_icon_warn shopIcon" style="display:none;float: left;"></i>
         </div> 
 		 <div class="weui_cell" style="top:20px">
 			<div class="weui_cell_hd">
@@ -478,16 +519,22 @@
 			            	<div class="hide-input {{IMG_LOGO == null || IMG_LOGO == ''?'weui_uploader_input_wrp':''}}">
 				                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png" id="i1" >
 			             	</div>
+			             	 <div class="weui_uploader_status_content">
+                                        <i class="weui_icon_warn logoIcon"></i>
+                         	 </div>
 		            	</div>
-		            	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;">店铺LOGO</div>
+		            	<div class="tablessetting-gray-font logoCell" style="font-size:13px;text-align:center;width:77px;">店铺LOGO</div>
 		            </li>
 		            <li>
 		            	<div class="weui_uploader_file" style="background-image:url({{IMG_BODAY[0]}})">
 			            	<div class="hide-input {{IMG_BODAY == null || IMG_BODAY == ''?'weui_uploader_input_wrp':''}}">
 				                <input class="weui_uploader_input" type="file" onchange="previewImage(this)"  accept="image/jpg,image/jpeg,image/png" id="i2">
 			             	</div>
+			             	<div class="weui_uploader_status_content1">
+                                        <i class="weui_icon_warn bodyIcon"></i>
+                         	 </div>
 		            	</div>
-		            	<div class="tablessetting-gray-font" style="font-size:13px;text-align:center;width:77px;width:79px;">卡券形象图片</div>
+		            	<div class="tablessetting-gray-font bodyCell" style="font-size:13px;text-align:center;width:77px;width:79px;">卡券形象图片</div>
 		             </li>
             	</ul>
             </div>
