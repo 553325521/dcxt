@@ -1,0 +1,21 @@
+{
+	"name": "winning_record",
+	"viewUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/winningRecord/template.html",
+	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/winningRecord/controller.js",
+	"config": {
+		"pageTitle":"卡券领取列表",
+		"findURL":"json/卡券_查询_根据店铺id找领取过的卡券.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"winning_record.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"winning_record.confirm"
+		        	}
+				]
+			}
+	}
+}

@@ -69,7 +69,7 @@
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
 					}
 					
-					var $form = $("#form");
+					/*	var $form = $("#form");
 					$form.form();
 					//保存
 					scope.doSave = function(){
@@ -105,7 +105,7 @@
 						eventBusService.publish(controllerName, 'appPart.load.modal.close', {
 							contentName : "modal"
 						});
-					});
+					});*/
 			}
 		];
 	});

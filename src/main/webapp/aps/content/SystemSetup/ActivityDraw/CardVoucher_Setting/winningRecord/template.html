@@ -1,0 +1,109 @@
+<style>
+	.cancelBorder:before{
+		width:0;
+	}
+	.hide-input{
+		float: left;
+		position: relative;
+		margin-right: 9px;
+		margin-bottom: 9px;
+		width: 77px;
+		height: 77px;
+	}
+	.weui_search_bar {
+    	padding: 6px 6px;
+	}
+	
+	.weui_search_outer:after {
+	    border: 0px solid #e6e6ea;
+	}
+	
+	.weui_search_outer:after {
+    	border-radius: 0px;
+	}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0
+	}
+	.weui_uploader_files li{
+	 	width:79px;
+	 	float:left;
+	 	margin-right: 9px;
+	}
+	
+	.weui_cell:active{
+		background-color:#ececec;
+	}
+	.weui_cell {
+    	padding: 14px 24px;
+    }
+    .weui-header-right div{
+    	font-size : 13px;
+    }
+    .click_select{
+    	border: 1px;
+    	border-color:#D5D5D5;
+    	border-style:none solid none none;
+    	padding:4px 8px;
+    }
+
+</style>
+  <div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/ActivityDraw/CardVoucher_Setting')">
+			<a class="icon icon-109" ></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="display:flex;top:0;matgin-top:0px;height:46px;background-color: #fff;">
+			<div style="font-size:13px;display:flex;border-radius: 5px;height:26px;margin:10px 2px; border: 1px solid #D5D5D5;">
+				<div class="weui_navbar_item location-center {{$last ? '':'click_select'}}" ng-repeat="item in ['未使用','已使用','已过期']" style="{{$last ? 'padding:4px 8px;':''}}{{click_select == $index + 1 ?'color:#fff;background-color:#838280;':''}}"  ng-click="click($index+1)">
+		             {{item}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cells" ng-repeat="item in card_voucher_list | filter:input_value" style="margin-top:-1px;background-color:#fff;font-size:14px;">		
+			<div class="weui_cell weui_cell_primary animated dcxt-font-overflow tablessetting-font-style" style="display:flex;">	
+				<div class="weui_cell_bd" style="margin-right:10px;width:30%;">
+					<div ng-switch on = "item.USER_PHONE">
+						<span ng-switch-when = "" style="color:red">无联系方式</span>
+						<span ng-switch-when = undefined style="color:red">无联系方式</span>
+						<span ng-switch-default>13883107775</span>
+					</div>
+					
+					<div>
+						<span>价值88元代金券</span>
+					</div>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<div>
+						<span>起：2016-05-12</span>
+					</div>
+					<div>
+						<span>止：2017-09-12</span>
+					</div>
+				</div>
+				<div class="weui_cell_bd" dir="rtl">
+					<div>
+						<span>已领取</span>
+					</div>
+					<div >
+						<span>1张</span>
+					</div>
+				</div>	
+			</div>
+	</div>
+	
+	
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	
