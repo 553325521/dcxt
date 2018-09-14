@@ -1,0 +1,23 @@
+{
+	"name": "card_voucher_edit",
+	"viewUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/Card_Voucher_Edit/template.html",
+	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/Card_Voucher_Edit/controller.js",
+	"config": {
+		
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"card_voucher_edit.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"card_voucher_edit.confirm"
+		        	}
+				]
+			},
+			
+		"loadShopDataURL":"json/Shop_queryForList_loadShopListByRedis.json",
+		"loadCardByIdURL":"json/Card_select_loadCardById.json"
+	}
+}

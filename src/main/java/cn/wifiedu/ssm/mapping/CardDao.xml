@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Card" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
+  
+  <!-- 查询某个商铺下面的所有券 -->
+	<select id="loadCardData" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT card_id,C.title,C.quantity,C.least_cost,C.reduce_cost,C.gift,C.discount,C.card_type 
+		FROM sc_card AS C 
+		INNER JOIN sc_shop_card AS S 
+		ON C.card_id = S.FK_CARD 
+		WHERE S.FK_SHOP = #{SHOP_ID} 
+	</select>
+	<!-- 根据卡券ID查询卡券信息 -->
+	<select id="loadCardInfoById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT * FROM sc_card C
+		WHERE C.card_id = #{card_id}
+	</select>
+  <!-- 插入卡券表 -->
+	<insert id="insertCard" parameterMap="BaseParameterMap" >
+    insert into sc_card
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="card_id != null" >
+        card_id,
+      </if>
+      <if test="logo_url != null" >
+        logo_url,
+      </if>
+      <if test="brand_name != null" >
+        brand_name,
+      </if>
+      <if test="code_type != null" >
+        code_type,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="color != null" >
+        color,
+      </if>
+      <if test="notice != null" >
+        notice,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="date_type != null" >
+        date_type,
+      </if>
+      <if test="begin_timestamp != null" >
+        begin_timestamp,
+      </if>
+      <if test="end_timestamp != null" >
+        end_timestamp,
+      </if>
+      <if test="fixed_term != null" >
+        fixed_term,
+      </if>
+      <if test="fixed_begin_term != null" >
+        fixed_begin_term,
+      </if>
+      <if test="quantity != null" >
+        quantity,
+      </if>
+      <if test="use_limit != null" >
+        use_limit,
+      </if>
+      <if test="get_limit != null" >
+        get_limit,
+      </if>
+      <if test="can_share != null" >
+        can_share,
+      </if>
+      <if test="can_give_friend != null" >
+        can_give_friend,
+      </if>
+      <if test="card_type != null" >
+        card_type,
+      </if>
+      <if test="least_cost != null" >
+        least_cost,
+      </if>
+      <if test="reduce_cost != null" >
+        reduce_cost,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="gift != null" >
+        gift,
+      </if>
+      <if test="can_use_with_other_discount != null" >
+        can_use_with_other_discount,
+      </if>
+      <if test="abstract != null" >
+        abstract,
+      </if>
+      <if test="icon_url_list != null" >
+        icon_url_list,
+      </if>
+      <if test="text_image_list != null" >
+        text_image_list,
+      </if>
+      <if test="create_by != null" >
+        create_by,
+      </if>
+      <if test="create_time != null" >
+        create_time,
+      </if>
+      <if test="update_by != null" >
+        update_by,
+      </if>
+      <if test="update_time != null" >
+        update_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="card_id != null" >
+        #{card_id,jdbcType=VARCHAR},
+      </if>
+      <if test="logo_url != null" >
+        #{logo_url,jdbcType=VARCHAR},
+      </if>
+      <if test="brand_name != null" >
+        #{brand_name,jdbcType=VARCHAR},
+      </if>
+      <if test="code_type != null" >
+        #{code_type,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="notice != null" >
+        #{notice,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="date_type != null" >
+        #{date_type,jdbcType=VARCHAR},
+      </if>
+      <if test="begin_timestamp != null" >
+        #{begin_timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="end_timestamp != null" >
+        #{end_timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="fixed_term != null" >
+        #{fixed_term,jdbcType=VARCHAR},
+      </if>
+      <if test="fixed_begin_term != null" >
+        #{fixed_begin_term,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=VARCHAR},
+      </if>
+      <if test="use_limit != null" >
+        #{use_limit,jdbcType=VARCHAR},
+      </if>
+      <if test="get_limit != null" >
+        #{get_limit,jdbcType=VARCHAR},
+      </if>
+      <if test="can_share != null" >
+        #{can_share,jdbcType=VARCHAR},
+      </if>
+      <if test="can_give_friend != null" >
+        #{can_give_friend,jdbcType=VARCHAR},
+      </if>
+      <if test="card_type != null" >
+        #{card_type,jdbcType=VARCHAR},
+      </if>
+      <if test="least_cost != null" >
+        #{least_cost,jdbcType=VARCHAR},
+      </if>
+      <if test="reduce_cost != null" >
+        #{reduce_cost,jdbcType=VARCHAR},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=VARCHAR},
+      </if>
+      <if test="gift != null" >
+        #{gift,jdbcType=VARCHAR},
+      </if>
+      <if test="can_use_with_other_discount != null" >
+        #{can_use_with_other_discount,jdbcType=VARCHAR},
+      </if>
+      <if test="abstract != null" >
+        #{abstract,jdbcType=VARCHAR},
+      </if>
+      <if test="icon_url_list != null" >
+        #{icon_url_list,jdbcType=VARCHAR},
+      </if>
+      <if test="text_image_list != null" >
+        #{text_image_list,jdbcType=VARCHAR},
+      </if>
+      <if test="create_by != null" >
+        #{create_by,jdbcType=VARCHAR},
+      </if>
+       <if test="create_time != null" >
+        #{create_time,jdbcType=VARCHAR},
+      </if>
+      <if test="update_by != null" >
+        #{update_by,jdbcType=VARCHAR},
+      </if>
+      <if test="update_time != null" >
+        #{update_time,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+ 	 <!-- 插入商铺和卡券中间表 -->
+  	<insert id="insertShopAndCard" parameterMap="BaseParameterMap">
+		insert into sc_shop_card
+		(
+		SHOP_CARD_PK,
+		FK_SHOP,
+		FK_CARD
+		)
+		VALUES
+		(
+		#{UUID},
+		#{FK_SHOP},
+		#{FK_CARD}
+		)
+	</insert>
+</mapper>

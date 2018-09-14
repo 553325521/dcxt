@@ -1,35 +1,39 @@
 
 	(function() {
-		define([], function() {
+		define(['zepto','slideleft'], function() {
 			return [
 				'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 				function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
 					scope = $scope;
 					scope.pageShow = "False";
+					
+					scope.noDataShow = "True";
 					//初始化form表单
 					scope.form = {},
 					// 定义页面标题
 					scope.pageTitle = '卡券设置';	
 					
-					scope.CardVoucher_LIST = [{
+					scope.tipShow = "False";
+					
+					scope.CardVoucher_LIST = [/*{
 						ACTIVITY_NAME:"活动1",
-						ISSTART:"开启",
+						ISSTART:"1",
 						DESCRIPTION:"券面20元/预发1000张/消费200元可用/自动发送开启"
 					},{
 						ACTIVITY_NAME:"活动2",
-						ISSTART:"关闭",
+						ISSTART:"0",
 						DESCRIPTION:"券面20元/预发1000张/消费200元可用/自动发送开启"
 					},{
 						ACTIVITY_NAME:"活动3",
-						ISSTART:"关闭",
+						ISSTART:"1",
 						DESCRIPTION:"券面20元/预发1000张/消费200元可用/自动发送开启"
-					}];
+					}*/];
 					
 					scope.form.fid = params.fid;
 
-					scope.toHref = function(path) {
+					scope.toHref = function(path,card_id) {
 						var m2 = {
-							"url" : "aps/content/" + path + "/config.json?fid=" + scope.form.fid,
+							"url" : "aps/content/" + path + "/config.json?fid=" + scope.form.fid+"&card_id="+card_id,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}
@@ -37,18 +41,21 @@
 					}
 					
 					var init = function() {
-					/*	$httpService.post(config.findURL, scope.form).success(function(data) {
+						$httpService.post(config.loadCardDataURL, scope.form).success(function(data) {
 							if (data.code != '0000') {
+								scope.pageShow = "True";
+								scope.noDataShow = "False";
+								scope.$apply();
 								loggingService.info(data.data);
 							} else {
-								scope.goods_list = data.data;
+								scope.CardVoucher_LIST = data.data;
 								scope.pageShow = "True";
+								scope.tipShow = "True";
 								scope.$apply();
 							}
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
-						});*/
-						scope.pageShow = "True";
+						});
 					}
 					
 					init();

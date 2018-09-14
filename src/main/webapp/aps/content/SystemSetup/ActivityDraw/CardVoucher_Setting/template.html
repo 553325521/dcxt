@@ -1,4 +1,10 @@
 <style>
+	.slidelefts .weui_cell_bd:active{
+		background-color:#ececec;
+	}
+	.slidelefts .weui_cell_bd{
+		background-color: inherit;
+	}
 	.dcxt_active .weui_cells{
 		background-color: inherit;
 	}
@@ -12,52 +18,73 @@
 	width:0;
 	}
 	.cancelPadding{
-		padding:0
+		padding:0;
 	}
-	
+	.tablessetting-font-style .weui_cell_bd .weui_cell_bd {
+    padding: 0px 10px;
+   }
+    .weui-loadmore-line .weui-loadmore-tips{
+    	background-color:#eee;
+    }
 </style>
-   <div class="weui-header" style="background-color:#FFFFFF">
-		<div class="weui-header-left">
-			<a class="icon icon-109"  ng-click="toHref('SystemSetup/ActivityDraw')"></a>
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/ActivityDraw')">
+			<a class="icon icon-109" ></a>
 		</div>
+
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
-		<div class="weui-header-right" style="top: 0;right:95px">
-			<div class="button_sp_area">
-				<div class="bom-radio" style="width:80px"  ng-click="toHref('SystemSetup/ActivityDraw/CardVoucher_Setting/winningRecord')">中奖记录</div>
-			</div>
-		</div>
+ 
 		<div class="weui-header-right" style="top: 0;">
-			<div class="button_sp_area">
-				<div class="bom-radio" id="attend2" style="width:70px;" ng-click="toHref('SystemSetup/ActivityDraw/CardVoucher_Setting/Card_Voucher_Add')">添加</div>
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio" id="attend2" ng-click="toHref('SystemSetup/ActivityDraw/CardVoucher_Setting/Card_Voucher_Add')">添加</div>
 			</div>
 		</div>
 	</div>
+
 	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
-		<div class="weui_cell dcxt_active border_left" style="padding-left:50px;padding-top:5px;" ng-repeat="item in CardVoucher_LIST">
-			<div class="weui_cells cancelBorder cancelBorderBottom tablessetting-font-style"">
-				<div class="weui_cell cancelBorder cancelPadding">
-					<div class="weui_cell_bd" style="margin-right:10px">
-						<span>{{$index+1}}</span>
+		<div class="weui_cell slidelefts" ng-repeat="item in CardVoucher_LIST" >		
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="transform: translateX(0px);" ng-click="toHref('SystemSetup/ActivityDraw/CardVoucher_Setting/Card_Voucher_Edit',item.card_id)">	
+				<div class="weui_cell no-broder cancelPadding">
+						<div class="weui_cell_bd" style="margin-right:10px">
+							<span ng-bind="$index + 1"></span>
+						</div>
+						<div class="weui_cell_bd weui_cell_primary">
+								<span ng-bind="item.title"></span>
+						</div>
+						<div class="weui_cell_bd tablessetting-small-font {{item.TABLES_AREA_STATUS == 0 ? 'tablessetting-red-font' : ''}}"">
+								<span class="{{item.ISSTART == '1' ? '':'tablessetting-red-font'}}">{{item.IS_USE == '1' ? '开启':'关闭'}}</span>
+						</div>
 					</div>
-					<div class="weui_cell_bd " style="width:80%">
-							<span>{{item.ACTIVITY_NAME}}</span>
-					</div>
-					<div class="weui_cell_bd weui_cell_primary">
-							<span>{{item.ISSTART}}</span>
+					<div class="weui_cell cancelBorder cancelPadding">
+						<div class="weui_cell_bd weui_cell_primary" ng-switch="item.card_type">
+								<span style="padding-left:30px;font-size:12px;color:#999" ng-switch-when="CASH">
+									券面{{item.reduce_cost/100}}元/预发{{item.quantity}}张/消费{{item.least_cost}}元可用
+								</span>
+						</div>
 					</div>
 				</div>
-				<div class="weui_cell cancelBorder cancelPadding">
-					<div class="weui_cell_bd weui_cell_primary">
-							<span style="font-size:12px;color:#999">{{item.DESCRIPTION}}</span>
-					</div>
-				</div>
+			<!-- </div> -->
+			<div class="slideleft">
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="vipCardDelete(item.TABLES_AREA_PK)">删除</span>
+       		</div>	      
+		</div>
+		
+		
+		<div class="weui_cell no-broder" ng-show="tipShow">
+			<div class="weui_cell_bd weui_cell_primary">
+					<span style="color:#B2B2B2;font-size: 11px;" >
+						  优惠券同时可以活动激活状态多个，自动发送只能激活一个，启用一个其他自动关闭。</span>
 			</div>
 		</div>
-	</div>
 		
+	</div>
+	<div class="weui-loadmore weui-loadmore-line" ng-hide="noDataShow">
+            <span class="weui-loadmore-tips">暂无数据</span>
+    </div>
 	<div class="weui-loadmore" ng-hide="pageShow">
 		<i class="weui-loading"></i>
 		<span class="weui-loadmore-tips">正在加载</span>
 	</div>
 	
-   <!-- body 最后 -->
+
+		

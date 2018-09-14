@@ -3,6 +3,7 @@
 	"viewUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/template.html",
 	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/controller.js",
 	"config": {
+		"loadCardDataURL":"json/Card_select_loadCardData.json",
 		"menu":{	
 	         "buttons":[
 		        	{

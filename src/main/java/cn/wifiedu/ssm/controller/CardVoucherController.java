@@ -2,6 +2,7 @@ package cn.wifiedu.ssm.controller;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import org.springframework.context.annotation.Scope;
@@ -265,7 +266,7 @@ public class CardVoucherController extends BaseController{
 					String [] shopArray = map.get("SHOPID").toString().split(",");
 					for(int i = 0;i < shopArray.length;i++){
 						param.put("FK_SHOP", shopArray[i]);
-						param.put("FK_CARD", insertRStr);
+						param.put("FK_CARD", card_id);
 						param.put("sqlMapId", "insertShopAndCard");
 						openService.insert(param);
 					}
@@ -281,4 +282,41 @@ public class CardVoucherController extends BaseController{
 			output("9999", "创建失败");
 		}
 	}
+	
+	@RequestMapping(value = "/Card_select_loadCardData", method = RequestMethod.POST)
+	public void loadCardData() {
+		try {
+
+			Map<String, Object> map = new HashMap<String,Object>();
+			// 获取当前session信息
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			map.put("SHOP_ID", userObj.get("FK_SHOP"));
+			map.put("sqlMapId", "loadCardData");
+			List<Map<String,Object>> dataList = openService.queryForList(map);
+			if(dataList!=null && dataList.size() !=0){
+				output("0000",dataList);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999", "查询失败");
+		}
+	}
+	@RequestMapping(value = "/Card_select_loadCardById", method = RequestMethod.POST)
+	public void loadCardById() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "loadCardInfoById");
+			List<Map<String,Object>> dataList = openService.queryForList(map);
+			if(dataList!=null && dataList.size() !=0){
+				output("0000",dataList.get(0));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999", "查询失败");
+		}
+	}
+	
 }
