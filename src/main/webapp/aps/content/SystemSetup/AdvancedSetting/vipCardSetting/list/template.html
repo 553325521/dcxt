@@ -1,0 +1,106 @@
+<style>
+	.cancelBorder:before{
+		width:0;
+	}
+	.hide-input{
+		float: left;
+		position: relative;
+		margin-right: 9px;
+		margin-bottom: 9px;
+		width: 77px;
+		height: 77px;
+	}
+	.weui_search_bar {
+    	padding: 6px 6px;
+	}
+	
+	.weui_search_outer:after {
+	    border: 0px solid #e6e6ea;
+	}
+	
+	.weui_search_outer:after {
+    	border-radius: 0px;
+	}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0
+	}
+	.weui_uploader_files li{
+	 	width:79px;
+	 	float:left;
+	 	margin-right: 9px;
+	}
+	
+	.weui_cell:active{
+		background-color:#ececec;
+	}
+
+</style>
+   <div class="weui-header" style="background-color:#FFFFFF;overflow：auto;">
+		<div class="weui-header-left">
+			<a class="icon icon-109"  ng-click="toHref('SystemSetup/AdvancedSetting/vipCardSetting')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	</div>
+	
+	 <div class="searchbar_wrap" style="margin-top:-3px;display:flex;background-color:#fff;"> 
+		<div class="weui_search_bar location-center" style="background-color:#fff; height:40px;width:100%;">
+			<input class="weui_input" style="max-width:25%;text-align:center;font-size:14px;" id="filter_select" type="text"
+						value="" ng-model="cardCate"></input><i class="icon icon-74" style="color:#b2b2b2;"></i>
+			<form class="weui_search_outer" style="margin-left:10px;border-radius: 0;border:0;">
+				<div class="weui_search_inner location-center" style="padding-left:37px;">
+					<i class="weui_icon_search"></i>
+					<span style='height:60%;width:1px;background-color:#f3f3f3; position: absolute;left: 30px;'></span>
+					<input type="search" class="weui_search_input tablessetting-small-font" id="weui_search_input" placeholder="输入关键字搜索" required 
+						ng-model="input_value" >
+					<a href="javascript:" class="weui_icon_clear"></a>
+				</div>
+			</form>
+	 	</div>
+	</div>
+	<div class="weui_cells" ng-repeat="item in record_list | filter:input_value | filter:filter_select" style="margin-top:-1px;background-color:#fff;font-size:14px;">		
+			<div class="weui_cell weui_cell_primary animated dcxt-font-overflow" style="display:flex;">	
+				<div class="weui_cell_bd" style="margin-right:10px;width:30%;">
+					<div ng-switch on = "item.USER_PHONE">
+						<span ng-switch-when = "" style="color:red">无联系方式</span>
+						<span ng-switch-when = undefined style="color:red">无联系方式</span>
+						<span ng-switch-default>{{item.USER_PHONE}}</span>
+					</div>
+					
+					<div>
+						<span>{{item.VCARD_NAME}}</span>
+					</div>
+				</div>
+				<div class="weui_cell_bd weui_cell_primary">
+					<div>
+						<span>{{item.USER_SN}}</span>
+					</div>
+					<div>
+						<span>消费：{{item.USER_VCARD_XFDS/100 | number:2}}</span>
+					</div>
+				</div>
+				<div class="weui_cell_bd" dir="rtl">
+					<div>
+						<span>{{item.USER_VCARD_TIME | limitTo:10}}</span>
+					</div>
+					<div >
+						<span>积分：{{item.USER_VCARD_CSJF}}</span>
+					</div>
+				</div>	
+			</div>
+	</div>
+	
+	
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	

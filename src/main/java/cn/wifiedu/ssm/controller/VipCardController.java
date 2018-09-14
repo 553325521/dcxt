@@ -185,7 +185,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							output("0000","修改成功");
 							return;
 						}else{
-							output("9999","更新失败");
+							output("9999","修改失败");
 							return;
 						}
 					}

@@ -1,0 +1,22 @@
+{
+	"name": "shopIntegral_setting",
+	"viewUrl": "aps/content/SystemSetup/AdvancedSetting/shopIntegralSetting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/AdvancedSetting/shopIntegralSetting/controller.js",
+	"config": {
+		"pageTitle":"店面折扣系数",
+		"saveURL":"json/Shop_update_updateShopIntegra.json",
+		"findURL":"json/Shop_select_findShopIntegraByShopId.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"shopIntegral_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"shopIntegral_setting.confirm"
+		        	}
+				]
+			}
+	}
+}

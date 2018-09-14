@@ -66,7 +66,7 @@
 										scope.START_TIME = scope.form.ALLOTTED_TIME_PERIOD.split(' ')[0]
 										scope.END_TIME = scope.form.ALLOTTED_TIME_PERIOD.split(' ')[1]
 									}
-									scope.$apply()
+									scope.$apply();
 								}
 							}).error(function(data) {
 								loggingService.info('获取测试信息出错');

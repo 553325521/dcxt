@@ -51,7 +51,7 @@
 	
 	</insert>
 	
-	<!-- 根绝会员卡id更新会员卡信息 -->
+	<!-- 根据会员卡id更新会员卡信息 -->
 	<update id="updaeteVipCardById" parameterMap="BaseParameterMap" >
 		UPDATE sc_vip_card SET 
 			VCARD_NAME = #{VCARD_NAME}, 
@@ -74,7 +74,7 @@
 			VCARD_PK = #{VCARD_PK};
 	</update>
 	
-	<!-- 根绝会员卡id查询会员卡信息 -->
+	<!-- 根据会员卡id查询会员卡信息 -->
 	<select id="selectVipCardById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 
 			VCARD_PK, VCARD_IDNUMBER, VCARD_NAME, IS_USE, ALLOTTED_TIME, ALLOTTED_TIME_PERIOD, VCARD_ZKXS, VCARD_JFXS, START_MONEY, START_JF, USE_SHOP, VCARD_LOGO, BACKGROUND_IMAGE, VCARD_SYXZ, VCARD_TQSM, VCARD_TWJS
@@ -84,7 +84,7 @@
 			VCARD_PK = #{VCARD_PK};
 	</select>
 	
-	<!-- 根绝店铺id查询该店铺所有会员卡基本信息 -->
+	<!-- 根据店铺id查询该店铺所有会员卡基本信息 -->
 	<select id="selectVipCardListByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 
 			VCARD_PK, VCARD_IDNUMBER, VCARD_NAME, IS_USE, ALLOTTED_TIME, ALLOTTED_TIME_PERIOD, VCARD_ZKXS, VCARD_JFXS, START_MONEY, START_JF, USE_SHOP, VCARD_LOGO, BACKGROUND_IMAGE, VCARD_SYXZ, VCARD_TQSM, VCARD_TWJS
@@ -95,5 +95,16 @@
 		AND
 			ssv.VIP_CARD_FK = svc.VCARD_PK;
 	</select>
-
+	
+	<!-- 根据店铺id查询该店铺所有会员卡名字 -->
+	<select id="selectVipCardNameListByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			VCARD_NAME
+		FROM 
+			 sc_vip_card svc, sc_shop_vcard ssv
+		WHERE 
+			ssv.SHOP_FK = #{SHOP_ID}
+		AND
+			ssv.VIP_CARD_FK = svc.VCARD_PK;
+	</select>
 </mapper>

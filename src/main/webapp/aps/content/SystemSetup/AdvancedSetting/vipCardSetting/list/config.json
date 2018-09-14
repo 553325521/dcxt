@@ -1,0 +1,21 @@
+{
+	"name": "vipCardSetting_list",
+	"viewUrl": "aps/content/SystemSetup/AdvancedSetting/vipCardSetting/list/template.html",
+	"controllerUrl": "aps/content/SystemSetup/AdvancedSetting/vipCardSetting/list/controller.js",
+	"config": {
+		"pageTitle":"会员列表",
+		"findURL":"json/Shop_select_findVipGiveOutByShopId.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"vipCardSetting_list.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"vipCardSetting_list.confirm"
+		        	}
+				]
+			}
+	}
+}

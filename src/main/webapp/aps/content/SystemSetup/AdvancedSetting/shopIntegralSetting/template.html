@@ -1,0 +1,113 @@
+<style>
+	.cancelBorder:before{
+		width:0;
+	}
+	.hide-input{
+		float: left;
+		position: relative;
+		margin-right: 9px;
+		margin-bottom: 9px;
+		width: 77px;
+		height: 77px;
+	}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0
+	}
+	.weui_uploader_files li{
+	 	width:79px;
+	 	float:left;
+	 	margin-right: 9px;
+	}
+
+</style>
+   <div class="weui-header" style="background-color:#FFFFFF;overflow：auto;">
+		<div class="weui-header-left">
+			<a class="icon icon-109"  ng-click="toHref('SystemSetup/AdvancedSetting')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area" style="padding: 12px 0;">
+				<div class="bom-radio"   ng-click="doSave()">保存</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow">
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">店面折扣系数</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary" style="margin-right: 4px;">
+			<input class="weui_input label-input dcxt-right-label" type="text" placeholder="百分比" ng-model="form.SHOP_DMZKXS" required emptyTips="请输入店面折扣系数" 
+				notMatchTips="请输入正确店面折扣系数" pattern="^[0-9]{1,3}(.{1}[0-9]{1,2})?$">
+		</div>
+		<div class="weui_cell_bd dcxt-right-label tablessetting-small-font" style="margin-right: 16px;">
+			<label>%</label>
+		</div>
+		<i class="weui_icon_warn"></i>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">店面积分系数</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary" style="margin-right: 4px;">
+			<input class="weui_input label-input dcxt-right-label" type="text" placeholder="百分比" ng-model="form.SHOP_DMJFXS" required emptyTips="请输入店面积分系数"
+				notMatchTips="请输入正确店面积分系数" pattern="^[0-9]{1,3}(.{1}[0-9]{1,2})?$">
+		</div>
+		<div class="weui_cell_bd dcxt-right-label tablessetting-small-font" style="margin-right: 16px;">
+			<label>%</label>
+		</div>
+		<i class="weui_icon_warn"></i>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">生日折扣系数</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary" style="margin-right: 4px;">
+			<input class="weui_input label-input dcxt-right-label" type="text"
+				placeholder="输入生日折扣系数" ng-model="form.SHOP_SRZKXS" required emptyTips="请输入生日折扣系数" notMatchTips="请输入正确生日折扣系数 pattern="^[0-9]+(.{1}[0-9]{1,2})?$">
+		</div>
+		<div class="weui_cell_bd dcxt-right-label tablessetting-small-font" style="margin-right: 16px;">
+			<label>%</label>
+		</div>
+		 <i class="weui_icon_warn"></i>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">生日积分系数</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary dcxt-right-label" style="margin-right: 4px;">
+			<input class="weui_input label-input dcxt-right-label" type="text"
+				placeholder="输入生日积分系数" ng-model="form.SHOP_SRJFXS" required emptyTips="请输入生日积分系数" notMatchTips="请输入正确生日积分系数" pattern="^[0-9]+(.{1}[0-9]{1,2})?$">
+		</div>
+		<div class="weui_cell_bd dcxt-right-label tablessetting-small-font" style="margin-right: 16px;">
+			<label>%</label>
+		</div>
+		 <i class="weui_icon_warn"></i>
+	</div>
+	
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<span style="color:#B2B2B2;font-size: 11px;" >
+				<div class="weui_cell no-broder" style="padding:0;">总折扣系数=会员级别折扣系数*店面折扣系数*生日折扣系数</div>
+				<div class="weui_cell no-broder" style="padding:0;">总积分系数=会员级别积分系数*店面积分系数*生日积分系数</div>
+				<div class="weui_cell no-broder" style="padding:0;">总积分=原价*总折扣系数*总积分系数</div>
+			</span>
+		</div>
+	</div>
+	
+</div>
+	 
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	

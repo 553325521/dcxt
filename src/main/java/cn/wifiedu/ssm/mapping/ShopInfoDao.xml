@@ -283,7 +283,36 @@
 		from sc_shop_info
 		where shop_id = #{SHOP_ID}
 	</select>
-
 	
-
+	<!-- 查询店面积分折扣 -->
+	<select id="selectShopIntegraByShopId" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT
+			SHOP_ID,
+			SHOP_DMZKXS,
+			SHOP_DMJFXS,
+			SHOP_SRZKXS,
+			SHOP_SRJFXS
+		FROM 
+			sc_shop_info
+		WHERE 
+			SHOP_ID = #{SHOP_ID};
+	</select>
+	
+	<!-- 根据店铺id修改店铺积分折扣 -->
+	<update  id="updateShopIntegraByShopId" parameterMap="BaseParameterMap">
+		UPDATE 
+			sc_shop_info SET SHOP_DMZKXS = #{SHOP_DMZKXS}, SHOP_DMJFXS = #{SHOP_DMJFXS}, SHOP_SRZKXS = #{SHOP_SRZKXS}, SHOP_SRJFXS = #{SHOP_SRJFXS}
+		WHERE
+			 SHOP_ID = #{SHOP_ID};
+	</update>
+	
+	<!-- 根绝店铺id查询发放的会员卡信息 -->
+	<select id="selectVipGiveOutByShopId" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT 
+			USER_VCARD_XFDS, USER_VCARD_CSJF, VCARD_NAME, USER_VCARD_TIME,USER_SN,USER_PHONE 
+		FROM 
+			sc_user_vcard suv, sc_vip_card svc, sc_user su 
+		WHERE 
+			svc.VCARD_PK IN (SELECT VIP_CARD_FK FROM sc_shop_vcard WHERE SHOP_FK = #{SHOP_ID}) AND svc.VCARD_PK = VCARD_FK AND su.USER_PK = suv.USER_FK;
+	</select>
 </mapper>
