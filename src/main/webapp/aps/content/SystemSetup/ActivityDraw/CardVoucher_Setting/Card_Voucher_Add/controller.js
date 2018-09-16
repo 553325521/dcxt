@@ -84,6 +84,34 @@
 					
 					scope.form.timePeriod = "全天";
 					
+					/*初始化是否可分享*/
+					scope.form.can_share = 'true';
+					/*初始化使用提醒*/
+					scope.form.notice = "";
+					/*初始化使用介绍*/
+					scope.form.description = "";
+					
+					/*初始化卡券code类型*/
+					scope.codeType_text = ['文 本','一维码','二维码 ','二维码无code显示','一维码无code显示',' 不显示code和条形码类型'];
+					scope.codeType_value = ['CODE_TYPE_TEXT','CODE_TYPE_BARCODE','CODE_TYPE_QRCODE','CODE_TYPE_ONLY_QRCODE','CODE_TYPE_ONLY_BARCODE','CODE_TYPE_NONE'];
+					scope.form.code_type = 'CODE_TYPE_TEXT';
+					$("#codeType_select").val('CODE_TYPE_TEXT');
+					/*初始化下拉框*/
+					function comboboxCodeTypeInit() {
+						$("#codeType_select").picker({
+							title : "选择类型",
+							toolbarCloseText : '确定',
+							cols : [
+								{
+									textAlign : 'center',
+									values :scope.codeType_value,
+									displayValues : scope.codeType_text
+								}
+							]
+						})
+					}
+					comboboxCodeTypeInit();
+					
 					/*初始化颜色数据源*/
 					scope.colorArray = [
 						{'colorName':'Color010','colorNumber':'	#63b359'},
@@ -136,30 +164,93 @@
 						if (newValue === '0') {
 							scope.time_week ="False";
 							scope.time_time ="False";
-						}else if(newValue === '1'){
-							scope.time_week ="True";
-							scope.time_time ="False";
 						}else{
-							
-							scope.time_week ="False";
+							scope.time_week ="True";
 							scope.SD_SHOW = "True";
 							$scope.$watch('form.TIMEDUAN', function(newValue, oldValue) {
 								if (newValue === '0') {
-									scope.form.timePeriod ="全天";
+									// 初始化限星期数据源
+									$scope.TIME_WEEK = [{
+											value : 'MONDAY' ,
+											name : '周一 ',
+											checked: false
+										},{
+											value : 'TUESDAY' ,
+											name : '周二',
+											checked: false
+										},{
+											value : 'WEDNESDAY' ,
+											name : '周三 ',
+											checked: false
+										},{
+											value : 'THURSDAY' ,
+											name : '周四 ',
+											checked: false
+										},{
+											value : 'FRIDAY' ,
+											name : '周五 ',
+											checked: false
+										},{
+											value : 'SATURDAY' ,
+											name : '周六 ',
+											checked: false
+										},{
+											value : 'SUNDAY',
+											name : '周日 ',
+											checked: false
+										}
+									];
+									scope.form.weekArray = [];
 									scope.time_time ="False";
 								}else{
+									// 初始化限星期数据源
+									$scope.TIME_WEEK = [{
+											value : 'MONDAY' ,
+											name : '周一 ',
+											checked: false
+										},{
+											value : 'TUESDAY' ,
+											name : '周二',
+											checked: false
+										},{
+											value : 'WEDNESDAY' ,
+											name : '周三 ',
+											checked: false
+										},{
+											value : 'THURSDAY' ,
+											name : '周四 ',
+											checked: false
+										},{
+											value : 'FRIDAY' ,
+											name : '周五 ',
+											checked: false
+										},{
+											value : 'SATURDAY' ,
+											name : '周六 ',
+											checked: false
+										},{
+											value : 'SUNDAY',
+											name : '周日 ',
+											checked: false
+										}
+									];
+									scope.form.weekArray = [];
 									scope.time_time ="True";
 								}
 							}, true);
 						}
 					}, true);
 					
+					/*初始化开始时间点*/
+					scope.form.begin_hhmm ="00 00";
+					/*初始化结束时间点*/
+					scope.form.end_hhmm ="00 00";
 					// 初始化限星期数据源
 					$scope.TIME_WEEK = [
 						{
 							value : 'MONDAY' ,
 							name : '周一 ',
-							checked: true
+							checked: false
 						},
 						{
 							value : 'TUESDAY' ,
@@ -193,21 +284,20 @@
 						}
 					];
 					/*初始化选择星期数组*/
-					scope.form.weekArray = [{
-						value : 'MONDAY' ,
-						name : '周一 ',
-						checked: true
-					}];
+					scope.form.weekArray = [];
+					scope.form.weekStr = "";
 					/*星期选择方法*/
 					scope.selectWeek = function(item){
 						var action = (item.checked ? 'add' : 'remove');
 						if (action == "add") {
-							scope.form.weekArray.push({value:item.value,name:item.name,checked:item.checked});
+							scope.form.weekArray.push(item.value);
 						/*	scope.form.timePeriod  = JSON.stringify(scope.form.GTYPE_AREA_Array);*/
 						} else {
-							scope.form.weekArray.remove({value:item.value,name:item.name,checked:item.checked});
+							scope.form.weekArray.remove(item.value);
 							/*scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);*/
 						}
+						scope.form.weekStr  = scope.form.weekArray.toString();
+						console.info(scope.form.weekStr)
 					}
 					
 					scope.form.TIMEDUAN = '0';
@@ -342,6 +432,46 @@
 						});*/
 						$("#start_time").datetimePicker({title:"选择日期", toolbarCloseText : '确定',m:1});
 						$("#end_time").datetimePicker({title:"选择日期",toolbarCloseText : '确定',m:1});
+						$("#begin_hhmm").picker({title:"选择时间",
+					        cols: [
+					          {
+					            textAlign: 'center',
+					            values: (function () {
+					                var arr = [];
+					                for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? '0' + i : i); }
+					                return arr;
+					            })()
+					            
+					          },
+					          {
+					            textAlign: 'center',
+					            values:  (function () {
+					                var arr = [];
+					                for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
+					                return arr;
+					            })(),
+					          }
+					        ]});
+						$("#end_hhmm").picker({title:"选择时间",
+					        cols: [
+					          {
+					            textAlign: 'center',
+					            values: (function () {
+					                var arr = [];
+					                for (var i = 0; i <= 23; i++) { arr.push(i < 10 ? '0' + i : i); }
+					                return arr;
+					            })()
+					            
+					          },
+					          {
+					            textAlign: 'center',
+					            values:  (function () {
+					                var arr = [];
+					                for (var i = 0; i <= 59; i++) { arr.push(i < 10 ? '0' + i : i); }
+					                return arr;
+					            })(),
+					          }
+					        ]});   
 						scope.pageShow = "True";
 					}
 					init();
@@ -371,11 +501,17 @@
 					//保存
 					scope.doSave = function(){
 						
+						scope.form.code_type = $("#codeType_select").val();
+						console.info(scope.form.notice);
 						scope.form.INTRODUCE_STR = JSON.stringify(scope.introduceArray);
 						
 						scope.form.begin_time = $("#start_time").val();
 						
 						scope.form.end_time = $("#end_time").val();
+						
+						scope.form.begin_hhmm = $("#begin_hhmm").val();
+						
+						scope.form.end_hhmm = $("#end_hhmm").val();
 						
 						var flag = true;
 						
@@ -386,6 +522,14 @@
 						}else{
 							flag = true;
 							scope.returnForm('.titleCell','.titleIcon');
+						}
+						/*判断领取数量*/
+						if(scope.form.use_limit == undefined){
+							flag = false;
+							scope.validateForm('.userLimitCell','.userLimitIcon','请输入领取数量');
+						}else{
+							flag = true;
+							scope.returnForm('.userLimitCell','.userLimitIcon');
 						}
 						/*期限开始时间判断*/
 						if(scope.form.begin_time =="" && scope.form.EXPIRY_DATE == "DATE_TYPE_FIX_TIME_RANGE"){

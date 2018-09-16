@@ -18,6 +18,7 @@
 			},
 			
 		"loadShopDataURL":"json/Shop_queryForList_loadShopListByRedis.json",
-		"loadCardByIdURL":"json/Card_select_loadCardById.json"
+		"loadCardByIdURL":"json/Card_select_loadCardById.json",
+		"updateCardURL":"json/CardVoucher_update_updateCard.json"
 	}
 }

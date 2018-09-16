@@ -17,6 +17,62 @@
 		SELECT * FROM sc_card C
 		WHERE C.card_id = #{card_id}
 	</select>
+	<!-- 根据卡券ID查询使用门店名称-->
+	<select id="loadShopByCodeID" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT S2.SHOP_NAME,S2.SHOP_ID FROM sc_shop_card S1 
+		INNER JOIN sc_shop_info S2 
+		ON S1.FK_SHOP = S2.SHOP_ID 
+		WHERE S1.FK_CARD = #{card_id}
+	</select>
+	<!-- 删除商品类别的时候删除商品 -->
+	<delete id="deleteByCardID" parameterMap="BaseParameterMap">
+		DELETE FROM
+		sc_shop_card
+		WHERE FK_CARD = #{card_id}
+	</delete>
+	<!-- 修改卡券 -->
+	<update id="updateCardById" parameterMap="BaseParameterMap" >
+    update sc_card
+    <set >
+      <if test="logo_url != null" >
+        logo_url = #{logo_url,jdbcType=VARCHAR},
+      </if>
+      <if test="code_type != null" >
+        code_type = #{code_type,jdbcType=VARCHAR},
+      </if>
+      <if test="color != null" >
+        color = #{color,jdbcType=VARCHAR},
+      </if>
+      <if test="notice != null" >
+        notice = #{notice,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="begin_timestamp != null" >
+        begin_timestamp = #{begin_timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="end_timestamp != null" >
+        end_timestamp = #{end_timestamp,jdbcType=VARCHAR},
+      </if>
+      <if test="get_limit != null" >
+        get_limit = #{get_limit,jdbcType=VARCHAR},
+      </if>
+      <if test="can_share != null" >
+        can_share = #{can_share,jdbcType=VARCHAR},
+      </if>
+      <if test="can_give_friend != null" >
+        can_give_friend = #{can_give_friend,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null" >
+        update_by = #{updateBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where card_id = #{card_id,jdbcType=VARCHAR}
+  </update>
   <!-- 插入卡券表 -->
 	<insert id="insertCard" parameterMap="BaseParameterMap" >
     insert into sc_card
