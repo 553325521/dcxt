@@ -65,18 +65,15 @@
 				</div>
 			<!-- </div> -->
 			<div class="slideleft">
-	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="vipCardDelete(item.TABLES_AREA_PK)">删除</span>
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="deleteCard(item.card_id)">删除</span>
        		</div>	      
 		</div>
-		
-		
 		<div class="weui_cell no-broder" ng-show="tipShow">
 			<div class="weui_cell_bd weui_cell_primary">
 					<span style="color:#B2B2B2;font-size: 11px;" >
 						  优惠券同时可以活动激活状态多个，自动发送只能激活一个，启用一个其他自动关闭。</span>
 			</div>
 		</div>
-		
 	</div>
 	<div class="weui-loadmore weui-loadmore-line" ng-hide="noDataShow">
             <span class="weui-loadmore-tips">暂无数据</span>

@@ -4,6 +4,7 @@
 	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/controller.js",
 	"config": {
 		"loadCardDataURL":"json/Card_select_loadCardData.json",
+		"deleteCardURL":"json/Card_delete_deleteCard.json",
 		"menu":{	
 	         "buttons":[
 		        	{

@@ -417,12 +417,10 @@ public class CardVoucherController extends BaseController{
 			
 			JSONObject createCard = JSONObject.parseObject(result);
 			
-			if(createCard.containsKey("errcode")&&createCard.get("errcode").equals("40100")){
+			System.out.println(createCard.containsKey("errcode")+"code"+createCard.getInteger("errcode"));
+			if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() == 40100){
 				output("40100", "有效期设置不正确");
-				return;
-			}
-			
-			if(createCard.containsKey("errcode")&&createCard.get("errmsg").equals("0")){
+			}else if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() == 0){
 				param.put("update_time",StringDeal.getStringDate());
 				param.put("update_by", userObj.get("USER_NAME"));
 				param.put("sqlMapId", "updateCardById");
@@ -441,11 +439,11 @@ public class CardVoucherController extends BaseController{
 						openService.insert(param);
 					}
 				}
+				output("0000","修改成功");
+				String str = cardJsonObj.toJSONString();
+				System.out.println("参数:"+str);
+				System.out.println("创建卡券返回结果:"+result);
 			}
-			output("0000","修改成功");
-			String str = cardJsonObj.toJSONString();
-			System.out.println("参数:"+str);
-			System.out.println("创建卡券返回结果:"+result);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -453,10 +451,13 @@ public class CardVoucherController extends BaseController{
 		}
 	}
 	
+	/**
+	* <p>Title: loadCardData</p>
+	* <p>Description: 显示卡券列表</p>
+	*/
 	@RequestMapping(value = "/Card_select_loadCardData", method = RequestMethod.POST)
 	public void loadCardData() {
 		try {
-
 			Map<String, Object> map = new HashMap<String,Object>();
 			// 获取当前session信息
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
@@ -474,6 +475,68 @@ public class CardVoucherController extends BaseController{
 			output("9999", "查询失败");
 		}
 	}
+	
+	/**
+	* <p>Title: deleteCard</p>
+	* <p>Description:删除卡券 </p>
+	*/
+	@RequestMapping(value = "/Card_delete_deleteCard", method = RequestMethod.POST)
+	public void deleteCard() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String card_id = map.get("card_id").toString();
+			/*获取appid*/
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			String accessToken = "";
+			String appid = userObj.getString("FK_APP");
+			/*获取accessToken*/
+			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+				accessToken = WxUtil.getWxAccessToken(appid,
+						interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+			} else {
+				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+			}
+			JSONObject cardJsonObj = new JSONObject();
+			
+			cardJsonObj.put("card_id", card_id);
+			
+			String url = CommonUtil.getPath("WX_DELETE_CARD");
+
+			url = url.replace("ACCESS_TOKEN", accessToken);
+			
+			String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
+			
+			JSONObject createCard = JSONObject.parseObject(result);
+			
+			if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() == 0){
+				map.put("sqlMapId", "deleteByCardID");
+				boolean deleteResult = openService.delete(map);
+				map.put("sqlMapId", "deleteCard");
+				boolean deleteCardResult = openService.delete(map);
+				if(deleteResult && deleteCardResult){
+					output("0000", "删除成功");
+				}else{
+					output("9999", "删除失败");
+				}
+			}else{
+				output("9999", "删除失败");
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999", "删除失败");
+		}
+	}
+	
+	/**
+	* <p>Title: loadCardById</p>
+	* <p>Description: 根据卡券ID查询卡群信息</p>
+	*/
 	@RequestMapping(value = "/Card_select_loadCardById", method = RequestMethod.POST)
 	public void loadCardById() {
 		try {

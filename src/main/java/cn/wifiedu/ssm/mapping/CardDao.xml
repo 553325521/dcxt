@@ -24,11 +24,17 @@
 		ON S1.FK_SHOP = S2.SHOP_ID 
 		WHERE S1.FK_CARD = #{card_id}
 	</select>
-	<!-- 删除商品类别的时候删除商品 -->
+	<!-- 删除卡券商铺中间表 -->
 	<delete id="deleteByCardID" parameterMap="BaseParameterMap">
 		DELETE FROM
 		sc_shop_card
 		WHERE FK_CARD = #{card_id}
+	</delete>
+	<!-- 删除卡券-->
+	<delete id="deleteCard" parameterMap="BaseParameterMap">
+		DELETE FROM
+		sc_card
+		WHERE card_id = #{card_id}
 	</delete>
 	<!-- 修改卡券 -->
 	<update id="updateCardById" parameterMap="BaseParameterMap" >

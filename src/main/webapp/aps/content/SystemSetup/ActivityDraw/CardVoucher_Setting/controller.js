@@ -31,6 +31,7 @@
 					
 					scope.form.fid = params.fid;
 
+					scope.form.card_id = "";
 					scope.toHref = function(path,card_id) {
 						var m2 = {
 							"url" : "aps/content/" + path + "/config.json?fid=" + scope.form.fid+"&card_id="+card_id,
@@ -38,6 +39,18 @@
 							"contentName" : "content"
 						}
 						eventBusService.publish(controllerName, 'appPart.load.content', m2);
+					}
+					
+					scope.deleteCard = function(card_id){
+						
+						scope.form.card_id = card_id;
+						var m2 = {
+								"url" : "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/config.json",
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : "是否删除?"
+							}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 					}
 					
 					var init = function() {
@@ -76,7 +89,7 @@
 					*/
 					// 弹窗确认事件
 					eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
-						 $httpService.post(config.removeURL,scope.del).success(function(data){
+						 $httpService.post(config.deleteCardURL,scope.form).success(function(data){
 							 if(data.code == "0000"){
 								 scope.pageShow = "False";
 								 init();
