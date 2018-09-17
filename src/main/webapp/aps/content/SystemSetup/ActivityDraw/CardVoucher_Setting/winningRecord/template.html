@@ -63,7 +63,7 @@
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="display:flex;top:0;matgin-top:0px;height:46px;background-color: #fff;">
 			<div style="font-size:13px;display:flex;border-radius: 5px;height:26px;margin:10px 2px; border: 1px solid #D5D5D5;">
-				<div class="weui_navbar_item location-center {{$last ? '':'click_select'}}" ng-repeat="item in ['未使用','已使用','已过期']" style="{{$last ? 'padding:4px 8px;':''}}{{click_select == $index + 1 ?'color:#fff;background-color:#838280;':''}}"  ng-click="click($index+1)">
+				<div class="weui_navbar_item location-center {{$last ? '':'click_select'}}" ng-repeat="item in ['未使用','已使用','已过期']" style="{{$last ? 'padding:4px 8px;':''}}{{click_select == $index + 1 ?'color:#fff;background-color:#838280;':'color:#000;'}}"  ng-click="click($index+1)">
 		             {{item}}
 				</div>
 			</div>

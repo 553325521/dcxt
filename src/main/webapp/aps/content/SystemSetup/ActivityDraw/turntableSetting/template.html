@@ -25,39 +25,39 @@
 }
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/AdvancedSetting')">
+		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/ActivityDraw')">
 			<a class="icon icon-109" ></a>
 		</div>
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
- 		<div class="weui-header-right" style="top: 0;right:95px">
+ 		 <div class="weui-header-right" style="top: 0;right:95px">
 			<div class="button_sp_area">
-				<div class="bom-radio" style="width:80px"  ng-click="toHref('SystemSetup/AdvancedSetting/vipCardSetting/list')">发放记录</div>
+				<div class="bom-radio" style="width:80px"  ng-click="toHref('SystemSetup/ActivityDraw/turntableSetting/list')">中奖记录</div>
 			</div>
 		</div>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area">
-				<div class="bom-radio" id="attend2" ng-click="toHref('SystemSetup/AdvancedSetting/vipCardSetting/setting')">添加</div>
+				<div class="bom-radio" id="attend2" ng-click="toHref('SystemSetup/ActivityDraw/turntableSetting/setting')">添加</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="weui_cells tablessetting-font-style" style="margin-top:1px;" ng-show="pageShow">
-		<div class="weui_cell slidelefts" ng-repeat="item in vip_card_list" >		
-			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="transform: translateX(0px);" ng-click="toHref('SystemSetup/AdvancedSetting/vipCardSetting/setting',item.VCARD_PK)">	
+		<div class="weui_cell slidelefts" ng-repeat="item in turntable_list" >		
+			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated" style="transform: translateX(0px);" ng-click="toHref('SystemSetup/ActivityDraw/turntableSetting/setting',item.TURNTABLE_PK)">	
 				<div class="weui_cell no-broder cancelPadding">
 						<div class="weui_cell_bd" style="margin-right:10px">
 							<span ng-bind="$index + 1"></span>
 						</div>
 						<div class="weui_cell_bd weui_cell_primary">
-								<span ng-bind="item.VCARD_NAME"></span>
+								<span ng-bind="item.ACTIVITY_NAME"></span>
 						</div>
-						<div class="weui_cell_bd tablessetting-small-font {{item.IS_USE == 0 ? 'tablessetting-red-font' : ''}}"">
+						<div class="weui_cell_bd tablessetting-small-font {{item.TABLES_AREA_STATUS == 0 ? 'tablessetting-red-font' : ''}}"">
 								<span class="{{item.IS_USE == '1' ? '':'tablessetting-red-font'}}">{{item.IS_USE == '1' ? '开启':'关闭'}}</span>
 						</div>
 					</div>
 					<div class="weui_cell cancelBorder cancelPadding">
 						<div class="weui_cell_bd weui_cell_primary">
-								<span style="padding-left:30px;font-size:12px;color:#999">{{item.ALLOTTED_TIME == '1' ? '永久':'期间'}}/折扣{{item.VCARD_ZKXS}}%/积分{{item.VCARD_JFXS}}%/储值{{item.START_MONEY/100 | number:2}}元/积分{{item.START_JF | number:2}}分</span>
+								<span style="padding-left:30px;font-size:12px;color:#999">{{TURNTABLE_CYDX}}{{PARTICIPATION_WAY}}</span>
 						</div>
 					</div>
 				</div>
@@ -68,7 +68,7 @@
 			
 					
 			<div class="slideleft">
-	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="vipCardDelete(item.VCARD_PK)">删除</span>
+	        	<span class="bg-red f-white dels" id="delete-table-cate" ng-click="vipCardDelete(item.TURNTABLE_PK)">删除</span>
        		</div>	      
 		</div>
 		
@@ -76,7 +76,7 @@
 		<div class="weui_cell no-broder">
 			<div class="weui_cell_bd weui_cell_primary">
 					<span style="color:#B2B2B2;font-size: 11px;" >
-						  优惠券同时可以活动激活状态多个，自动发送只能激活一个，启用一个其他自动关闭。</span>
+						  欢乐转盘同时只能有一个活动激活状态，开启一个其他自动为关闭状态。</span>
 			</div>
 		</div>
 		

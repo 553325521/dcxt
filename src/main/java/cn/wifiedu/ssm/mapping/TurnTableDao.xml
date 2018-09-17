@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="turnTable" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+	
+	<!-- 插入转盘信息 -->
+	<insert id="insertTurntable" parameterMap="BaseParameterMap" >
+		INSERT INTO sc_turntable 
+		(
+			TURNTABLE_PK,
+			ACTIVITY_NAME,
+			IS_USE,
+			TURNTABLE_CYDX,
+			TURNTABLE_YXQX,
+			PARTICIPATION_WAY,
+			PARTICIPATION_TIME,
+			PARTICIPATION_KCJF,
+			TURNTABLE_ZJGL,
+			TURNTABLE_LQQX,
+			USE_SHOP,
+			TURNTABLE_PRIZE,
+			TURNTABLE_BZSM,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		VALUES
+		(
+			#{UUID},
+			#{ACTIVITY_NAME},
+			#{IS_USE},
+			#{TURNTABLE_CYDX},
+			#{TURNTABLE_YXQX},
+			#{PARTICIPATION_WAY},
+			#{PARTICIPATION_TIME},
+			#{PARTICIPATION_KCJF},
+			#{TURNTABLE_ZJGL},
+			#{TURNTABLE_LQQX},
+			#{USE_SHOP},
+			#{TURNTABLE_PRIZE},
+			#{TURNTABLE_BZSM},
+			NOW(),
+			#{CREATE_BY}
+		)
+	</insert>
+	
+	<!-- 根据转盘id更新转盘信息 -->
+	<update id="updaeteTurntableById" parameterMap="BaseParameterMap">
+		UPDATE sc_turntable SET 
+			ACTIVITY_NAME = #{ACTIVITY_NAME}, 
+			IS_USE = #{IS_USE}, 
+			TURNTABLE_CYDX = #{TURNTABLE_CYDX}, 
+			TURNTABLE_YXQX = #{TURNTABLE_YXQX}, 
+			PARTICIPATION_WAY = #{PARTICIPATION_WAY}, 
+			PARTICIPATION_TIME = #{PARTICIPATION_TIME}, 
+			PARTICIPATION_KCJF = #{PARTICIPATION_KCJF}, 
+			TURNTABLE_ZJGL = #{TURNTABLE_ZJGL}, 
+			TURNTABLE_LQQX = #{TURNTABLE_LQQX}, 
+			USE_SHOP = #{USE_SHOP}, 
+			TURNTABLE_PRIZE = #{TURNTABLE_PRIZE}, 
+			TURNTABLE_BZSM = #{TURNTABLE_BZSM}, 
+			UPDATE_TIME = NOW(), 
+			UPDATE_BY = #{UPDATE_BY}
+		WHERE 
+			TURNTABLE_PK = #{TURNTABLE_PK};
+	</update>
+	
+	<!-- 根据转盘id查询转盘信息 -->
+	<select id="selectTurntableById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			TURNTABLE_PK, ACTIVITY_NAME, IS_USE, TURNTABLE_CYDX, TURNTABLE_YXQX, PARTICIPATION_WAY, PARTICIPATION_TIME, PARTICIPATION_KCJF, TURNTABLE_ZJGL, TURNTABLE_LQQX, USE_SHOP, TURNTABLE_PRIZE, TURNTABLE_BZSM
+		FROM 
+			 sc_turntable
+		WHERE 
+			TURNTABLE_PK = #{TURNTABLE_PK};
+	</select>
+	
+	<!-- 根据店铺id查询该店铺所有转盘基本信息 -->
+	<select id="selectTurntableListByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			TURNTABLE_PK, ACTIVITY_NAME, IS_USE, TURNTABLE_CYDX, PARTICIPATION_WAY
+		FROM 
+			 sc_shop_turntable sst, sc_turntable st
+		WHERE 
+			sst.SHOP_FK = #{SHOP_ID}
+		AND
+			sst.TURNTABLE_FK = st.TURNTABLE_PK;
+	</select>
+	
+	<!-- 根据店铺id查询该店铺所有转盘名字 -->
+	<select id="selectTurntableNameListByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			ACTIVITY_NAME
+		FROM 
+			 sc_turntable st, sc_shop_turntable sst
+		WHERE 
+			sst.SHOP_FK = #{SHOP_ID}
+		AND
+			sst.TURNTABLE_FK = st.TURNTABLE_PK;
+	</select>
+	
+	<!-- 根据店铺id更改是否启用转盘 -->
+	<update id="updaeteTurntableIsUseById" parameterMap="BaseParameterMap">
+		UPDATE sc_turntable SET IS_USE = #{TURNTABLE_IS_USE} WHERE TURNTABLE_PK IN (SELECT TURNTABLE_FK FROM sc_shop_turntable WHERE SHOP_FK IN 
+		 <foreach collection="USE_SHOP.split(',')" item="shopId" index="index"
+                open="(" close=")" separator=",">
+                #{shopId}
+         </foreach>
+		);
+	</update>
+	
+	<!-- 根据转盘id删除转盘 -->
+	<delete id="removeTurntableById" parameterMap="BaseParameterMap">
+		DELETE FROM 
+			sc_turntable
+		WHERE
+			TURNTABLE_PK = #{TURNTABLE_ID} AND USE_SHOP LIKE '%${SHOP_ID}%';
+	</delete>
+</mapper>

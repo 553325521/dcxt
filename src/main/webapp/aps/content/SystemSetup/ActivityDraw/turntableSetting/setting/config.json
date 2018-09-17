@@ -1,0 +1,22 @@
+{
+	"name": "turntableSetting_setting",
+	"viewUrl": "aps/content/SystemSetup/ActivityDraw/turntableSetting/setting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/turntableSetting/setting/controller.js",
+	"config": {
+		"insertOrUpdate":"json/Turntable_insert_insertOrUpdateTurntable.json",
+		"findURL":"json/Turntable_select_findTurntableById.json",
+		"initURL":"json/Shop_queryForList_selectManagerShopIdAndNameByUserId.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"turntableSetting_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"turntableSetting_setting.confirm"
+		        	}
+				]
+			}
+	}
+}

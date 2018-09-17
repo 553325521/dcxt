@@ -288,7 +288,7 @@
 					}
 					scope.initsize_selects = function(index,value){
 						$(".size_select:eq(" + index + ")").val(value);
-						$(".size_select").picker({
+						$(".size_select:eq(" + index + ")").picker({
 							title : "选择份型",
 							toolbarCloseText : '确定',
 							cols : [

@@ -27,19 +27,11 @@ import cn.wifiedu.ssm.util.PictureUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 
-		/**
-		 * 
-		 * @author lps
-		 * @date 2018年8月3日18:54:58
-		 * @Description:
-		 * @version V1.0
-		 *
-		 */
 		@Controller
 		@Scope("prototype")
-		public class VipCardController extends BaseController {
+		public class TurntableController extends BaseController {
 
-			private static Logger logger = Logger.getLogger(VipCardController.class);
+			private static Logger logger = Logger.getLogger(TurntableController.class);
 
 			@Resource
 			OpenService openService;
@@ -58,105 +50,88 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public static final long ONE_PIC_MAXSIZE = 2100000L;	//允许的单张图片最大大小
 			public static final long ALL_PICMAX_SIZE = 6300000L;	//允许的所有图片最大大小
 			public static final int MAX_PIC_NUM = 10;				//允许的图片最大数量
-			private static final String VIPCARD_PICPATH = "assets/img/vipcard";	//会员卡图片存储位置
-			private static final String VIPCARD_TWJS_PICPATH = "assets/img/vipcard_twjs"; //会员卡图文介绍图片存储位置
+			private static final long MAX_TWDESC_LENGTH = 1000;	//图文说明文字最大大小
+			private static final String Turntable_TWJS_PICPATH = "assets/img/turntable_twjs"; //转盘图文介绍图片存储位置
 			
 			/**
 			 * 
 			 * @date 2018年9月11日 下午5:26:02 
 			 * @author lps
 			 * 
-			 * @Description: 插入会员卡
+			 * @Description: 插入转盘
 			 * @param request
 			 * @param session 
 			 * @return void 
 			 *
 			 */
 			
-			@RequestMapping("/VipCard_insert_insertOrUpdateVipCard")
-			public void addVipCard(HttpServletRequest request, HttpSession session){
+			@RequestMapping("/Turntable_insert_insertOrUpdateTurntable")
+			public void addTurntable(HttpServletRequest request, HttpSession session){
 				try {
 					Map map = getParameterMap();
 					
 					//表单验证
-					if(StringUtils.isBlank((String)map.get("VCARD_NAME")) || 
+					if(StringUtils.isBlank((String)map.get("ACTIVITY_NAME")) || 
 							StringUtils.isBlank((String)map.get("IS_USE")) || 
-							StringUtils.isBlank((String)map.get("ALLOTTED_TIME")) || 
-							StringUtils.isBlank((String)map.get("VCARD_ZKXS")) ||
-							StringUtils.isBlank((String)map.get("VCARD_JFXS")) ||
-							StringUtils.isBlank((String)map.get("START_MONEY")) ||
-							StringUtils.isBlank((String)map.get("START_JF")) || 
+							StringUtils.isBlank((String)map.get("TURNTABLE_CYDX")) || 
+							StringUtils.isBlank((String)map.get("TURNTABLE_YXQX")) ||
+							StringUtils.isBlank((String)map.get("PARTICIPATION_WAY")) ||
+							StringUtils.isBlank((String)map.get("PARTICIPATION_KCJF")) ||
+							StringUtils.isBlank((String)map.get("TURNTABLE_ZJGL")) || 
+							StringUtils.isBlank((String)map.get("TURNTABLE_LQQX")) || 
 							StringUtils.isBlank((String)map.get("USE_SHOP")) || 
-							StringUtils.isBlank((String)map.get("VCARD_LOGO")) || 
-							StringUtils.isBlank((String)map.get("BACKGROUND_IMAGE"))
+							StringUtils.isBlank((String)map.get("TURNTABLE_PRIZE"))
 							){
-						output("9999","信息填写不完成");
-						return;
-					}
-					
-					//元转换成分
-					map.put("START_MONEY", (long)(Double.parseDouble((String)map.get("START_MONEY"))*100));
-					//判断单张图片大小
-					Integer onePicSize = map.get("VCARD_LOGO").toString().length()*3/4;
-					if(onePicSize < 10){output("9999","添加一个LOGO"); return;}
-					if(onePicSize > ONE_PIC_MAXSIZE){
-						output("9999","单张图片大小不允许超过" + Math.floor(ONE_PIC_MAXSIZE/1000000) + "M");
-						return;
-					}
-					
-					onePicSize = map.get("BACKGROUND_IMAGE").toString().length()*3/4;
-					if(onePicSize < 10){output("9999","添加一个背景图片"); return;}
-					if(onePicSize > ONE_PIC_MAXSIZE){
-						output("9999","单张图片大小不允许超过" + Math.floor(ONE_PIC_MAXSIZE/1000000) + "M");
+						output("9999","信息填写不完整");
 						return;
 					}
 					
 					//图文说明里边的图片和文字验证
-					List<Map<String, String>> twDescList = (List<Map<String, String>>) JSON.parse((String)map.get("VCARD_TWJS"));
-//					String result = twDescList.stream().forEach(action);
-					
+					List<Map<String, String>> twDescList = (List<Map<String, String>>) JSON.parse((String)map.get("TURNTABLE_BZSM"));
+					//判断图文说明的长度
+					long twDescLength = 0;
 					for (Map<String, String> twDescMap : twDescList) {
 						if(twDescMap.get("img").length()*3/4 > ONE_PIC_MAXSIZE){
 							output("9999","单张图片大小不允许超过" + Math.floor(ONE_PIC_MAXSIZE/1000000) + "M");
 							return;
 						}
-						if(twDescMap.get("text").length() > 200){
-							output("9999","图文介绍文字超过200");
-							return;
-						}
+						twDescLength += twDescMap.get("text").length();
+					}
+					if(twDescLength > MAX_TWDESC_LENGTH){
+						output("9999","图文介绍文字长度超过" + MAX_TWDESC_LENGTH);
+						return;
 					}
 					
 					//表单验证成功，开始插入
-					
-					//插入店铺LOGO
-					if(map.get("VCARD_LOGO").toString().indexOf("data:image/") != -1){
-						map.put("VCARD_LOGO",PictureUtil.base64ToImage(map.get("VCARD_LOGO").toString(), VIPCARD_PICPATH));
-					}
-					//插入会员卡背景照片
-					if(map.get("BACKGROUND_IMAGE").toString().indexOf("data:image/") != -1){
-						map.put("BACKGROUND_IMAGE",PictureUtil.base64ToImage(map.get("BACKGROUND_IMAGE").toString(), VIPCARD_PICPATH));
-					}
 					//插入图文介绍图片
 					for (Map<String, String> twDescMap : twDescList) {
 						if(twDescMap.get("img").toString().indexOf("data:image/") != -1){
-							twDescMap.put("img", PictureUtil.base64ToImage(twDescMap.get("img").toString(), VIPCARD_TWJS_PICPATH));
+							twDescMap.put("img", PictureUtil.base64ToImage(twDescMap.get("img").toString(), Turntable_TWJS_PICPATH));
 						}
 					}
-					map.put("VCARD_TWJS", JSONObject.toJSONString(twDescList));
+					map.put("TURNTABLE_BZSM", JSONObject.toJSONString(twDescList));
+					
+					//如果转盘为开启，把其他的关闭
+					if("1".equals(map.get("IS_USE"))){
+						map.put("sqlMapId", "updaeteTurntableIsUseById");
+						map.put("TURNTABLE_IS_USE", "0");
+						openService.update(map);
+					}
+					
 					
 					//判断是添加还是修改
-					if(StringUtils.isBlank((String)map.get("VCARD_PK")) || "undefined".equals(map.get("VCARD_PK"))){
+					if(StringUtils.isBlank((String)map.get("TURNTABLE_PK")) || "undefined".equals(map.get("TURNTABLE_PK"))){
 						//是添加
-						map.put("sqlMapId", "insertVipCard");
+						map.put("sqlMapId", "insertTurntable");
 						String insert = openService.insert(map);
 						if(insert != null){
-							//添加商铺会员卡对应关系表
+							//添加商铺转盘对应关系表
 							String shopsStr = (String)map.get("USE_SHOP");
 							String[] shops = shopsStr.split(",");
-							map.put("sqlMapId", "insertShopVipCard");
+							map.put("sqlMapId", "insertShopTurntable");
 							for(int i=0;i<shops.length;i++){
 								map.put("SHOP_ID", shops[i]);
-								map.put("VIP_CARD_ID", insert);
+								map.put("TURNTABLE_ID", insert);
 								openService.insert(map);
 							}
 							output("0000","添加成功");
@@ -166,18 +141,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							return;
 						}
 					}else{//是更新
-						map.put("sqlMapId", "updaeteVipCardById");
+						map.put("sqlMapId", "updaeteTurntableById");
 						boolean b = openService.update(map);
 						if(b){
-							//先删除原来的店铺-会员卡关系
-							map.put("sqlMapId", "removeShopVipCardByVipCardId");
-							map.put("VIP_CARD_ID",map.get("VCARD_PK"));
+							//再添加现在的转盘关系
+							map.put("sqlMapId", "removeShopTurntableByTurntableId");
+							map.put("TURNTABLE_ID",map.get("TURNTABLE_PK"));
 							boolean delete = openService.delete(map);
 							if(delete){
-								//再添加现在的会员卡关系
 								String shopsStr = (String)map.get("USE_SHOP");
 								String[] shops = shopsStr.split(",");
-								map.put("sqlMapId", "insertShopVipCard");
+								map.put("sqlMapId", "insertShopTurntable");
 								for(int i=0;i<shops.length;i++){
 									map.put("SHOP_ID", shops[i]);
 									openService.insert(map);
@@ -206,17 +180,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 * @date 2018年9月11日 下午5:25:20 
 			 * @author lps
 			 * 
-			 * @Description: 根绝会员卡id查询会员卡信息
+			 * @Description: 根绝转盘id查询转盘信息
 			 * @param request
 			 * @param session 
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/VipCard_select_findVipCardById")
-			public void findVipCardById(HttpServletRequest request, HttpSession session){
+			@RequestMapping("/Turntable_select_findTurntableById")
+			public void findTurntableById(HttpServletRequest request, HttpSession session){
 				try {
 					Map map = getParameterMap();
-					map.put("sqlMapId", "selectVipCardById");
+					map.put("sqlMapId", "selectTurntableById");
 							
 					Map reMap = (Map) openService.queryForObject(map);
 					output("0000",reMap);
@@ -235,17 +209,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 * @date 2018年9月11日 下午5:24:48 
 			 * @author lps
 			 * 
-			 * @Description: 查询该商铺下所有的会员卡
+			 * @Description: 查询该商铺下所有的转盘
 			 * @param request
 			 * @param session 
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/ShopVipCard_select_findVipCard")
-			public void findVipCardByShopId(HttpServletRequest request, HttpSession session){
+			@RequestMapping("/ShopTurntable_select_findTurntable")
+			public void findTurntableByShopId(HttpServletRequest request, HttpSession session){
 				try {
 					Map map = getParameterMap();
-					map.put("sqlMapId", "selectVipCardListByShopId");
+					map.put("sqlMapId", "selectTurntableListByShopId");
 					
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
@@ -269,18 +243,19 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				
 			}
 			
+			
 			/**
 			 * 
-			 * @date 2018年9月15日 下午9:23:04 
+			 * @date 2018年9月15日 下午9:25:59 
 			 * @author lps
 			 * 
-			 * @Description: 根据会员卡id删除会员卡
+			 * @Description: 根据转盘id删除转盘
 			 * @param request
 			 * @param session 
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("/VIPCard_delete_removeVIPCardById")
+			@RequestMapping("/Turntable_delete_removeTurntableById")
 			public void removeVIPCardById(HttpServletRequest request, HttpSession session){
 				try {
 					Map map = getParameterMap();
@@ -290,9 +265,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					
-					
 					//先删除会员卡信息
-					map.put("sqlMapId", "removeVIPCardById");
+					map.put("sqlMapId", "removeTurntableById");
 					
 					boolean delete = openService.delete(map);
 					if(!delete){
@@ -300,7 +274,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						return;
 					}
 					//再删除店铺-会员卡关系
-					map.put("sqlMapId", "removeShopVipCardByVipCardId");
+					map.put("sqlMapId", "removeShopTurntableByVipCardId");
 					delete = openService.delete(map);
 					if(!delete){
 						output("9999","删除失败");
@@ -314,7 +288,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					e.printStackTrace();
 				}
 			}
-			
 			
 }
 

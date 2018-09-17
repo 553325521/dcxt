@@ -1,0 +1,358 @@
+<style>
+	.cancelBorder:before{
+		width:0;
+	}
+	.hide-input{
+		float: left;
+		position: relative;
+		margin-right: 9px;
+		margin-bottom: 9px;
+		width: 77px;
+		height: 77px;
+	}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0
+	}
+	.weui_uploader_files li{
+	 	width:79px;
+	 	float:left;
+	 	margin-right: 9px;
+	}
+	
+
+	
+
+</style>
+   <div class="weui-header" style="background-color:#FFFFFF;overflow：auto;">
+		<div class="weui-header-left">
+			<a class="icon icon-109"  ng-click="toHref('SystemSetup/ActivityDraw/turntableSetting')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+		<!--  <div class="weui-header-right" style="top: 0;right:95px">
+			<div class="button_sp_area">
+				<div class="bom-radio" style="width:80px"  ng-click="toHref('SystemSetup/AdvancedSetting/vipCardSetting/list')">中奖记录</div>
+			</div>
+		</div> -->
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area">
+				<div class="bom-radio"   ng-click="doSave()">保存</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow">
+	<div class="weui_cell">
+    	<div class="weui_cell_hd"><label class="weui_label label tablessetting-label">活动名称</label></div>
+        	<div class="weui_cell_bd weui_cell_primary" style="margin-right: 16px;">
+            <input class="weui_input label-input dcxt-right-label" type="text" placeholder="输入活动名称"  ng-model="form.ACTIVITY_NAME" required emptyTips="请输入活动名称"/>
+        </div>
+        <div class="weui_cell_hd">
+        	<i class="weui_icon_warn"></i>
+        </div>
+     </div>
+     <div class="weui_cell dcxt_active">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">是否开启</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form" style="text-align:right;margin-right: 16px;">
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+					<input class="weui-form-checkbox" name="f2" id="g1" value="1"
+							type="radio" ng-model="form.IS_USE"> 
+					<label for="g1"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>开启</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10%;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="0" type="radio" ng-model="form.IS_USE"> 
+					<label for="g2"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>关闭</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="weui_cell dcxt_active">
+    	<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">参与对象</label>
+		</div>
+        <div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form" style="text-align:right;margin-right: 16px;">
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+					<input class="weui-form-checkbox" name="f1" id="g3" value="1" type="radio" ng-model="form.TURNTABLE_CYDX"> 
+					<label for="g3"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>所有粉丝</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10%;">
+					<input class="weui-form-checkbox" name="f1" id="g4" value="2" type="radio" ng-model="form.TURNTABLE_CYDX"> 
+					<label for="g4"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>仅限会员</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+    </div>
+    <div class="weui_cell">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">有效期限</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary tablessetting-small-font" style="display:flex;">
+			<input class="weui_input" style="text-align:center;" ng-model="START_TIME" id="start_time" type="text" readonly value="" />
+			<div>—</div>
+			<input class="weui_input" style="text-align:center;" ng-model="END_TIME" id="end_time" readonly type="text" value="" />	
+		</div>
+	</div>
+	
+	
+	
+
+	<div class="weui_cell dcxt_active">
+    	<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">参与方式</label>
+		</div>
+        <div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form" style="text-align:right;margin-right: 2px;display:flex;">
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left:5px;">
+					<input class="weui-form-checkbox" name="f3" id="g5" value="1" type="radio" ng-model="form.PARTICIPATION_WAY"> 
+					<label for="g5"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>每日参与</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 5px;">
+					<input class="weui-form-checkbox" name="f3" id="g6" value="2" type="radio" ng-model="form.PARTICIPATION_WAY"> 
+					<label for="g6"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>一次参与</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 5px;">
+					<input class="weui-form-checkbox" name="f3" id="g7" value="3" type="radio" ng-model="form.PARTICIPATION_WAY"> 
+					<label for="g7"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>消费抽奖</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+    </div>
+	
+	
+	<div class="weui_cell ">
+		<div class="weui_cell_bd tablessetting-small-font" style="margin-left:25%;">
+			{{form.PARTICIPATION_WAY == 3 ? '消费': form.PARTICIPATION_WAY==2 ? '一次':'每日'}}免积分参与
+		</div>
+		<div class="weui_cell_bd tablessetting-small-font" style="min-width:8%;max-width:14%;padding:0 16px;">
+			<input class="weui_input" style="text-align:center;" ng-model="form.PARTICIPATION_TIME" id="start_time" type="text" value="" />
+		</div>
+		
+		<div class="weui_cell_bd tablessetting-small-font weui_cell_primary" style="justify-content: left;">
+			次
+		</div>
+	</div>
+	
+	
+	<div class="weui_cell ">
+		<div class="weui_cell_hd" style="margin-left:10px;
+		
+		">
+			<label class="weui_label label tablessetting-label">参与次数用完后，每次扣除</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary tablessetting-small-font" style="min-width:8%;max-width:14%;padding:0 8px 0 0;">
+			<input class="weui_input" style="text-align:center;padding:0;" ng-model="form.PARTICIPATION_KCJF" required emptyTips="请输入要扣除的积分" 
+		                	notMatchTips="请输入正确要扣除的积分" pattern="^[0-9]+$" >
+		</div>
+		
+		<div class="weui_cell_bd tablessetting-small-font">
+			积分，为0不开启
+		</div>
+	</div>
+	<div style="display:flex;" class="weui_cell">
+			<div class="weui_cell_hd">
+				<label class="weui_label label tablessetting-label">中奖概率</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary tablessetting-small-font" style="padding:0 16px 0 0;">
+				<input class="weui_input" style="text-align:center;" ng-model="form.TURNTABLE_ZJGL" id="start_time" type="text" value="" 
+				 required emptyTips="请输入中奖概率" 
+		                	notMatchTips="请输入正确的中奖概率" pattern="^[0-9]+$"/>
+			</div>
+			<div class="weui_cell_bd tablessetting-small-font">
+				<label>%</label>
+			</div>
+			<div class="weui_cell_hd tablessetting-small-font" style="margin-left:20px;">
+				领奖期限
+			</div>
+			<div class="weui_cell_bd weui_cell_primary tablessetting-small-font" style="min-width:8%;max-width:14%;padding:0 16px;">
+				<input class="weui_input" style="text-align:center;" ng-model="form.TURNTABLE_LQQX" id="start_time" type="text" value="" />
+			</div>
+			
+			<div class="weui_cell_bd tablessetting-small-font">
+				天内
+			</div>
+	</div>
+	
+	
+	<div class="weui_cell tablessetting-weui_select">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">适用门店</label>
+		</div>
+		<div class="weui_cell_bd  weui_cell_primary" style="margin-right: 18px;">
+			<input class="weui_input label-input dcxt-right-label" type="text" id="d3"
+				value="{{USE_SHOP_NAMES}}" date placeholder="至少选择一个门店" required emptyTips="请选择门店">
+		</div>
+	</div>
+		
+	
+	<div class="weui_cell cancelBorder"  style="flex-wrap:wrap;background-color:#F8F8F8;">
+		<div class="weui_cell_hd">
+			<label class="weui_label label  tablessetting-label">奖品设置</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<label style="font-size:13px;color:#888;">(最多允许设置6个奖项)</label>
+		</div>
+		<div class="weui_cell_bd" style="margin-right:4%;" ng-click="addJPSZ()">
+        	<i class="icon-plus-sign" style="color:#04be02"></i>
+    	</div>
+	</div>
+	
+
+	 <div ng-repeat="item in TURNTABLE_PRIZE track by $index" ng-init="initprize_selects($index,item.cate.name)" class="dcxt_active weui_cell {{$first ? 'cancelBorder':''}}" >
+	        <div class="weui_cell_bd" style="width:90%;float:left;padding-left:6%;padding-right:0;font-size:13px;">
+	        <div style="display:flex;padding:0 0px 8px 0;">
+	        	<div class="weui_cell_bd cancelBorder" style="width:50%;float:left;display:flex;padding-right:8px;">
+		        	<div class="weui_cell_bd location-center" style="display:flex;">
+		        		类别
+		        	</div>
+					<div class="weui_cell_bd weui_cell_primary" style="padding: 0 4px 0 8px;">
+						<input class="weui_input label-input cate_select" type="text"  style="text-align:center;" data-id="{{$index}}"
+							value=""  ng-model="item.cate.name">
+					</div>
+					<div class="weui_cell_bd">
+						<span class="icon icon-74"></span>
+					</div>
+				</div>
+			
+			 	<div class="weui_cell_bd cancelBorder" style="width:50%;float:left;display:flex;padding-right:0;">
+				 	<div class="weui_cell_bd location-center">
+		        		奖项名
+		        	</div>
+		        	<div class="weui_cell_bd weui_cell_primary" style="padding: 0 0 0 8px;">
+		                <input class="weui_cell_hd weui_input" style="text-align:center;padding:0;" ng-model="item.award_name" placeholder="例：一等奖" required emptyTips="请输入奖项名">
+		             </div>
+	        	 </div>
+	        </div>
+	        <div style="display:flex;">
+	        	<div class="weui_cell_bd cancelBorder" style="width:44%;float:left;display:flex;padding-right:0;">
+		        	<div class="weui_cell_bd location-center">
+		        	{{item.cate.name == '积分' ? '积分分数' : item.cate.name == '储值' ? '储值金额' : '奖品名'}}
+		        	</div>
+					<div class="weui_cell_bd weui_cell_primary" style="padding:0 0 0 8px;">
+						<input ng-show="item.cate.name == '卡券'" class="weui_input label-input prize_select" type="text" style="text-align:center;" onClick="" data-id="{{$index}}"
+							value=""  ng-model="item.awards.name">
+						<input ng-hide="item.cate.name == '卡券'" class="weui_input label-input" type="text" style="text-align:center;" data-id="{{$index}}"
+							value=""  ng-model="item.awards.name">
+					</div>
+					<div class="weui_cell_bd" ng-show="item.cate.name == '卡券'">
+						<span class="icon icon-74"></span>
+					</div>
+				</div>
+			
+			 	<div class="weui_cell_bd cancelBorder" style="margin-left:6px;width:28%;display:flex;padding-right:0;">
+				 	<div class="weui_cell_bd location-center">
+		        		实际数
+		        	</div>
+		        	<div class="weui_cell_bd weui_cell_primary" style="padding: 0 0 0 8px;">
+		                <input class="weui_cell_hd weui_input" style="text-align:center;padding:0;" ng-model="item.true_num" placeholder="例：1" required emptyTips="请输入奖品实际数" 
+		                	notMatchTips="请输入正确奖品实际数" pattern="^[0-9]+$" >
+		             </div>
+	        	 </div>
+	        	 <div class="weui_cell_bd cancelBorder" style="margin-left:8px;width:28%;display:flex;padding-right:0;">
+				 	<div class="weui_cell_bd location-center">
+		        		展示数
+		        	</div>
+		        	<div class="weui_cell_bd weui_cell_primary" style="padding: 0 0 0 8px;">
+		                <input class="weui_cell_hd weui_input" style="text-align:center;padding:0;" ng-model="item.num" placeholder="例：1" required emptyTips="请输入奖品展示数" 
+		                	notMatchTips="请输入正确奖品展示数" pattern="^[0-9]+$" >
+		             </div>
+	        	 </div>
+	        </div>
+        </div>
+		<div class="weui_cell_bd" style="width:10%;padding-right:0;font-size:14px;text-align:center;">
+		         <div class="weui_cell_bd" ng-click="delJPSZ($index)">
+		             	<i class="icon-trash" style="color:#04be02"></i>
+		      </div>
+		</div>
+	</div>
+	
+	<div class="weui_cell cancelBorder"  style="flex-wrap:wrap;background-color:#F8F8F8;">
+		<div class="weui_cell_hd">
+			<label class="weui_label label  tablessetting-label">备注说明</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<label style="font-size:13px;color:#888;">(1000字以内的图文介绍)</label>
+		</div>
+		<div class="weui_cell_bd" style="margin-right:4%;" ng-click="addBZSM()">
+        	<i class="icon-plus-sign" style="color:#04be02"></i>
+    	</div>
+	</div>
+	<div ng-repeat="sm in bzsm track by $index"> 
+        <div class="weui_cell" style="width:20%;float:left;margin-left:3%;padding-right:0;">
+			<div class="weui_uploader_bd weui_cell_primary">
+	           	<ul class="weui_uploader_files" id="img2x">
+	            	<li>
+			           <div class="weui_uploader_file" style="background-image:url({{sm.img}})">
+				           <div class="hide-input {{item.img == null || item.img == ''?'weui_uploader_input_wrp':''}}">
+					           <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" >
+				            </div>
+			           </div>
+			         </li>
+	            </ul>
+	        </div>
+		</div>
+		<div class="weui_cell cancelBorder" style="height:84px">
+         	<div class="weui_cell_bd weui_cell_primary">
+            	<textarea style="padding:0 12px;" id="textarea" class="weui_textarea" placeholder="文字介绍" rows="3" ng-model="sm.text"></textarea>
+            </div>
+            <div class="weui_cell_bd" style="margin-left:20%;padding-right:4%;" ng-click="delBZSM($index)">
+            	<i class="icon-trash" style="color:#04be02"></i>
+            </div>
+        </div>
+    </div>
+		
+		
+		
+	
+</div>
+	 
+<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+</div>
+	

@@ -1,0 +1,22 @@
+{
+	"name": "turntable_setting",
+	"viewUrl": "aps/content/SystemSetup/ActivityDraw/turntableSetting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/turntableSetting/controller.js",
+	"config": {
+		"pageTitle": "欢乐转盘列表",
+		"findURL":"json/ShopTurntable_select_findTurntable.json",
+		"removeURL":"json/Turntable_delete_removeTurntableById.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"turntable_setting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"turntable_setting.confirm"
+		        	}
+				]
+			}
+	}
+}

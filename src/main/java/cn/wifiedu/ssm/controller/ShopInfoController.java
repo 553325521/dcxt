@@ -439,6 +439,60 @@ public class ShopInfoController extends BaseController {
 		}
 	}
 	
+	
+	
+	/**
+	 * 
+	 * @date 2018年9月17日 下午9:50:33 
+	 * @author lps
+	 * 
+	 * @Description:  查询该店铺的转盘中奖记录
+	 * @return void 
+	 *
+	 */
+	@RequestMapping("/Shop_select_findTurntablePrizeRecordByShopId")
+	public void findTurntablePrizeRecordByShopId() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "selectTurntablePrizeRecordByShopId");
+			
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			
+			map.put("SHOP_ID", userObj.get("FK_SHOP")); 
+			
+			List reList = openService.queryForList(map);
+			if(reList == null){
+				output("9999", "查询错误");
+				return;
+			}
+			
+			//查询该店铺下的所有转盘名称
+			map.put("sqlMapId", "selectTurntableNameListByShopId");
+			List<Map<String, Object>> resultList = openService.queryForList(map);
+			if(resultList == null){
+				output("9999", "你还没有转盘");
+				return;
+			}
+			//把List<Map<String,String>>转换为List<String>,去除原来map中的key
+			List reList2 = resultList.stream().map(a -> a.get("ACTIVITY_NAME")).collect(Collectors.toList());
+			
+			Map reMap = new HashMap<String, List>();
+			reMap.put("turntable_record", reList);
+			reMap.put("turntable_name_list", reList2);
+			
+			output("0000", reMap);
+			return;
+		} catch (Exception e) {
+			logger.error("error", e);
+			output("9999", "出错");
+			return;
+		}
+	}
+	
+	
+	
 	public static void main(String[] args) {
 		List<Map<String, Object>> reList2 = new ArrayList<Map<String,Object>>();
 		Map map = new HashMap<String, String>();

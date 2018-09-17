@@ -107,4 +107,13 @@
 		AND
 			ssv.VIP_CARD_FK = svc.VCARD_PK;
 	</select>
+	
+	<!-- 根据会员卡id删除会员卡 -->
+	<delete id="removeVIPCardById" parameterMap="BaseParameterMap">
+		DELETE FROM 
+			sc_vip_card
+		WHERE
+			VCARD_PK = #{VCARD_ID} AND USE_SHOP LIKE '%${SHOP_ID}%';
+	</delete>
+	
 </mapper>

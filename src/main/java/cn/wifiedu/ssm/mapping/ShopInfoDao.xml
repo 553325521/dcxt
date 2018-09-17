@@ -315,4 +315,12 @@
 		WHERE 
 			svc.VCARD_PK IN (SELECT VIP_CARD_FK FROM sc_shop_vcard WHERE SHOP_FK = #{SHOP_ID}) AND svc.VCARD_PK = VCARD_FK AND su.USER_PK = suv.USER_FK;
 	</select>
+	
+	<!-- 根绝店铺id查询转盘中奖信息 -->
+	<select id="selectTurntablePrizeRecordByShopId" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT 
+			su.USER_PHONE, str.PRIZE_STATUS, str.JXM_CATE, str.PRIZE_NAME,str.GET_TIME, str.PRIZE_TIME, str.OVER_TIME, st.ACTIVITY_NAME 
+		FROM sc_user su,sc_turntable_record str, sc_turntable st WHERE str.USER_FK = su.USER_PK AND str.TURNTABLE_FK = st.TURNTABLE_PK AND str.TURNTABLE_FK IN (
+			SELECT TURNTABLE_FK FROM sc_shop_turntable WHERE SHOP_FK = #{SHOP_ID});
+	</select>
 </mapper>

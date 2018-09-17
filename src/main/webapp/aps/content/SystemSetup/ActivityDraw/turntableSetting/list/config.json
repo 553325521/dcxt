@@ -1,0 +1,21 @@
+{
+	"name": "turntableSetting_list",
+	"viewUrl": "aps/content/SystemSetup/ActivityDraw/turntableSetting/list/template.html",
+	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/turntableSetting/list/controller.js",
+	"config": {
+		"pageTitle":"中奖记录",
+		"findURL":"json/Shop_select_findTurntablePrizeRecordByShopId.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"turntableSetting_list.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"turntableSetting_list.confirm"
+		        	}
+				]
+			}
+	}
+}

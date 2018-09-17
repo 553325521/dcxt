@@ -11,15 +11,15 @@
 				// 定义页面标题
 				scope.pageTitle = config.pageTitle;
 				
-				// 会员卡数据源
-				scope.vip_card_list = [];
+				// 转盘数据源
+				scope.turntable_list = [];
 				
 				var init = function() {
 					$httpService.post(config.findURL).success(function(data) {
 						if (data.code != '0000') {
 							loggingService.info(data.data);
 						} else {
-							scope.vip_card_list = data.data;
+							scope.turntable_list = data.data;
 							scope.pageShow = "True";
 							scope.$apply();
 						}
@@ -30,24 +30,21 @@
 				
 				init();
 				
-				scope.toHref = function(path,vcard_id) {
+				scope.toHref = function(path,turntable_id) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json?vcard_id="+vcard_id+"&fid="+params.fid,
+						"url" : "aps/content/" + path + "/config.json?turntable_id="+turntable_id+"&fid="+params.fid,
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
 				
-				
-				
-				
 				//删除按钮
-				scope.vipCardDelete = function(vcard_id){
+				scope.vipCardDelete = function(area_id){
 					scope.del={}
-					scope.del.VCARD_ID = vcard_id;
+					scope.del.area_id = area_id;
 					var m2 = {
-						"url" : "aps/content/SystemSetup/AdvancedSetting/vipCardSetting/config.json",
+						"url" : "aps/content/SystemSetup/ActivityDraw/turntableSetting/config.json",
 						"title" : "提示",
 						"contentName" : "modal",
 						"text" : "是否删除?"

@@ -652,13 +652,25 @@ public class ShopController extends BaseController {
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			
 			map.put("USER_ID", userObj.get("USER_PK")); 
+			//商铺的名字和id
+			List<Map<String,Object>> ShopList = openService.queryForList(map);
 			
-			List<Map<String,Object>> queryForList = openService.queryForList(map);
-			if(queryForList == null){
+			if(ShopList == null){
 				output("9999", "查询错误");
 				return;
 			}
-			output("0000", queryForList);
+			
+			//优惠券的名字和id
+			
+			
+			
+			
+			List reList = new ArrayList<Map>();
+			reList.add(ShopList);
+			
+			
+			
+			output("0000", ShopList);
 			return;
 		} catch (Exception e) {
 			logger.error("error", e);

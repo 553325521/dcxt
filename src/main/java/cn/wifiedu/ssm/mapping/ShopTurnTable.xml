@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="shopVipCard" >
+<mapper namespace="shopTurntable" >
   <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
   <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
 	
-	<!-- 插入店铺-会员卡信息 -->
-	<insert id="insertShopVipCard" parameterMap="BaseParameterMap" >
-		INSERT INTO sc_shop_vcard 
+	<!-- 插入店铺-转盘信息 -->
+	<insert id="insertShopTurntable" parameterMap="BaseParameterMap" >
+		INSERT INTO sc_shop_turntable 
 		(
-			SHOP_CARD_PK,
+			SHOP_TURNTABLE_PK,
 			SHOP_FK,
-			VIP_CARD_FK,
+			TURNTABLE_FK,
 			CREATE_TIME,
 			CREATE_BY
 		)
@@ -18,15 +18,15 @@
 		(
 			#{UUID},
 			#{SHOP_ID},
-			#{VIP_CARD_ID},
+			#{TURNTABLE_ID},
 			NOW(),
 			#{CREATE_BY}
 		)
 	
 	</insert>
-	
-	<delete id="removeShopVipCardByVipCardId" parameterMap="BaseParameterMap">
-		DELETE FROM sc_shop_vcard WHERE VIP_CARD_FK = #{VCARD_ID};
+				
+	<delete id="removeShopTurntableByTurntableId" parameterMap="BaseParameterMap">
+		DELETE FROM sc_shop_turntable WHERE TURNTABLE_FK = #{TURNTABLE_ID};
 	</delete>
 	
 
