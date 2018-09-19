@@ -250,6 +250,8 @@ public class WXBizMsgCrypt {
 		Object[] encrypt = XMLParse.extract2(postData);
 
 		// 验证安全签名
+		System.out.println("第一个参数:  "+token);
+		System.out.println("最后一个参数:  "+encrypt[1].toString());
 		String signature = SHA1.getSHA1(token, timeStamp, nonce, encrypt[1].toString());
 
 		// 和URL中的签名比较是否相等

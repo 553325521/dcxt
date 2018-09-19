@@ -32,6 +32,7 @@ import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.WxUtil;
 import cn.wifiedu.ssm.util.qq.weixin.AesException;
 import cn.wifiedu.ssm.util.qq.weixin.WXBizMsgCrypt;
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -557,6 +558,52 @@ public class InterfaceController extends BaseController {
 			e.printStackTrace();
 		}
 		output2(response, "success");
+	}
+	public Element processAuthorizeEvent1(String APPID, HttpServletRequest request) {
+		String nonce = request.getParameter("nonce");
+		String timestamp = request.getParameter("timestamp");
+		String signature = request.getParameter("signature");
+		String msgSignature = request.getParameter("msg_signature");
+
+		if (StringUtils.isBlank(msgSignature)) {
+			return null;
+		}
+		try {
+			StringBuilder sb = new StringBuilder();
+			BufferedReader in = request.getReader();
+
+			String line = "";
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
+			}
+			String xml = sb.toString();
+			
+			String accessToken = "";
+
+			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + APPID)) {
+				accessToken = WxUtil.getWxAccessToken(APPID, this.getComponentAccessToken(),
+						this.getRefreshTokenByAppId(APPID));
+				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + APPID, accessToken);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + APPID, 3600 * 1);
+			} else {
+				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + APPID);
+			}
+			WXBizMsgCrypt pc = new WXBizMsgCrypt(component_token, encodingAesKey, component_appid);
+			xml = pc.decryptMsg(msgSignature, timestamp, nonce, xml);
+			Document doc = DocumentHelper.parseText(xml);
+			Element rootElt = doc.getRootElement();
+			System.out.println(xml);
+			return rootElt;
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (AesException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
 	}
 
 }

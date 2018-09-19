@@ -1,6 +1,9 @@
 package cn.wifiedu.ssm.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -17,9 +20,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
@@ -680,25 +685,60 @@ public class WxController extends BaseController {
 	/**
 	 * 获取微信推送到服务器事件
 	 */
-	@RequestMapping("/portal")
-	public void getUserInfo(HttpServletRequest request, HttpServletResponse reponse) {
+	@RequestMapping("/{APPID}/portal")
+	public void getUserInfo(HttpServletRequest request, HttpServletResponse reponse,@PathVariable String APPID) {
 		try {
-			Map<String, Object> map = getParameterMap();
-			logger.info(map + "");
-
-			PrintWriter out = reponse.getWriter();
-
-			if (map.containsKey("openid")) {
-				map.put("OPENID", map.get("openid").toString());
-				map.put("sqlMapId", "checkUserExits");
-				List<Map<String, Object>> checkUserList = openService.queryForList(map);
-				if (checkUserList.size() == 0) {
-					map.put("sqlMapId", "insertUserInitOpenId");
-					openService.insert(map);
+			Element returnElement  = interfaceController.processAuthorizeEvent1(APPID, request);
+			/*领取卡券事件处理*/
+			String eventStr = returnElement.elementText("Event");
+			if(eventStr.equals("user_get_card")){
+				String card_id = returnElement.elementText("CardId");
+				String code_id = returnElement.elementText("UserCardCode");
+				String openid = returnElement.elementText("FromUserName");
+				String createTime = returnElement.elementText("CreateTime");
+				String IsGiveByFriend = returnElement.elementText("IsGiveByFriend");
+				String unionID = returnElement.elementText("UnionId");
+				String OldUserCardCode = returnElement.elementText("OldUserCardCode");
+				Map<String,Object> param = new HashMap<String,Object>();
+				if(IsGiveByFriend.equals("0")){
+					param.put("card_code", code_id);
+					param.put("card_id", card_id);
+					param.put("open_id", openid);
+					param.put("create_time", createTime);
+					param.put("unionid", unionID);
+					param.put("sqlMapId", "insertUserCard");
+					openService.insert(param);
+				}else{
+					param.put("card_code", OldUserCardCode);
+					param.put("sqlMapId", "deleteUserCard");
+					boolean deleteResult = openService.delete(param);
+					if(deleteResult){
+						logger.info("卡券转赠事件删除旧code成功");
+						param.clear();
+						param.put("card_code", code_id);
+						param.put("card_id", card_id);
+						param.put("open_id", openid);
+						param.put("create_time", createTime);
+						param.put("unionid", unionID);
+						param.put("sqlMapId", "insertUserCard");
+						openService.insert(param);
+						logger.info("卡券转赠事件插入新code成功");
+					}
 				}
+			/*转赠卡券处理*/
+			}else if(eventStr.equals("user_gifting_card")){
+				logger.info("============================卡券转赠事件处理============================");
+			}else{
+				logger.info("=============================无事件处理微信返回结果逻辑================================");
 			}
-
-			out.println("");
+			logger.info("领券方帐号"+returnElement.elementText("FromUserName"));
+			logger.info("消息创建时间 "+returnElement.elementText("CreateTime"));
+			logger.info("消息类型 "+returnElement.elementText("MsgType"));
+			logger.info("事件类型 "+returnElement.elementText("Event"));
+			logger.info("卡券ID"+returnElement.elementText("CardId"));
+			logger.info("是否为转赠领取 "+returnElement.elementText("IsGiveByFriend"));
+			logger.info("code序列号 "+returnElement.elementText("UserCardCode"));
+			logger.info("领券用户的UnionId "+returnElement.elementText("UnionId"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

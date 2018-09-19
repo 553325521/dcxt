@@ -36,6 +36,17 @@
 		sc_card
 		WHERE card_id = #{card_id}
 	</delete>
+	<!-- 删除用户卡券中间表-->
+	<delete id="deleteUserCard" parameterMap="BaseParameterMap">
+		DELETE FROM
+		sc_user_card
+		WHERE card_code = #{card_code}
+	</delete>
+	<!-- 插入卡券与用户中间关系表 -->
+	<insert id="insertUserCard" parameterMap="BaseParameterMap" >
+		INSERT INTO sc_user_card 
+		values(#{card_code},#{card_id},#{open_id},#{create_time},#{unionid})
+	</insert>
 	<!-- 修改卡券 -->
 	<update id="updateCardById" parameterMap="BaseParameterMap" >
     update sc_card
