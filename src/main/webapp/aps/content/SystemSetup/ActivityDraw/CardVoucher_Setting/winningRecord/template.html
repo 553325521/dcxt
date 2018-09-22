@@ -69,25 +69,25 @@
 			</div>
 		</div>
 	</div>
-	<div class="weui_cells" ng-repeat="item in card_voucher_list | filter:input_value" style="margin-top:-1px;background-color:#fff;font-size:14px;">		
+	<div class="weui_cells" ng-repeat="item in card_voucher_list" style="margin-top:-1px;background-color:#fff;font-size:14px;">		
 			<div class="weui_cell weui_cell_primary animated dcxt-font-overflow tablessetting-font-style" style="display:flex;">	
 				<div class="weui_cell_bd" style="margin-right:10px;width:30%;">
 					<div ng-switch on = "item.USER_PHONE">
 						<span ng-switch-when = "" style="color:red">无联系方式</span>
 						<span ng-switch-when = undefined style="color:red">无联系方式</span>
-						<span ng-switch-default>13883107775</span>
+						<span ng-switch-default>{{item.USER_PHONE}}</span>
 					</div>
 					
 					<div>
-						<span>价值88元代金券</span>
+						<span>{{item.title}}</span>
 					</div>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
 					<div>
-						<span>起：2016-05-12</span>
+						<span>起：{{item.begin_timestamp}}</span>
 					</div>
 					<div>
-						<span>止：2017-09-12</span>
+						<span>止：{{item.end_timestamp}}</span>
 					</div>
 				</div>
 				<div class="weui_cell_bd" dir="rtl">
@@ -95,7 +95,7 @@
 						<span>已领取</span>
 					</div>
 					<div >
-						<span>1张</span>
+						<span>{{item.card_number}}张</span>
 					</div>
 				</div>	
 			</div>

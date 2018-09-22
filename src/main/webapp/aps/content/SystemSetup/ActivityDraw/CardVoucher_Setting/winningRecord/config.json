@@ -4,7 +4,7 @@
 	"controllerUrl": "aps/content/SystemSetup/ActivityDraw/CardVoucher_Setting/winningRecord/controller.js",
 	"config": {
 		"pageTitle":"卡券领取列表",
-		"findURL":"json/卡券_查询_根据店铺id找领取过的卡券.json",
+		"findURL":"json/Card_select_loadCardGetList.json",
 		"menu":{	
 	            "buttons":[
 		        	{

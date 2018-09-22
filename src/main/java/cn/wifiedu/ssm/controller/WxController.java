@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +40,7 @@ import cn.wifiedu.core.util.SessionUtil;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
+import cn.wifiedu.ssm.util.DateUtil;
 import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.WXJSUtil;
 import cn.wifiedu.ssm.util.WxUtil;
@@ -226,7 +231,7 @@ public class WxController extends BaseController {
 				userMap.put("FK_APP", appid);
 				if (checkList != null && checkList.size() == 0) {
 					// 查询 openId 根据 用户详细信息
-					//getWxUserInfo(openId, userMap);
+					// getWxUserInfo(openId, userMap);
 					map.put("USER_UNIONID", jedisClient.get(RedisConstants.WX_UNIONID + openId));
 					map.put("sqlMapId", "insertUserInitOpenIdMini");
 
@@ -686,12 +691,12 @@ public class WxController extends BaseController {
 	 * 获取微信推送到服务器事件
 	 */
 	@RequestMapping("/{APPID}/portal")
-	public void getUserInfo(HttpServletRequest request, HttpServletResponse reponse,@PathVariable String APPID) {
+	public void getUserInfo(HttpServletRequest request, HttpServletResponse reponse, @PathVariable String APPID) {
 		try {
-			Element returnElement  = interfaceController.processAuthorizeEvent1(APPID, request);
-			/*领取卡券事件处理*/
+			Element returnElement = interfaceController.processAuthorizeEvent1(APPID, request);
+			/* 领取卡券事件处理 */
 			String eventStr = returnElement.elementText("Event");
-			if(eventStr.equals("user_get_card")){
+			if (eventStr.equals("user_get_card")) {
 				String card_id = returnElement.elementText("CardId");
 				String code_id = returnElement.elementText("UserCardCode");
 				String openid = returnElement.elementText("FromUserName");
@@ -699,46 +704,98 @@ public class WxController extends BaseController {
 				String IsGiveByFriend = returnElement.elementText("IsGiveByFriend");
 				String unionID = returnElement.elementText("UnionId");
 				String OldUserCardCode = returnElement.elementText("OldUserCardCode");
-				Map<String,Object> param = new HashMap<String,Object>();
-				if(IsGiveByFriend.equals("0")){
+				Map<String, Object> param = new HashMap<String, Object>();
+				if (IsGiveByFriend.equals("0")) {
 					param.put("card_code", code_id);
 					param.put("card_id", card_id);
 					param.put("open_id", openid);
 					param.put("create_time", createTime);
 					param.put("unionid", unionID);
+					param.put("card_status", "0");
 					param.put("sqlMapId", "insertUserCard");
 					openService.insert(param);
-				}else{
+					param.put("sqlMapId", "loadCardInfoById");
+					List<Map<String, Object>> singleCard = openService.queryForList(param);
+					if (singleCard.get(0).get("date_type").toString().equals("DATE_TYPE_FIX_TERM")) {
+						param.put("begin_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("begin_timestamp").toString())));
+						param.put("end_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("end_timestamp").toString())));
+						param.put("sqlMapId", "updateCardTime");
+						openService.update(param);
+					}
+				} else {
 					param.put("card_code", OldUserCardCode);
-					param.put("sqlMapId", "deleteUserCard");
-					boolean deleteResult = openService.delete(param);
-					if(deleteResult){
-						logger.info("卡券转赠事件删除旧code成功");
+					param.put("card_status", "4");
+					param.put("sqlMapId", "updateUserCardStatus");
+					boolean updateResult = openService.update(param);
+					if (updateResult) {
+						logger.info("转赠修改原来的卡券状态为失效");
 						param.clear();
 						param.put("card_code", code_id);
 						param.put("card_id", card_id);
 						param.put("open_id", openid);
 						param.put("create_time", createTime);
 						param.put("unionid", unionID);
+						param.put("card_status", "0");
 						param.put("sqlMapId", "insertUserCard");
 						openService.insert(param);
+						param.put("sqlMapId", "loadCardInfoById");
+						List<Map<String, Object>> singleCard = openService.queryForList(param);
+						if (singleCard.get(0).get("date_type").toString().equals("DATE_TYPE_FIX_TERM")) {
+							param.put("begin_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("begin_timestamp").toString())));
+							param.put("end_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("end_timestamp").toString())));
+							param.put("sqlMapId", "updateCardTime");
+							openService.update(param);
+						}
 						logger.info("卡券转赠事件插入新code成功");
 					}
 				}
-			/*转赠卡券处理*/
-			}else if(eventStr.equals("user_gifting_card")){
+				/* 转赠卡券处理 */
+			} else if (eventStr.equals("user_gifting_card")) {
 				logger.info("============================卡券转赠事件处理============================");
-			}else{
+				String code_id = returnElement.elementText("UserCardCode");
+				String IsReturnBack = returnElement.elementText("IsReturnBack");
+				Map<String, Object> param = new HashMap<String, Object>();
+				if (IsReturnBack.equals("0")) {
+					param.put("card_code", code_id);
+					param.put("card_status", "2");
+					param.put("sqlMapId", "updateUserCardStatus");
+					boolean updateResult = openService.update(param);
+					if (updateResult) {
+						logger.info("卡券转赠事件处理:修改卡券状态为转赠中");
+					}
+				} else {
+					param.put("card_code", code_id);
+					param.put("card_status", "0");
+					param.put("sqlMapId", "updateUserCardStatus");
+					boolean updateResult = openService.update(param);
+					if (updateResult) {
+						logger.info("卡券转赠事件处理:修改卡券状态退回为正常状态");
+					}
+				}
+
+			} else if (eventStr.equals("user_del_card")) {
+				String code_id = returnElement.elementText("UserCardCode");
+				Map<String, Object> param = new HashMap<String, Object>();
+				param.put("card_code", code_id);
+				param.put("card_status", "3");
+				param.put("sqlMapId", "updateUserCardStatus");
+				boolean updateResult = openService.update(param);
+				if (updateResult) {
+					logger.info("卡券用户删除事件处理");
+				}
+			} else if (eventStr.equals("user_consume_card")) {
+				String code_id = returnElement.elementText("UserCardCode");
+				Map<String, Object> param = new HashMap<String, Object>();
+				param.put("card_code", code_id);
+				param.put("card_status", "1");
+				param.put("sqlMapId", "updateUserCardStatus");
+				boolean updateResult = openService.update(param);
+				if (updateResult) {
+					logger.info("卡券用户核销事件处理");
+				}
+			} else {
 				logger.info("=============================无事件处理微信返回结果逻辑================================");
 			}
-			logger.info("领券方帐号"+returnElement.elementText("FromUserName"));
-			logger.info("消息创建时间 "+returnElement.elementText("CreateTime"));
-			logger.info("消息类型 "+returnElement.elementText("MsgType"));
-			logger.info("事件类型 "+returnElement.elementText("Event"));
-			logger.info("卡券ID"+returnElement.elementText("CardId"));
-			logger.info("是否为转赠领取 "+returnElement.elementText("IsGiveByFriend"));
-			logger.info("code序列号 "+returnElement.elementText("UserCardCode"));
-			logger.info("领券用户的UnionId "+returnElement.elementText("UnionId"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -186,7 +186,22 @@ public class DateUtil{
             e.printStackTrace();  
         }  
         return "";  
-    }  
+    }
+    
+    /**
+    * <p>Title: addDayTimeStamp</p>
+    * <p>Description:当前时间增加天数返回时间戳 </p>
+    * @param num
+    * @return
+    */
+    public static long addDayTimeStamp(int num){
+		Date date = new Date();
+		Calendar c = Calendar.getInstance();  
+        c.setTime(date);  
+        c.add(Calendar.DAY_OF_MONTH, num); 
+        date = c.getTime();
+        return date.getTime()/1000;
+	}
    /* public static void main(String[] args) {
 		String a = "12321312313";
 		String [] array = a.split(",");

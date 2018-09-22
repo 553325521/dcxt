@@ -17,6 +17,28 @@
 		SELECT * FROM sc_card C
 		WHERE C.card_id = #{card_id}
 	</select>
+	<!-- 获取卡券列表 -->
+	<select id="selectCardList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT d.*  FROM sc_shop_card ssc inner join (SELECT u.USER_PHONE,c.* 
+		from sc_user u RIGHT JOIN 
+		(SELECT a.card_id, a.open_id,a.card_status, count(*) as card_number, b.title,b.begin_timestamp,b.end_timestamp 
+		from sc_user_card a LEFT JOIN sc_card b on a.card_id = b.card_id 
+		GROUP BY a.card_id, a.open_id) c 
+		ON u.USER_WX = c.open_id
+		WHERE c.card_status = #{card_status}
+		<if test="current_timestamp != null" >
+        	and  c.begin_timestamp &lt;= #{current_timestamp} and c.end_timestamp &gt;= #{current_timestamp}
+      	</if>
+      	) d ON ssc.FK_CARD = d.card_id
+      	WHERE ssc.FK_SHOP = #{SHOP_ID}
+	</select>
+	<!-- 根据卡券id更新卡券领取时间 -->
+	<update id="updateCardTime" parameterMap="BaseParameterMap" >
+		UPDATE sc_card
+		SET begin_timestamp = #{begin_timestamp},
+		end_timestamp = #{end_timestamp}
+		WHERE card_id = #{card_id}
+	</update>
 	<!-- 根据卡券ID查询使用门店名称-->
 	<select id="loadShopByCodeID" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
 		SELECT S2.SHOP_NAME,S2.SHOP_ID FROM sc_shop_card S1 
@@ -45,8 +67,14 @@
 	<!-- 插入卡券与用户中间关系表 -->
 	<insert id="insertUserCard" parameterMap="BaseParameterMap" >
 		INSERT INTO sc_user_card 
-		values(#{card_code},#{card_id},#{open_id},#{create_time},#{unionid})
+		values(#{card_code},#{card_id},#{open_id},#{create_time},#{unionid},#{card_status})
 	</insert>
+	<!-- 修改卡券 -->
+	<update id="updateUserCardStatus" parameterMap="BaseParameterMap" >
+		UPDATE sc_user_card
+		SET card_status = #{card_status}
+		WHERE card_code = #{card_code}
+	</update>
 	<!-- 修改卡券 -->
 	<update id="updateCardById" parameterMap="BaseParameterMap" >
     update sc_card

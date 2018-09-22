@@ -1,6 +1,8 @@
 package cn.wifiedu.ssm.controller;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -558,5 +560,33 @@ public class CardVoucherController extends BaseController{
 			output("9999", "查询失败");
 		}
 	}
-	
+	/**
+	* <p>Title: loadCardGetList</p>
+	* <p>Description: 获取卡券领取列表</p>
+	*/
+	@RequestMapping(value = "/Card_select_loadCardGetList", method = RequestMethod.POST)
+	public void loadCardGetList() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			map.put("SHOP_ID", userObj.get("FK_SHOP"));
+			map.put("sqlMapId", "selectCardList");
+			List<Map<String,Object>> dataList = openService.queryForList(map);
+			for(int i = 0;i < dataList.size();i++ ){
+				dataList.get(i).put("begin_timestamp",timeConvert(Long.parseLong(dataList.get(i).get("begin_timestamp").toString())));
+				dataList.get(i).put("end_timestamp",timeConvert(Long.parseLong(dataList.get(i).get("end_timestamp").toString())));
+			}
+			output("0000", dataList);
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999", "查询失败");
+		}
+	}
+	 private String timeConvert(long dateValue){
+		Date date = new Date((long)dateValue*1000);
+		SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+		return s.format(date);
+	}
 }
