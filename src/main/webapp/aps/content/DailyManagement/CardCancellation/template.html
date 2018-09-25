@@ -1,0 +1,30 @@
+<style>
+	.noBorder:before{
+		border:0;
+	}
+	.slidelefts .weui_cell_bd:active{
+		background-color:#ececec;
+	}
+	.slidelefts .weui_cell_bd{
+		background-color: inherit;
+	}
+</style>
+	<div class="weui-header"  style="background-color:#FFFFFF">
+		<div class="weui-header-left">
+			<a class="icon icon-109" style="color: #0D0D0D !important;" ng-click="toHref('welcome')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	</div>
+	 <div class="weui_cells weui_cells_form" style="margin-top:0;">
+		<div class="weui-form" style="padding-top:10px;background-color:#FFFFFF;height: 350px;">
+         	<div class="weui-form-li">
+				<input  type="text" style="height:35px;border-radius:3px;text-indent: 14px;" ng-model="form.code" class="weui-form-input" placeholder="请输入需要核销的卡券编号">
+			</div>
+			<div class="weui-form-li" style="margin: 30px 20px;text-align:center;">
+				<span  style="color:#888">在此可以核销团购券、代金券、优惠券</span>
+			</div>
+			<div class="weui-form-li" style="margin: 60px 20px;">
+				<a href="javascript:;" class="weui_btn weui_btn_primary" ng-click="confirmCancelCard()">确认核销</a>
+			</div>
+        </div>
+	</div>

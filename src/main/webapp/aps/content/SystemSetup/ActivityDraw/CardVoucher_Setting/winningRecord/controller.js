@@ -83,8 +83,8 @@
 						}else{
 							scope.card_voucher_list = [];
 							scope.form.card_status = 0;
-							/*scope.form.current_timestamp = Math.floor(new Date().getTime()/1000);1537372800*/
-							scope.form.current_timestamp = "1537372838";
+							scope.form.current_timestamp = Math.floor(new Date().getTime()/1000);
+						/*	scope.form.current_timestamp = "1537372838";*/
 							$httpService.post(config.findURL,scope.form).success(function(data) {
 								if (data.code != '0000') {
 									loggingService.info(data.data);

@@ -717,8 +717,8 @@ public class WxController extends BaseController {
 					param.put("sqlMapId", "loadCardInfoById");
 					List<Map<String, Object>> singleCard = openService.queryForList(param);
 					if (singleCard.get(0).get("date_type").toString().equals("DATE_TYPE_FIX_TERM")) {
-						param.put("begin_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("begin_timestamp").toString())));
-						param.put("end_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("end_timestamp").toString())));
+						param.put("begin_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("fixed_begin_term").toString())));
+						param.put("end_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("fixed_term").toString())));
 						param.put("sqlMapId", "updateCardTime");
 						openService.update(param);
 					}
@@ -741,8 +741,8 @@ public class WxController extends BaseController {
 						param.put("sqlMapId", "loadCardInfoById");
 						List<Map<String, Object>> singleCard = openService.queryForList(param);
 						if (singleCard.get(0).get("date_type").toString().equals("DATE_TYPE_FIX_TERM")) {
-							param.put("begin_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("begin_timestamp").toString())));
-							param.put("end_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("end_timestamp").toString())));
+							param.put("begin_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("fixed_begin_term").toString())));
+							param.put("end_timestamp", DateUtil.addDayTimeStamp(Integer.parseInt(singleCard.get(0).get("fixed_term").toString())));
 							param.put("sqlMapId", "updateCardTime");
 							openService.update(param);
 						}

@@ -1,0 +1,17 @@
+{
+	"name": "card_cancellation",
+	"viewUrl": "aps/content/DailyManagement/CardCancellation/template.html",
+	"controllerUrl": "aps/content/DailyManagement/CardCancellation/controller.js",
+	"config": {
+		"cancelCardURL":"json/Card_cancel_cancelCard.json",
+		"menu":{
+			"buttons":[{
+				"buttonName":"取消",
+				"buttonLink":"card_cancellation.close"
+			},{
+				"buttonName":"确定",
+				"buttonLink":"card_cancellation.confirm"
+			}]
+		}
+	}
+}

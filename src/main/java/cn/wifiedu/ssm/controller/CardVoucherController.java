@@ -584,6 +584,49 @@ public class CardVoucherController extends BaseController{
 			output("9999", "查询失败");
 		}
 	}
+	/**
+	* <p>Title: cancelCard</p>
+	* <p>Description: 核销卡券</p>
+	*/
+	@RequestMapping(value = "/Card_cancel_cancelCard", method = RequestMethod.POST)
+	public void cancelCard() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSONObject.parseObject(userJson);
+			String accessToken = "";
+			String appid = userObj.getString("FK_APP");
+			/*获取accessToken*/
+			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+				accessToken = WxUtil.getWxAccessToken(appid,
+						interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+			} else {
+				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+			}
+			JSONObject cardJsonObj = new JSONObject();
+			
+			cardJsonObj.put("code", map.get("code"));
+			
+			String url = CommonUtil.getPath("WX_CANCEL_CARD");
+
+			url = url.replace("ACCESS_TOKEN", accessToken);
+			
+			String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
+			
+			JSONObject cancelCard = JSONObject.parseObject(result);
+			if(cancelCard.getIntValue("errcode") == 0){
+				output("0000", "核销成功");
+			}else{
+				output("9999", "code码输入不正确");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999", "code码输入不正确");
+		}
+	}
 	 private String timeConvert(long dateValue){
 		Date date = new Date((long)dateValue*1000);
 		SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
