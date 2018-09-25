@@ -30,6 +30,8 @@
 				// 弹窗默认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 					$httpService.post(config.cancelCardURL, $scope.form).success(function(data) {
+							scope.form.code = "";
+							scope.$apply();
 								var m2 = {
 										"title" : "提示",
 										"contentName" : "modal",
