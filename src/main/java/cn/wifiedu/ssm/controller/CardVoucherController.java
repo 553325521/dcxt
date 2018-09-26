@@ -218,7 +218,15 @@ public class CardVoucherController extends BaseController{
 				param.put("gift",map.get("gift"));
 				/*抵消券*/
 			}else{
-				
+				baseInfoJsonObj.put("default_detail",map.get("description"));
+				baseInfoInnerJsonObj.put("promotion_url_name","次数/金额");
+				baseInfoInnerJsonObj.put("promotion_url_sub_title","查看");
+				baseInfoInnerJsonObj.put("promotion_app_brand_user_name","gh_86a091e50ad4@app");
+				baseInfoInnerJsonObj.put("promotion_app_brand_pass","API/cardPage");
+				param.put("dk_total_time",map.get("dk_total_time"));
+				param.put("dk_use_time",map.get("dk_use_time"));
+				param.put("dk_total_money",map.get("dk_total_money"));
+				param.put("dk_use_money",map.get("dk_use_money"));
 			}
 			/*装入卡券高级信息*/
 			baseInfoJsonObj.put("advanced_info",advanceInfoJsonObj);
@@ -291,6 +299,20 @@ public class CardVoucherController extends BaseController{
 			String card_id = "";
 			
 			if(createCard.containsKey("errcode")&&createCard.get("errmsg").equals("ok")){
+				
+				JSONObject cardUpdateJsonObj = new JSONObject();
+				JSONObject baseUpdateInfoJsonObj = new JSONObject();
+				JSONObject baseUpdateInfoInnerJsonObj = new JSONObject();
+			/*	jsonPost.add(cardJsonObj);*/
+				cardUpdateJsonObj.put("card_id",createCard.get("card_id").toString());
+				cardUpdateJsonObj.put(cardType.toLowerCase(), baseUpdateInfoJsonObj);
+				baseUpdateInfoJsonObj.put("base_info",baseUpdateInfoInnerJsonObj);
+				baseUpdateInfoInnerJsonObj.put("promotion_url","API/cardPage/"+createCard.get("card_id").toString());
+				String updateUrl = CommonUtil.getPath("WX_UPDATE_CARD");
+				updateUrl = updateUrl.replace("ACCESS_TOKEN", accessToken);
+				String updateResult = CommonUtil.WxPOST(updateUrl, cardUpdateJsonObj.toJSONString(), "UTF-8");
+				JSONObject updateCard = JSONObject.parseObject(updateResult);
+				System.out.println("更新外连接url返回结果"+updateCard);
 				card_id = createCard.get("card_id").toString();
 				param.put("card_id",card_id);
 				param.put("create_time",StringDeal.getStringDate());
@@ -606,21 +628,106 @@ public class CardVoucherController extends BaseController{
 			} else {
 				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
 			}
-			JSONObject cardJsonObj = new JSONObject();
-			
-			cardJsonObj.put("code", map.get("code"));
-			
-			String url = CommonUtil.getPath("WX_CANCEL_CARD");
+			String code_id = map.get("code").toString();
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("card_code",code_id);
+			param.put("sqlMapId", "selectUserCardByCodeID");
+			List<Map<String, Object>> singleUserCard = openService.queryForList(param);
+			param.clear();
+			param.put("card_id",singleUserCard.get(0).get("card_id"));
+			param.put("sqlMapId", "loadCardInfoById");
+			List<Map<String, Object>> singleCard = openService.queryForList(param);
+			String card_type = singleCard.get(0).get("card_type").toString();
+			int syTime = 0;
+			double syMoney = 0.0;
+			if(card_type.equals("GENERAL_COUPON")){
+				Object totalTime = singleCard.get(0).get("dk_total_time");
+				Object totalMoney = singleCard.get(0).get("dk_total_money");
+				Object dk_use_money = singleCard.get(0).get("dk_use_money");
+				Object use_time = singleUserCard.get(0).get("dk_use_time");
+				Object use_money = singleUserCard.get(0).get("dk_use_money");
+				if(totalTime != null && totalMoney == null){
+					syTime = Integer.parseInt(totalTime.toString())- Integer.parseInt(use_time.toString());
+					if(syTime == 1){
+						JSONObject cardJsonObj = new JSONObject();
+						
+						cardJsonObj.put("code", map.get("code"));
+						
+						String url = CommonUtil.getPath("WX_CANCEL_CARD");
 
-			url = url.replace("ACCESS_TOKEN", accessToken);
-			
-			String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
-			
-			JSONObject cancelCard = JSONObject.parseObject(result);
-			if(cancelCard.getIntValue("errcode") == 0){
-				output("0000", "核销成功");
+						url = url.replace("ACCESS_TOKEN", accessToken);
+						
+						String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
+						
+						JSONObject cancelCard = JSONObject.parseObject(result);
+						if(cancelCard.getIntValue("errcode") == 0){
+							output("0000", "核销成功");
+						}else{
+							output("9999", "code码输入不正确");
+						}
+					}else{
+						param.clear();
+						param.put("card_code",code_id);
+						param.put("dk_use_time",String.valueOf(Integer.parseInt(use_time.toString()+1)));
+						param.put("sqlMapId", "updateUserCardByCode");
+						boolean flag = openService.update(param);
+						if(flag){
+							output("0000", "核销成功");
+						}else{
+							output("9999", "code码输入不正确");
+						}
+					}
+				}else{
+					syMoney = Double.parseDouble(totalMoney.toString())- Double.parseDouble(use_money.toString());
+					
+					if(syMoney <= Double.parseDouble(use_money.toString())){
+						JSONObject cardJsonObj = new JSONObject();
+						
+						cardJsonObj.put("code", map.get("code"));
+						
+						String url = CommonUtil.getPath("WX_CANCEL_CARD");
+
+						url = url.replace("ACCESS_TOKEN", accessToken);
+						
+						String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
+						
+						JSONObject cancelCard = JSONObject.parseObject(result);
+						if(cancelCard.getIntValue("errcode") == 0){
+							output("0000", "核销成功");
+						}else{
+							output("9999", "code码输入不正确");
+						}
+					}else{
+						param.clear();
+						param.put("card_code",code_id);
+						param.put("dk_use_money",String.valueOf(Double.parseDouble(use_money.toString())+Double.parseDouble(dk_use_money.toString())));
+						param.put("sqlMapId", "updateUserCardByCode");
+						boolean flag = openService.update(param);
+						if(flag){
+							output("0000", "核销成功");
+						}else{
+							output("9999", "code码输入不正确");
+						}
+					}
+				}
+				
 			}else{
-				output("9999", "code码输入不正确");
+				JSONObject cardJsonObj = new JSONObject();
+				
+				cardJsonObj.put("code", map.get("code"));
+				
+				String url = CommonUtil.getPath("WX_CANCEL_CARD");
+
+				url = url.replace("ACCESS_TOKEN", accessToken);
+				
+				String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
+				
+				JSONObject cancelCard = JSONObject.parseObject(result);
+				if(cancelCard.getIntValue("errcode") == 0){
+					output("0000", "核销成功");
+				}else{
+					output("9999", "code码输入不正确");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

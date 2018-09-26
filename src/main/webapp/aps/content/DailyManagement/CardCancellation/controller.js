@@ -7,8 +7,6 @@
 				scope = $scope;
 				// 定义页面标题
 				scope.pageTitle = '卡券核销';	
-				
-				
 				scope.toHref = function(path) {
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,

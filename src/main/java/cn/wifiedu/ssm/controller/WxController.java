@@ -712,6 +712,8 @@ public class WxController extends BaseController {
 					param.put("create_time", createTime);
 					param.put("unionid", unionID);
 					param.put("card_status", "0");
+					param.put("dk_use_time", "0");
+					param.put("dk_use_money", "0");
 					param.put("sqlMapId", "insertUserCard");
 					openService.insert(param);
 					param.put("sqlMapId", "loadCardInfoById");
@@ -736,6 +738,8 @@ public class WxController extends BaseController {
 						param.put("create_time", createTime);
 						param.put("unionid", unionID);
 						param.put("card_status", "0");
+						param.put("dk_use_time", "0");
+						param.put("dk_use_money", "0");
 						param.put("sqlMapId", "insertUserCard");
 						openService.insert(param);
 						param.put("sqlMapId", "loadCardInfoById");

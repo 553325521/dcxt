@@ -17,6 +17,11 @@
 		SELECT * FROM sc_card C
 		WHERE C.card_id = #{card_id}
 	</select>
+	<!-- 根据codeID查询用户卡券信息 -->
+	<select id="selectUserCardByCodeID" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT * FROM sc_user_card 
+		WHERE card_code = #{card_code}
+	</select>
 	<!-- 获取卡券列表 -->
 	<select id="selectCardList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
 		SELECT d.*  FROM sc_shop_card ssc inner join (SELECT u.USER_PHONE,c.* 
@@ -66,14 +71,27 @@
 	</delete>
 	<!-- 插入卡券与用户中间关系表 -->
 	<insert id="insertUserCard" parameterMap="BaseParameterMap" >
-		INSERT INTO sc_user_card 
-		values(#{card_code},#{card_id},#{open_id},#{create_time},#{unionid},#{card_status})
+		INSERT INTO sc_user_card (card_code,card_id,open_id,create_time,card_status,dk_use_time,dk_use_money)
+		values(#{card_code},#{card_id},#{open_id},#{create_time},#{unionid},#{card_status},#{dk_use_time},#{dk_use_money})
 	</insert>
 	<!-- 修改卡券 -->
 	<update id="updateUserCardStatus" parameterMap="BaseParameterMap" >
 		UPDATE sc_user_card
 		SET card_status = #{card_status}
 		WHERE card_code = #{card_code}
+	</update>
+	<!-- 修改用户卡券使用次数或者使用金额 -->
+	<update id="updateUserCardByCode" parameterMap="BaseParameterMap" >
+		UPDATE sc_user_card
+	<set>
+	  <if test="dk_use_time != null" >
+        dk_use_time = #{dk_use_time,jdbcType=VARCHAR},
+      </if>
+      <if test="dk_use_money != null" >
+        dk_use_money = #{dk_use_money,jdbcType=VARCHAR},
+      </if>
+	</set>
+	WHERE card_code = #{card_code}
 	</update>
 	<!-- 修改卡券 -->
 	<update id="updateCardById" parameterMap="BaseParameterMap" >
@@ -203,6 +221,18 @@
       <if test="text_image_list != null" >
         text_image_list,
       </if>
+      <if test="dk_total_time != null" >
+        dk_total_time,
+      </if>
+      <if test="dk_use_time != null" >
+        dk_use_time,
+      </if>
+      <if test="dk_total_money != null" >
+        dk_total_money,
+      </if>
+      <if test="dk_use_money != null" >
+        dk_use_money,
+      </if>
       <if test="create_by != null" >
         create_by,
       </if>
@@ -297,6 +327,18 @@
       </if>
       <if test="text_image_list != null" >
         #{text_image_list,jdbcType=VARCHAR},
+      </if>
+       <if test="dk_total_time != null" >
+        #{dk_total_time,jdbcType=VARCHAR},
+      </if>
+       <if test="dk_use_time != null" >
+        #{dk_use_time,jdbcType=VARCHAR},
+      </if>
+       <if test="dk_total_money != null" >
+        #{dk_total_money,jdbcType=VARCHAR},
+      </if>
+       <if test="dk_use_money != null" >
+        #{dk_use_money,jdbcType=VARCHAR},
       </if>
       <if test="create_by != null" >
         #{create_by,jdbcType=VARCHAR},

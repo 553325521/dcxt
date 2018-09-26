@@ -279,8 +279,8 @@
 									</div>
 								</label>
 							</div>
-							<div class="weui-form-li iblock li-checkbox-self" style="margin-left:GENERAL_COUPON">
-								<input class="weui-form-checkbox" name="f3" id="g8" value="2"
+							<div class="weui-form-li iblock li-checkbox-self" style="margin-left:2%">
+								<input class="weui-form-checkbox" name="f3" id="g8" value="GENERAL_COUPON""
 									type="radio" ng-model="form.CARD_VOUCHER_TYPE"> <label
 									for="g8"> <i class="weui-icon-radio icon-checkbox-self"
 									style="margin: 0;"></i>
@@ -369,18 +369,18 @@
 				<div class="weui_cell cancelBorder cancelPadding" style="padding-top:5px;" ng-show="DKQ_ISSHOW">
 					<div class="weui_cell_bd weui_cell_primary">
 						<div style="width: 17%;float: left;margin-left: 5%;">券面次数</div>
-						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.qm_time"/>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.dk_total_time"/>
 						<div style="width: 18%;float: left;">次,限</div>
-						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.total_time"/>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.dk_use_time"/>
 						<div>次用完</div>
 					</div>
 				</div>
 				<div class="weui_cell cancelBorder cancelPadding" style="padding-top:5px;" ng-show="DKQ_MONEY_ISSHOW">
 					<div class="weui_cell_bd weui_cell_primary">
 						<div style="width: 17%;float: left;margin-left: 5%;">券面金额</div>
-						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.qm_money"/>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.dk_total_money"/>
 						<div style="width: 22%;float: left;">元,每次抵消</div>
-						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.dx_money"/>
+						<input style="width: 17%;float: left;" class="weui_input label-input" type="text"   ng-model="form.dk_use_money"/>
 						<div>元</div>
 					</div>
 				</div>

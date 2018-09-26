@@ -355,7 +355,7 @@
 							scope.ZKQ_ISSHOW = "True";
 							scope.DKQ_ISSHOW = "False";
 							scope.DKQ_MONEY_ISSHOW = "False";
-						}else if(newValue === '2'){
+						}else if(newValue === 'GENERAL_COUPON'){
 							scope.DKTYPE_ISSHOW = "True";
 							scope.DJQ_ISSHOW = "False";
 							scope.DHQ_ISSHOW = "False";
