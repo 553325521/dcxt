@@ -17,13 +17,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
+import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
+import cn.wifiedu.ssm.util.DateUtil;
 import cn.wifiedu.ssm.util.PictureUtil;
+import cn.wifiedu.ssm.util.WxUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 
@@ -46,6 +50,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			
 			@Resource
 			private JedisClient jedisClient;
+			
+			@Resource
+			InterfaceController interfaceController;
 			
 			public OpenService getOpenService() {
 				return openService;
@@ -76,7 +83,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			@RequestMapping("/VipCard_insert_insertOrUpdateVipCard")
 			public void addVipCard(HttpServletRequest request, HttpSession session){
 				try {
-					Map map = getParameterMap();
+					Map<String,Object>map = getParameterMap();
 					
 					//表单验证
 					if(StringUtils.isBlank((String)map.get("VCARD_NAME")) || 
@@ -113,6 +120,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					//图文说明里边的图片和文字验证
 					List<Map<String, String>> twDescList = (List<Map<String, String>>) JSON.parse((String)map.get("VCARD_TWJS"));
+					List<Map<String, String>> twDescList1 = (List<Map<String, String>>) JSON.parse((String)map.get("VCARD_TWJS"));
 //					String result = twDescList.stream().forEach(action);
 					
 					for (Map<String, String> twDescMap : twDescList) {
@@ -129,10 +137,12 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//表单验证成功，开始插入
 					
 					//插入店铺LOGO
+					String VCARD_LOGO_STR = map.get("VCARD_LOGO").toString();
 					if(map.get("VCARD_LOGO").toString().indexOf("data:image/") != -1){
 						map.put("VCARD_LOGO",PictureUtil.base64ToImage(map.get("VCARD_LOGO").toString(), VIPCARD_PICPATH));
 					}
 					//插入会员卡背景照片
+					String BACKGROUND_IMAGE_STR = map.get("BACKGROUND_IMAGE").toString();
 					if(map.get("BACKGROUND_IMAGE").toString().indexOf("data:image/") != -1){
 						map.put("BACKGROUND_IMAGE",PictureUtil.base64ToImage(map.get("BACKGROUND_IMAGE").toString(), VIPCARD_PICPATH));
 					}
@@ -143,10 +153,127 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						}
 					}
 					map.put("VCARD_TWJS", JSONObject.toJSONString(twDescList));
-					
 					//判断是添加还是修改
 					if(StringUtils.isBlank((String)map.get("VCARD_PK")) || "undefined".equals(map.get("VCARD_PK"))){
-						//是添加
+						//添加的业务逻辑
+						/*获取appid*/
+						String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+						JSONObject userObj = JSONObject.parseObject(userJson);
+						String accessToken = "";
+						String appid = userObj.getString("FK_APP");
+						/*获取accessToken*/
+						if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+							accessToken = WxUtil.getWxAccessToken(appid,
+									interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+							jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+							jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+						} else {
+							accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+						}
+						/*往微信上传店铺LOGO*/
+						String logoWxUrl = "";
+						if(VCARD_LOGO_STR.indexOf("data:image/") != -1){
+							String imgLOGOStr = VCARD_LOGO_STR;
+							String [] imgLogoArray = imgLOGOStr.split(",");
+							String logoReStr = CommonUtil.uploadImg(imgLogoArray[1], String.valueOf(VCARD_LOGO_STR.length()*3/4), imgLogoArray[0], accessToken);
+							JSONObject obj = JSONObject.parseObject(logoReStr);
+							logoWxUrl = obj.get("url").toString();
+						}
+						//往微信上传背景图片
+						String bgImgUrl = "";
+						if(BACKGROUND_IMAGE_STR.indexOf("data:image/") != -1){
+							String [] bgImgArray = BACKGROUND_IMAGE_STR.split(",");
+							String bgReStr = CommonUtil.uploadImg(bgImgArray[1], String.valueOf(BACKGROUND_IMAGE_STR.length()*3/4), bgImgArray[0], accessToken);
+							JSONObject obj = JSONObject.parseObject(bgReStr);
+							bgImgUrl = obj.get("url").toString();
+						}
+						//往微信上传图文介绍里的图片
+						JSONArray instroduceJsonArray = new JSONArray();
+						if(twDescList1.size()!=0){
+							for(int i = 0;i < twDescList1.size();i++){
+								JSONObject instroduceJson = new JSONObject();
+								Map<String, String> instroduceMap = twDescList1.get(i); 
+								String base64 = instroduceMap.get("img");
+								String [] instroduceImgArray = base64.split(",");
+								String instroduceReStr = CommonUtil.uploadImg(instroduceImgArray[1], String.valueOf(base64.length()*3/4), instroduceImgArray[0], accessToken);
+								JSONObject obj = JSONObject.parseObject(instroduceReStr);
+								String instroduceImgUrl = obj.get("url").toString();
+								instroduceJson.put("image_url",instroduceImgUrl);
+								instroduceJson.put("text",instroduceMap.get("text"));
+								instroduceJsonArray.add(instroduceJson);
+							}
+						}
+						//组装post数据
+						JSONObject postJsonObj = new JSONObject();
+						JSONObject cardJsonObj = new JSONObject();
+						JSONObject memberCardJsonObj = new JSONObject();
+						JSONObject baseInfoJsonObj = new JSONObject();
+						JSONObject skuJsonObj = new JSONObject();
+						JSONObject dateJsonObj = new JSONObject();
+						JSONObject swipeJsonObj = new JSONObject();
+						JSONObject customJsonObj = new JSONObject();
+						JSONObject advanceJsonObj = new JSONObject();
+						JSONObject bonusRuleJsonObj = new JSONObject();
+						JSONObject payinfoJsonObj = new JSONObject();
+						postJsonObj.put("card", cardJsonObj);
+						cardJsonObj.put("card_type", "MEMBER_CARD");
+						cardJsonObj.put("member_card",memberCardJsonObj);
+						memberCardJsonObj.put("background_pic_url",bgImgUrl);
+						memberCardJsonObj.put("base_info",baseInfoJsonObj);
+						baseInfoJsonObj.put("logo_url",logoWxUrl);
+						/*根据商铺ID查询商铺名称*/
+						Map<String, Object> selectShopMap = new HashMap<>();
+						selectShopMap.put("SHOP_FK", userObj.getString("FK_SHOP"));
+						selectShopMap.put("sqlMapId", "SelectByPrimaryKey");
+						Map<String, Object> reShopMap = (Map<String, Object>)openService.queryForObject(selectShopMap);
+						/*装商铺名称*/
+						baseInfoJsonObj.put("brand_name",reShopMap.get("SHOP_NAME"));
+						baseInfoJsonObj.put("code_type","CODE_TYPE_TEXT");
+						baseInfoJsonObj.put("title",map.get("VCARD_NAME"));
+						baseInfoJsonObj.put("color","Color010");
+						baseInfoJsonObj.put("notice","结账时出示会员卡");
+						baseInfoJsonObj.put("description",map.get("VCARD_SYXZ"));
+						baseInfoJsonObj.put("sku",skuJsonObj);
+						skuJsonObj.put("quantity",50);
+						baseInfoJsonObj.put("date_info", dateJsonObj);
+						if(map.get("ALLOTTED_TIME").equals("1")){
+							dateJsonObj.put("type","DATE_TYPE_PERMANENT");
+						}else{
+							dateJsonObj.put("type","DATE_TYPE_FIX_TIME_RANGE");
+							String [] allowTimeArray = map.get("ALLOTTED_TIME_PERIOD").toString().split(" ");
+							dateJsonObj.put("begin_timestamp",Integer.parseInt(DateUtil.date2TimeStamp(allowTimeArray[0])));
+							dateJsonObj.put("end_timestamp",Integer.parseInt(DateUtil.date2TimeStamp(allowTimeArray[1])));
+						}
+						baseInfoJsonObj.put("get_limit", 1);
+						baseInfoJsonObj.put("pay_info",payinfoJsonObj);
+						payinfoJsonObj.put("swipe_card", swipeJsonObj);
+						swipeJsonObj.put("is_swipe_card", true);
+						baseInfoJsonObj.put("is_pay_and_qrcode", true);
+						memberCardJsonObj.put("prerogative",map.get("VCARD_TQSM"));
+						memberCardJsonObj.put("auto_activate",true);
+						memberCardJsonObj.put("wx_activate",true);
+						memberCardJsonObj.put("supply_bonus", true);
+						memberCardJsonObj.put("supply_balance", false);
+						memberCardJsonObj.put("custom_field1",customJsonObj);
+						customJsonObj.put("name_type","FIELD_NAME_TYPE_LEVEL");
+						customJsonObj.put("url","http://www.qq.com");
+						memberCardJsonObj.put("advanced_info", advanceJsonObj);
+						advanceJsonObj.put("text_image_list",instroduceJsonArray);
+						memberCardJsonObj.put("discount",((int)Double.parseDouble(map.get("VCARD_ZKXS").toString()))/10-1);
+						memberCardJsonObj.put("bonus_rule",bonusRuleJsonObj);
+						bonusRuleJsonObj.put("cost_money_unit",10000);
+						bonusRuleJsonObj.put("increase_bonus",(int)Double.parseDouble(map.get("VCARD_JFXS").toString()));
+						bonusRuleJsonObj.put("init_increase_bonus",(int)Double.parseDouble(map.get("START_JF").toString()));
+						/*创建会员卡，往微信发送POST请求*/
+						String url = CommonUtil.getPath("WX_CREATE_CARD");
+						url = url.replace("ACCESS_TOKEN", accessToken);
+						String result = CommonUtil.WxPOST(url, postJsonObj.toJSONString(), "UTF-8");
+						System.out.println("accessToken==========="+accessToken);
+						System.out.println("参数============"+postJsonObj.toJSONString());
+						JSONObject createCard = JSONObject.parseObject(result);
+						
+						System.out.println("================"+createCard+"======================");
 						map.put("sqlMapId", "insertVipCard");
 						String insert = openService.insert(map);
 						if(insert != null){
@@ -314,7 +441,5 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					e.printStackTrace();
 				}
 			}
-			
-			
 }
 

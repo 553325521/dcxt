@@ -91,8 +91,7 @@ public class CardVoucherController extends BaseController{
 			/*上传店铺LOGO*/
 			String imgLOGOStr = map.get("IMG_LOGO_STR").toString();
 			String [] imgLogoArray = imgLOGOStr.split(",");
-			String imgSize = imgLogoArray[3].substring(0, imgLogoArray[3].length()-1);
-			String logoReStr = CommonUtil.uploadImg(imgLogoArray[1], imgSize, imgLogoArray[2], accessToken);
+			String logoReStr = CommonUtil.uploadImg(imgLogoArray[1],"600000", imgLogoArray[2], accessToken);
 			JSONObject obj = JSONObject.parseObject(logoReStr);
 			String logoWxUrl = obj.get("url").toString();
 			System.out.println("店铺LOGOurl:"+logoWxUrl);

@@ -71,7 +71,7 @@
 	</delete>
 	<!-- 插入卡券与用户中间关系表 -->
 	<insert id="insertUserCard" parameterMap="BaseParameterMap" >
-		INSERT INTO sc_user_card (card_code,card_id,open_id,create_time,card_status,dk_use_time,dk_use_money)
+		INSERT INTO sc_user_card (card_code,card_id,open_id,create_time,unionid,card_status,dk_use_time,dk_use_money)
 		values(#{card_code},#{card_id},#{open_id},#{create_time},#{unionid},#{card_status},#{dk_use_time},#{dk_use_money})
 	</insert>
 	<!-- 修改卡券 -->
