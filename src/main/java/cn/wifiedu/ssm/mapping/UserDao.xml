@@ -15,5 +15,12 @@
 			set 
 				USER_BALANCE = #{USER_BALANCE}
 		where USER_PK = #{USER_PK} 
-	</update> 
+	</update>
+	
+	<update id="updateUserPhoneByUnionId" parameterMap="BaseParameterMap">
+		update SC_USER
+			set 
+				USER_PHONE = #{USER_PHONE}
+		where USER_UNIONID = #{USER_UNIONID} 
+	</update>
 </mapper>

@@ -34,4 +34,5 @@ public class RedisConstants {
 	
 	public static final String WX_SESSION_KEY = "wx_session_key:";
 	
+	public static final String WX_USER_PHONE = "wx_user_phone:";
 }
