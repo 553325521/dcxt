@@ -116,4 +116,5 @@
 			VCARD_PK = #{VCARD_ID} AND USE_SHOP LIKE '%${SHOP_ID}%';
 	</delete>
 	
+	
 </mapper>

@@ -134,6 +134,21 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						}
 					}
 					
+					/*获取appid*/
+					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					JSONObject userObj = JSONObject.parseObject(userJson);
+					String accessToken = "";
+					String appid = userObj.getString("FK_APP");
+					/*获取accessToken*/
+					if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+						accessToken = WxUtil.getWxAccessToken(appid,
+								interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+						jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+						jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+					} else {
+						accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+					}
 					//表单验证成功，开始插入
 					
 					//插入店铺LOGO
@@ -156,21 +171,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//判断是添加还是修改
 					if(StringUtils.isBlank((String)map.get("VCARD_PK")) || "undefined".equals(map.get("VCARD_PK"))){
 						//添加的业务逻辑
-						/*获取appid*/
-						String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
-						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-						JSONObject userObj = JSONObject.parseObject(userJson);
-						String accessToken = "";
-						String appid = userObj.getString("FK_APP");
-						/*获取accessToken*/
-						if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
-							accessToken = WxUtil.getWxAccessToken(appid,
-									interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
-							jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
-							jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
-						} else {
-							accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
-						}
 						/*往微信上传店铺LOGO*/
 						String logoWxUrl = "";
 						if(VCARD_LOGO_STR.indexOf("data:image/") != -1){
@@ -272,27 +272,104 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						System.out.println("accessToken==========="+accessToken);
 						System.out.println("参数============"+postJsonObj.toJSONString());
 						JSONObject createCard = JSONObject.parseObject(result);
-						
 						System.out.println("================"+createCard+"======================");
-						map.put("sqlMapId", "insertVipCard");
-						String insert = openService.insert(map);
-						if(insert != null){
-							//添加商铺会员卡对应关系表
-							String shopsStr = (String)map.get("USE_SHOP");
-							String[] shops = shopsStr.split(",");
-							map.put("sqlMapId", "insertShopVipCard");
-							for(int i=0;i<shops.length;i++){
-								map.put("SHOP_ID", shops[i]);
-								map.put("VIP_CARD_ID", insert);
-								openService.insert(map);
-							}
-							output("0000","添加成功");
+						if(createCard.containsKey("errcode")&&!createCard.getString("errmsg").equals("ok")){
+							output(createCard.getString("errcode"),"创建失败");
 							return;
 						}else{
-							output("9999","添加失败");
-							return;
+							map.put("VCARD_IDNUMBER",createCard.get("card_id"));
+							map.put("sqlMapId", "insertVipCard");
+							String insert = openService.insert(map);
+							if(insert != null){
+								//添加商铺会员卡对应关系表
+								String shopsStr = (String)map.get("USE_SHOP");
+								String[] shops = shopsStr.split(",");
+								map.put("sqlMapId", "insertShopVipCard");
+								for(int i=0;i<shops.length;i++){
+									map.put("SHOP_ID", shops[i]);
+									map.put("VIP_CARD_ID", insert);
+									openService.insert(map);
+								}
+								output("0000","添加成功");
+								return;
+							}else{
+								output("9999","添加失败");
+								return;
+							}
 						}
 					}else{//是更新
+						/*往微信上传店铺LOGO*/
+						String logoWxUrl = "";
+						if(VCARD_LOGO_STR.indexOf("data:image/") != -1){
+							String imgLOGOStr = VCARD_LOGO_STR;
+							String [] imgLogoArray = imgLOGOStr.split(",");
+							String logoReStr = CommonUtil.uploadImg(imgLogoArray[1], String.valueOf(VCARD_LOGO_STR.length()*3/4), imgLogoArray[0], accessToken);
+							JSONObject obj = JSONObject.parseObject(logoReStr);
+							logoWxUrl = obj.get("url").toString();
+						}
+						//往微信上传背景图片
+						String bgImgUrl = "";
+						if(BACKGROUND_IMAGE_STR.indexOf("data:image/") != -1){
+							String [] bgImgArray = BACKGROUND_IMAGE_STR.split(",");
+							String bgReStr = CommonUtil.uploadImg(bgImgArray[1], String.valueOf(BACKGROUND_IMAGE_STR.length()*3/4), bgImgArray[0], accessToken);
+							JSONObject obj = JSONObject.parseObject(bgReStr);
+							bgImgUrl = obj.get("url").toString();
+						}
+						//组装post数据
+						JSONObject postJsonObj = new JSONObject();
+						JSONObject memberCardJsonObj = new JSONObject();
+						JSONObject baseInfoJsonObj = new JSONObject();
+						JSONObject dateJsonObj = new JSONObject();
+						JSONObject bonusRuleJsonObj = new JSONObject();
+						//获取会员卡number
+						map.put("sqlMapId", "selectVipCardById");
+						List<Map<String,Object>> singleVipCard = openService.queryForList(map);
+						String vipNumber = singleVipCard.get(0).get("VCARD_IDNUMBER").toString();
+						postJsonObj.put("card_id", vipNumber);
+						postJsonObj.put("member_card",memberCardJsonObj);
+						memberCardJsonObj.put("base_info",baseInfoJsonObj);
+						//装背景图片路径
+						memberCardJsonObj.put("background_pic_url",bgImgUrl);
+						//装logo路径
+						baseInfoJsonObj.put("logo_url",logoWxUrl);
+						//装会员卡名称
+						baseInfoJsonObj.put("title",map.get("VCARD_NAME"));
+						//装使用说明
+						baseInfoJsonObj.put("description",map.get("VCARD_SYXZ"));
+						//若有效期为时间段，则进行修改(仅支持修改时间段)
+						if(singleVipCard.get(0).get("ALLOTTED_TIME").toString().equals("2")){
+							baseInfoJsonObj.put("date_info", dateJsonObj);
+							dateJsonObj.put("type",1);
+							String [] allowTimeArray = map.get("ALLOTTED_TIME_PERIOD").toString().split(" ");
+							dateJsonObj.put("begin_timestamp",Integer.parseInt(DateUtil.date2TimeStamp(allowTimeArray[0])));
+							dateJsonObj.put("end_timestamp",Integer.parseInt(DateUtil.date2TimeStamp(allowTimeArray[1])));
+						}
+						//装特权说明
+						memberCardJsonObj.put("prerogative",map.get("VCARD_TQSM"));
+						//折扣
+						memberCardJsonObj.put("discount",((int)Double.parseDouble(map.get("VCARD_ZKXS").toString()))/10-1);
+						//积分规则
+						memberCardJsonObj.put("bonus_rule",bonusRuleJsonObj);
+						bonusRuleJsonObj.put("cost_money_unit",10000);
+						bonusRuleJsonObj.put("increase_bonus",(int)Double.parseDouble(map.get("VCARD_JFXS").toString()));
+						bonusRuleJsonObj.put("init_increase_bonus",(int)Double.parseDouble(map.get("START_JF").toString()));
+						/*创建卡券，往微信发送POST请求*/
+						String url = CommonUtil.getPath("WX_UPDATE_CARD");
+
+						url = url.replace("ACCESS_TOKEN", accessToken);
+						
+						String result = CommonUtil.WxPOST(url, postJsonObj.toJSONString(), "UTF-8");
+						
+						JSONObject createCard = JSONObject.parseObject(result);
+						
+						System.out.println(createCard.containsKey("errcode")+"code"+createCard.getInteger("errcode"));
+						if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() == 40100){
+							output("9999", "有效期设置不正确");
+							return;
+						}else if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() != 0){
+							output("9999", "修改失败");
+							return;
+						}
 						map.put("sqlMapId", "updaeteVipCardById");
 						boolean b = openService.update(map);
 						if(b){
@@ -410,17 +487,39 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			@RequestMapping("/VIPCard_delete_removeVIPCardById")
 			public void removeVIPCardById(HttpServletRequest request, HttpSession session){
 				try {
-					Map map = getParameterMap();
+					Map<String,Object>map = getParameterMap();
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 					JSONObject userObj = JSONObject.parseObject(userJson);
-					
+				/*	根据ID查询会员卡信息*/
+					map.put("VCARD_PK",map.get("VCARD_ID"));
+					map.put("sqlMapId", "selectVipCardById");
+					List<Map<String,Object>> singleVipCard = openService.queryForList(map);
+					String vipNumber = singleVipCard.get(0).get("VCARD_IDNUMBER").toString();
+					JSONObject cardJsonObj = new JSONObject();
+					cardJsonObj.put("card_id", vipNumber);
+					String url = CommonUtil.getPath("WX_DELETE_CARD");
+					/*获取accessToken*/
+					String accessToken = "";
+					String appid = userObj.getString("FK_APP");
+					if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+						accessToken = WxUtil.getWxAccessToken(appid,
+								interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+						jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+						jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+					} else {
+						accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+					}
+					url = url.replace("ACCESS_TOKEN", accessToken);
+					String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
+					JSONObject deleteCardResult = JSONObject.parseObject(result);
+					if(deleteCardResult.containsKey("errcode")&&deleteCardResult.getInteger("errcode").intValue() != 0){
+						output("9999", "删除失败");
+						return;
+					}
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));
-					
-					
 					//先删除会员卡信息
 					map.put("sqlMapId", "removeVIPCardById");
-					
 					boolean delete = openService.delete(map);
 					if(!delete){
 						output("9999","删除失败");
