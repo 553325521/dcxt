@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="shoppingCart" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
+ 	<!--添加商品类别表 -->
+	<insert id="insertShoppingCart" parameterMap="BaseParameterMap">
+		insert into
+		SC_SHOPPING_CART
+		(
+		CART_PK,
+		FK_USER,
+		FK_SHOP,
+		FK_GOODS,
+		GOODS_NUMBER,
+		GOODS_FORMAT,
+		GOODS_MAKING,
+		GOODS_TASTE,
+		GOODS_STATE,
+		INSERT_TIME,
+		INSERT_BY
+		)
+		values(
+		#{UUID},
+		#{FK_USER},
+		#{FK_SHOP},
+		#{GOODS_PK},
+		#{GOODS_NUM},
+		#{GOODS_SPECIFICATION},
+		#{GOODS_RECIPE},
+		#{GOODS_TASTE},
+		'暂存',
+		NOW(),
+		#{INSERT_BY},
+		)
+	</insert>
+ 	
+</mapper>

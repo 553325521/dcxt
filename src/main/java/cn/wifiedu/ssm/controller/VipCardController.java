@@ -336,14 +336,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						baseInfoJsonObj.put("title",map.get("VCARD_NAME"));
 						//装使用说明
 						baseInfoJsonObj.put("description",map.get("VCARD_SYXZ"));
+						baseInfoJsonObj.put("date_info", dateJsonObj);
 						//若有效期为时间段，则进行修改(仅支持修改时间段)
 						if(singleVipCard.get(0).get("ALLOTTED_TIME").toString().equals("2")){
-							baseInfoJsonObj.put("date_info", dateJsonObj);
 							dateJsonObj.put("type",1);
 							String [] allowTimeArray = map.get("ALLOTTED_TIME_PERIOD").toString().split(" ");
 							dateJsonObj.put("begin_timestamp",Integer.parseInt(DateUtil.date2TimeStamp(allowTimeArray[0])));
 							dateJsonObj.put("end_timestamp",Integer.parseInt(DateUtil.date2TimeStamp(allowTimeArray[1])));
+						}else{
+							dateJsonObj.put("type",3);
 						}
+						
 						//装特权说明
 						memberCardJsonObj.put("prerogative",map.get("VCARD_TQSM"));
 						//折扣
