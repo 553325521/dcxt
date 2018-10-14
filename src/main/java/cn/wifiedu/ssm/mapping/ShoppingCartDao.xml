@@ -13,6 +13,7 @@
 		FK_SHOP,
 		FK_GOODS,
 		GOODS_NUMBER,
+		GOODS_PRICE,
 		GOODS_FORMAT,
 		GOODS_MAKING,
 		GOODS_TASTE,
@@ -26,6 +27,7 @@
 		#{FK_SHOP},
 		#{GOODS_PK},
 		#{GOODS_NUM},
+		#{GOODS_PRICE},
 		#{GOODS_SPECIFICATION},
 		#{GOODS_RECIPE},
 		#{GOODS_TASTE},
@@ -36,9 +38,8 @@
 	</insert>
 	<!-- 查询某用户的购物车数据 -->
 	<select id="selectCartDataByUser" parameterMap="BaseParameterMap">
-		select 	c.CART_PK,c.FK_GOODS,c.GOODS_NUMBER,c.GOODS_FORMAT,c.GOODS_MAKING,c.GOODS_TASTE,g.GOODS_PRICE 
-		from SC_SHOPPING_CART c left join SC_GOODS g
-		on c.FK_GOODS = g.GOODS_PK
+		select 	CART_PK,FK_GOODS,GOODS_NUMBER,GOODS_FORMAT,GOODS_MAKING,GOODS_TASTE,GOODS_PRICE 
+		from SC_SHOPPING_CART 
 		where FK_USER = #{FK_USER},
 		and FK_SHOP = #{FK_SHOP},
 		and CART_STATE = #{CART_STATE}
