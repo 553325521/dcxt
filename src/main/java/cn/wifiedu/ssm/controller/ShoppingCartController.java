@@ -45,8 +45,12 @@ public class ShoppingCartController extends BaseController {
 			Map<String, Object> map = getParameterMap();
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("openid").toString());
 			if (StringUtils.isNotBlank(userJson)) {
-				if (!map.containsKey("shopid") || StringUtils.isBlank(map.get("shopid").toString())) {
-					output("9999", "参数无效");
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "商铺参数无效");
+					return;
+				}
+				if (!map.containsKey("FK_USER") || StringUtils.isBlank(map.get("FK_USER").toString())) {
+					output("9999", "USER参数无效");
 					return;
 				}
 				map.put("sqlMapId","insertShoppingCart");
@@ -59,6 +63,37 @@ public class ShoppingCartController extends BaseController {
 			e.printStackTrace();
 		}
 	}
+	@RequestMapping(value = "/ShoppingCart_load_loadCartDataByUser", method = RequestMethod.POST)
+	public void loadCartDataByUser() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("openid").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "商铺参数无效");
+					return;
+				}
+				if (!map.containsKey("FK_USER") || StringUtils.isBlank(map.get("FK_USER").toString())) {
+					output("9999", "USER参数无效");
+					return;
+				}
+				if (!map.containsKey("CART_STATE") || StringUtils.isBlank(map.get("CART_STATE").toString())) {
+					output("9999", "状态参数无效");
+					return;
+				}
+				map.put("sqlMapId","selectCartDataByUser");
+				List<Map<String,Object>> cartDataList = openService.queryForList(map);
+				output("0000", cartDataList);
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	
 }
