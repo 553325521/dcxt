@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="order" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>	
+	<!-- 根据时间查询订单 -->
+	<select id="selectOrderByTime" parameterMap="BaseParameterMap">
+		select 	o.ORDER_PK,o.ORDER_POSITION,o.ORDER_PAY_WAY,
+			o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
+			o.ARRIVE_TIME,o.CREATE_TIME,o.CREATE_BY,
+			SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,
+			SUM(od.ORDER_DETAILS_GMONEY*od.ORDER_DETAILS_FS) AS TOTAL_MONEY
+		from SC_ORDER o left join SC_ORDER_DETAILS od
+		on o.ORDER_PK = od.FK_ORDER
+		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+			BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i:%s') 
+			AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i:%s')
+			AND ORDER_PAY_STATE = #{ORDER_PAY_STATE}			
+		GROUP BY od.FK_ORDER
+		ORDER BY str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') DESC
+	</select>
+ 	
+</mapper>
