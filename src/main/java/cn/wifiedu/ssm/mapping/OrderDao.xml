@@ -15,7 +15,9 @@
 		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i') 
 			BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i') 
 			AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
-			AND ORDER_PAY_STATE = #{ORDER_PAY_STATE}			
+		<if test="ORDER_PAY_STATE != null" >
+        	AND ORDER_PAY_STATE = #{ORDER_PAY_STATE}
+      	</if>
 		GROUP BY od.FK_ORDER
 		ORDER BY str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') DESC
 	</select>

@@ -53,6 +53,9 @@ public class OrderController extends BaseController{
 					output("9999", "订单支付状态参数无效");
 					return;
 				}
+				if(map.get("ORDER_PAY_STATE").toString().equals("2")){
+					map.put("ORDER_PAY_STATE",null);
+				}
 				map.put("sqlMapId","selectOrderByTime");
 				List<Map<String,Object>> orderDataList = openService.queryForList(map);
 				output("0000", orderDataList);
