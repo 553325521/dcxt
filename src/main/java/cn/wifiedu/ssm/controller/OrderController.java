@@ -1,5 +1,6 @@
 package cn.wifiedu.ssm.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,37 @@ public class OrderController extends BaseController{
 	public void setOpenService(OpenService openService) {
 	this.openService = openService;
 	}
+	
+	/**
+	* <p>Title: loadOrderNumber</p>
+	* <p>Description: 查询支付与未支付状态分别订单数量</p>
+	*/
+	@RequestMapping(value = "/Order_load_loadOrderNumber", method = RequestMethod.POST)
+	public void loadOrderNumber(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("openid").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("CREATE_TIME") || StringUtils.isBlank(map.get("CREATE_TIME").toString())||
+						!map.containsKey("END_TIME") || StringUtils.isBlank(map.get("END_TIME").toString())) {
+					output("9999", "时间参数无效");
+					return;
+				}
+				if(!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())){
+					output("9999", "商铺ID参数无效");
+					return;
+				}
+				map.put("sqlMapId","selectOrderNumber");
+				List<Map<String,Object>> orderDataList = openService.queryForList(map);
+				output("0000", orderDataList);
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	* <p>Title: loadOrderDataByTime</p>
 	* <p>Description: 根据时间、状态查询订单列表</p>
@@ -47,6 +79,10 @@ public class OrderController extends BaseController{
 				if (!map.containsKey("CREATE_TIME") || StringUtils.isBlank(map.get("CREATE_TIME").toString())||
 						!map.containsKey("END_TIME") || StringUtils.isBlank(map.get("END_TIME").toString())) {
 					output("9999", "时间参数无效");
+					return;
+				}
+				if(!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())){
+					output("9999", "商铺ID参数无效");
 					return;
 				}
 				if (!map.containsKey("ORDER_PAY_STATE") || StringUtils.isBlank(map.get("ORDER_PAY_STATE").toString())) {
@@ -85,6 +121,36 @@ public class OrderController extends BaseController{
 				map.put("sqlMapId","selectOrderDetailByOrderPK");
 				List<Map<String,Object>> orderDataList = openService.queryForList(map);
 				output("0000", orderDataList);
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	* <p>Title: tuiCai</p>
+	* <p>Description: 订单退菜</p>
+	*/
+	@RequestMapping(value = "/Order_delete_tuiCai", method = RequestMethod.POST)
+	public void tuiCai(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("openid").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("ORDER_DETAILS_PK") || StringUtils.isBlank(map.get("ORDER_DETAILS_PK").toString())) {
+					output("9999", "退菜ID无效");
+					return;
+				}
+				map.put("sqlMapId","deleteOrderDetailByORDER_DETAILS_PK");
+				boolean deleteResult = openService.delete(map);
+				if(deleteResult){
+					output("0000","退菜成功");
+				}else{
+					output("9999","退菜失败");
+				}
 			} else {
 				output("9999", "token无效");
 				return;
