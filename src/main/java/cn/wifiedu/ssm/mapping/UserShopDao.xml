@@ -8,7 +8,7 @@
 	<select id="findStaffByShopId" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT a.FK_USER, a.FK_ROLE, b.USER_NAME, b.USER_SN,
-		b.USER_PHONE, b.USER_SEX, a.IS_USE, a.USER_UNIONID FROM
+		b.USER_PHONE, b.USER_SEX, a.IS_USE, b.USER_UNIONID FROM
 		SC_USER_SHOP a LEFT JOIN
 		SC_USER b
 		ON
