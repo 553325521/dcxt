@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.util.Arith;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
@@ -382,18 +383,35 @@ public class GoodsTypeController extends BaseController {
 							checkMap.put(typeMap.get("GTYPE_PK").toString(), "");
 						}
 					}
-
+					map.put("FK_USER", map.get("openid").toString());
+					map.put("CART_STATE", "zancun");
+					map.put("sqlMapId", "selectCartDataByUser");
+					// 购物车列表
+					List<Map<String, Object>> cartDataList = openService.queryForList(map);
+					
 					for (Map<String, Object> type : typeList) {
 						Map<String, Object> good = new HashMap<>();
 						good.put("GTYPE_PK", type.get("GTYPE_PK").toString());
 						good.put("GTYPE_NAME", type.get("GTYPE_NAME").toString());
 						List<Map<String, Object>> goods = new ArrayList<>();
+						double typeCount = 0;
 						for (Map<String, Object> goodInfo : reMap) {
 							if ((type.get("GTYPE_PK").toString()).equals(goodInfo.get("GTYPE_PK").toString())) {
+								double goodCount = 0;
+								if (cartDataList != null && !cartDataList.isEmpty()) {
+									for (Map<String, Object> cartMap : cartDataList) {
+										if ((cartMap.get("FK_GOODS").toString()).equals(goodInfo.get("GOODS_PK").toString())) {
+											typeCount = Arith.add(typeCount, Double.valueOf(cartMap.get("qity").toString()));
+											goodCount = Arith.add(goodCount, Double.valueOf(cartMap.get("qity").toString()));
+										}
+									}
+								}
+								goodInfo.put("qity", goodCount);
 								goods.add(goodInfo);
 							}
 						}
 						good.put("infos", goods);
+						good.put("GTYPE_QITY", typeCount);
 						goodsList.add(good);
 					}
 				}
