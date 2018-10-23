@@ -7,6 +7,7 @@
 		"findURL":"json/Goods_query_queryGoods.json",
 		"initURL":"json/GoodsType_select_findGoodsNameById.json",
 		"updateURL":"json/Goods_update_updateGoodsById.json",
+		"getConfig":"json/Wx_getWxConfigMess.json",
 		"menu":{	
 	            "buttons":[
 		        	{

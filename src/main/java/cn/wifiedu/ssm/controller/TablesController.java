@@ -210,6 +210,22 @@ import cn.wifiedu.ssm.util.redis.JedisClient;
 						return;
 					}
 					
+					//判断是否设置已启用而父节点未启用
+					map.put("sqlMapId", "findTablesAreaById");
+					Map<String,String> areaMess = (Map) openService.queryForObject(map);
+					if(areaMess == null){
+						output("9999", "添加失败！");
+						return;
+					}
+					//如果是的话，直接返回错误
+					if("0".equals(areaMess.get("TABLES_AREA_STATUS")) && "1".equals(map.get("TABLES_STATUS"))){
+						output("9999", "该区域已停用，不允许启用该桌位！");
+						return;
+					}
+					
+					
+					
+					
 					//判断，如果当前排序序号不是最后一个，开始把当前序号后边的依次加一
 					if(pxxh - 1 != areaCount){
 						map.put("sqlMapId", "updateTablesPxxhById");

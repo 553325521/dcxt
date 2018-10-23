@@ -934,7 +934,7 @@ public class WxController extends BaseController {
 			return;
 		} catch (ExceptionVo e) {
 			e.printStackTrace();
-			output("0000", e);
+			output("9999", e);
 		}
 	}
 }

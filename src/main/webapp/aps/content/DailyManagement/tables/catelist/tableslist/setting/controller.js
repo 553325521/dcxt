@@ -20,7 +20,7 @@
 			//判断
 			if(tables_id != undefined && tables_id != 'undefined' && tables_id != ''){
 				//是修改
-				// 定义页面标题
+				//定义页面标题
 				scope.pageTitle = "修改餐桌";
 				//初始化排序序号列表
 				tables_pxxh = Array(Number(params.tables_num)).fill().map((v,i) => i+1);//填充排序列表 1-n
@@ -51,27 +51,21 @@
 				$("#pxxh_select").val(Number(params.tables_num)+1);
 				scope.form.TABLES_PXXH = Number(params.tables_num)+1;
 				scope.form.TABLES_STATUS = "1";
-				scope.form.TABLES_DESC="";
+				scope.form.TABLES_DESC = "";
+				scope.form.TABLES_SHORT_NAME = "";
 				comboboxInit()
 			}
 			
 		}
 		
 		init()
-		
-		
 		/*	//餐桌区域列表
 		tables_qy = [ '大厅', '雅间', '小包间', '大包间']
-		
 		
 		//区域初始化
 		scope.form.TABLES_QY = tables_qy[1]
 		////这一行是为了解决第一次点击下拉菜单后滑块默认是第一个的问题
 		$("#qy_select").val(scope.form.TABLES_QY);*/
-		
-
-		
-		
 		
 		
 		//跳转
@@ -91,6 +85,7 @@
 		//保存
 		
 		scope.doSave = function(){
+			scope.form.TABLES_SHORT_NAME = scope.form.TABLES_SHORT_NAME.trim();
 			console.info(scope.form)
 			$form.validate(function(error) {
 				if (!error) {

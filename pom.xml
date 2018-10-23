@@ -254,6 +254,19 @@
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.7.0</version>
+	</dependency>
+
+ 		<dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.5.3</version>
+        </dependency>
+		
+		<!-- 饿了么相关 -->
+		<dependency>
+		    <groupId>me.ele.openapi</groupId>
+		    <artifactId>eleme-java-ws-openapi</artifactId>
+		    <version>1.0.2-RELEASE</version>
 		</dependency>
 
 	</dependencies>

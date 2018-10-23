@@ -4,9 +4,10 @@
   	<resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
  	<parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
   
+  	<!-- 根据餐桌区域ID查询该区域下所有餐桌 -->
 	<select id="selectTablesByAreaId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 
-			TABLES_PK, TABLES_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC
+			TABLES_PK, TABLES_NAME,TABLES_SHORT_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC
 		FROM
 			sc_tables
 		WHERE
@@ -20,10 +21,11 @@
 		WHERE
 			TABLES_PK = #{TABLES_ID}
 	</delete>
-	  
+	 
+	 <!-- 根据餐桌ID查询餐桌信息 -->
 	<select id="findTablesById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 
-			TABLES_PK, TABLES_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC
+			TABLES_PK, TABLES_NAME, TABLES_SHORT_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC
 		FROM
 			sc_tables
 		WHERE
@@ -36,6 +38,7 @@
 			TABLES_PK,
 			TABLES_AREA_FK,
 			TABLES_NAME,
+			TABLES_SHORT_NAME,
 			TABLES_NUM,
 			TABLES_STATUS,
 			TABLES_PXXH,
@@ -48,6 +51,7 @@
 			#{UUID},
 			#{TABLES_AREA_ID},
 			#{TABLES_NAME},
+			#{TABLES_SHORT_NAME},
 			#{TABLES_NUM},
 			#{TABLES_STATUS},
 			#{TABLES_PXXH},
@@ -60,7 +64,7 @@
 	
 	<!-- 根绝ID修改指定桌位 -->
 	<update id="updateTablesById" parameterMap="BaseParameterMap">
-		UPDATE sc_tables SET TABLES_NAME = #{TABLES_NAME}, 
+		UPDATE sc_tables SET TABLES_NAME = #{TABLES_NAME}, TABLES_SHORT_NAME = #{TABLES_SHORT_NAME},
 			TABLES_NUM = #{TABLES_NUM}, TABLES_STATUS = #{TABLES_STATUS},
 			TABLES_PXXH = #{TABLES_PXXH},
 			TABLES_DESC = #{TABLES_DESC},

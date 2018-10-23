@@ -539,7 +539,7 @@ public class StarPosPay {
 			map.put("TRM_NO", paramsMap.get("trmNo"));
 			map.put("ORG_NO", paramsMap.get("orgNo"));
 			map.put("AMOUNT", paramsMap.get("amount"));
-			map.put("TOTAL_AMOUNT", paramsMap.get("TOTAL_AMOUNT"));
+			map.put("TOTAL_AMOUNT", paramsMap.get("total_amount"));
 			map.put("USER_ID", paramsMap.get("USER_ID"));
 			
 			if(paramsMap.containsKey("characterSet")){
@@ -628,7 +628,16 @@ public static void main(String[] args) {
 	Map<String, String> map = new HashMap<String, String>();
 	
 	try {
-		 pubSigQry();
+//		amount ：金额，单位为分
+//	     * authCode :要扫的条形码。扫码支付授权码，设备读取用户微信或支付宝中的条码或者二维码信息 
+//	     * payChannel ：支付渠道。见静态变量
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("amount", "1");
+		paramsMap.put("authCode", "283313854606440601");
+		paramsMap.put("payChannel", PAY_CHANNEL_ALIPAY);
+		paramsMap.put("USER_ID", "333");
+		
+		System.out.println(new StarPosPay().pay(paramsMap));
 	} catch (Exception e) {
 		e.printStackTrace();
 	}

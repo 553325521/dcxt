@@ -140,6 +140,13 @@
 						}
 					}
 					init();
+					
+					
+					
+					//使用jssdk，调用微信选择本地图片，需要注入配置信息
+//					getConfigMessage();
+					
+					
 					//点击了标签
 					scope.clickLabel = function(text){
 						console.info(scope.LABEL)
@@ -302,28 +309,6 @@
 					}
 					
 					function comboboxInit() {
-					/*	$("#pxxh_select").picker({
-							title : "选择排序序号",
-							toolbarCloseText : '确定',
-							cols : [
-								{
-									textAlign : 'center',
-									values : pxxh_select,
-									displayValues : pxxh_select
-								}
-								]
-						});*/
-					/*	$("#fs_select").picker({
-							title : "选择分类",
-							toolbarCloseText : '确定',
-							cols : [
-								{
-									textAlign : 'center',
-									values : goods_type,
-									displayValues : goods_type
-								}
-								]
-						});*/
 						$("#unit_select").picker({
 							title : "选择单位",
 							toolbarCloseText : '确定',
@@ -337,6 +322,63 @@
 						});
 					}
 					
+					
+//					
+//					function getConfigMessage(){
+//						
+//						$httpService.post(config.getConfig,scope.form).success(function(data){
+//							 
+//							 if(data.code != "0000"){
+//								 var m2 = {
+//									"title" : "提示",
+//									"contentName" : "modal",
+//									"text" : data.data
+//								}
+//								 eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+//							 }else{
+//								 data = data.data
+//								 wx.config({
+////										debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+//									    appId: data.appId, // 必填，公众号的唯一标识
+//									    timestamp: data.timestamp,// 必填，生成签名的时间戳
+//									    nonceStr: data.noncestr, // 必填，生成签名的随机串
+//									    signature: data.signature,// 必填，签名
+//									    jsApiList: ['chooseImage'] // 必填，需要使用的JS接口列表
+//									});
+//
+//									wx.error(function(res){
+//										loggingService.info('config初始化失败-general_goods_setting-350');
+//										console.info("config失败")
+//										console.info(res)
+//									});
+//									
+//									wx.success(function(){
+//
+//										wx.chooseImage({
+//											count: 9, // 默认9
+//											sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+//											sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+//											success: function (res) {
+//											var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
+//												console.info('条用成功');
+//												console.info(res);
+//											}
+//											});
+//										
+//									});
+//							 }
+//							
+//						    }).error(function(data){
+//						    	loggingService.info('获取测试信息出错');
+//						    });
+//						
+//						
+//						
+//						
+//					}
+					
+					
+					
 				}
 			];
 		});
@@ -344,6 +386,7 @@
 	
 	//添加或更换图片
 	function previewImage(file) {
+		
 		index = angular.element(file).scope().$index  //onchange里边获取不到$index，只能这么获取了
 	    for(var i=0;i<file.files.length;i++){
 		    if (file.files && file.files[i]) {

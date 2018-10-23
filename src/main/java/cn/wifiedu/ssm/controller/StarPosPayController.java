@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -66,7 +67,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 */
 			
 			@RequestMapping(value = "/starPosPay_async_notify", method = RequestMethod.POST)
-			public void findAgentInfoById(HttpServletRequest request,HttpSession seesion){
+			public void findAgentInfoById(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
 				String params = null;
 				try {
 					BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "gbk"));
@@ -129,7 +130,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						jedisClient.del(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"));
 					}
 					
-					output("000000","success                                                     ");
+//					output("000000","success                                                     ");
+					//RspCode	RspDes
+					reponse.getWriter().write("{\"RspCode\":\"000000\",\"RspDes\":\"success                                                     \"}");
 					return;
 				} catch (Exception e) {
 					logger.error(e);
