@@ -86,6 +86,10 @@
 		
 		scope.doSave = function(){
 			scope.form.TABLES_SHORT_NAME = scope.form.TABLES_SHORT_NAME.trim();
+			if(scope.form.TABLES_SHORT_NAME.length > 3){
+				$.toptips('餐桌简称不能多于3个字')
+				return;
+			}
 			console.info(scope.form)
 			$form.validate(function(error) {
 				if (!error) {
