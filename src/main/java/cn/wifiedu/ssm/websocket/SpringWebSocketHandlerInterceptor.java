@@ -11,6 +11,13 @@ import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
+/**
+* <p>Title: SpringWebSocketHandlerInterceptor</p>
+* <p>Description:WebSocket拦截器 </p>
+* <p>Company: feixu</p>
+* @author    wangjinglong
+* @date       2018年10月25日
+*/
 public class SpringWebSocketHandlerInterceptor extends  HttpSessionHandshakeInterceptor {
 
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
@@ -20,9 +27,10 @@ public class SpringWebSocketHandlerInterceptor extends  HttpSessionHandshakeInte
         //获取当前Session
         if (request instanceof ServletServerHttpRequest) {
         	ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
-            HttpServletRequest httpRequest = servletRequest.getServletRequest();
             HttpSession session = servletRequest.getServletRequest().getSession(false);
-            System.out.println(httpRequest.getAttribute("userid"));
+            attributes.put("openId",session.getAttribute("openId"));
+            attributes.put("shopId",session.getAttribute("shopId"));
+            System.out.println("用户openId"+session.getAttribute("openId"));
         }
         System.out.println("连接到我了");
         return super.beforeHandshake(request, response, wsHandler, attributes);

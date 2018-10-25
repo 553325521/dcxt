@@ -10,6 +10,13 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+/**
+* <p>Title: WebSocketConfig</p>
+* <p>Description: WebSocket配置</p>
+* <p>Company: feixu</p>
+* @author    wangjinglong
+* @date       2018年10月25日
+*/
 @Configuration
 @EnableWebMvc
 @EnableWebSocket

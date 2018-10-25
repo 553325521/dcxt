@@ -29,6 +29,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.socket.TextMessage;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.zxing.WriterException;
@@ -43,6 +44,8 @@ import cn.wifiedu.ssm.util.WxConstants;
 import cn.wifiedu.ssm.util.WxUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
+import cn.wifiedu.ssm.websocket.MessageType;
+import cn.wifiedu.ssm.websocket.SystemWebSocketHandler;
 
 /**
  * 商铺与数据库交互
@@ -677,6 +680,32 @@ public class ShopController extends BaseController {
 			output("9999", "出错");
 			return;
 		}
+	}
+	
+	/**
+	* <p>Title: pushSession</p>
+	* <p>Description:将用户openid和shopid放入session </p>
+	*/
+	@RequestMapping("/Shop_pushSession_pushOpenIDAndShopIDSession")
+	public void pushSession(HttpServletRequest request){
+		try {
+			Map<String, Object> map = getParameterMap();
+			HttpSession session  = request.getSession();
+			session.setAttribute("openId",map.get("openId"));
+			session.setAttribute("shopId",map.get("shopId"));
+			System.out.println(session.getAttribute("openId"));
+			output("0000","push成功");
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Autowired
+	private SystemWebSocketHandler systemWebSocketHandler;
+	@RequestMapping("/Shop_test_test")
+	public void test(){
+		systemWebSocketHandler.sendMessageToUser("f9099370f12942439aae999f9455d43f",new TextMessage(MessageType.UPDATE_ORDERDATA));
+		systemWebSocketHandler.sendMessageToUser("f9099370f12942439aae999f9455d43f",new TextMessage(MessageType.UPDATE_ORDERDATA));
 	}
 	
 }
