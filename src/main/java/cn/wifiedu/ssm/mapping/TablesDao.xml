@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="tables" >
-  	<resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
- 	<parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
-  
-  	<!-- 根据餐桌区域ID查询该区域下所有餐桌 -->
-	<select id="selectTablesByAreaId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		SELECT 
+<mapper namespace="tables">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+
+	<select id="selectTablesByAreaId" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT
 			TABLES_PK, TABLES_NAME,TABLES_SHORT_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC
 		FROM
-			sc_tables
+		sc_tables
 		WHERE
-			TABLES_AREA_FK = #{TABLES_AREA_ID} ORDER BY CAST(TABLES_PXXH AS SIGNED integer);
+		TABLES_AREA_FK = #{TABLES_AREA_ID} ORDER BY CAST(TABLES_PXXH AS SIGNED integer);
 	</select>
-	
+
 	<!-- 根绝桌位id删除指定桌位 -->
 	<delete id="removeTablesById" parameterMap="BaseParameterMap">
-		DELETE FROM 
-			sc_tables
+		DELETE FROM
+		sc_tables
 		WHERE
-			TABLES_PK = #{TABLES_ID}
+		TABLES_PK = #{TABLES_ID}
 	</delete>
-	 
-	 <!-- 根据餐桌ID查询餐桌信息 -->
-	<select id="findTablesById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		SELECT 
+
+	<select id="findTablesById" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT
 			TABLES_PK, TABLES_NAME, TABLES_SHORT_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC
 		FROM
-			sc_tables
+		sc_tables
 		WHERE
-			TABLES_PK = #{TABLES_ID}
+		TABLES_PK = #{TABLES_ID}
 	</select>
-	  
+
 	<insert id="insertTables" parameterMap="BaseParameterMap">
 		INSERT INTO sc_tables
 		(
@@ -59,9 +59,9 @@
 			NOW(),
 			#{CREATE_BY}
 		)
-	
+
 	</insert>
-	
+
 	<!-- 根绝ID修改指定桌位 -->
 	<update id="updateTablesById" parameterMap="BaseParameterMap">
 		UPDATE sc_tables SET TABLES_NAME = #{TABLES_NAME}, TABLES_SHORT_NAME = #{TABLES_SHORT_NAME},
@@ -73,53 +73,65 @@
 		WHERE 
 			TABLES_PK = #{TABLES_ID}
 	</update>
-	
+
 	<!-- 插入或添加桌位, 之前位置后边的桌位排序序号依次增加 -->
 	<!-- 修改或删除桌位, 之前位置后边的桌位排序序号依次减少 -->
 	<update id="updateTablesPxxhById" parameterMap="BaseParameterMap">
-		UPDATE 
-			sc_tables
-		SET 
-			TABLES_PXXH = CAST(TABLES_PXXH AS SIGNED integer) 
-				<choose>
-					<when test="sub == true">
-			           - 
-			        </when>
-			        <otherwise>
-			           +
-			        </otherwise>
-		    	</choose>
-			 1 
-		WHERE 
-			TABLES_AREA_FK = #{TABLES_AREA_ID} 
-		AND 
-			CAST(TABLES_PXXH AS SIGNED integer) > CAST(#{SMALL_TABLES_PXXH} AS SIGNED integer)
+		UPDATE
+		sc_tables
+		SET
+		TABLES_PXXH = CAST(TABLES_PXXH AS SIGNED integer)
+		<choose>
+			<when test="sub == true">
+				-
+			</when>
+			<otherwise>
+				+
+			</otherwise>
+		</choose>
+		1
+		WHERE
+		TABLES_AREA_FK = #{TABLES_AREA_ID}
+		AND
+		CAST(TABLES_PXXH AS SIGNED integer) > CAST(#{SMALL_TABLES_PXXH} AS SIGNED integer)
 		<if test="BIG_TABLES_PXXH != null and BIG_TABLES_PXXH != ''">
-			AND 
-				 CAST(TABLES_PXXH AS SIGNED integer) &lt;= CAST(#{BIG_TABLES_PXXH} AS SIGNED integer);
+			AND
+			CAST(TABLES_PXXH AS SIGNED integer) &lt;= CAST(#{BIG_TABLES_PXXH} AS SIGNED integer);
 		</if>
-		;
 	</update>
-	
-	<select id="findTablesCountByAreaId" parameterMap="BaseParameterMap"  resultMap="BaseResultMap">
-		SELECT COUNT(TABLES_PXXH) AS tables_count FROM sc_tables WHERE TABLES_AREA_FK = #{TABLES_AREA_ID};
+
+	<select id="findTablesCountByAreaId" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT COUNT(TABLES_PXXH) AS tables_count FROM sc_tables
+		WHERE TABLES_AREA_FK = #{TABLES_AREA_ID};
 	</select>
-	
+
+	<select id="loadTableList" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		select a.TABLES_AREA_PK, a.TABLES_AREA_NAME,
+		a.TABLES_AREA_NUM, b.TABLES_PK, b.TABLES_NAME, b.TABLES_NUM,
+		b.TABLES_PXXH from sc_tables_area a LEFT JOIN sc_tables b ON
+		a.TABLES_AREA_PK = b.TABLES_AREA_FK where
+		a.SHOP_FK=#{shopid} AND a.TABLES_AREA_STATUS
+		= '1' AND b.TABLES_STATUS = '1' ORDER BY CONVERT(b.TABLES_PXXH,
+		SIGNED);
+	</select>
+
 	<!-- 根据区域id删除下边的所有桌位 -->
 	<delete id="removeTablesByAreaId" parameterMap="BaseParameterMap">
-		DELETE FROM 
-			sc_tables
+		DELETE FROM
+		sc_tables
 		WHERE
-			TABLES_AREA_FK = #{TABLES_AREA_ID}
+		TABLES_AREA_FK = #{TABLES_AREA_ID}
 	</delete>
-	
+
 	<update id="updateTablesStatusByAreaId" parameterMap="BaseParameterMap">
-		UPDATE 
-			sc_tables
-		SET 
-			TABLES_STATUS = #{TABLES_AREA_STATUS}
-		WHERE 
-			TABLES_AREA_FK = #{TABLES_AREA_ID} 
+		UPDATE
+		sc_tables
+		SET
+		TABLES_STATUS = #{TABLES_AREA_STATUS}
+		WHERE
+		TABLES_AREA_FK = #{TABLES_AREA_ID}
 	</update>
-	
+
 </mapper>

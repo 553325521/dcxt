@@ -82,7 +82,22 @@
 			</if>
 		</where>
 	</update>
-
+	
+	<update id="updateCartNum" parameterMap="BaseParameterMap">
+		UPDATE SC_SHOPPING_CART SET GOODS_NUMBER = #{GOODS_NUM}
+		<where>
+			AND CART_PK = #{CART_PK}
+			AND CART_STATE = 'zancun'
+		</where>
+	</update>
+	
+	<delete id="deleteCartGoods" parameterMap="BaseParameterMap">
+		delete FROM SC_SHOPPING_CART
+		<where>
+			AND CART_PK = #{CART_PK}
+		</where>
+	</delete>
+	
 	<delete id="deleteGoodsForCart" parameterMap="BaseParameterMap">
 		delete FROM SC_SHOPPING_CART
 		<where>

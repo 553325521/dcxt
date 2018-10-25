@@ -2,6 +2,7 @@ package cn.wifiedu.ssm.util.redis.impl;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -9,9 +10,10 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 public class JedisClientSingle implements JedisClient {
 	
+	private static Logger logger = Logger.getLogger(JedisClientSingle.class);
+
 	@Autowired
 	private JedisPool jedisPool; 
-	
 	
 	@Override
 	public String get(String key) {
@@ -20,7 +22,9 @@ public class JedisClientSingle implements JedisClient {
 			Jedis jedis = jedisPool.getResource();
 			string = jedis.get(key);
 			jedis.close();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.error("error", e);
+		}
 		return string;
 	}
 	

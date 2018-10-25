@@ -21,7 +21,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 @Scope("prototype")
 public class ShoppingCartController extends BaseController {
 
-	private static Logger logger = Logger.getLogger(GoodsController.class);
+	private static Logger logger = Logger.getLogger(ShoppingCartController.class);
 
 	@Resource
 	OpenService openService;
@@ -113,6 +113,7 @@ public class ShoppingCartController extends BaseController {
 				if (Integer.valueOf(resMap.get("GOODS_COUNT").toString()) > 0) {
 					// 已存在 数量增加
 					map.put("GOODS_NUMBER", Integer.valueOf(resMap.get("GOODS_NUMBER").toString()) + 1);
+					map.put("UPDATE_BY", map.get("FK_USER").toString());
 					map.put("sqlMapId", "updateGoodsNum");
 					if (openService.update(map)) {
 						return true;
@@ -150,6 +151,7 @@ public class ShoppingCartController extends BaseController {
 							return;
 						}
 					} else {
+						map.put("UPDATE_BY", map.get("FK_USER").toString());
 						map.put("sqlMapId", "updateGoodsNum");
 						if (openService.update(map)) {
 							output("0000", "ok");
@@ -162,6 +164,66 @@ public class ShoppingCartController extends BaseController {
 			logger.error("error", e);
 		}
 		output("9999", "操作失败");
+		return;
+	}
+
+	/**
+	 * @author kqs
+	 * @return void
+	 * @date 2018年10月14日 - 下午8:50:47
+	 * @description:购物车界面加减、订单页面加减
+	 */
+	@RequestMapping(value = "/ShoppingCart_update_updateCartNum", method = RequestMethod.POST)
+	public void updateCartNum() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				// 判断是否已加入购物车
+				// 若加入就加数量
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "商铺参数无效");
+					return;
+				}
+				if (!map.containsKey("FK_USER") || StringUtils.isBlank(map.get("FK_USER").toString())) {
+					output("9999", "USER参数无效");
+					return;
+				}
+				if (!map.containsKey("CART_PK") || StringUtils.isBlank(map.get("CART_PK").toString())) {
+					output("9999", "参数无效");
+					return;
+				}
+				if (!map.containsKey("GOODS_NUM") || StringUtils.isBlank(map.get("GOODS_NUM").toString())) {
+					output("9999", "参数无效");
+					return;
+				} else {
+					if ((Double.valueOf(map.get("GOODS_NUM").toString())).compareTo((double)0) > 0) {
+						map.put("UPDATE_BY", map.get("FK_USER").toString());
+						map.put("sqlMapId", "updateCartNum");
+						if (openService.update(map)) {
+							output("0000", "操作成功~");
+							return;
+						}
+						output("9999", "操作失败~");
+						return;
+					} else if ((Double.valueOf(map.get("GOODS_NUM").toString())).compareTo((double)0) == 0) {
+						map.put("sqlMapId", "deleteCartGoods");
+						if (openService.delete(map)) {
+							output("0000", "操作成功~");
+							return;
+						}
+						output("9999", "操作失败~");
+						return;
+					}
+				}
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			logger.error("error", e);
+		}
+		output("9999", "token无效");
 		return;
 	}
 
@@ -197,7 +259,7 @@ public class ShoppingCartController extends BaseController {
 		output("9999", "操作失败");
 		return;
 	}
-	
+
 	@RequestMapping(value = "/ShoppingCart_load_loadCartDataByUser", method = RequestMethod.POST)
 	public void loadCartDataByUser() {
 		try {

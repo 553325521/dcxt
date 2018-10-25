@@ -29,7 +29,7 @@
 		<!-- 连接空闲多久后释放, 当空闲时间>该值 且 空闲连接>最大空闲连接数 时直接释放 -->
 		<property name="softMinEvictableIdleTimeMillis" value="10000" />
 		<!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 -->
-		<property name="maxWaitMillis" value="1500" />
+		<property name="maxWaitMillis" value="5000" />
 		<!-- 在获取连接的时候检查有效性, 默认false -->
 		<property name="testOnBorrow" value="true" />
 		<!-- 在空闲时检查有效性, 默认false -->
