@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +47,8 @@ public class CardVoucherController extends BaseController{
 	@Resource
 	OpenService openService;
 	
+	private static Logger logger = Logger.getLogger(WxController.class);
+	
 	public OpenService getOpenService() {
 		return openService;
 	}
@@ -78,6 +82,8 @@ public class CardVoucherController extends BaseController{
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");
+			logger.info("redis日志:创建卡券获取userJson"+userJson);
+			logger.info("redis日志:创建卡券获取appid"+appid);
 			/*获取accessToken*/
 			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
 				accessToken = WxUtil.getWxAccessToken(appid,
@@ -87,7 +93,7 @@ public class CardVoucherController extends BaseController{
 			} else {
 				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
 			}
-			System.out.println("创建卡券的accessToken:"+accessToken);
+			logger.info("redis日志:创建卡券获取appid"+accessToken);
 			/*上传店铺LOGO*/
 			String imgLOGOStr = map.get("IMG_LOGO_STR").toString();
 			String [] imgLogoArray = imgLOGOStr.split(",");
@@ -357,9 +363,11 @@ public class CardVoucherController extends BaseController{
 			/*获取appid*/
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			logger.info("redis日志:修改卡券获取userJson"+userJson);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");
+			logger.info("redis日志:修改卡券获取appid"+appid);
 			/*获取accessToken*/
 			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
 				accessToken = WxUtil.getWxAccessToken(appid,
@@ -369,7 +377,8 @@ public class CardVoucherController extends BaseController{
 			} else {
 				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
 			}
-			System.out.println("创建卡券的accessToken:"+accessToken);
+			logger.info("redis日志:修改卡券获取accessToken"+accessToken);
+			System.out.println("修改卡券的accessToken:"+accessToken);
 			/*上传店铺LOGO*/
 			String imgLOGOStr = map.get("IMG_LOGO_STR").toString();
 			String [] imgLogoArray = imgLOGOStr.split(",");
@@ -486,6 +495,7 @@ public class CardVoucherController extends BaseController{
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
+			logger.info("redis日志:显示卡券列表获取userJson"+userJson);
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "loadCardData");
 			List<Map<String,Object>> dataList = openService.queryForList(map);
@@ -511,9 +521,11 @@ public class CardVoucherController extends BaseController{
 			/*获取appid*/
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			logger.info("redis日志:删除卡券获取userJson"+userJson);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");
+			logger.info("redis日志:删除卡券获取appid"+appid);
 			/*获取accessToken*/
 			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
 				accessToken = WxUtil.getWxAccessToken(appid,
@@ -523,6 +535,7 @@ public class CardVoucherController extends BaseController{
 			} else {
 				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
 			}
+			logger.info("redis日志:删除卡券获取accessToken"+accessToken);
 			JSONObject cardJsonObj = new JSONObject();
 			
 			cardJsonObj.put("card_id", card_id);
@@ -591,6 +604,7 @@ public class CardVoucherController extends BaseController{
 			Map<String, Object> map = getParameterMap();
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			logger.info("redis日志:获取卡券领取列表userJson"+userJson);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "selectCardList");
@@ -615,6 +629,7 @@ public class CardVoucherController extends BaseController{
 			Map<String, Object> map = getParameterMap();
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			logger.info("redis日志:核销卡券userJson"+userJson);
 			JSONObject userObj = JSONObject.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");

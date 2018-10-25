@@ -137,6 +137,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					/*获取appid*/
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					logger.info("redis日志:创建会员卡userJson"+userJson);
 					JSONObject userObj = JSONObject.parseObject(userJson);
 					String accessToken = "";
 					String appid = userObj.getString("FK_APP");
@@ -493,6 +494,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Map<String,Object>map = getParameterMap();
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+					logger.info("redis日志:删除会员卡userJson"+userJson);
 					JSONObject userObj = JSONObject.parseObject(userJson);
 				/*	根据ID查询会员卡信息*/
 					map.put("VCARD_PK",map.get("VCARD_ID"));
