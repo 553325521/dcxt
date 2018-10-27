@@ -143,5 +143,14 @@
 		#{CART_STATE}
 		order by INSERT_TIME
 	</select>
-
+	
+	<update id="updateCartToOrder" parameterMap="BaseParameterMap">
+		UPDATE SC_SHOPPING_CART SET CART_STATE = 'zdd'
+		<where>
+			AND FK_SHOP = #{FK_SHOP}
+			AND FK_USER = #{FK_USER}
+			AND CART_STATE = 'zancun'
+		</where>
+	</update>
+	
 </mapper>

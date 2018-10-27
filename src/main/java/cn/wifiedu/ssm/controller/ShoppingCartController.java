@@ -138,24 +138,50 @@ public class ShoppingCartController extends BaseController {
 	public void removeCart() {
 		try {
 			Map<String, Object> map = getParameterMap();
-			map.put("sqlMapId", "checkIsExistShopCart");
-			Map<String, Object> resMap = (Map<String, Object>) openService.queryForObject(map);
-			if (resMap != null && resMap.containsKey("GOODS_COUNT")) {
-				if (Integer.valueOf(resMap.get("GOODS_COUNT").toString()) > 0) {
-					// 已存在 数量减少
-					map.put("GOODS_NUMBER", Integer.valueOf(resMap.get("GOODS_NUMBER").toString()) - 1);
-					if ((Integer.valueOf(resMap.get("GOODS_NUMBER").toString()) - 1) == 0) {
-						map.put("sqlMapId", "deleteGoodsForCart");
-						if (openService.delete(map)) {
-							output("0000", "ok");
-							return;
-						}
-					} else {
-						map.put("UPDATE_BY", map.get("FK_USER").toString());
-						map.put("sqlMapId", "updateGoodsNum");
-						if (openService.update(map)) {
-							output("0000", "ok");
-							return;
+			System.out.println(map);
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				// 判断是否已加入购物车
+				// 若加入就加数量
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "商铺参数无效");
+					return;
+				}
+				if (!map.containsKey("FK_USER") || StringUtils.isBlank(map.get("FK_USER").toString())) {
+					output("9999", "USER参数无效");
+					return;
+				}
+				if ((map.get("GOODS_TASTE").toString()).equals("[]")
+						|| StringUtils.isBlank(map.get("GOODS_TASTE").toString())) {
+					map.put("GOODS_TASTE", null);
+				}
+				if ((map.get("GOODS_RECIPE").toString()).equals("[]")
+						|| StringUtils.isBlank(map.get("GOODS_RECIPE").toString())) {
+					map.put("GOODS_RECIPE", null);
+				}
+				if ((map.get("GOODS_SPECIFICATION").toString()).equals("[]")
+						|| StringUtils.isBlank(map.get("GOODS_SPECIFICATION").toString())) {
+					map.put("GOODS_SPECIFICATION", null);
+				}
+				map.put("sqlMapId", "checkIsExistShopCart");
+				Map<String, Object> resMap = (Map<String, Object>) openService.queryForObject(map);
+				if (resMap != null && resMap.containsKey("GOODS_COUNT")) {
+					if (Integer.valueOf(resMap.get("GOODS_COUNT").toString()) > 0) {
+						// 已存在 数量减少
+						map.put("GOODS_NUMBER", Integer.valueOf(resMap.get("GOODS_NUMBER").toString()) - 1);
+						if ((Integer.valueOf(resMap.get("GOODS_NUMBER").toString()) - 1) == 0) {
+							map.put("sqlMapId", "deleteGoodsForCart");
+							if (openService.delete(map)) {
+								output("0000", "ok");
+								return;
+							}
+						} else {
+							map.put("UPDATE_BY", map.get("FK_USER").toString());
+							map.put("sqlMapId", "updateGoodsNum");
+							if (openService.update(map)) {
+								output("0000", "ok");
+								return;
+							}
 						}
 					}
 				}
@@ -197,7 +223,7 @@ public class ShoppingCartController extends BaseController {
 					output("9999", "参数无效");
 					return;
 				} else {
-					if ((Double.valueOf(map.get("GOODS_NUM").toString())).compareTo((double)0) > 0) {
+					if ((Double.valueOf(map.get("GOODS_NUM").toString())).compareTo((double) 0) > 0) {
 						map.put("UPDATE_BY", map.get("FK_USER").toString());
 						map.put("sqlMapId", "updateCartNum");
 						if (openService.update(map)) {
@@ -206,7 +232,7 @@ public class ShoppingCartController extends BaseController {
 						}
 						output("9999", "操作失败~");
 						return;
-					} else if ((Double.valueOf(map.get("GOODS_NUM").toString())).compareTo((double)0) == 0) {
+					} else if ((Double.valueOf(map.get("GOODS_NUM").toString())).compareTo((double) 0) == 0) {
 						map.put("sqlMapId", "deleteCartGoods");
 						if (openService.delete(map)) {
 							output("0000", "操作成功~");

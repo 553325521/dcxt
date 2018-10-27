@@ -49,4 +49,69 @@
 		DELETE FROM SC_ORDER_DETAILS
 		WHERE ORDER_DETAILS_PK = #{ORDER_DETAILS_PK};
 	</delete>
+	
+	<select id="countByExample" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT COUNT(ORDER_PK) as ORDER_COUNT FROM SC_ORDER WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i') BETWEEN CONCAT_WS('', date_format(now(),'%y-%m-%d'), ' 00:00') AND CONCAT_WS('', date_format(now(),'%y-%m-%d'), ' 23:59');
+	</select>
+	
+	<select id="checkIsExitByExample" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT COUNT(ORDER_PK) as ORDER_COUNT FROM SC_ORDER WHERE ORDER_CODE = #{ORDER_CODE};
+	</select>
+	
+	<insert id="insertOrderInfo" parameterMap="BaseParameterMap">
+		INSERT INTO SC_ORDER
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ORDER_PK,
+			ORDER_POSITION,
+			ORDER_CODE,
+			ORDER_RS,
+			ORDER_PAY_STATE,
+			ORDER_STATE,
+			ARRIVE_TIME,
+			FK_SHOP,
+			CREATE_TIME,
+			CREATE_BY
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{UUID},
+			#{ORDER_POSITION},
+			#{ORDER_CODE},
+			#{ORDER_RS},
+			'0',
+			#{ORDER_STATE},
+			#{ARRIVE_TIME},
+			#{FK_SHOP},
+			NOW(),
+			#{CREATE_BY},
+		</trim>
+	</insert>
+	
+	<insert id="insertOrderDeatilInfo" parameterMap="BaseParameterMap">
+		INSERT INTO SC_ORDER_DETAILS
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ORDER_DETAILS_PK,
+			ORDER_DETAILS_GNAME,
+			ORDER_DETAILS_FS,
+			ORDER_DETAILS_GMONEY,
+			FK_ORDER,
+			ORDER_DETAILS_FORMAT,
+			ORDER_DETAILS_TASTE,
+			ORDER_DETAILS_MAKING,
+			ORDER_DETAILS_DW,
+			FK_GOODS,
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{UUID},
+			#{GOODS_NAME},
+			#{GOODS_NUMBER},
+			#{GOODS_PRICE},
+			#{FK_ORDER},
+			#{GOODS_FORMAT},
+			#{GOODS_TASTE},
+			#{GOODS_MAKING},
+			#{GOODS_DW},
+			#{FK_GOODS},
+		</trim>
+	</insert>
+	
 </mapper>
