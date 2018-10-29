@@ -266,7 +266,7 @@ public class OrderController extends BaseController {
 	 * @return
 	 * @return String
 	 * @date 2018年10月27日 - 上午11:45:01
-	 * @description:
+	 * @description:获取订单code
 	 */
 	private String getOrderCode(Map<String, Object> map) {
 		try {
@@ -286,6 +286,7 @@ public class OrderController extends BaseController {
 				}
 				return orderCode + count;
 			}
+			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

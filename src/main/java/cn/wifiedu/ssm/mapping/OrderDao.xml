@@ -103,7 +103,7 @@
 		<trim prefix="values (" suffix=")" suffixOverrides=",">
 			#{UUID},
 			#{GOODS_NAME},
-			#{GOODS_NUMBER},
+			#{GOODS_NUM},
 			#{GOODS_PRICE},
 			#{FK_ORDER},
 			#{GOODS_FORMAT},
