@@ -700,12 +700,4 @@ public class ShopController extends BaseController {
 			e.printStackTrace();
 		}
 	}
-	@Autowired
-	private SystemWebSocketHandler systemWebSocketHandler;
-	@RequestMapping("/Shop_test_test")
-	public void test(){
-		systemWebSocketHandler.sendMessageToUser("f9099370f12942439aae999f9455d43f",new TextMessage(MessageType.UPDATE_ORDERDATA));
-		systemWebSocketHandler.sendMessageToUser("f9099370f12942439aae999f9455d43f",new TextMessage(MessageType.UPDATE_ORDERDATA));
-	}
-	
 }

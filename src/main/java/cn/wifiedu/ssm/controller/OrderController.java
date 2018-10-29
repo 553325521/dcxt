@@ -13,12 +13,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.socket.TextMessage;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
+import cn.wifiedu.ssm.websocket.MessageType;
+import cn.wifiedu.ssm.websocket.SystemWebSocketHandler;
 
 @Controller
 @Scope("prototype")
@@ -32,6 +35,9 @@ public class OrderController extends BaseController {
 	@Resource
 	private JedisClient jedisClient;
 
+	@Autowired
+	private SystemWebSocketHandler systemWebSocketHandler;
+	
 	public OpenService getOpenService() {
 		return openService;
 	}
@@ -239,6 +245,8 @@ public class OrderController extends BaseController {
 						
 						txManagerController.commit();
 						output("0000", "创建成功");
+						//通知客户端创建订单了sb王景龘
+						systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
 						return;
 					}
 				}

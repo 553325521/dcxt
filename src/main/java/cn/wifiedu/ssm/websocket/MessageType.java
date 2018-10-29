@@ -11,8 +11,8 @@ public class MessageType {
 
 	//更新订单数量消息类型
 	 public static final String UPDATE_ORDERNUMBER = "0";
-	 //更新订单数据消息类型
-	 public static final String UPDATE_ORDERDATA = "1";
+	 //创建订单消息类型
+	 public static final String UPDATE_ORDERDATA = "101";
 	 
 	 
 }
