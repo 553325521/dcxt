@@ -245,7 +245,7 @@ public class OrderController extends BaseController {
 						
 						txManagerController.commit();
 						output("0000", "创建成功");
-						//通知客户端创建订单了sb王景龘
+						//通知客户端创建订单
 						systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
 						return;
 					}
