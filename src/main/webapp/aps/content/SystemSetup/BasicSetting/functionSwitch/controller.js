@@ -74,31 +74,25 @@
 				init()
 
 				$scope.changeUseStatus = function(col) {
-					let checked = scope.tagList[col] ? true : false;
-					scope.tagList[col] = checked;
-							console.info(checked);
-				//					$httpService.post(config.updateRoleFunStatusURL, item).success(function(data) {
-				//						var m2 = {
-				//							"title" : "提示",
-				//							"contentName" : "modal",
-				//							"text" : data.data
-				//						}
-				//						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
-				//
-				//						if (data.code != '0000') {
-				//							item.checked = !item.checked;
-				//						} else {
-				//							item.IS_USE = item.checked ? '1' : '0';
-				//						}
-				//					}).error(function(data) {
-				//						var m2 = {
-				//							"title" : "提示",
-				//							"contentName" : "modal",
-				//							"text" : '操作失败！'
-				//						}
-				//						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
-				//						item.checked = !item.checked;
-				//					});
+					$httpService.post(config.updateURL, scope.tagList).success(function(data) {
+						var m2 = {
+							"title" : "提示",
+							"contentName" : "modal",
+							"text" : data.data
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+
+						if (data.code == '0000') {
+							scope.tagList[col] = scope.tagList[col] ? true : false;
+						}
+					}).error(function(data) {
+						var m2 = {
+							"title" : "提示",
+							"contentName" : "modal",
+							"text" : '操作失败！'
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+					});
 				}
 			}
 		];

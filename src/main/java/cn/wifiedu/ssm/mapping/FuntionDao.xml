@@ -125,15 +125,69 @@
 		#{CREATE_TIME}
 		)
 	</insert>
-	
+
 	<!--查询功能开关 -->
 	<select id="loadFuncSwitchList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		SELECT * FROM SC_FUNC_SWITCH 
+		SELECT * FROM SC_FUNC_SWITCH
 		<where>
 			<if test="FK_SHOP != null">
 				FK_SHOP = #{FK_SHOP}
 			</if>
 		</where>
 	</select>
+	
+	<!-- 更新功能开关 -->
+	<update id="updateFuncSwitch" parameterMap="BaseParameterMap">
+		UPDATE SC_FUNC_SWITCH
+		<set>
+			<if test="CHECK_YDDFKQR != null">
+				CHECK_YDDFKQR = #{CHECK_YDDFKQR},
+			</if>
+			<if test="CHECK_SMDFQR != null">
+				CHECK_SMDFQR = #{CHECK_SMDFQR},
+			</if>
+			<if test="CHECK_HYGN != null">
+				CHECK_HYGN = #{CHECK_HYGN},
+			</if>
+			<if test="CHECK_ZFKJU != null">
+				CHECK_ZFKJU = #{CHECK_ZFKJU},
+			</if>
+			<if test="CHECK_TDDCSY != null">
+				CHECK_TDDCSY = #{CHECK_TDDCSY},
+			</if>
+			<if test="CHECK_JCRS != null">
+				CHECK_JCRS = #{CHECK_JCRS},
+			</if>
+			<if test="CHECK_YDBF != null">
+				CHECK_YDBF = #{CHECK_YDBF},
+			</if>
+			<if test="CHECK_JFGN != null">
+				CHECK_JFGN = #{CHECK_JFGN},
+			</if>
+			<if test="CHECK_XLPH != null">
+				CHECK_XLPH = #{CHECK_XLPH},
+			</if>
+			<if test="CHECK_JHHYDJSR != null">
+				CHECK_JHHYDJSR = #{CHECK_JHHYDJSR},
+			</if>
+			<if test="CHECK_DYSYT != null">
+				CHECK_DYSYT = #{CHECK_DYSYT},
+			</if>
+			<if test="CHECK_WMDC != null">
+				CHECK_WMDC = #{CHECK_WMDC},
+			</if>
+			<if test="CHECK_TDYTMB != null">
+				CHECK_TDYTMB = #{CHECK_TDYTMB},
+			</if>
+			<if test="CHECK_TDKT != null">
+				CHECK_TDKT = #{CHECK_TDKT},
+			</if>
+			<if test="CHECK_YYZT != null">
+				CHECK_YYZT = #{CHECK_YYZT},
+			</if>
+		</set>
+		where FK_SHOP = #{FK_SHOP}
+	</update>
+
 </mapper>

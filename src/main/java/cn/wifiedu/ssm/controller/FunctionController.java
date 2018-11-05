@@ -85,15 +85,15 @@ public class FunctionController extends BaseController {
 	public void loadFunctionListByUserRole(HttpServletRequest request, HttpSession session) {
 		try {
 			Map<String, Object> map = getParameterMap();
-			
+
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSONObject.parseObject(userJson);
-			
+
 			// 存储用户对应的shop信息
 			String shopJson = jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token);
 			JSONObject shopObj = JSONObject.parseObject(shopJson);
-			
+
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("ROLE_ID", userObj.get("FK_ROLE"));
@@ -211,7 +211,7 @@ public class FunctionController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
 	@RequestMapping("/FunctionSwitch_select_loadFuncSwitchList")
 	public void loadFuncSwitchList(HttpServletRequest request, HttpSession session) {
 		try {
@@ -233,5 +233,37 @@ public class FunctionController extends BaseController {
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月16日 - 下午11:45:31
+	 * @description:更新店铺角色对应的权限启用状态
+	 */
+	@RequestMapping("/FunctionSwitch_update_updateFuncSwitch")
+	public void updateFuncSwitch(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			if (StringUtils.isNotBlank(userJson)) {
+				map.put("sqlMapId", "updateFuncSwitch");
+				if (openService.update(map)) {
+					output("0000", "操作成功!");
+					return;
+				}
+				output("9999", "操作失败!");
+				return;
+			}
+			output("9999", "非法操作!");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+		return;
 	}
 }
