@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -210,5 +211,27 @@ public class FunctionController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-
+	
+	@RequestMapping("/FunctionSwitch_select_loadFuncSwitchList")
+	public void loadFuncSwitchList(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			if (StringUtils.isNotBlank(userJson)) {
+				JSONObject userObj = JSONObject.parseObject(userJson);
+				map.put("FK_SHOP", userObj.get("FK_SHOP"));
+				map.put("sqlMapId", "loadFuncSwitchList");
+				Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
+				if (reMap != null) {
+					output("0000", reMap);
+					return;
+				}
+			}
+			output("9999", "查询失败!");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
 }

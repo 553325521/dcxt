@@ -37,7 +37,7 @@ public class OrderController extends BaseController {
 
 	@Autowired
 	private SystemWebSocketHandler systemWebSocketHandler;
-	
+
 	public OpenService getOpenService() {
 		return openService;
 	}
@@ -45,10 +45,13 @@ public class OrderController extends BaseController {
 	public void setOpenService(OpenService openService) {
 		this.openService = openService;
 	}
-	
+
 	@Autowired
 	private TransactionManagerController txManagerController;
-	
+
+	@Autowired
+	private ShoppingCartController shopCartCtrl;
+
 	/**
 	 * <p>
 	 * Title: loadOrderNumber
@@ -236,13 +239,14 @@ public class OrderController extends BaseController {
 							if (result1 == null) {
 								throw new RuntimeException();
 							}
+							
 						}
-						
+
 						map.put("sqlMapId", "updateCartToOrder");
 						if (!openService.update(map)) {
 							throw new RuntimeException();
 						}
-						
+
 						txManagerController.commit();
 						output("0000", "创建成功");
 						//通知客户端创建订单
@@ -292,5 +296,91 @@ public class OrderController extends BaseController {
 		}
 		return null;
 	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @return void
+	 * @date 2018年10月29日 - 下午9:54:45
+	 * @description:订单加菜
+	 */
+	@RequestMapping(value = "/Order_update_updateCartToOrderMore", method = RequestMethod.POST)
+	public void updateCartToOrderMore() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("FK_ORDER") || StringUtils.isBlank(map.get("FK_ORDER").toString())) {
+					output("9999", "订单ID无效");
+					return;
+				}
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "shopid无效");
+					return;
+				}
+				map.put("CART_STATE", "zancun");
+				map.put("sqlMapId", "selectCartDataByUser");
+				List<Map<String, Object>> cartDataList = openService.queryForList(map);
+				txManagerController.createTxManager();
+				for (Map<String, Object> cartMap : cartDataList) {
+					cartMap.put("FK_ORDER", map.get("FK_ORDER").toString());
+					cartMap.put("FK_SHOP", map.get("FK_SHOP").toString());
+					cartMap.put("CREATE_BY", map.get("FK_USER").toString());
+					cartMap.put("sqlMapId", "insertOrderDeatilInfo");
+					String result1 = openService.insert(cartMap);
+					if (result1 == null) {
+						throw new RuntimeException();
+					}
+				}
+				
+				map.put("sqlMapId", "updateCartToOrder");
+				if (!openService.update(map)) {
+					throw new RuntimeException();
+				}
+				txManagerController.commit();
+				output("0000", "操作成功~");
+				return;
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			logger.error("error", e);
+			txManagerController.rollback();
+		}
+		output("9999", "操作失败~");
+		return;
+	}
 	
+	/**
+	 * 
+	 * @author kqs
+	 * @return void
+	 * @date 2018年10月29日 - 下午9:54:45
+	 * @description:订单加菜
+	 */
+	@RequestMapping(value = "/Order_select_loadCountOrderWei", method = RequestMethod.POST)
+	public void loadCountWei() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "shopid无效");
+					return;
+				}
+				map.put("sqlMapId", "loadCountOrderWei");
+				Map<String, Object> orderObj = (Map<String, Object>) openService.queryForObject(map);
+				output("0000", orderObj);
+				return;
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			logger.error("error", e);
+		}
+		output("9999", "操作失败~");
+		return;
+	}
 }

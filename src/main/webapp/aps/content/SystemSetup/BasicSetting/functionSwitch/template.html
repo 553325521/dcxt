@@ -1,0 +1,145 @@
+
+<div class="weui-header" style="background-color:#FFFFFF">
+	<div class="weui-header-left"
+		ng-click="toHref('SystemSetup/BasicSetting');">
+		<a class="icon icon-109" style="color: #0D0D0D !important;"></a>
+	</div>
+	<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+</div>
+<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>预定待付需确认</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_YDDFKQR')" ng-model="tagList.CHECK_YDDFKQR">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>扫码待付需确认</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_SMDFQR')" ng-model="tagList.CHECK_SMDFQR">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>会员功能</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_HYGN')" ng-model="tagList.CHECK_HYGN">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>支付即会员</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_ZFKJU')" ng-model="tagList.CHECK_ZFKJU">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>堂点带出银</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_TDDCSY')" ng-model="tagList.CHECK_TDDCSY">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>就餐人数</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_JCRS')" ng-model="tagList.CHECK_JCRS">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>预定包房</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_YDBF')" ng-model="tagList.CHECK_YDBF">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>积分功能</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_JFGN')" ng-model="tagList.CHECK_JFGN">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>销量排行</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_XLPH')" ng-model="tagList.CHECK_XLPH">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>激活会员登记生日</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_JHHYDJSR')" ng-model="tagList.CHECK_JHHYDJSR">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>店员收银台</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_DYSYT')" ng-model="tagList.CHECK_DYSYT">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>外卖点餐</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_WMDC')" ng-model="tagList.CHECK_WMDC">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>堂点有图模板</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_TDYTMB')" ng-model="tagList.CHECK_TDYTMB">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>堂点开台</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_TDKT')" ng-model="tagList.CHECK_TDKT">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>营业状态</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('CHECK_YYZT')" ng-model="tagList.CHECK_YYZT">
+		</div>
+	</div>
+</div>

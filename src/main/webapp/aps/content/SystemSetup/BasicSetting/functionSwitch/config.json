@@ -1,0 +1,22 @@
+{
+	"name": "functionSwitch_list",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/functionSwitch/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/functionSwitch/controller.js",
+	"config": {
+		"pageTitle": "功能开关",
+		"findURL": "json/FunctionSwitch_select_loadFuncSwitchList.json",
+		"updateURL":"json/FunctionSwitch_update_updateFuncSwitch.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"functionSwitch_list.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"functionSwitch_list.confirm"
+		        	}
+				]
+			}
+	}
+}

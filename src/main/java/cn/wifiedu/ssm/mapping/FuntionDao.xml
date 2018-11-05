@@ -125,5 +125,15 @@
 		#{CREATE_TIME}
 		)
 	</insert>
-
+	
+	<!--查询功能开关 -->
+	<select id="loadFuncSwitchList" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT * FROM SC_FUNC_SWITCH 
+		<where>
+			<if test="FK_SHOP != null">
+				FK_SHOP = #{FK_SHOP}
+			</if>
+		</where>
+	</select>
 </mapper>

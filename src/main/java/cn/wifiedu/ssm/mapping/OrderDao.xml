@@ -1,37 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="order" >
-  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
-  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
-  	<!-- 查询未支付与支付分别订单数量 -->
-  	<select id="selectOrderNumber"  parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-  		select 
-  			o.ORDER_PAY_STATE,count(*) as ORDER_NUMBER 
-  		from sc_order o 
-  		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i') 
-			BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i') 
-			AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
-			AND FK_SHOP = #{FK_SHOP}
-  		group by o.ORDER_PAY_STATE
-  	</select>	
+<mapper namespace="order">
+	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
+	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
+	<!-- 查询未支付与支付分别订单数量 -->
+	<select id="selectOrderNumber" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		select
+		o.ORDER_PAY_STATE,count(*) as ORDER_NUMBER
+		from sc_order o
+		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i')
+		BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i')
+		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+		AND FK_SHOP = #{FK_SHOP}
+		group by o.ORDER_PAY_STATE
+	</select>
 	<!-- 根据时间查询订单 -->
-	<select id="selectOrderByTime" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		select 	o.ORDER_PK,o.ORDER_POSITION,o.ORDER_PAY_WAY,
-			o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
-			o.ARRIVE_TIME,o.CREATE_TIME,o.CREATE_BY,
-			SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,
-			SUM(od.ORDER_DETAILS_GMONEY/100*od.ORDER_DETAILS_FS) AS TOTAL_MONEY
+	<select id="selectOrderByTime" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		select o.ORDER_PK,o.ORDER_POSITION,o.ORDER_PAY_WAY,
+		o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
+		o.ARRIVE_TIME,o.CREATE_TIME,o.CREATE_BY,
+		SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,
+		SUM(od.ORDER_DETAILS_GMONEY/100*od.ORDER_DETAILS_FS) AS TOTAL_MONEY
 		from SC_ORDER o left join SC_ORDER_DETAILS od
-		on o.ORDER_PK = od.FK_ORDER
-		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i') 
-			BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i') 
-			AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
-		<if test="ORDER_PAY_STATE != null" >
-        	AND ORDER_PAY_STATE = #{ORDER_PAY_STATE}
-      	</if>
-      		AND FK_SHOP = #{FK_SHOP}
+		on
+		o.ORDER_PK = od.FK_ORDER
+		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d
+		%H:%i')
+		BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i')
+		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+		<if test="ORDER_PAY_STATE != null">
+			AND ORDER_PAY_STATE = #{ORDER_PAY_STATE}
+		</if>
+		AND FK_SHOP = #{FK_SHOP}
 		GROUP BY od.FK_ORDER
-		ORDER BY str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') DESC
+		ORDER BY
+		str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') DESC
 	</select>
 	<!-- 根据订单ID查询订单总金额 -->
 	<select id="selectOrderTotalMoneyByOrderPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
@@ -52,22 +57,30 @@
 			od.ORDER_DETAILS_GMONEY,od.ORDER_DETAILS_FS
 		from SC_ORDER o left join SC_ORDER_DETAILS od
 		on o.ORDER_PK = od.FK_ORDER
-		WHERE o.ORDER_PK = #{ORDER_PK}
- 	</select>
- 	<!-- 根据订单详情id删除订单里某一种菜品 -->
+		WHERE o.ORDER_PK =
+		#{ORDER_PK}
+	</select>
+	<!-- 根据订单详情id删除订单里某一种菜品 -->
 	<delete id="deleteOrderDetailByORDER_DETAILS_PK" parameterMap="BaseParameterMap">
 		DELETE FROM SC_ORDER_DETAILS
-		WHERE ORDER_DETAILS_PK = #{ORDER_DETAILS_PK};
+		WHERE ORDER_DETAILS_PK =
+		#{ORDER_DETAILS_PK};
 	</delete>
-	
-	<select id="countByExample" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		SELECT COUNT(ORDER_PK) as ORDER_COUNT FROM SC_ORDER WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i') BETWEEN CONCAT_WS('', date_format(now(),'%y-%m-%d'), ' 00:00') AND CONCAT_WS('', date_format(now(),'%y-%m-%d'), ' 23:59');
+
+	<select id="countByExample" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT COUNT(ORDER_PK) as ORDER_COUNT FROM SC_ORDER WHERE
+		str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i') BETWEEN CONCAT_WS('',
+		date_format(now(),'%y-%m-%d'), ' 00:00') AND CONCAT_WS('',
+		date_format(now(),'%y-%m-%d'), ' 23:59');
 	</select>
-	
-	<select id="checkIsExitByExample" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		SELECT COUNT(ORDER_PK) as ORDER_COUNT FROM SC_ORDER WHERE ORDER_CODE = #{ORDER_CODE};
+
+	<select id="checkIsExitByExample" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT COUNT(ORDER_PK) as ORDER_COUNT FROM SC_ORDER WHERE
+		ORDER_CODE = #{ORDER_CODE};
 	</select>
-	
+
 	<insert id="insertOrderInfo" parameterMap="BaseParameterMap">
 		INSERT INTO SC_ORDER
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -95,7 +108,7 @@
 			#{CREATE_BY},
 		</trim>
 	</insert>
-	
+
 	<insert id="insertOrderDeatilInfo" parameterMap="BaseParameterMap">
 		INSERT INTO SC_ORDER_DETAILS
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -159,5 +172,13 @@
 							WHERE s.SHOP_ID = #{FK_SHOP})
 	</select>
 	
+
+	<select id="loadCountOrderWei" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT COUNT(ORDER_PK) as ORDER_COUNT FROM SC_ORDER WHERE
+		ORDER_PAY_STATE = '0' AND ORDER_STATE = '2' AND FK_SHOP = #{FK_SHOP}
+		AND CREATE_BY = #{FK_USER}
+	</select>
+
 	
 </mapper>
