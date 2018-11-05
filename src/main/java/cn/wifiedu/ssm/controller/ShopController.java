@@ -39,6 +39,7 @@ import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
+import cn.wifiedu.ssm.util.DateUtil;
 import cn.wifiedu.ssm.util.QRCode;
 import cn.wifiedu.ssm.util.WxConstants;
 import cn.wifiedu.ssm.util.WxUtil;
@@ -700,4 +701,62 @@ public class ShopController extends BaseController {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	* <p>Title: loadShopReportByShopID</p>
+	* <p>Description: 加载商铺报表数据</p>
+	*/
+	@RequestMapping("/Shop_load_loadShopReportByShopID")
+	public void loadShopReportByShopID(){
+		try {
+			Map<String,Object> resultMap = new HashMap<String, Object>();
+			//加载商铺消费总金额
+			double SUM_MONEY = 0;
+			Map<String, Object> map = getParameterMap();
+			String []dateArray = DateUtil.returnTodayStartAndEnd();
+			map.put("todayStart", dateArray[0]);
+			map.put("todayEnd", dateArray[1]);
+			//计算智慧云订单金额
+			map.put("sqlMapId", "selectZHYMoney");
+			List<Map<String,Object>> zhyMoneyList = openService.queryForList(map);
+			SUM_MONEY = SUM_MONEY+this.jsTotalMoney(zhyMoneyList,"ORDER_SHOPMONEY");
+			//计算饿百订单金额
+			map.put("sqlMapId", "selectEBMoney");
+			List<Map<String,Object>> ebMoneyList = openService.queryForList(map);
+			SUM_MONEY = SUM_MONEY+this.jsTotalMoney(ebMoneyList,"ORDER_SHOP_FEE");
+			resultMap.put("SUM_MONEY", SUM_MONEY);
+			//商铺卖出去商品总份数
+			int totalQuantity = 0;
+			//计算智慧云平台卖出去的订单中的商品总数
+			map.put("sqlMapId", "selectZHYOrderNumber");
+			List<Map<String,Object>> zhyOrderNumberList = openService.queryForList(map);
+			totalQuantity = totalQuantity+Integer.parseInt(zhyOrderNumberList.get(0).get("ZHY_ORDER_NUMBER").toString());
+			//计算饿百平台卖出去的订单中的商品总数
+			map.put("sqlMapId", "selectEBOrderNumber");
+			List<Map<String,Object>> ebOrderNumberList = openService.queryForList(map);
+			totalQuantity = totalQuantity+Integer.parseInt(ebOrderNumberList.get(0).get("EB_ORDER_NUMBER").toString());
+			resultMap.put("SUM_ORDER",totalQuantity);
+			//计算今日该店铺新增会员个数
+			resultMap.put("SUM_MEMBER",0);
+			output("0000",resultMap);
+			
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	/*计算总金额*/
+	private double jsTotalMoney(List<Map<String,Object>> moneyList,String key){
+		double sumMoney = 0.0;
+		for(Map<String,Object> map:moneyList){
+			double currentMoney = Double.parseDouble(map.get(key).toString());
+			sumMoney = sumMoney+currentMoney;
+		}
+		return sumMoney/100;
+	}
+	
 }

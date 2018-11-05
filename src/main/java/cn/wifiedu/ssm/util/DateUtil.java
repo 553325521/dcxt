@@ -202,6 +202,25 @@ public class DateUtil{
         date = c.getTime();
         return date.getTime()/1000;
 	}
+    
+    /**
+    * <p>Title: returnTodayStartAndEnd</p>
+    * <p>Description: 计算当前日期的0:00和23:59:59</p>
+    * @return
+    */
+    public static String[] returnTodayStartAndEnd(){
+    	String [] dateArray = new String[2];
+    	 SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FMT);
+    	 String today = sdf.format(new Date());
+    	 String start = today.substring(0, 11)+"00:00:00";
+    	 String end = today.substring(0, 11)+"23:59:59";
+    	 dateArray[0] = start;
+    	 dateArray[1] = end;
+    	 return dateArray;
+    }
+    public static void main(String[] args) {
+		DateUtil.returnTodayStartAndEnd();
+	}
    /* public static void main(String[] args) {
 		String a = "12321312313";
 		String [] array = a.split(",");

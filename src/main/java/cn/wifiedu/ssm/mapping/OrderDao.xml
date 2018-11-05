@@ -33,6 +33,16 @@
 		GROUP BY od.FK_ORDER
 		ORDER BY str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') DESC
 	</select>
+	<!-- 根据订单ID查询订单总金额 -->
+	<select id="selectOrderTotalMoneyByOrderPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		select 	SUM(od.ORDER_DETAILS_GMONEY/100*od.ORDER_DETAILS_FS) AS TOTAL_MONEY
+		from SC_ORDER o left join SC_ORDER_DETAILS od
+		on o.ORDER_PK = od.FK_ORDER
+		WHERE o.ORDER_PK = #{ORDER_PK}
+		GROUP BY od.FK_ORDER
+	</select>
+	
+	
  	<!-- 根据订单id查询订单详情 -->
  	<select id="selectOrderDetailByOrderPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
  		select 	o.ORDER_PK,o.ORDER_POSITION,
@@ -113,5 +123,41 @@
 			#{FK_GOODS},
 		</trim>
 	</insert>
+	<!-- 查询今日智慧云订单消费总金额 -->
+	<select id="selectZHYMoney" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT o.ORDER_SHOPMONEY  FROM sc_order o WHERE str_to_date(o.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+			BETWEEN str_to_date(#{todayStart},'%Y-%m-%d %H:%i:%s') 
+			AND str_to_date(#{todayEnd},'%Y-%m-%d %H:%i:%s')
+			AND o.FK_SHOP = #{FK_SHOP}
+	</select>
+	<!-- 查询今日智慧云订单商品总份数 -->
+	<select id="selectZHYOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT COUNT(od.ORDER_DETAILS_FS) AS ZHY_ORDER_NUMBER FROM sc_order o LEFT JOIN sc_order_details od
+			ON o.ORDER_PK = od.FK_ORDER
+			WHERE o.FK_SHOP = #{FK_SHOP}
+			 AND str_to_date(o.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+			BETWEEN str_to_date(#{todayStart},'%Y-%m-%d %H:%i:%s') 
+			AND str_to_date(#{todayEnd},'%Y-%m-%d %H:%i:%s')
+	</select>
+	<!-- 查询今日饿百订单消费总金额 -->
+	<select id="selectEBMoney" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT eb.ORDER_SHOP_FEE FROM sc_waimai_eb_order eb
+	 		WHERE str_to_date(eb.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+				BETWEEN str_to_date(#{todayStart},'%Y-%m-%d %H:%i:%s') 
+				AND str_to_date(#{todayEnd},'%Y-%m-%d %H:%i:%s')
+				AND eb.SHOP_BAIDU_ID = (SELECT s.EB_SHOP_ID  FROM sc_shop_info s 
+					WHERE s.SHOP_ID = #{FK_SHOP})
+	</select>
+	<!-- 查询今日饿百订单商品总份数-->
+	<select id="selectEBOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT COUNT(od.ORDER_DETAILS_FS) AS EB_ORDER_NUMBER FROM sc_waimai_eb_order eb 
+			LEFT JOIN sc_order_details od ON eb.ORDER_PK = od.FK_ORDER 
+			WHERE str_to_date(eb.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+					BETWEEN str_to_date(#{todayStart},'%Y-%m-%d %H:%i:%s') 
+					AND str_to_date(#{todayEnd},'%Y-%m-%d %H:%i:%s')
+					AND eb.SHOP_BAIDU_ID = (SELECT s.EB_SHOP_ID  FROM sc_shop_info s 
+							WHERE s.SHOP_ID = #{FK_SHOP})
+	</select>
+	
 	
 </mapper>

@@ -121,4 +121,12 @@
 		WHERE
 		a.FK_USER = #{USER_PK} AND a.FK_ROLE != '7'
 	</select>
+	
+	<!-- 根据商铺ID查询该商铺的抹零规则 -->
+	<select id="selectMoLingByShopPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT m.FK_SHOP,m.SHOP_MOLING_PK,
+			m.SHOP_MOLING_VALUE,m.SHOP_MOLING_TEXT 
+		FROM sc_shop_moling m 
+		WHERE m.FK_SHOP = #{FK_SHOP}
+	</select>
 </mapper>
