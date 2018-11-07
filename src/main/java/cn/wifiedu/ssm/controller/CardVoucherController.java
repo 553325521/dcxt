@@ -4,7 +4,6 @@ package cn.wifiedu.ssm.controller;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -14,6 +13,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import cn.wifiedu.core.controller.BaseController;
@@ -79,7 +80,7 @@ public class CardVoucherController extends BaseController{
 			/*获取appid*/
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");
 			logger.info("redis日志:创建卡券获取userJson"+userJson);
@@ -98,7 +99,7 @@ public class CardVoucherController extends BaseController{
 			String imgLOGOStr = map.get("IMG_LOGO_STR").toString();
 			String [] imgLogoArray = imgLOGOStr.split(",");
 			String logoReStr = CommonUtil.uploadImg(imgLogoArray[1],"600000", imgLogoArray[2], accessToken);
-			JSONObject obj = JSONObject.parseObject(logoReStr);
+			JSONObject obj = JSON.parseObject(logoReStr);
 			String logoWxUrl = obj.get("url").toString();
 			System.out.println("店铺LOGOurl:"+logoWxUrl);
 			/*上传卡券形象图片*/
@@ -106,19 +107,19 @@ public class CardVoucherController extends BaseController{
 			String [] imgBodayArray = imgBodayStr.split(",");
 			String imgBodaySize = imgBodayArray[3].substring(0, imgBodayArray[3].length()-1);
 			String imgBodayReStr = CommonUtil.uploadImg(imgBodayArray[1], imgBodaySize, imgBodayArray[2], accessToken);
-			JSONObject imgBodayObj = JSONObject.parseObject(imgBodayReStr);
+			JSONObject imgBodayObj = JSON.parseObject(imgBodayReStr);
 			String bodyWxUrl = imgBodayObj.get("url").toString();
 			System.out.println("卡券形象图片url:"+bodyWxUrl);
 			/*上传卡券图文说明中的图片到微信服务器*/
 			JSONArray jsa = new JSONArray();
 			JSONArray localPicArray = new JSONArray();
 			String introduceStr = map.get("INTRODUCE_STR").toString();
-			JSONArray introduceArray = JSONArray.parseArray(introduceStr);
+			JSONArray introduceArray = JSON.parseArray(introduceStr);
 			for(Object j: introduceArray){
 				JSONObject jb = (JSONObject)j;
 				String introduceBase64 = jb.get("img").toString().split(",")[1];
 				String introduceReStr = CommonUtil.uploadImg(introduceBase64, jb.get("imgSize").toString(), jb.get("imgName").toString(), accessToken);
-				JSONObject introduceReObj = JSONObject.parseObject(introduceReStr);
+				JSONObject introduceReObj = JSON.parseObject(introduceReStr);
 				String introduceURL = introduceReObj.get("url").toString();
 				JSONObject jsb = new JSONObject();
 				JSONObject localJsb = new JSONObject();
@@ -299,7 +300,7 @@ public class CardVoucherController extends BaseController{
 			
 			String result = CommonUtil.WxPOST(url, totalObject.toJSONString(), "UTF-8");
 			
-			JSONObject createCard = JSONObject.parseObject(result);
+			JSONObject createCard = JSON.parseObject(result);
 			
 			String card_id = "";
 			
@@ -316,7 +317,7 @@ public class CardVoucherController extends BaseController{
 				String updateUrl = CommonUtil.getPath("WX_UPDATE_CARD");
 				updateUrl = updateUrl.replace("ACCESS_TOKEN", accessToken);
 				String updateResult = CommonUtil.WxPOST(updateUrl, cardUpdateJsonObj.toJSONString(), "UTF-8");
-				JSONObject updateCard = JSONObject.parseObject(updateResult);
+				JSONObject updateCard = JSON.parseObject(updateResult);
 				System.out.println("更新外连接url返回结果"+updateCard);
 				card_id = createCard.get("card_id").toString();
 				param.put("card_id",card_id);
@@ -364,7 +365,7 @@ public class CardVoucherController extends BaseController{
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			logger.info("redis日志:修改卡券获取userJson"+userJson);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");
 			logger.info("redis日志:修改卡券获取appid"+appid);
@@ -386,7 +387,7 @@ public class CardVoucherController extends BaseController{
 			if(imgLogoArray.length != 1){
 				String imgSize = imgLogoArray[3].substring(0, imgLogoArray[3].length()-1);
 				String logoReStr = CommonUtil.uploadImg(imgLogoArray[1], imgSize, imgLogoArray[2], accessToken);
-				JSONObject obj = JSONObject.parseObject(logoReStr);
+				JSONObject obj = JSON.parseObject(logoReStr);
 				logoWxUrl = obj.get("url").toString();
 			}
 			System.out.println("店铺LOGOurl:"+logoWxUrl);
@@ -447,7 +448,7 @@ public class CardVoucherController extends BaseController{
 			
 			String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
 			
-			JSONObject createCard = JSONObject.parseObject(result);
+			JSONObject createCard = JSON.parseObject(result);
 			
 			System.out.println(createCard.containsKey("errcode")+"code"+createCard.getInteger("errcode"));
 			if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() == 40100){
@@ -494,7 +495,7 @@ public class CardVoucherController extends BaseController{
 			// 获取当前session信息
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			logger.info("redis日志:显示卡券列表获取userJson"+userJson);
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "loadCardData");
@@ -522,7 +523,7 @@ public class CardVoucherController extends BaseController{
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			logger.info("redis日志:删除卡券获取userJson"+userJson);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");
 			logger.info("redis日志:删除卡券获取appid"+appid);
@@ -546,7 +547,7 @@ public class CardVoucherController extends BaseController{
 			
 			String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
 			
-			JSONObject createCard = JSONObject.parseObject(result);
+			JSONObject createCard = JSON.parseObject(result);
 			
 			if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() == 0){
 				map.put("sqlMapId", "deleteByCardID");
@@ -605,7 +606,7 @@ public class CardVoucherController extends BaseController{
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			logger.info("redis日志:获取卡券领取列表userJson"+userJson);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "selectCardList");
 			List<Map<String,Object>> dataList = openService.queryForList(map);
@@ -630,7 +631,7 @@ public class CardVoucherController extends BaseController{
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			logger.info("redis日志:核销卡券userJson"+userJson);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			String accessToken = "";
 			String appid = userObj.getString("FK_APP");
 			/*获取accessToken*/
@@ -673,7 +674,7 @@ public class CardVoucherController extends BaseController{
 						
 						String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
 						
-						JSONObject cancelCard = JSONObject.parseObject(result);
+						JSONObject cancelCard = JSON.parseObject(result);
 						if(cancelCard.getIntValue("errcode") == 0){
 							output("0000", "核销成功");
 						}else{
@@ -705,7 +706,7 @@ public class CardVoucherController extends BaseController{
 						
 						String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
 						
-						JSONObject cancelCard = JSONObject.parseObject(result);
+						JSONObject cancelCard = JSON.parseObject(result);
 						if(cancelCard.getIntValue("errcode") == 0){
 							output("0000", "核销成功");
 						}else{
@@ -736,7 +737,7 @@ public class CardVoucherController extends BaseController{
 				
 				String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
 				
-				JSONObject cancelCard = JSONObject.parseObject(result);
+				JSONObject cancelCard = JSON.parseObject(result);
 				if(cancelCard.getIntValue("errcode") == 0){
 					output("0000", "核销成功");
 				}else{
@@ -749,7 +750,7 @@ public class CardVoucherController extends BaseController{
 		}
 	}
 	 private String timeConvert(long dateValue){
-		Date date = new Date((long)dateValue*1000);
+		Date date = new Date(dateValue*1000);
 		SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
 		return s.format(date);
 	}

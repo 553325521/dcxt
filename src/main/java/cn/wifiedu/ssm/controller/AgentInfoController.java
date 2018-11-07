@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -67,7 +68,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 //					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					map.put("USER_ID", userObj.get("USER_PK")); 
@@ -103,7 +104,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					map.put("USER_ID", userObj.get("USER_PK")); 
 					

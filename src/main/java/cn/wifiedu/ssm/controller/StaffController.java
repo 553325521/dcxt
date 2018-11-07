@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -81,7 +82,7 @@ public class StaffController extends BaseController {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			Map<String, Object> map = getParameterMap();
 			map.put("IS_USE", String.valueOf(map.get("IS_USE")));
 			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
@@ -119,7 +120,7 @@ public class StaffController extends BaseController {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			Map<String, Object> map = getParameterMap();
 			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
 			map.put("sqlMapId", "findStaffByShopIdAndUserId");
@@ -144,7 +145,7 @@ public class StaffController extends BaseController {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			Map<String, Object> map = getParameterMap();
 			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
 			map.put("sqlMapId", "findStaffByShopId");
@@ -170,7 +171,7 @@ public class StaffController extends BaseController {
 
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 
 			String params = "?SHOP_ID=" + userObj.getString("FK_SHOP");
 			if (!userObj.containsKey("FK_APP")) {
@@ -277,7 +278,7 @@ public class StaffController extends BaseController {
 							System.out.println("tagAddURL====" + tagAddURL);
 							String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
 							System.out.println("resCont====" + resCont);
-							JSONObject resObj = JSONObject.parseObject(resCont);
+							JSONObject resObj = JSON.parseObject(resCont);
 							if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
 								// 重定向成功页面
 								String btnToken = UUID.randomUUID().toString();
@@ -298,7 +299,7 @@ public class StaffController extends BaseController {
 
 								// redis存储用户登录信息
 								jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId,
-										JSONObject.toJSONString(userMap));
+										JSON.toJSONString(userMap));
 
 								// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 								CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);

@@ -22,7 +22,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.PictureUtil;
@@ -69,7 +68,7 @@ public class ShopInfoController extends BaseController {
 		//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
 		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-		JSONObject userObj = JSONObject.parseObject(userJson);
+		JSONObject userObj = JSON.parseObject(userJson);
 		
 		map.put("userId", userObj.get("USER_PK"));
 		map.put("shopId", userObj.get("FK_SHOP"));
@@ -88,7 +87,7 @@ public class ShopInfoController extends BaseController {
 		//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
 		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-		JSONObject userObj = JSONObject.parseObject(userJson);
+		JSONObject userObj = JSON.parseObject(userJson);
 		
 		map.put("SHOP_ID", userObj.get("FK_SHOP"));
 		map.put("USER_ID", userObj.get("USER_PK")); 
@@ -135,7 +134,7 @@ public class ShopInfoController extends BaseController {
 		//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
 		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-		JSONObject userObj = JSONObject.parseObject(userJson);
+		JSONObject userObj = JSON.parseObject(userJson);
 		
 		map.put("SHOP_ID", userObj.get("FK_SHOP"));
 		map.put("USER_ID", userObj.get("USER_PK")); 
@@ -181,7 +180,7 @@ public class ShopInfoController extends BaseController {
 
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 			map.put("USER_ID", userObj.get("USER_PK")); 
@@ -334,7 +333,7 @@ public class ShopInfoController extends BaseController {
 			
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("SHOP_ID", userObj.get("FK_SHOP")); 
 			
@@ -370,7 +369,7 @@ public class ShopInfoController extends BaseController {
 			
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("SHOP_ID", userObj.get("FK_SHOP")); 
 			
@@ -406,7 +405,7 @@ public class ShopInfoController extends BaseController {
 			
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("SHOP_ID", userObj.get("FK_SHOP")); 
 			
@@ -458,7 +457,7 @@ public class ShopInfoController extends BaseController {
 			
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("SHOP_ID", userObj.get("FK_SHOP")); 
 			

@@ -23,7 +23,6 @@ import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
-import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 	
@@ -70,7 +69,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public void findAgentInfoById(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
 				String params = null;
 				try {
-					BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "gbk"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "gbk"));
 					StringBuffer sb = new StringBuffer("");
 					String temp;
 					while ((temp = br.readLine()) != null) {
@@ -96,10 +95,10 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					map.put("NOTIFY_PAY_CHANNEL", reMap.get("PayChannel"));
 					map.put("NOTIFY_TXNAMT", reMap.get("TxnAmt"));
 					map.put("NOTIFY_TXN_STATUS", reMap.get("TxnStatus"));
-					map.put("BANK_TYPE", JSONArray.toJSONString(reMap.get("BankType")));
+					map.put("BANK_TYPE", JSON.toJSONString(reMap.get("BankType")));
 					map.put("OFFICE_ID", reMap.get("OfficeId"));
 					map.put("SEL_ORDER_NO", reMap.get("ChannelId"));
-					map.put("CRD_FLG", JSONArray.toJSONString(reMap.get("CrdFlg")));
+					map.put("CRD_FLG", JSON.toJSONString(reMap.get("CrdFlg")));
 					map.put("LOG_NO", reMap.get("logNo"));
 					map.put("UPDATE_BY", "admin");
 					
@@ -122,11 +121,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					if(jedisClient.isExit(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"))
 					&& StringUtils.isNotBlank(jedisClient.get(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo")))){
 						String mess = jedisClient.get(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"));//取出之前存在redis的map信息
-						Map<String, Object> messMap = (Map<String, Object>)JSONObject.parseObject(mess);
+						Map<String, Object> messMap = JSON.parseObject(mess);
 						String callBackUrl = (String) messMap.get("callBackUrl");
 						messMap.remove("callBackUrl");
 						postMap.putAll(messMap);
-						String retStr = CommonUtil.posts(CommonUtil.getPath("project_url").replace("DATA", callBackUrl), JSONObject.toJSONString(postMap), "utf-8");
+						String retStr = CommonUtil.posts(CommonUtil.getPath("project_url").replace("DATA", callBackUrl), JSON.toJSONString(postMap), "utf-8");
 						jedisClient.del(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"));
 					}
 					

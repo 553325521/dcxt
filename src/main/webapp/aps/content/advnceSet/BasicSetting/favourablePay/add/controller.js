@@ -98,6 +98,21 @@
 						$(".time_week").hide();
 					}
 				}
+				//跳转方法
+				$scope.toHref = function(path) {
+					var m2 = {
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
+				//初始化日期样式
+				function initDateStyle(){
+					$("#start_time").datetimePicker({title:"选择日期", toolbarCloseText : '确定',m:1});
+					$("#end_time").datetimePicker({title:"选择日期",toolbarCloseText : '确定',m:1});
+				}
+				initDateStyle();
 				
 				$scope.toHistory = function(){
 					var m2 = {

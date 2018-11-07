@@ -14,9 +14,10 @@ import org.springframework.context.ApplicationContextAware;
 public final class SpringContextUtil implements ApplicationContextAware {
     private static ApplicationContext context;
 
-    @SuppressWarnings("static-access")
+    @Override
+	@SuppressWarnings("static-access")
     public void setApplicationContext(ApplicationContext contex) throws BeansException {
-        this.context = contex;
+        SpringContextUtil.context = contex;
     }
 
     public static Object getBean(String beanName) {

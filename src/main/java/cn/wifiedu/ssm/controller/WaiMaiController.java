@@ -3,8 +3,6 @@ package cn.wifiedu.ssm.controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +26,7 @@ import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.waimai.down.Result;
 import cn.wifiedu.ssm.util.waimai.EBWaiMai;
-import cn.wifiedu.ssm.util.waimai.HttpRequestUtil;
 import cn.wifiedu.ssm.util.waimai.SignUtil;
-import eleme.openapi.ws.sdk.Bootstrap;
-import eleme.openapi.ws.sdk.config.BusinessHandle;
-import eleme.openapi.ws.sdk.config.Config;
-import eleme.openapi.ws.sdk.config.ElemeSdkLogger;
-import eleme.openapi.ws.sdk.entity.Account;
-import eleme.openapi.ws.sdk.exception.UnableConnectionException;
 
 		/**
 		 * 
@@ -132,7 +123,7 @@ import eleme.openapi.ws.sdk.exception.UnableConnectionException;
 				try {
 					map = getParameterMap();
 					
-					BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "utf-8"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
 					StringBuffer sb = new StringBuffer("");
 					String temp;
 					while ((temp = br.readLine()) != null) {
@@ -171,7 +162,7 @@ import eleme.openapi.ws.sdk.exception.UnableConnectionException;
 				try {
 					map = getParameterMap();
 					
-					BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "utf-8"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
 					StringBuffer sb = new StringBuffer("");
 					String temp;
 					while ((temp = br.readLine()) != null) {
@@ -207,7 +198,7 @@ import eleme.openapi.ws.sdk.exception.UnableConnectionException;
 				try {
 					map = getParameterMap();
 					
-					BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "utf-8"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
 					StringBuffer sb = new StringBuffer("");
 					String temp;
 					while ((temp = br.readLine()) != null) {
@@ -241,7 +232,7 @@ import eleme.openapi.ws.sdk.exception.UnableConnectionException;
 				try {
 					map = getParameterMap();
 					
-					BufferedReader br = new BufferedReader(new InputStreamReader((ServletInputStream) request.getInputStream(), "utf-8"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
 					StringBuffer sb = new StringBuffer("");
 					String temp;
 					while ((temp = br.readLine()) != null) {

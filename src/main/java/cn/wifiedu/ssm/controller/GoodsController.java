@@ -208,7 +208,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						picMap.put(picUrl, picSize);
 					}
 					
-					map.put("PICTURE_URL", JSONArray.toJSONString(picMap));
+					map.put("PICTURE_URL", JSON.toJSONString(picMap));
 					
 					/**排序序号操作*/
 					
@@ -315,7 +315,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					}
 					
 					//取出新的pic信息和旧的pic信息
-					List<String> newPicList = (List<String>)JSONObject.parse((String) map.get("PICTURE_URL"));
+					List<String> newPicList = (List<String>)JSON.parse((String) map.get("PICTURE_URL"));
 					Map<String,Long> picUrlMap = JSON.parseObject((String) reMap.get("PICTURE_URL"), LinkedHashMap.class,Feature.OrderedField);
 					if(newPicList != null && newPicList.size() > MAX_PIC_NUM){
 						output("9999", "上传图片不能超过"+ MAX_PIC_NUM +"张");
@@ -362,7 +362,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							picMap.put(picUrl, base64Pic.length()*3/4);
 						}
 					}
-					map.put("PICTURE_URL", JSONArray.toJSONString(picMap));
+					map.put("PICTURE_URL", JSON.toJSONString(picMap));
 					
 					//判断当前商品排序等于之前的排序吗
 					if(bef_pxxh != after_pxxh){
@@ -427,7 +427,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					Map map = getParameterMap();
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));

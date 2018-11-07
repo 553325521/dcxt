@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.chainsaw.Main;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -17,11 +16,11 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -62,7 +61,7 @@ public class CashController extends BaseController {
 	public void showAgentShopInfo() {
 		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-		JSONObject userObj = JSONObject.parseObject(userJson);
+		JSONObject userObj = JSON.parseObject(userJson);
 		try {
 			Map<String, Object> map = new HashMap<String,Object>();
 			map.put("USER_PK",userObj.get("USER_PK"));
@@ -85,7 +84,7 @@ public class CashController extends BaseController {
 	    TransactionStatus status = transactionManager.getTransaction(defaultTransactionDefinition);
 		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-		JSONObject userObj = JSONObject.parseObject(userJson);
+		JSONObject userObj = JSON.parseObject(userJson);
 	    try {
 			Map<String, Object> map = getParameterMap();
 			map.put("USER_FK", userObj.get("USER_PK"));
@@ -129,7 +128,7 @@ public class CashController extends BaseController {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			Map<String, Object> map = new HashMap<String,Object>();
 			map.put("USER_PK", userObj.get("USER_PK"));
 			map.put("sqlMapId", "selectCashMoneyByUserPK");

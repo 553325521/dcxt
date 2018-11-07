@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -56,7 +57,7 @@ public class TradingRecordController extends BaseController {
 			
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("USER_WX", userObj.get("USER_PK")); 
 			map.put("sqlMapId", "fingTradingRecord");
@@ -86,7 +87,7 @@ public class TradingRecordController extends BaseController {
 			Map<String, Object> map = getParameterMap();
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("sqlMapId", "findCommissionRecordList");

@@ -2,11 +2,9 @@ package cn.wifiedu.ssm.controller;
 
 
 	import java.lang.reflect.Field;
-import java.text.ParseException;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,14 +19,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.thoughtworks.xstream.converters.collections.MapConverter;
-
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.starpos.pay.StarPosPay;
@@ -148,7 +144,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					
 					/**数据验证结束*/

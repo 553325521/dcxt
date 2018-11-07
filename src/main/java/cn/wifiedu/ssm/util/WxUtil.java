@@ -76,7 +76,7 @@ public class WxUtil {
 			postStr.put("authorizer_appid", authorizer_appid);
 			postStr.put("authorizer_refresh_token", authorizer_refresh_token);
 			String res = CommonUtil.posts(url, postStr.toJSONString(), "utf-8");
-			String authorizer_access_token_new = JSONObject.parseObject(res).getString("authorizer_access_token");
+			String authorizer_access_token_new = JSON.parseObject(res).getString("authorizer_access_token");
 			return authorizer_access_token_new;
 		} catch (Exception e) {
 			e.printStackTrace();

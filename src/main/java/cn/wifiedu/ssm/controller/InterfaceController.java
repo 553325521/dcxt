@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -200,7 +201,7 @@ public class InterfaceController extends BaseController {
 				/** 发送Https请求到微信 */
 				String retStr = CommonUtil.posts(url, json.toString(), "utf-8");
 
-				JSONObject resultJson = JSONObject.parseObject(retStr);
+				JSONObject resultJson = JSON.parseObject(retStr);
 				logger.info("resultJson ==== " + resultJson.toString());
 
 				/** 在返回结果中获取token */
@@ -247,7 +248,7 @@ public class InterfaceController extends BaseController {
 				/** 发送Https请求到微信 */
 				String retStr = CommonUtil.posts(url, json.toString(), "utf-8");
 
-				JSONObject resultJson = JSONObject.parseObject(retStr);
+				JSONObject resultJson = JSON.parseObject(retStr);
 				logger.info("resultJson ==== " + resultJson.toString());
 
 				/** 在返回结果中获取token */
@@ -294,7 +295,7 @@ public class InterfaceController extends BaseController {
 			/** 发送Https请求到微信 */
 			String retStr = CommonUtil.posts(url, json.toString(), "utf-8");
 
-			JSONObject resultJson = JSONObject.parseObject(retStr);
+			JSONObject resultJson = JSON.parseObject(retStr);
 			/** 在返回结果中获取pre_auth_code */
 			String componentPreAuthCode = resultJson.getString("pre_auth_code");
 
@@ -326,7 +327,7 @@ public class InterfaceController extends BaseController {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			//
 			if (userObj.containsKey("FK_APP") && !(CommonUtil.getPath("AppID")).equals(userObj.getString("FK_APP"))) {
 				Map<String, Object> map = new HashMap<>();
@@ -385,7 +386,7 @@ public class InterfaceController extends BaseController {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			String url = CommonUtil.getPath("AuthWxPlatFormUrl").toString();
 
 			url = url.replace("componentAppid", component_appid).replace("preAuthCode", getComponentPreAuthCode())
@@ -424,8 +425,8 @@ public class InterfaceController extends BaseController {
 				jsonObj.put("authorization_code", authorization_code);
 				String resContent = CommonUtil.posts(url, jsonObj.toJSONString(), "utf-8");
 				if (StringUtils.isNotBlank(resContent)) {
-					JSONObject resObj = JSONObject.parseObject(resContent);
-					JSONObject obj = JSONObject.parseObject(resObj.get("authorization_info").toString());
+					JSONObject resObj = JSON.parseObject(resContent);
+					JSONObject obj = JSON.parseObject(resObj.get("authorization_info").toString());
 					String authorizer_appid = obj.getString("authorizer_appid");
 					String authorizer_access_token = obj.getString("authorizer_access_token");
 					String authorizer_refresh_token = obj.getString("authorizer_refresh_token");

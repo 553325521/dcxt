@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -69,7 +70,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Map<String, Object> map = getParameterMap();
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					map.put("sqlMapId", "selectTablesArea");
@@ -104,7 +105,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					//先查询区域总数量
 					map.put("sqlMapId", "findTablesAreaCountByShopId");
@@ -205,7 +206,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Map<String, Object> map = getParameterMap();
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					//先查询区域总数量
 					map.put("sqlMapId", "findTablesAreaCountByShopId");
@@ -288,7 +289,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						//从session取数据
 						String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-						JSONObject userObj = JSONObject.parseObject(userJson);
+						JSONObject userObj = JSON.parseObject(userJson);
 						
 						map.put("SHOP_ID", userObj.get("FK_SHOP"));
 						boolean b = openService.update(map);
@@ -307,7 +308,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						return;
 					}
 					//判断区域状态是不是改变，是的话是不是改成已停用，如果是，就把子节点全都改成已停用
-					if(!bef_status.equals((String)map.get("TABLES_AREA_STATUS")) && bef_status.equals("1")){
+					if(!bef_status.equals(map.get("TABLES_AREA_STATUS")) && bef_status.equals("1")){
 						map.put("sqlMapId", "updateTablesStatusByAreaId");
 						update = openService.update(map);
 					}

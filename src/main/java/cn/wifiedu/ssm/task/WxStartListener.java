@@ -12,6 +12,7 @@ public class WxStartListener implements ServletContextListener {
 	/**
 	 * 监听开始销毁
 	 */
+	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
 		System.out.println("contextDestroyed");
 	}
@@ -19,6 +20,7 @@ public class WxStartListener implements ServletContextListener {
 	/**
 	 * 监听开始执行
 	 */
+	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		
 		// 当监听开始执行时,设置一个TIME

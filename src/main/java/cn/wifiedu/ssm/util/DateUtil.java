@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.chainsaw.Main;
 
 
 /**

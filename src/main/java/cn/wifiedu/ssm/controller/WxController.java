@@ -1,16 +1,8 @@
 package cn.wifiedu.ssm.controller;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.URLEncoder;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +235,7 @@ public class WxController extends BaseController {
 					getUserInfo(openId, userMap);
 				}
 				// redis存储用户登录信息
-				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
+				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSON.toJSONString(userMap));
 
 				// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 				CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
@@ -295,7 +287,7 @@ public class WxController extends BaseController {
 					getUserInfo(openId, userMap);
 				}
 				// redis存储用户登录信息
-				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
+				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSON.toJSONString(userMap));
 
 				// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 				CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
@@ -351,7 +343,7 @@ public class WxController extends BaseController {
 				userMap.put("FK_ROLE", "7");
 				userMap.put("FK_USER_TAG", "141");
 				// redis存储用户登录信息
-				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSONObject.toJSONString(userMap));
+				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSON.toJSONString(userMap));
 
 				// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 				CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
@@ -420,7 +412,7 @@ public class WxController extends BaseController {
 				logger.info("userInfo====" + res);
 				res = new String(res.getBytes("ISO-8859-1"), "UTF-8");
 				logger.info("userInfo====" + res);
-				JSONObject obj = JSONObject.parseObject(res);
+				JSONObject obj = JSON.parseObject(res);
 				map.put("USER_SN", obj.getString("nickname"));
 				map.put("USER_SEX", obj.getString("sex"));
 				// map.put("province", obj.get("province"));
@@ -452,7 +444,7 @@ public class WxController extends BaseController {
 		logger.info("getOpenIdByCode url:" + url);
 		String res = CommonUtil.get(url);
 		logger.info("getOpenIdByCode response:" + res);
-		JSONObject succesResponse = JSONObject.parseObject(res);
+		JSONObject succesResponse = JSON.parseObject(res);
 
 		String openId = succesResponse.getString("openid");
 
@@ -495,7 +487,7 @@ public class WxController extends BaseController {
 		logger.info("getOpenIdByCode url:" + url);
 		String res = CommonUtil.get(url);
 		logger.info("getOpenIdByCode response:" + res);
-		JSONObject succesResponse = JSONObject.parseObject(res);
+		JSONObject succesResponse = JSON.parseObject(res);
 
 		String openId = succesResponse.getString("openid");
 
@@ -614,7 +606,7 @@ public class WxController extends BaseController {
 						// 插入agent
 						String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY
 								+ CookieUtils.getCookieValue(request, "DCXT_TOKEN"));
-						JSONObject userObj = JSONObject.parseObject(userJson);
+						JSONObject userObj = JSON.parseObject(userJson);
 
 						map.put("sqlMapId", "insertAgentInfoById");
 						map.put("USER_ID", checkList.get(0).get("USER_PK").toString());
@@ -855,7 +847,7 @@ public class WxController extends BaseController {
 					String json = jedisClient.get(RedisConstants.WX_BUTTON_TOKEN + btnToken);
 					if (StringUtils.isNotBlank(json)) {
 						jedisClient.del(RedisConstants.WX_BUTTON_TOKEN + btnToken);
-						output("0000", JSONObject.parseObject(json));
+						output("0000", JSON.parseObject(json));
 					}
 				}
 			}
@@ -893,7 +885,7 @@ public class WxController extends BaseController {
 			/** 发送Https请求到微信 */
 			String retStr = CommonUtil.get(url);
 
-			JSONObject resultJson = JSONObject.parseObject(retStr);
+			JSONObject resultJson = JSON.parseObject(retStr);
 			logger.info("resultJson ==== " + resultJson.toString());
 
 			/** 在返回结果中获取token */

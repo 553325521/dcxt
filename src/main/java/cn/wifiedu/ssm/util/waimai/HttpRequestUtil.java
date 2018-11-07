@@ -11,8 +11,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import cn.wifiedu.ssm.controller.WaiMaiController;
-
 public class HttpRequestUtil {
 	private static Logger logger = Logger.getLogger(HttpRequestUtil.class);
 	

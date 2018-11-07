@@ -32,7 +32,7 @@ public class HttpParamsUtils {
 			Collections.sort(keys);
 		}
 		for(String key : keys){
-			String value = (String)payParams.get(key);
+			String value = payParams.get(key);
 			if(StringUtils.isEmpty(value)){
 				continue;
 			}

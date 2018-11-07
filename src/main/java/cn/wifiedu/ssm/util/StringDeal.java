@@ -352,7 +352,7 @@ public class StringDeal {
 	 */
 	public static String getPreMonth(int i) {
 		Calendar cal = Calendar.getInstance();
-		cal.add(cal.MONTH, i);
+		cal.add(Calendar.MONTH, i);
 		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM");
 		String preMonth = dft.format(cal.getTime());
 		return preMonth;
@@ -473,7 +473,7 @@ public class StringDeal {
 	 */
 	public static String getPreMonth2(int i) {
 		Calendar cal = Calendar.getInstance();
-		cal.add(cal.MONTH, -i);
+		cal.add(Calendar.MONTH, -i);
 		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM");
 		String preMonth = dft.format(cal.getTime());
 		return preMonth;

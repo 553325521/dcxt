@@ -7,7 +7,7 @@
 	}
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/BasicSetting/favourablePay/list','')">
+		<div href="#" class="weui-header-left" ng-click="toHref('advnceSet/BasicSetting/favourablePay/list')">
 			<a class="icon icon-109" ></a>
 		</div>
 
@@ -91,12 +91,13 @@
 		</div>
 	</div>
 		<div class="weui_cell">
-			<div class="weui_cell_hd">
-				<label class="weui_label label">有效期限</label>
+			 <div class="weui_cell_hd expiryCell">
+				<label class="weui_label label">期限</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input" id="start_time" style="float: left;width:48%" type="date" value="" />
-				<input class="weui_input" id="end_time" style="float: left;width:48%" type="date" value="" />	
+				<input class="weui_input" id="start_time" style="float: left;width:35%" type="text" ng-model="form.begin_time"  readonly value="" />
+				<div style="float:left;width:5%;padding-left:3%">——</div>
+				<input class="weui_input" id="end_time" style="float: left;width:35%;padding-left: 30px;" ng-model="form.end_time " readonly type="text" value="" />	
 			</div>
 		</div>
 		<div class="weui_cell">

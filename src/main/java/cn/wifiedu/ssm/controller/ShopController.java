@@ -29,8 +29,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.socket.TextMessage;
-
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.zxing.WriterException;
 
@@ -45,8 +44,6 @@ import cn.wifiedu.ssm.util.WxConstants;
 import cn.wifiedu.ssm.util.WxUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
-import cn.wifiedu.ssm.websocket.MessageType;
-import cn.wifiedu.ssm.websocket.SystemWebSocketHandler;
 
 /**
  * 商铺与数据库交互
@@ -135,7 +132,7 @@ public class ShopController extends BaseController {
 			map.put("sqlMapId", "insertUserShop");
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("SHOP_ID", insert);
 			map.put("ROLE_ID", "7");
@@ -168,7 +165,7 @@ public class ShopController extends BaseController {
 			// 获取当前session信息
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			map.put("USER_ID", userObj.get("USER_PK"));
 			map.put("sqlMapId", "selectAgentInfoById");
 
@@ -336,7 +333,7 @@ public class ShopController extends BaseController {
 									}
 								});
 								String resCont = CommonUtil.posts(tagAddURL, postObj.toJSONString(), "utf-8");
-								JSONObject resObj = JSONObject.parseObject(resCont);
+								JSONObject resObj = JSON.parseObject(resCont);
 								if (WxConstants.ERRORCODE_0.equals(resObj.getString("errcode"))) {
 
 									/* 插入到shopApp表 */
@@ -372,7 +369,7 @@ public class ShopController extends BaseController {
 
 									// redis存储用户登录信息
 									jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId,
-											JSONObject.toJSONString(userMap));
+											JSON.toJSONString(userMap));
 
 									// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 									CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
@@ -543,13 +540,13 @@ public class ShopController extends BaseController {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			Map<String, Object> map = new HashMap<>();
 			map.put("USER_PK", userObj.getString("USER_PK"));
 			map.put("sqlMapId", "loadShopListByUser");
 			List<Map<String, Object>> reList = openService.queryForList(map);
 			// 更新 店铺列表数据
-			jedisClient.set(RedisConstants.REDIS_USER_SHOP_LIST_KEY + token, JSONObject.toJSONString(reList));
+			jedisClient.set(RedisConstants.REDIS_USER_SHOP_LIST_KEY + token, JSON.toJSONString(reList));
 			if (reList != null && reList.size() == 1) {
 				userObj.put("FK_APP", reList.get(0).get("FK_APP"));
 				userObj.put("FK_SHOP", reList.get(0).get("FK_SHOP"));
@@ -559,13 +556,13 @@ public class ShopController extends BaseController {
 				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + token, userObj.toJSONString());
 				// 存储用户对应的shop信息
 				jedisClient.set(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token,
-						JSONObject.toJSONString(reList.get(0)));
+						JSON.toJSONString(reList.get(0)));
 				output("0000", "success");
 				return;
 			} else {
 				if (jedisClient.isExit(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token) && StringUtils
 						.isNotBlank(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token))) {
-					Map<String, Object> mapp = (Map<String, Object>) JSONObject
+					Map<String, Object> mapp = (Map<String, Object>) JSON
 							.parse(jedisClient.get(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token));
 					userObj.put("FK_APP", mapp.get("FK_APP"));
 					userObj.put("FK_SHOP", mapp.get("FK_SHOP"));
@@ -596,7 +593,7 @@ public class ShopController extends BaseController {
 	public void loadShopListByRedis() {
 		try {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
-			List<Map<String, Object>> reList = (List<Map<String, Object>>) JSONObject
+			List<Map<String, Object>> reList = (List<Map<String, Object>>) JSON
 					.parse(jedisClient.get(RedisConstants.REDIS_USER_SHOP_LIST_KEY + token));
 			output("0000", reList);
 			return;
@@ -619,7 +616,7 @@ public class ShopController extends BaseController {
 
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			userObj.put("FK_APP", map.get("FK_APP"));
 			userObj.put("FK_SHOP", map.get("FK_SHOP"));
 			userObj.put("FK_ROLE", map.get("FK_ROLE"));
@@ -627,7 +624,7 @@ public class ShopController extends BaseController {
 			// 重新对用户redis赋值
 			jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + token, userObj.toJSONString());
 			// 存储用户对应的shop信息
-			jedisClient.set(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token, JSONObject.toJSONString(map));
+			jedisClient.set(RedisConstants.REDIS_USER_SHOP_SESSION_KEY + token, JSON.toJSONString(map));
 			output("0000", "welcome");
 			return;
 		} catch (Exception e) {
@@ -653,7 +650,7 @@ public class ShopController extends BaseController {
 			
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 			
 			map.put("USER_ID", userObj.get("USER_PK")); 
 			//商铺的名字和id

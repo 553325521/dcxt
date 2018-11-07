@@ -1,9 +1,7 @@
 package cn.wifiedu.ssm.controller;
 
 
-	import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+	import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -21,7 +19,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.PictureUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -109,7 +106,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							twDescMap.put("img", PictureUtil.base64ToImage(twDescMap.get("img").toString(), Turntable_TWJS_PICPATH));
 						}
 					}
-					map.put("TURNTABLE_BZSM", JSONObject.toJSONString(twDescList));
+					map.put("TURNTABLE_BZSM", JSON.toJSONString(twDescList));
 					
 					//如果转盘为开启，把其他的关闭
 					if("1".equals(map.get("IS_USE"))){
@@ -224,7 +221,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					
@@ -261,7 +258,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Map map = getParameterMap();
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					

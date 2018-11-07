@@ -6,23 +6,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.ssm.controller.StarPosPayController;
 import cn.wifiedu.ssm.util.CommonUtil;
-import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 
@@ -165,7 +159,7 @@ public class StarPosPay {
          logger.info(paramsMap);
          
          String reqUrl = testHeadUrl + "/pubSigPay.json";
-         String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+         String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
          Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
          
          //把交易信息插入数据库
@@ -187,7 +181,7 @@ public class StarPosPay {
         	 }
         	 callBackParamMap.put("callBackUrl", callBackUrl);
         	 //把回调url存入redis，收到新大陆的异步消息后立马回调
-      		jedisClient.set(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"), JSONObject.toJSONString(callBackParamMap));
+      		jedisClient.set(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"), JSON.toJSONString(callBackParamMap));
       		// 设置过期时间2小时
       		jedisClient.expire(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"), 3600 * 2);
          }
@@ -273,7 +267,7 @@ public class StarPosPay {
           logger.info(paramsMap);
 
           String reqUrl = testHeadUrl + "/sdkBarcodePay.json";
-          String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+          String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
           Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
           
           logger.info("------------------back_Map---------------------------");
@@ -368,7 +362,7 @@ public class StarPosPay {
         /** 发起post请求**/
         String reqUrl = testHeadUrl + "/sdkBarcodePosPay.json";
         
-        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
         Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
         
         logger.info("------------------back_Map---------------------------");
@@ -404,7 +398,7 @@ public class StarPosPay {
         logger.info(paramsMap);
 
         String reqUrl = testHeadUrl + "/sdkQryBarcodePay.json";
-        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
         Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
         
         logger.info("------------------back_Map---------------------------");
@@ -436,7 +430,7 @@ public class StarPosPay {
         System.out.println("paramsMap = " + paramsMap);
 
         String reqUrl = testHeadUrl + "/sdkRefundBarcodePay.json";
-        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
         Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
         
         System.out.println("map = " + reMap);
@@ -459,7 +453,7 @@ public class StarPosPay {
         System.out.println("paramsMap = " + paramsMap);
 
         String reqUrl = testHeadUrl + "/RevokeBarcodepay.json";
-        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
         Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
         System.out.println("map = " + reMap);
     }
@@ -485,7 +479,7 @@ public class StarPosPay {
 
 
         String reqUrl = testHeadUrl + "/pubSigQry.json";
-        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+        String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
         Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
         System.out.println("map = " + reMap);
     }
@@ -513,7 +507,7 @@ public class StarPosPay {
          String sign = MD5.sign(preStr, testKey, "UTF-8");
          paramsMap.put("signValue",sign);
     	 String reqUrl = testHeadUrl + "/qryAuthorizationcode.json";
-    	  String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSONObject.toJSONString(paramsMap), "UTF-8"),"UTF-8");
+    	  String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
           Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
          
          System.out.println("map = " + reMap);

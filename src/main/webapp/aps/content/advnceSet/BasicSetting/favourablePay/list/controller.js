@@ -40,7 +40,7 @@
 				
 				$scope.add = function(){
 					var m2 = {
-							"url" : "aps/content/advnceSet/BasicSetting/favourablePay/add/config.json",
+							"url" : "aps/content/advnceSet/BasicSetting/favourablePay/add/config.json?fid=" + params.fid,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}

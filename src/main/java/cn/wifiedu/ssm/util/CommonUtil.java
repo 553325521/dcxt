@@ -53,7 +53,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.zxing.WriterException;
 import com.thoughtworks.xstream.XStream;
 
-import cn.wifiedu.ssm.util.redis.RedisConstants;
 import cn.wifiedu.ssm.vo.MessageVo;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -132,14 +131,17 @@ public class CommonUtil {
 		try {
 			httpget.setHeader(new Header() {
 
+				@Override
 				public String getValue() {
 					return "zh-cn";
 				}
 
+				@Override
 				public String getName() {
 					return "Accept-Language";
 				}
 
+				@Override
 				public HeaderElement[] getElements() throws ParseException {
 					return null;
 				}
@@ -359,7 +361,7 @@ public class CommonUtil {
 
 		String res = CommonUtil.get(url);
 		if (res != null && res.indexOf("errcode") <= 0) {
-			com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject(res);
+			com.alibaba.fastjson.JSONObject obj = JSON.parseObject(res);
 			userMap.put("USER_SN", obj.get("nickname"));
 			userMap.put("USER_SEX", obj.get("sex"));
 //			userMap.put("province", obj.get("province"));
@@ -384,7 +386,7 @@ public class CommonUtil {
 		url = url.replace("CODE", code);
 		System.out.println("getOpenIdByCode=" + url);
 		String res = CommonUtil.get(url);
-		com.alibaba.fastjson.JSONObject obj = com.alibaba.fastjson.JSONObject.parseObject(res);
+		com.alibaba.fastjson.JSONObject obj = JSON.parseObject(res);
 		String openId = obj.get("openid").toString();
 		String refresh_token = obj.get("refresh_token").toString();
 		String access_token = obj.get("access_token").toString();
@@ -483,7 +485,8 @@ public class CommonUtil {
 		}
 		
 	 HostnameVerifier hv = new HostnameVerifier() {
-		    public boolean verify(String urlHostName, SSLSession session) {
+		    @Override
+			public boolean verify(String urlHostName, SSLSession session) {
 		        System.out.println("Warning: URL Host: " + urlHostName + " vs. "
 		                + session.getPeerHost());
 		        return true;
@@ -503,7 +506,8 @@ public class CommonUtil {
 
 		static class miTM implements javax.net.ssl.TrustManager,
 		        javax.net.ssl.X509TrustManager {
-		    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+		    @Override
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 		        return null;
 		    }
 
@@ -517,13 +521,15 @@ public class CommonUtil {
 		        return true;
 		    }
 
-		    public void checkServerTrusted(
+		    @Override
+			public void checkServerTrusted(
 		            java.security.cert.X509Certificate[] certs, String authType)
 		            throws java.security.cert.CertificateException {
 		        return;
 		    }
 
-		    public void checkClientTrusted(
+		    @Override
+			public void checkClientTrusted(
 		            java.security.cert.X509Certificate[] certs, String authType)
 		            throws java.security.cert.CertificateException {
 		        return;

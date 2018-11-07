@@ -1,8 +1,7 @@
 package cn.wifiedu.ssm.controller;
 
 
-	import java.util.ArrayList;
-import java.util.HashMap;
+	import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.DateUtil;
@@ -138,7 +136,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 					logger.info("redis日志:创建会员卡userJson"+userJson);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					String accessToken = "";
 					String appid = userObj.getString("FK_APP");
 					/*获取accessToken*/
@@ -168,7 +166,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							twDescMap.put("img", PictureUtil.base64ToImage(twDescMap.get("img").toString(), VIPCARD_TWJS_PICPATH));
 						}
 					}
-					map.put("VCARD_TWJS", JSONObject.toJSONString(twDescList));
+					map.put("VCARD_TWJS", JSON.toJSONString(twDescList));
 					//判断是添加还是修改
 					if(StringUtils.isBlank((String)map.get("VCARD_PK")) || "undefined".equals(map.get("VCARD_PK"))){
 						//添加的业务逻辑
@@ -178,7 +176,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							String imgLOGOStr = VCARD_LOGO_STR;
 							String [] imgLogoArray = imgLOGOStr.split(",");
 							String logoReStr = CommonUtil.uploadImg(imgLogoArray[1], String.valueOf(VCARD_LOGO_STR.length()*3/4), imgLogoArray[0], accessToken);
-							JSONObject obj = JSONObject.parseObject(logoReStr);
+							JSONObject obj = JSON.parseObject(logoReStr);
 							logoWxUrl = obj.get("url").toString();
 						}
 						//往微信上传背景图片
@@ -186,7 +184,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						if(BACKGROUND_IMAGE_STR.indexOf("data:image/") != -1){
 							String [] bgImgArray = BACKGROUND_IMAGE_STR.split(",");
 							String bgReStr = CommonUtil.uploadImg(bgImgArray[1], String.valueOf(BACKGROUND_IMAGE_STR.length()*3/4), bgImgArray[0], accessToken);
-							JSONObject obj = JSONObject.parseObject(bgReStr);
+							JSONObject obj = JSON.parseObject(bgReStr);
 							bgImgUrl = obj.get("url").toString();
 						}
 						//往微信上传图文介绍里的图片
@@ -198,7 +196,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 								String base64 = instroduceMap.get("img");
 								String [] instroduceImgArray = base64.split(",");
 								String instroduceReStr = CommonUtil.uploadImg(instroduceImgArray[1], String.valueOf(base64.length()*3/4), instroduceImgArray[0], accessToken);
-								JSONObject obj = JSONObject.parseObject(instroduceReStr);
+								JSONObject obj = JSON.parseObject(instroduceReStr);
 								String instroduceImgUrl = obj.get("url").toString();
 								instroduceJson.put("image_url",instroduceImgUrl);
 								instroduceJson.put("text",instroduceMap.get("text"));
@@ -272,7 +270,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						String result = CommonUtil.WxPOST(url, postJsonObj.toJSONString(), "UTF-8");
 						System.out.println("accessToken==========="+accessToken);
 						System.out.println("参数============"+postJsonObj.toJSONString());
-						JSONObject createCard = JSONObject.parseObject(result);
+						JSONObject createCard = JSON.parseObject(result);
 						System.out.println("================"+createCard+"======================");
 						if(createCard.containsKey("errcode")&&!createCard.getString("errmsg").equals("ok")){
 							output(createCard.getString("errcode"),"创建失败");
@@ -305,7 +303,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							String imgLOGOStr = VCARD_LOGO_STR;
 							String [] imgLogoArray = imgLOGOStr.split(",");
 							String logoReStr = CommonUtil.uploadImg(imgLogoArray[1], String.valueOf(VCARD_LOGO_STR.length()*3/4), imgLogoArray[0], accessToken);
-							JSONObject obj = JSONObject.parseObject(logoReStr);
+							JSONObject obj = JSON.parseObject(logoReStr);
 							logoWxUrl = obj.get("url").toString();
 						}
 						//往微信上传背景图片
@@ -313,7 +311,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						if(BACKGROUND_IMAGE_STR.indexOf("data:image/") != -1){
 							String [] bgImgArray = BACKGROUND_IMAGE_STR.split(",");
 							String bgReStr = CommonUtil.uploadImg(bgImgArray[1], String.valueOf(BACKGROUND_IMAGE_STR.length()*3/4), bgImgArray[0], accessToken);
-							JSONObject obj = JSONObject.parseObject(bgReStr);
+							JSONObject obj = JSON.parseObject(bgReStr);
 							bgImgUrl = obj.get("url").toString();
 						}
 						//组装post数据
@@ -364,7 +362,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						
 						String result = CommonUtil.WxPOST(url, postJsonObj.toJSONString(), "UTF-8");
 						
-						JSONObject createCard = JSONObject.parseObject(result);
+						JSONObject createCard = JSON.parseObject(result);
 						
 						System.out.println(createCard.containsKey("errcode")+"code"+createCard.getInteger("errcode"));
 						if(createCard.containsKey("errcode")&&createCard.getInteger("errcode").intValue() == 40100){
@@ -458,7 +456,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 					
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					
@@ -495,7 +493,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 					String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 					logger.info("redis日志:删除会员卡userJson"+userJson);
-					JSONObject userObj = JSONObject.parseObject(userJson);
+					JSONObject userObj = JSON.parseObject(userJson);
 				/*	根据ID查询会员卡信息*/
 					map.put("VCARD_PK",map.get("VCARD_ID"));
 					map.put("sqlMapId", "selectVipCardById");
@@ -517,7 +515,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					}
 					url = url.replace("ACCESS_TOKEN", accessToken);
 					String result = CommonUtil.WxPOST(url, cardJsonObj.toJSONString(), "UTF-8");
-					JSONObject deleteCardResult = JSONObject.parseObject(result);
+					JSONObject deleteCardResult = JSON.parseObject(result);
 					if(deleteCardResult.containsKey("errcode")&&deleteCardResult.getInteger("errcode").intValue() != 0){
 						output("9999", "删除失败");
 						return;

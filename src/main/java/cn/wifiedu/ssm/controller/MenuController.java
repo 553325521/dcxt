@@ -20,7 +20,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -77,7 +76,7 @@ public class MenuController extends BaseController {
 		try {
 			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 
 			Map<String, Object> map = getParameterMap();
 			map.put("FK_APP", userObj.getString("FK_APP"));
@@ -104,7 +103,7 @@ public class MenuController extends BaseController {
 
 			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 
 			Map<String, Object> map = getParameterMap();
 			map.put("FK_APP", userObj.getString("FK_APP"));
@@ -177,7 +176,7 @@ public class MenuController extends BaseController {
 		try {
 			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 
 			Map<String, Object> map = getParameterMap();
 			if (map.containsKey("MENU_PLAT")) {
@@ -220,7 +219,7 @@ public class MenuController extends BaseController {
 		try {
 			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 
 			Map<String, Object> postMap = new HashMap<>();
 
@@ -380,7 +379,7 @@ public class MenuController extends BaseController {
 		try {
 			String usertoken = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + usertoken);
-			JSONObject userObj = JSONObject.parseObject(userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
 
 			// Map<String, Object> map = getParameterMap();
 			// map.put("SHOP_ID", userObj.getString("FK_SHOP"));
