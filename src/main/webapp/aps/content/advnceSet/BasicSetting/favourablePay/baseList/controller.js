@@ -13,7 +13,7 @@
 							"contentName" : "content"
 						}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
-					$scope.$apply();
+					/*$scope.$apply();*/
 				}
 				
 				// 餐桌区域数据源
@@ -50,16 +50,18 @@
 				//根绝索引删除当前元素
 				$scope.tablesDelete = function(obj){
 					$.confirm("您确定要删除 " + obj.rule_name + " 吗?", "确认删除?", function() {
-				        	
+				        
 						$scope.form.rulePk = obj.preferential_rule_pk;
 						$httpService.post(config.deleteURL, $scope.form).success(function(data) {
 							if (data.code === '0000') {
 								$.toast("删除成功!");
+								//闭合滑块
+					        	$('.slideleft_cell_bd').css('-webkit-transform', 'translateX(0px)');
+					        	$scope.form.rulePk ='';
 								init();
 							} else {
 								
 							}
-							
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
 						});
@@ -89,6 +91,12 @@
 					$httpService.post(config.getBaseInfo, $scope.form).success(function(data) {
 						if (data.code === '0000') {
 							$scope.dataList = data.data;
+							for(var i = 0;i<$scope.dataList.length;i++){
+								var rule = $scope.dataList[i].rule_model;
+								var jsonArray = JSON.parse(rule);
+								$scope.dataList[i].rule_model = jsonArray[0]["YH_WAY"];
+							}
+							console.info($scope.dataList);
 							$scope.$apply();
 						} else {
 							

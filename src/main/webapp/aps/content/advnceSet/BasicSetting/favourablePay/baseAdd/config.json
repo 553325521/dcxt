@@ -3,7 +3,7 @@
 	"viewUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseAdd/template.html",
 	"controllerUrl": "aps/content/advnceSet/BasicSetting/favourablePay/baseAdd/controller.js",
 	"config": {
-		"pageTitle": "优惠买单",
+		"pageTitle": "优惠设置",
 		"saveYouhuimaidan":"json/ShopInfo_saveYouhuimaidan_data.json",
 		"getGoodType":"json/GoodsType_select_loadGoodsTypeListByPID.json"
 	}

@@ -113,7 +113,6 @@
 		where is_use = '0'
 		and fk_user = #{userId}
 	</select>
-	
 	<update id="deleteAllRuleGood" parameterMap="BaseParameterMap">
 		update sc_preferntial_rule_good set 
 			delete_flag = '1'
@@ -121,21 +120,6 @@
 		and delete_flag = '0'
 	</update>
 	
-	<update id="editYouhuimaidan" parameterMap="BaseParameterMap">
-		update sc_preferntial_rule set
-			rule_name = #{rule_name},
-			rule_order = #{rule_order},
-			is_use = #{is_use},
-			rule_model = #{rule_model},
-			remark = #{remark},
-			good_scope = #{good_scope},
-			rule_model_first = #{rule_model_first},
-			rule_model_second = #{rule_model_second},
-			update_by = #{USER_ID},
-			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
-			fk_shop = #{SHOP_ID}
-		where preferential_rule_pk = #{rulePk}
-	</update>
 	
 	<select id="getGoodTypeForRule" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
 		select
@@ -166,8 +150,6 @@
 			rule_model,
 			remark,
 			good_scope,
-			rule_model_first,
-			rule_model_second,
 			create_by,
 			create_time,
 			delete_flag,
@@ -176,6 +158,9 @@
 		where delete_flag = '0'
 		<if test="rulePk != null and rulePk != '' ">
 			AND preferential_rule_pk = #{rulePk}
+		</if>
+		<if test="shopId != null and shopId != '' ">
+			AND fk_shop = #{shopId}
 		</if>
 		<if test="userId != null and userId != '' ">
 			and create_by = #{userId}
@@ -203,6 +188,25 @@
 			'0'
 		)
 	</insert>
+	<!-- 优惠规则编辑时更新排序序号(当序号往前移动变小) -->
+	<update id="updateYHRuleOrderChangeSmall" parameterMap="BaseParameterMap">
+		UPDATE sc_preferntial_rule SET
+		rule_order = rule_order +1
+		WHERE rule_order
+		&lt; #{old_order} AND rule_order &gt;= #{rule_order} AND
+		fk_shop = #{SHOP_ID} AND
+		delete_flag = '0'
+	</update>
+	<!-- 优惠规则编辑时更新排序序号(当序号往前移动变大) -->
+	<update id="updateYHRuleOrderChangeLarge" parameterMap="BaseParameterMap">
+		UPDATE sc_preferntial_rule SET
+		rule_order = rule_order -1
+		WHERE rule_order
+		&lt;= #{rule_order} AND rule_order &gt;
+		#{old_order} AND
+		fk_shop = #{SHOP_ID} AND
+		delete_flag = '0'
+	</update>
 	
 	<insert id="saveYouhuimaidan" parameterMap="BaseParameterMap">
 		insert into sc_preferntial_rule
@@ -214,8 +218,6 @@
 			rule_model,
 			remark,
 			good_scope,
-			rule_model_first,
-			rule_model_second,
 			create_by,
 			create_time,
 			delete_flag,
@@ -227,18 +229,43 @@
 			#{rule_name},
 			#{rule_order},
 			#{is_use},
-			#{rule_model},
+			#{yh_array},
 			#{remark},
-			#{good_scope},
-			#{rule_model_first},
-			#{rule_model_second},
+			#{goods_area},
 			#{USER_ID},
 			date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
 			'0',
 			#{SHOP_ID}
 		)
 	</insert>
+	<update id="editYouhuimaidan" parameterMap="BaseParameterMap">
+		update sc_preferntial_rule set
+			rule_name = #{rule_name},
+			rule_order = #{rule_order},
+			is_use = #{is_use},
+			rule_model = #{yh_array},
+			remark = #{remark},
+			good_scope = #{goods_area},
+			update_by = #{USER_ID},
+			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
+			fk_shop = #{SHOP_ID}
+		where preferential_rule_pk = #{preferential_rule_pk}
+	</update>
 	
+	<!-- 添加优惠设置的时候排序设置 -->
+	<update id="updateYHOrder" parameterMap="BaseParameterMap">
+		update sc_preferntial_rule
+		set rule_order = rule_order+1
+		where rule_order &gt;= #{rule_order}
+		and delete_flag = '0'
+	</update>
+	<!-- 删除优惠设置的时候排序设置 -->
+	<update id="updateDel_YHOrder" parameterMap="BaseParameterMap">
+		update sc_preferntial_rule
+		set rule_order = rule_order-1
+		where rule_order &gt; #{rule_order}
+		and delete_flag = '0'
+	</update>
 	<update id="saveShopInfo" parameterMap="BaseParameterMap">
 		update sc_shop_info set 
 			SHOP_NAME = #{SHOP_NAME},

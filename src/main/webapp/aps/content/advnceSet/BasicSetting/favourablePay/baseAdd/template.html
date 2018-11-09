@@ -5,9 +5,15 @@
 	.slidelefts .weui_cell_bd{
 		background-color: inherit;
 	}
+	.rule_model_1:before{border:0}
+	.rule_model_1{padding:0}
+	.rule_model_2:before{border:0}
+	.rule_model_2{padding:0}
+	.rule_model_3:before{border:0}
+	.rule_model_3{padding:0}
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/BasicSetting/favourablePay/baseList','')">
+		<div href="#" class="weui-header-left" ng-click="toHref('advnceSet/BasicSetting/favourablePay/baseList','')">
 			<a class="icon icon-109" ></a>
 		</div>
 
@@ -45,9 +51,9 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input ng-click="isUser('1')" class="weui-form-checkbox" name="is_use" id="g1" value="58mm"
-						type="radio" ng-model="form.is_use_1"> <label
-						for="g1"> <i class="weui-icon-radio icon-checkbox-self"
+					<input  class="weui-form-checkbox" name="is_use" id="g1" value="1"
+						type="radio" ng-model="form.is_use"> 
+						<label for="g1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
 							<p>是</p>
@@ -56,8 +62,8 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input ng-click="isUser('0')" class="weui-form-checkbox" name="is_use" id="g2" value="80mm"
-						type="radio" ng-model="form.is_use_2"> <label
+					<input  class="weui-form-checkbox" name="is_use" id="g2" value="0"
+						type="radio" ng-model="form.is_use"> <label
 						for="g2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
@@ -75,8 +81,8 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input ng-click="checkRuleModel('1')" class="weui-form-checkbox" name="rule_model" id="rule_model_1" value="58mm"
-						type="radio" ng-model="form.yhfs_zkyh"> <label
+					<input  class="weui-form-checkbox" name="rule_model" id="rule_model_1" value="折扣优惠"
+						type="radio" ng-model="form.yh_way"> <label
 						for="rule_model_1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
@@ -86,8 +92,8 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input ng-click="checkRuleModel('2')" class="weui-form-checkbox" name="rule_model" id="rule_model_2" value=""
-						type="radio" ng-model="form.yhfs_gdmj"> <label
+					<input  class="weui-form-checkbox" name="rule_model" id="rule_model_2" value="固定满减"
+						type="radio" ng-model="form.yh_way"> <label
 						for="rule_model_2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
@@ -97,8 +103,8 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input ng-click="checkRuleModel('3')" class="weui-form-checkbox" name="rule_model" id="rule_model_3" value=""
-						type="radio" ng-model="form.yhfs_sjmj"> <label
+					<input  class="weui-form-checkbox" name="rule_model" id="rule_model_3" value="随机满减"
+						type="radio" ng-model="form.yh_way"> <label
 						for="rule_model_3"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">
@@ -111,81 +117,110 @@
 	</div>
 	
 	<div class="weui_cell " style="background-color:;width:46%;height:44px;float:left;margin-left:2%;padding:0">
-			 <div class="weui_cell_bd"><label class="weui_label label">金额范围</label></div>
+			 <div class="weui_cell_bd" style="margin-left:35%;"><label class="weui_label label">金额范围</label></div>
 		</div>
 		 <div class="weui_cell " style="background-color:;height:44px;margin-right:2%;padding:0">
-                <div class="weui_cell_hd"><label class="weui_label label">优惠范围</label></div>
-                <div class="weui_cell_bd" style="margin-left:20%">
-                	<!-- <i class="icon-plus-sign" style="color:#04be02"></i> -->
+                <div class="weui_cell_hd" style="margin-left: 20%;"><label class="weui_label label">优惠范围</label></div>
+                <div class="weui_cell_bd" ng-click="add()" style="margin-left:20%">
+                	<i class="icon-plus-sign" style="color:#04be02"></i>
                 </div>
          </div>
-        <div class="weui_cell rule_model_1" style="width:40%;height:44px;float:left;padding-right:0">
+       	<div id="zk_yh" class="weui_cell" ng-show="zk_yh" ng-repeat="item in zkyh_array track by $index">
+       		 <div class="weui_cell rule_model_1" style="width:40%;height:44px;float:left;padding-right:0">
+				<div class="weui_cell_bd" style="float: left">
+					<label style="width:45px" class="weui_label label label-input">消费</label>
+				</div>
+				<div class="weui_cell_bd" style="float: left">
+					<input ng-model="item.zk_smallmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
+				</div>
+				<div class="weui_cell_bd" style="float:left">—</div>
+				<div class="weui_cell_bd" style="float: left">
+					<input ng-model="item.zk_bigmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
+				</div>
+				<div class="weui_cell_bd" style="float: left">
+					<label style="width:45px" class="weui_label label">元,</label>
+				</div>
+			</div>
+			 <div class="weui_cell rule_model_1" style="width:45%;height:44px;padding-left:0">
+	            <div class="weui_cell_bd" style="float: left;">
+					<label style="width:85px" class="weui_label label label-input">折扣优惠</label>
+				</div>
+				<div class="weui_cell_bd" style="float: left">
+					<input ng-model="item.zk_discount" class="weui_input label-input" style="width:40px" type="text" value="" >
+				</div>
+				<div class="weui_cell_bd" style="float: left"> 
+					<label style="width:45px" class="weui_label label">折</label>
+				</div>
+				<div class="weui_cell_bd" style="float: left" ng-click="del($index)">
+					<label style="font-size:17px;" class="weui_label label"><i  class="icon-trash" style="color:#04be02"></i></label>
+				</div>
+	         </div>
+       	</div>
+         <div id="gdmj" class="weui_cell" ng-show="gdmj" ng-repeat="item in gd_array track by $index">
+         	<div class="weui_cell rule_model_2" style="width:40%;height:44px;float:left;padding-right:0">
 			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">消费</label>
+				<label style="width:45px" class="weui_label label label-input">消费</label>
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<input ng-model="form.yh_zkxf" class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+				<input ng-model="item.gd_smallmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float:left">—</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input ng-model="item.gd_bigmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">元，</label>
+				<label style="width:45px" class="weui_label label">元,</label>
 			</div>
 		</div>
-		 <div class="weui_cell rule_model_1" style="width:45%;height:44px;">
-                <div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:85px" class="weui_label label">折扣优惠</label>
+		 <div class="weui_cell rule_model_2" style="width:45%;height:44px;padding-left:0">
+            <div class="weui_cell_bd" style="float: left;">
+				<label style="width:75px" class="weui_label label label-input">固定减</label>
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<input ng-model="form.yh_zkyh" class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+				<input ng-model="item.gd_jmoney" class="weui_input label-input" style="width:40px" type="text" value="" >
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">折</label>
+				<label style="width:45px" class="weui_label label">元</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left" ng-click="del($index)">
+				<label style="font-size:17px;" class="weui_label label"><i class="icon-trash" style="color:#04be02"></i></label>
 			</div>
          </div>
-         
-        <div class="weui_cell rule_model_2" style="width:40%;height:44px;float:left;padding-right:0">
+         </div>
+         <div id="sjmj" class="weui_cell" ng-show="sjmj" ng-repeat="item in sj_array track by $index">
+         	 <div class="weui_cell rule_model_3" style="width:40%;height:44px;float:left;padding-right:0">
 			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">消费</label>
+				<label style="width:45px" class="weui_label label label-input">消费</label>
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<input ng-model="form.yh_gdxf" class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+				<input ng-model="item.sj_smallmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float:left">—</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input ng-model="item.sj_bigmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">元，</label>
+				<label style="width:45px" class="weui_label label">元,</label>
 			</div>
 		</div>
-		 <div class="weui_cell rule_model_2" style="width:45%;height:44px;">
-                <div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:85px" class="weui_label label">固定减</label>
+		 <div class="weui_cell rule_model_3" style="width:45%;height:44px;padding-left:0">
+            <div class="weui_cell_bd" style="float: left;">
+				<label style="width:70px" class="weui_label label label-input">随机减</label>
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<input ng-model="form.yh_gdj" class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
+				<input ng-model="item.sj_jsmallmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
+			</div>
+			<div class="weui_cell_bd" style="float:left">—</div>
+			<div class="weui_cell_bd" style="float: left">
+				<input ng-model="item.sj_jbigmoney" class="weui_input label-input" style="width:30px" type="text" value="" >
 			</div>
 			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">元</label>
+				<label style="width:45px" class="weui_label label">元</label>
+			</div>
+			<div class="weui_cell_bd" style="float: left" ng-click="del($index)">
+				<label style="font-size:17px;" class="weui_label label"><i class="icon-trash" style="color:#04be02"></i></label>
 			</div>
          </div>
-         
-         <div class="weui_cell rule_model_3" style="width:40%;height:44px;float:left;padding-right:0">
-			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">消费</label>
-			</div>
-			<div class="weui_cell_bd" style="float: left">
-				<input ng-model="form.yh_sjxf" class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
-			</div>
-			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">元，</label>
-			</div>
-		</div>
-		 <div class="weui_cell rule_model_3" style="width:45%;height:44px;">
-                <div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:85px" class="weui_label label">随机减</label>
-			</div>
-			<div class="weui_cell_bd" style="float: left">
-				<input ng-model="form.yh_sjj" class="weui_input label-input" style="border-bottom: 1px solid #dbdbdb;width:45px" type="text" value="" >
-			</div>
-			<div class="weui_cell_bd" style="float: left">
-				<label style="font-size:90%;width:45px" class="weui_label label">元</label>
-			</div>
          </div>
 
 	<div class="weui_cell">
@@ -195,7 +230,7 @@
 		<div class="weui_cell_bd weui_cell_primary">
 			<div class="weui-form">
 				<div class="weui-form-li iblock li-checkbox-self">
-					<input ng-click="good_scope('0')" class="weui-form-checkbox" name="good_scope" id="good_scope_1" value="0"
+					<input ng-click="good_scope('全部商品')" class="weui-form-checkbox" name="good_scope" id="good_scope_1" value="全部商品"
 						type="radio" ng-model="form.good_scope"> <label
 						for="good_scope_1"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
@@ -206,7 +241,7 @@
 				</div>
 				<div class="weui-form-li iblock li-checkbox-self"
 					style="margin-left: 10px;">
-					<input ng-click="good_scope('1')" class="weui-form-checkbox" name="good_scope" id="good_scope_2" value="1"
+					<input ng-click="good_scope('部分商品')" class="weui-form-checkbox" name="good_scope" id="good_scope_2" value="部分商品"
 						type="radio" ng-model="form.good_scope"> <label
 						for="good_scope_2"> <i class="weui-icon-radio icon-checkbox-self"
 						style="margin: 0;"></i>
@@ -219,7 +254,7 @@
 		</div>
 	</div>		
 
-<div class="weui_cell_bd goodType">
+	<div class="weui_cell_bd goodType">
 				<div class="weui-form">
 					<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10px;"
 						ng-repeat="item in goodType">
@@ -237,17 +272,16 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-				<div class="weui_cell">
+			<div class="weui_cell">
 					<div class="weui_cell_hd">
 						<label class="weui_label label">备注说明</label>
 					</div>
 					<div class="weui_cell_bd weui_cell_primary">
-						<textarea class="weui_textarea" ng-change="remarkChange()" ng-model="form.remark" placeholder="1000字以内的图文说明" rows="3"></textarea>
-			            <div class="weui_textarea_counter"><span>{{remarkNum}}</span>/1000</div>
+						<textarea class="weui_textarea"  ng-model="form.remark" placeholder="1000字以内的图文说明" rows="3"></textarea>
+			            <div class="weui_textarea_counter"><span>{{form.remark.length}}</span>/1000</div>
 					</div>
 				</div>
+		</div>
 			</div>
 		</div>
 	</div>

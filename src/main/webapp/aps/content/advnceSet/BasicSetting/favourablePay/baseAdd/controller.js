@@ -3,9 +3,73 @@
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
+				
+				scope = $scope;
+				
 				$scope.pageTitle = config.pageTitle;
+				
+				//初始化折扣、固减、随减显示
+				scope.zk_yh = "True";
+				scope.gdmj = "False";
+				scope.sjmj = "False";
+				
 				$scope.form = {};
-				$scope.form.goodType = new Array();
+				//初始化备注说明
+				scope.form.remark = "";
+				//是否启用初始化
+				$scope.form.is_use = 0;
+				//优惠方式初始化
+				$scope.form.yh_way = "折扣优惠";
+				//当优惠方式为折扣优惠的数组
+				scope.zkyh_array = [{"zk_smallmoney":"","zk_bigmoney":"","zk_discount":""}];
+				//当优惠方式为固定满减的数组
+				scope.gd_array = [{"gd_smallmoney":"","gd_bigmoney":"","gd_jmoney":""}];
+				//当优惠方式为随机满减的数组
+				scope.sj_array = [{"sj_smallmoney":"","sj_bigmoney":"","sj_jsmallmoney":"","sj_jbigmoney":""}];
+				//监听优惠方式选择值
+				$scope.$watch('form.yh_way', function(newValue, oldValue) {
+					if (newValue === '折扣优惠') {
+						scope.zk_yh = "True";
+						scope.gdmj = "False";
+						scope.sjmj = "False";
+						scope.zkyh_array = [{"zk_smallmoney":"","zk_bigmoney":"","zk_discount":""}];
+					}else if(newValue === '固定满减'){
+						scope.zk_yh = "False";
+						scope.gdmj = "True";
+						scope.sjmj = "False";
+						scope.gd_array = [{"gd_smallmoney":"","gd_bigmoney":"","gd_jmoney":""}];
+					}else{
+						scope.zk_yh = "False";
+						scope.gdmj = "False";
+						scope.sjmj = "True";
+						scope.sj_array = [{"sj_smallmoney":"","sj_bigmoney":"","sj_jsmallmoney":"","sj_jbigmoney":""}];
+					}
+				})
+				//添加优惠方式的元素
+				scope.add = function(){
+					if(scope.form.yh_way == '折扣优惠'){
+						scope.zkyh_array.push({"zk_smallmoney":"","zk_bigmoney":"","zk_discount":""});
+					}else if(scope.form.yh_way == '固定满减'){
+						scope.gd_array.push({"gd_smallmoney":"","gd_bigmoney":"","gd_jmoney":""})
+					}else{
+						scope.sj_array.push({"sj_smallmoney":"","sj_bigmoney":"","sj_jsmallmoney":"","sj_jbigmoney":""})
+					}
+				}
+				scope.aa = function(){
+					console.info("aa");
+				}
+				//删除优惠方式的元素
+				scope.del = function(index){
+					if(scope.form.yh_way == '折扣优惠'){
+						scope.zkyh_array.splice(index,1);
+					}else if(scope.form.yh_way == '固定满减'){
+						scope.gd_array.splice(index,1);
+					}else{
+						scope.sj_array.splice(index,1);
+					}
+				}
+				
+				$scope.form.goodType = [];
 				
 				$scope.toHref = function(path) {
 					var m2 = {
@@ -27,9 +91,9 @@
 				}
 				
 				$scope.good_scope = function(pa){
-					if(pa == "0"){
+					if(pa == "全部商品"){
 						$(".goodType").hide();
-						$scope.form.goodType = $scope.goodType.slice(0);
+						$scope.form.goodType = [];
 					}else{
 						$(".goodType").show();
 						$scope.form.goodType = [];
@@ -37,14 +101,27 @@
 				}
 				
 				$scope.doAdd = function(){
-					$scope.form.goodType = JSON.stringify($scope.form.goodType);
+					//初始化最后的优惠方式数组
+					scope.form.yh_array = [];
+					//初始化最后的商品范围数组
+					scope.form.goods_area = [];
+					scope.form.yh_array.push({"YH_WAY":scope.form.yh_way});
+					scope.form.goods_area.push({"GOODS_AREA":scope.form.good_scope});
+					scope.form.goods_area.push({"AREA_DETAIL":scope.form.goodType});
+					if(scope.form.yh_way == '折扣优惠'){
+						scope.form.yh_array.push({"WAY_DETAIL":scope.zkyh_array});
+					}else if(scope.form.yh_way == '固定满减'){
+						scope.form.yh_array.push({"WAY_DETAIL":scope.gd_array});
+					}else{
+						scope.form.yh_array.push({"WAY_DETAIL":scope.sj_array});
+					}
+					scope.form.goods_area = JSON.stringify($scope.form.goods_area);
+					$scope.form.yh_array = JSON.stringify($scope.form.yh_array);
+					
 					console.log($scope.form);
-
+					
 					$httpService.post(config.saveYouhuimaidan, $scope.form).success(function(data) {
-						console.log(data.code === '0000');
 						if (data.code === '0000') {
-							//alert("添加成功");
-							$.toast("删除成功!");
 							var m2 = {
 									"url" : "aps/content/advnceSet/BasicSetting/favourablePay/baseList/config.json",
 									"contentName" : "content"
@@ -54,7 +131,6 @@
 							//$scope.toHref("advnceSet/BasicSetting/favourablePay/baseList");
 							//$scope.reset();
 						} else {
-							//alert("请重新填写完整");
 							$scope.form = {};
 						}
 						
@@ -63,16 +139,8 @@
 					});
 				}
 				
-				$scope.isUser = function(pa){
-					$scope.form.is_use = pa;
-				}
-				
 				$scope.reset = function(){
 					$scope.form = {};
-				}
-				
-				$scope.remarkChange = function(){
-					$scope.remarkNum = $scope.form.remark.length;
 				}
 				
 				$scope.checkRuleModel = function(pa){
@@ -100,7 +168,7 @@
 							for(var i=0; i<$scope.goodType.length; i++){
 								$scope.goodType[i].checked = false;
 							}
-							$scope.good_scope("0");
+							$scope.good_scope("全部商品");
 							$scope.$apply();
 						} else {
 							
@@ -112,97 +180,8 @@
 				}
 				
 				var init = function(){
-					console.log("baseAdd");
-					
-					// 打印类型数据源
-					$scope.printer_level = [
-						{
-							value : 1,
-							name : '周一 '
-						},
-						{
-							value : 2,
-							name : '周二'
-						},
-						{
-							value : 3,
-							name : '周三 '
-						},
-						{
-							value : 4,
-							name : '周四 '
-						},
-						{
-							value : 5,
-							name : '周五 '
-						},
-						{
-							value : 6,
-							name : '周六 '
-						},
-						{
-							value : 7,
-							name : '周日 '
-						}
-					];
-					
-					$scope.printer_level_2 = [
-						{
-							value : 1,
-							name : '上午 '
-						},
-						{
-							value : 2,
-							name : '中午'
-						},
-						{
-							value : 3,
-							name : '晚上 '
-						}
-					];
-					
-					$("#SHOP_TYPE_1").picker({
-						title : "优惠方式",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '请选择优惠方式','啊啊啊', '啥啥啥','对对对' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								
-							}
-						}
-					});
-					
-					$("#SHOP_TYPE_2").picker({
-						title : "适用门店",
-						toolbarCloseText : '确定',
-						cols : [
-							{
-								textAlign : 'center',
-								values : [ '请选择适用门店','啊啊啊', '啥啥啥','对对对' ]
-							}
-						],
-						onChange : function(e) {
-							if (e != undefined && e.value[0] != undefined) {
-								var value = e.value[0]
-								
-							}
-						}
-					});
-					
-					$scope.form.SHOP_TYPE_1 = "请选择优惠方式";
-					$scope.form.SHOP_TYPE_1_VALUE = '1';
-					
-					$scope.form.SHOP_TYPE_2 = "请选择适用门店";
-					$scope.form.SHOP_TYPE_2_VALUE = '1';
-					$scope.form.good_scope = "0";
+					$scope.form.good_scope = "全部商品";
 					$scope.checkRuleModel('1');
-					
 					getGoodType();
 					
 				}

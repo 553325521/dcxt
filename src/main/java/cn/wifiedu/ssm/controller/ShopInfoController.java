@@ -18,10 +18,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.PictureUtil;
@@ -82,7 +84,7 @@ public class ShopInfoController extends BaseController {
 	public void editYouhuimaidan() throws Exception {
 		Map<String, Object> map = getParameterMap();
 		
-		String rulePk = map.get("rulePk").toString();
+		String rulePk = map.get("preferential_rule_pk").toString();
 		
 		//String token = "o40NVwcZRjgFCE5GSb9JKb6luzb4";
 		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
@@ -92,37 +94,75 @@ public class ShopInfoController extends BaseController {
 		map.put("SHOP_ID", userObj.get("FK_SHOP"));
 		map.put("USER_ID", userObj.get("USER_PK")); 
 		map.put("ROLE_ID", userObj.get("FK_ROLE")); 
-		
-		if(map.get("rule_model").toString().equals("1")) {
-			map.put("rule_model_first", map.get("yh_zkxf").toString());
-			map.put("rule_model_second", map.get("yh_zkyh").toString());
-		}else if(map.get("rule_model").toString().equals("2")) {
-			map.put("rule_model_first", map.get("yh_gdxf").toString());
-			map.put("rule_model_second", map.get("yh_gdj").toString());
-		}else if(map.get("rule_model").toString().equals("3")) {
-			map.put("rule_model_first", map.get("yh_sjxf").toString());
-			map.put("rule_model_second", map.get("yh_sjj").toString());
+		map.put("shopId", userObj.get("FK_SHOP"));
+		map.put("sqlMapId", "getfavourBaseInfo");
+		List<Map<String,Object>> ruleList = openService.queryForList(map);
+		int currentOrder = Integer.parseInt(map.get("rule_order").toString());
+		int oldOrder = Integer.parseInt(map.get("old_order").toString());
+		if(oldOrder < currentOrder){
+			map.put("sqlMapId", "updateYHRuleOrderChangeLarge");
+			openService.update(map);
+		}else{
+			map.put("sqlMapId", "updateYHRuleOrderChangeSmall");
+			openService.update(map);
 		}
-		
+		//拿到最大的order
+		int bigOrder = Integer.parseInt(ruleList.get(ruleList.size()-1).get("rule_order").toString());
+		//用户设置的order
+		int userOrder = Integer.parseInt(map.get("rule_order").toString());
+		//如果用户设置的order>数据库中的最大的标号
+		if(userOrder >= bigOrder+1){
+			map.put("rule_order",bigOrder+1);
+		}
 		map.put("sqlMapId", "editYouhuimaidan");
-		openService.update(map);
+		boolean b = openService.update(map);
 		
 		map.put("fk_preferential_rule", rulePk);
 		
 		map.put("sqlMapId", "deleteAllRuleGood");
 		if(openService.update(map)) {
-			List<Map<String, Object>> list = toListMap(map.get("goodType").toString());
-			
-			for(int i=0; i<list.size(); i++) {
-				map.put("sqlMapId", "saveYouhuimaidanGood");
-				map.put("fk_goodtype", list.get(i).get("GTYPE_PK").toString());
-				openService.insert(map);
+			String goodArea = map.get("goods_area").toString();
+			JSONArray areaArray = JSONObject.parseArray(goodArea);
+			if(areaArray.getJSONObject(0).getString("GOODS_AREA").equals("部分商品")){
+				map.put("fk_preferential_rule", rulePk);
+				JSONArray goodsArray = areaArray.getJSONObject(1).getJSONArray("AREA_DETAIL");
+				for(int i = 0;i < goodsArray.size();i++){
+					map.put("sqlMapId", "saveYouhuimaidanGood");
+					map.put("fk_goodtype",goodsArray.getJSONObject(i).getString("GTYPE_PK"));
+					openService.insert(map);
+				}
 			}
 		}
 		output("success");
 	}
-	
-	
+	/**
+	* <p>Title: deleteYouhuimaidan</p>
+	* <p>Description: 删除优惠规则</p>
+	*/
+	@RequestMapping("/ShopInfo_deleteFavourBaseInfo")
+	public void deleteYouhuimaidan(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "getfavourBaseInfo");
+			List<Map<String,Object>> list =openService.queryForList(map);
+			map.put("rule_order",list.get(0).get("rule_order"));
+			map.put("sqlMapId", "updateDel_YHOrder");
+			openService.update(map);
+			map.put("sqlMapId", "deleteFavourBaseInfo");
+			openService.update(map);
+			map.put("sqlMapId", "deleteAllRuleGood");
+			openService.update(map);
+			output("0000", "delete success");
+			
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	/**
 	 * 优惠买单设置
 	 * @throws Exception 
@@ -135,36 +175,42 @@ public class ShopInfoController extends BaseController {
 		String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 		String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 		JSONObject userObj = JSON.parseObject(userJson);
-		
 		map.put("SHOP_ID", userObj.get("FK_SHOP"));
 		map.put("USER_ID", userObj.get("USER_PK")); 
-		map.put("ROLE_ID", userObj.get("FK_ROLE")); 
-		
-		if(map.get("rule_model").toString().equals("1")) {
-			map.put("rule_model_first", map.get("yh_zkxf").toString());
-			map.put("rule_model_second", map.get("yh_zkyh").toString());
-		}else if(map.get("rule_model").toString().equals("2")) {
-			map.put("rule_model_first", map.get("yh_gdxf").toString());
-			map.put("rule_model_second", map.get("yh_gdj").toString());
-		}else if(map.get("rule_model").toString().equals("3")) {
-			map.put("rule_model_first", map.get("yh_sjxf").toString());
-			map.put("rule_model_second", map.get("yh_sjj").toString());
+		map.put("ROLE_ID", userObj.get("FK_ROLE"));
+		map.put("shopId", userObj.get("FK_SHOP"));
+		map.put("sqlMapId", "getfavourBaseInfo");
+		List<Map<String,Object>> ruleList = openService.queryForList(map);
+		//数据库没有优惠规则记录
+		if(ruleList.size() == 0){
+			map.put("rule_order",1);
+		}else{
+			//拿到最大的order
+			int bigOrder = Integer.parseInt(ruleList.get(ruleList.size()-1).get("rule_order").toString());
+			//用户设置的order
+			int userOrder = Integer.parseInt(map.get("rule_order").toString());
+			//如果用户设置的order>数据库中的最大的标号
+			if(userOrder >= bigOrder+1){
+				map.put("rule_order",bigOrder+1);
+			}else{
+				map.put("sqlMapId", "updateYHOrder");
+				openService.update(map);
+			}
 		}
-		
 		map.put("sqlMapId", "saveYouhuimaidan");
 		String rulePk = openService.insert(map);
-		
-		map.put("fk_preferential_rule", rulePk);
-		
-		List<Map<String, Object>> list = toListMap(map.get("goodType").toString());
-		
-		for(int i=0; i<list.size(); i++) {
-			map.put("sqlMapId", "saveYouhuimaidanGood");
-			map.put("fk_goodtype", list.get(i).get("GTYPE_PK").toString());
-			openService.insert(map);
+		String goodArea = map.get("goods_area").toString();
+		JSONArray areaArray = JSONObject.parseArray(goodArea);
+		if(areaArray.getJSONObject(0).getString("GOODS_AREA").equals("部分商品")){
+			map.put("fk_preferential_rule", rulePk);
+			JSONArray goodsArray = areaArray.getJSONObject(1).getJSONArray("AREA_DETAIL");
+			for(int i = 0;i < goodsArray.size();i++){
+				map.put("sqlMapId", "saveYouhuimaidanGood");
+				map.put("fk_goodtype",goodsArray.getJSONObject(i).getString("GTYPE_PK"));
+				openService.insert(map);
+			}
 		}
-		
-		output("success");
+		output("0000","success");
 	}
 	
 	

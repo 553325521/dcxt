@@ -6,6 +6,6 @@
 		"pageTitle": "优惠设置",
 		"getBaseInfo":"json/Open_queryForList_getfavourBaseInfo.json",
 		"getUserInfo":"json/ShopInfo_getUserInfo_data.json",
-		"deleteURL":"json/Open_update_deleteFavourBaseInfo.json"
+		"deleteURL":"json/ShopInfo_deleteFavourBaseInfo.json"
 	}
 }
