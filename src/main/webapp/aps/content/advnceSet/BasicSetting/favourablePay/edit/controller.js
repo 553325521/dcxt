@@ -1,9 +1,10 @@
 (function() {
-	define(['zepto','slideleft','jqueryweui'], function() {
+	define(['jqueryweui'], function() {
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
 				$scope.pageTitle = config.pageTitle;
+				scope = $scope;
 				$scope.form = {};
 				$scope.form.favourPK = params.pk;
 				var baseStr = new Array;
@@ -16,6 +17,14 @@
 					getUserInfo();
 				}
 				
+				$scope.toHref = function(path) {
+					var m2 = {
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
 				$scope.remarkChange = function(){
 					$scope.remarkLength = $scope.form.remark.length;
 				}
@@ -25,18 +34,15 @@
 					$scope.form.end_time = $("#end_time").val();
 					$scope.form.time_week = "";
 					$scope.form.time_time = "";
-					for(var i=0; i<$scope.printer_level.length; i++){
-						if($scope.printer_level[i].checked == true){
-							$scope.form.time_week = $scope.form.time_week + "," + $scope.printer_level[i].value;
-						}
+					//初始化有效时段数组
+					scope.form.timePeriodArray = [];
+					for(var i=0; i<$scope.form.weekList.length; i++){
+						$scope.form.time_week = $scope.form.time_week + "," + $scope.form.weekList[i].value;
 					}
 					$scope.form.time_week = $scope.form.time_week.substring(1,$scope.form.time_week.length);
 					
-					for(var i=0; i<$scope.printer_level_2.length; i++){
-						if($scope.printer_level_2[i].checked == true){
-							$scope.form.time_time = $scope.form.time_time + "," + $scope.printer_level_2[i].value;
-						}
-						$scope.form.time_time = $scope.form.time_time + "," + $scope.printer_level_2[i].value;
+					for(var i=0; i<$scope.form.timeList.length; i++){
+						$scope.form.time_time = $scope.form.time_time + "," + $scope.form.timeList[i].value;
 					}
 					$scope.form.time_time = $scope.form.time_time.substring(1,$scope.form.time_time.length);
 					
@@ -45,12 +51,16 @@
 							$scope.form.fk_rule = $scope.form.baseRule[i].preferential_rule_pk;
 						}
 					}
-					
-					for(var i=0; i<$scope.form.myShop.length; i++){
-						if($("#SHOP_TYPE_2").val() == $scope.form.myShop[i].shop_name){
-							$scope.form.fk_shop = $scope.form.myShop[i].fk_shop;
-						}
+					if(scope.form.period == 0){
+						scope.form.timePeriodArray.push({"periodName":"不限时段"});
+					}else if(scope.form.period == 1){
+						scope.form.timePeriodArray.push({"periodName":"限星期"});
+						scope.form.timePeriodArray.push({"timeDetail":$scope.form.time_week});
+					}else{
+						scope.form.timePeriodArray.push({"periodName":"限时段"});
+						scope.form.timePeriodArray.push({"timeDetail":$scope.form.time_time});
 					}
+					scope.form.timePeriodStr = JSON.stringify(scope.form.timePeriodArray);
 					console.log($scope.form);
 					$httpService.post(config.editURL, $scope.form).success(function(data) {
 						if (data.code === '0000') {
@@ -91,7 +101,40 @@
 						
 					}
 			}
-				
+				//初始化日期样式
+				function initDateStyle(){
+					$("#start_time").datetimePicker({title:"选择日期", toolbarCloseText : '确定',m:1});
+					$("#end_time").datetimePicker({title:"选择日期",toolbarCloseText : '确定',m:1});
+				}
+				initDateStyle();
+				/*初始化商铺选择数据源*/
+				scope.shopArray = [];
+				function comboboxInit() {
+						$httpService.post(config.loadShopDataURL,scope.form).success(function(data){
+							console.info(data.data);
+							for(var i = 0;i < data.data.length;i++){
+								scope.shopArray.push({title:data.data[i].SHOP_NAME,value:data.data[i].FK_SHOP});
+								/*scope.shopArray.push({title:'测试',value:'fdsf1123'});*/
+							}
+							scope.$apply();
+							console.info("shopArray:"+scope.shopArray);
+							$("#d3").select({
+						        title: "选择门店",
+						        multi: true,
+						        split:',',
+						        closeText:'完成',
+						        items:scope.shopArray,
+						        onChange: function(d) {
+						        	scope.form.SHOPID = d.values;
+						        	scope.form.SHOP_NAME = d.titles;
+						        	scope.$apply();
+						        }
+						      });
+					    }).error(function(data){
+					    	loggingService.info('获取测试信息出错');
+					    });
+				}
+				comboboxInit();
 				$scope.xianTime = function(pa){
 					console.log(pa);
 					if(pa == "0"){
@@ -116,49 +159,49 @@
 				}
 				
 				var init = function(){
-					// 
+					// 打印类型数据源
 					$scope.printer_level = [
 						{
-							value : 1,
+							value : '周一 ',
 							name : '周一 '
 						},
 						{
-							value : 2,
+							value : '周二',
 							name : '周二'
 						},
 						{
-							value : 3,
+							value : '周三 ',
 							name : '周三 '
 						},
 						{
-							value : 4,
+							value : '周四 ',
 							name : '周四 '
 						},
 						{
-							value : 5,
+							value : '周五 ',
 							name : '周五 '
 						},
 						{
-							value : 6,
+							value :'周六 ',
 							name : '周六 '
 						},
 						{
-							value : 7,
+							value : '周日 ',
 							name : '周日 '
 						}
 					];
 					
 					$scope.printer_level_2 = [
 						{
-							value : 1,
+							value : '上午 ',
 							name : '上午 '
 						},
 						{
-							value : 2,
-							name : '中午'
+							value : '上午 ',
+							name : '上午 '
 						},
 						{
-							value : 3,
+							value : '晚上 ',
 							name : '晚上 '
 						}
 					];
@@ -175,6 +218,7 @@
 				var getListInfo = function(){
 					$httpService.post(config.getFavourListURL, $scope.form).success(function(data) {
 						if (data.code === '0000') {
+							console.info(data.data);
 							$scope.form = data.data[0];
 							$scope.form.favourPK = params.pk;
 							$scope.form.jifen = data.data[0].points;
@@ -182,39 +226,44 @@
 							$("#SHOP_TYPE_1").val($scope.form.rule_name);
 							$("#start_time").val($scope.form.start_time);
 							$("#end_time").val($scope.form.end_time);
+							var periodArray = JSON.parse($scope.form.period);
+							console.info("array");
+							console.info(periodArray);
+							var periodName = periodArray[0].periodName;
+							$scope.form.weekList = [];
+							$scope.form.timeList = [];
+							if(periodName == "不限时段"){
+								scope.form.period = "0";
+							}else if(periodName == "限星期"){
+								scope.form.period = "1";
+								var weekStr = periodArray[1].timeDetail.split(",");
+								for(var i=0; i<$scope.printer_level.length; i++){
+									for(var j=0; j<weekStr.length; j++){
+										if($scope.printer_level[i].value == weekStr[j]){
+											$scope.printer_level[i].checked = true;
+											$scope.form.weekList.push($scope.printer_level[i]);
+										}
+									}
+								}
+							}else{
+								scope.form.period = "2";
+								var timeStr = periodArray[1].timeDetail.split(",");
+								for(var i=0; i<$scope.printer_level_2.length; i++){
+									for(var j=0; j<timeStr.length; j++){
+										if($scope.printer_level_2[i].value == timeStr[j]){
+											$scope.printer_level_2[i].checked = true;
+											$scope.form.timeList.push($scope.printer_level_2[i]);
+										}
+									}
+								}
+							}
 							$scope.form.baseRule = $scope.baseRule;
-							$scope.form.myShop = $scope.myShop;
+							//$scope.form.myShop = $scope.myShop;
 							if($scope.form.remark != undefined){
 								$scope.remarkLength = $scope.form.remark.length;
 							}
 
 							$scope.form.userId = $scope.userId;
-							
-							$scope.form.weekList = new Array;
-							$scope.form.timeList = new Array;
-							
-							if($scope.form.period_week != undefined){
-								var weekStr = $scope.form.period_week.split(",");
-								for(var i=0; i<$scope.printer_level.length; i++){
-									for(var j=0; j<weekStr.length; j++){
-										if($scope.printer_level[i].value == weekStr[j]){
-											$scope.printer_level[i].checked = true;
-										}
-									}
-								}
-							}
-							
-							if($scope.form.period_time != undefined){
-								var timeStr = $scope.form.period_time.split(",");
-								for(var i=0; i<$scope.printer_level_2.length; i++){
-									for(var j=0; j<timeStr.length; j++){
-										if($scope.printer_level_2[i].value == timeStr[j]){
-											$scope.printer_level_2[i].checked = true;
-										}
-									}
-								}
-							}
-							
 							$scope.xianTime($scope.form.period);
 							
 							$scope.$apply();
@@ -225,46 +274,6 @@
 						loggingService.info('获取测试信息出错');
 					});
 				}
-				
-				var getMyShop = function(){
-					$httpService.post(config.getMyShop, $scope.form).success(function(data) {
-						if (data.code === '0000') {
-							$scope.form.myShop = data.data;
-							$scope.myShop = data.data;
-							for(var i=0; i<$scope.form.myShop.length; i++){
-								console.log($scope.form.myShop[i].shop_name);
-								shopStr.push($scope.form.myShop[i].shop_name);
-								console.log(shopStr);
-							}
-							console.log($scope.form);
-							console.log(shopStr);
-							$("#SHOP_TYPE_2").picker({
-								title : "适用门店",
-								toolbarCloseText : '确定',
-								cols : [
-									{
-										textAlign : 'center',
-										values : shopStr
-									}
-								],
-								onChange : function(e) {
-									if (e != undefined && e.value[0] != undefined) {
-										var value = e.value[0]
-										
-									}
-								}
-							});
-							
-							$scope.$apply();
-						} else {
-							
-						}
-						
-					}).error(function(data) {
-						loggingService.info('获取测试信息出错');
-					});
-				}
-				
 				var getYouHui = function(){
 					$httpService.post(config.getBaseInfo, $scope.form).success(function(data) {
 						if (data.code === '0000') {
@@ -311,7 +320,6 @@
 							$scope.userId = $scope.form.userInfo.userId;
 							//$scope.form.shopId = $scope.form.userInfo.shopId;
 							console.log($scope.form);
-							getMyShop();
 							getYouHui();
 							init();
 							getListInfo();

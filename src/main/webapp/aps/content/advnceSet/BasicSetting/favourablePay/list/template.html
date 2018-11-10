@@ -31,13 +31,11 @@
 					<font size="0.5" color="#CCCCCC">
 					{{item.actor == 0 ? '所有粉丝' : '仅限会员'}}
 					/
-					{{item.period == 0 ? '不限时段' : ''}}
-					{{item.period == 1 ? '限星期' : ''}}
-					{{item.period == 2 ? '限时段' : ''}}
+					{{item.period}}
 					/
 					{{item.rule_name}}
 					/
-					{{item.good_scope == 0 ? '全部商品' : '部分商品'}}
+					{{item.good_scope}}
 					</font>
 				</div>
 				<div class="weui_cell_bd tablessetting-small-font {{item.status == 0 ? 'tablessetting-red-font' : 'tablessetting-gray-font'}}" >

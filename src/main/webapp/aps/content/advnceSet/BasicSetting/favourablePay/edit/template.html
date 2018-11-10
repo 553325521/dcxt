@@ -7,7 +7,7 @@
 	}
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/BasicSetting/favourablePay/list','')">
+		<div href="#" class="weui-header-left" ng-click="toHref('advnceSet/BasicSetting/favourablePay/list','')">
 			<a class="icon icon-109" ></a>
 		</div>
 
@@ -95,8 +95,9 @@
 				<label class="weui_label label">有效期限</label>
 			</div>
 			<div class="weui_cell_bd weui_cell_primary">
-				<input class="weui_input" id="start_time" style="float: left;width:48%" type="date" value="" />
-				<input class="weui_input" id="end_time" style="float: left;width:48%" type="date" value="" />	
+				<input class="weui_input label-input" id="start_time" style="float: left;width:35%" type="text" ng-model="form.begin_time"  readonly value="" />
+				<div style="float:left;width:5%;padding-left:3%">——</div>
+				<input class="weui_input label-input" id="end_time" style="float: left;width:35%;padding-left: 30px;" ng-model="form.end_time " readonly type="text" value="" />	
 			</div>
 		</div>
 		<div class="weui_cell">
@@ -189,7 +190,7 @@
 			<label class="weui_label label">优惠方式</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			 <input class="weui_input label-input" style="float: right;width: 35%;margin-left: 10px" type="text" id="SHOP_TYPE_1">
+			 <input class="weui_input label-input" style="width: 45%;margin-left: 10px" type="text" id="SHOP_TYPE_1">
 		</div>
 		</div>
 		
@@ -198,7 +199,7 @@
 			<label class="weui_label label">适用门店</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
-			 <input class="weui_input label-input" style="float: right;width: 35%;margin-left: 10px" type="text" id="SHOP_TYPE_2">
+			 <input class="weui_input label tablessetting-label" style="width:100%" type="text" value="" ng-model="form.SHOP_NAME" placeholder="请选择适用门店" id='d3'/>
 		</div>
 		</div>
 		

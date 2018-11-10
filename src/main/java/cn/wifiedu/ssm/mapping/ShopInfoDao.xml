@@ -11,18 +11,15 @@
 			actor = #{actor},
 			start_time = #{start_time},
 			end_time = #{end_time},
-			period = #{period},
-			fk_shop = #{fk_shop},
+			period = #{timePeriodStr},
 			fk_rule = #{fk_rule},
 			points = #{jifen},
 			remark = #{remark},
 			update_by = #{userId},
-			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
-			period_week = #{time_week},
-			period_period = #{time_time}
+			update_time = date_format(NOW(), '%Y-%c-%d %h:%i:%s' )
 		where preferntial_pk = #{favourPK}
 	</update>
-	
+	<!-- 删除优惠买单 -->
 	<update id="delFavour" parameterMap="BaseParameterMap">
 		update sc_preferntial set 
 			delete_flag = '1',
@@ -30,7 +27,13 @@
 			update_by = #{userId}
 		where preferntial_pk = #{favPk}
 	</update>
-	
+	<!-- 删除优惠买单和商铺中间表 -->
+	<update id="delPreferntialShop" parameterMap="BaseParameterMap">
+		update sc_preferntial_shop set 
+			delete_flag = '1'
+		where fk_preferntial = #{favPk}
+	</update>
+	<!-- 查询优惠买单列表 -->
 	<select id="favourList" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
 		select
 			preferntial_pk,
@@ -40,29 +43,27 @@
 			start_time,
 			end_time,
 			period,
-			fk_shop,
 			fk_rule,
 			(select rule_name from sc_preferntial_rule where fk_rule = preferential_rule_pk)rule_name,
 			(select good_scope from sc_preferntial_rule where fk_rule = preferential_rule_pk)good_scope,
-			(select shop_name from sc_shop_info where shop_id = fk_shop)shop_name,
+			<!-- (select shop_name from sc_shop_info where shop_id = fk_shop)shop_name, -->
 			points,
 			remark,
 			create_by,
 			create_time,
-			delete_flag,
-			period_week,
-			period_period
+			delete_flag
 		from sc_preferntial
 		where delete_flag = 0
 		<if test="favourPK != null and favourPK != '' ">
 			AND preferntial_pk = #{favourPK}
 		</if>
-		<if test="userId != null and userId != '' ">
-			and create_by = #{userId}
+		<if test="shopId != null and shopId != '' ">
+			and preferntial_pk in (select fk_preferntial from sc_preferntial_shop where fk_shop = #{shopId} and delete_flag = '0' )
 		</if>
 		order by create_time desc
 	</select>
 	
+	<!-- 插入优惠买单 -->
 	<insert id="saveFavour" parameterMap="BaseParameterMap">
 		insert into sc_preferntial
 		(
@@ -73,15 +74,12 @@
 			start_time,
 			end_time,
 			period,
-			fk_shop,
 			fk_rule,
 			points,
 			remark,
 			create_by,
 			create_time,
-			delete_flag,
-			period_week,
-			period_period
+			delete_flag
 		)
 		values
 		(
@@ -91,19 +89,36 @@
 			#{actor},
 			#{start_time},
 			#{end_time},
-			#{period},
-			#{fk_shop},
+			#{timePeriodStr},
 			#{fk_rule},
 			#{jifen},
 			#{remark},
 			#{userId},
 			date_format(NOW(), '%Y-%c-%d %h:%i:%s' ),
-			'0',
-			#{time_week},
-			#{time_time}
+			'0'
 		)
 	</insert>
-	
+	<!-- 插入优惠买单有关的店铺 -->
+	<insert id="savePreferntialShop" parameterMap="BaseParameterMap">
+		insert into sc_preferntial_shop 
+		(
+			preferntial_shop_pk,
+			fk_preferntial,
+			fk_shop,
+			create_by,
+			create_time,
+			delete_flag
+		)
+		values
+		(
+			#{UUID},
+			#{fk_preferntial},
+			#{fk_shop},
+			#{userId},
+			date_format(NOW(),'%Y-%c-%d %h:%i:%s'),
+			'0'
+		)
+	</insert>
 	<select id="getMyShop" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
 		select
 			fk_shop,

@@ -164,6 +164,105 @@ public class ShopInfoController extends BaseController {
 		
 	}
 	/**
+	* <p>Title: deletePreferntial</p>
+	* <p>Description:删除优惠买单 </p>
+	*/
+	@RequestMapping("/ShopInfo_deletePreferntial")
+	public void deletePreferntial(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "delPreferntialShop");
+			if(openService.update(map)){
+				map.put("sqlMapId", "delFavour");
+				openService.update(map);
+				output("0000", "删除成功");
+			}
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	* <p>Title: savePreferntial</p>
+	* <p>Description: 添加优惠买单</p>
+	*/
+	@RequestMapping("/ShopInfo_savePreferntial")
+	public void savePreferntial(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			//map.put("fk_shop", userObj.get("FK_SHOP"));
+			map.put("userId", userObj.get("USER_PK")); 
+			map.put("sqlMapId", "saveFavour");
+			String preferntial_pk = openService.insert(map);
+			if(preferntial_pk !=null && preferntial_pk!="" ){
+				map.put("fk_preferntial", preferntial_pk);
+				String [] shopFkArray = map.get("SHOPID").toString().split(",");
+				for(String fk_shop:shopFkArray){
+					map.put("fk_shop", fk_shop);
+					map.put("sqlMapId", "savePreferntialShop");
+					openService.insert(map);
+				}
+				output("0000", "添加成功");
+			}else{
+				output("9999", "添加失败");
+			}
+			
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	/**
+	* <p>Title: updatePreferntial</p>
+	* <p>Description:编辑优惠买单 </p>
+	*/
+	@RequestMapping("/ShopInfo_updatePreferntial")
+	public void updatePreferntial(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("userId", userObj.get("USER_PK")); 
+			map.put("sqlMapId", "editFavour");
+			boolean b = openService.update(map);
+			if(b){
+				map.put("favPk", map.get("favourPK"));
+				map.put("sqlMapId", "delPreferntialShop");
+				if(openService.update(map)){
+					String [] shopFkArray = map.get("SHOPID").toString().split(",");
+					for(String fk_shop:shopFkArray){
+						map.put("fk_preferntial",map.get("favourPK"));
+						map.put("fk_shop", fk_shop);
+						map.put("sqlMapId", "savePreferntialShop");
+						openService.insert(map);
+					}
+					output("0000", "修改成功");
+				}
+			}else{
+				output("9999", "修改失败");
+			}
+			
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	/**
 	 * 优惠买单设置
 	 * @throws Exception 
 	 */

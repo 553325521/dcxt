@@ -3,6 +3,7 @@
 		return [
 			'$scope', 'httpService', 'config', 'params', '$routeParams', 'eventBusService', 'controllerName', 'loggingService',
 			function($scope, $httpService, config, params, $routeParams, eventBusService, controllerName, loggingService) {
+				scope = $scope;
 				$scope.pageTitle = config.pageTitle;
 				$scope.form = {};
 				
@@ -84,7 +85,14 @@
 				var getListInfo = function(){
 					$httpService.post(config.getFavourListURL, $scope.form).success(function(data) {
 						if (data.code === '0000') {
+							console.info(data.data);
 							$scope.dataList = data.data;
+							for(var i = 0;i < $scope.dataList.length;i++){
+								var goodScopeStr = $scope.dataList[i].good_scope;
+								var goodScopeJsonArray = JSON.parse(goodScopeStr);
+								 $scope.dataList[i].good_scope = goodScopeJsonArray[0].GOODS_AREA;
+								 $scope.dataList[i].period = JSON.parse($scope.dataList[i].period)[0].periodName;
+							}
 							$scope.$apply();
 						} else {
 							
@@ -98,7 +106,7 @@
 					$httpService.post(config.getUserInfo, $scope.form).success(function(data) {
 						if (data.code === '0000') {
 							$scope.form.userInfo = data.data;
-							$scope.form.userId = $scope.form.userInfo.userId;
+							scope.form.shopId = $scope.form.userInfo.shopId;
 							//$scope.form.shopId = $scope.form.userInfo.shopId;
 							getListInfo();
 						} else {

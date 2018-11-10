@@ -7,6 +7,7 @@
 		"getUserInfo":"json/ShopInfo_getUserInfo_data.json",
 		"getBaseInfo":"json/Open_queryForList_getfavourBaseInfo.json",
 		"getMyShop":"json/Open_queryForList_getMyShop.json",
-		"saveURL":"json/Open_insert_saveFavour"
+		"loadShopDataURL":"json/Shop_queryForList_loadShopListByRedis.json",
+		"saveURL":"json/ShopInfo_savePreferntial.json"
 	}
 }

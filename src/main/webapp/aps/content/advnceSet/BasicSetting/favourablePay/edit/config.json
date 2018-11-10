@@ -9,6 +9,7 @@
 		"delFavourListURL":"json/Open_update_delFavour.json",
 		"getBaseInfo":"json/Open_queryForList_getfavourBaseInfo.json",
 		"getMyShop":"json/Open_queryForList_getMyShop.json",
-		"editURL":"json/Open_update_editFavour.json"
+		"loadShopDataURL":"json/Shop_queryForList_loadShopListByRedis.json",
+		"editURL":"json/ShopInfo_updatePreferntial.json"
 	}
 }
