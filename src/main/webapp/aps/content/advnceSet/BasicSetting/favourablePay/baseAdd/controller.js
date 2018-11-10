@@ -73,7 +73,7 @@
 				
 				$scope.toHref = function(path) {
 					var m2 = {
-						"url" : "aps/content/" + path + "/config.json",
+						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
 						"contentName" : "content"
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
