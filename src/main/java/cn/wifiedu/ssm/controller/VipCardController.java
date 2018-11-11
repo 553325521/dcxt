@@ -469,7 +469,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					return;
 				} catch (Exception e) {
 					output("9999",e);
-					e.printStackTrace();
+					logger.error(e);
 				}
 				
 				

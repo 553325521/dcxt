@@ -31,7 +31,9 @@ public class JedisClientSingle implements JedisClient {
 	@Override
 	public boolean isExit(String key) {
 		Jedis jedis = jedisPool.getResource();
-        return jedis.exists(key);
+		boolean isExists = jedis.exists(key);
+		jedis.close();
+        return isExists;
 	}
 
 	@Override

@@ -3,7 +3,7 @@
 <mapper namespace="tables">
 	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
-
+	<!-- 根据餐桌区域ID查询该区域下所有餐桌 -->
 	<select id="selectTablesByAreaId" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT
@@ -21,7 +21,7 @@
 		WHERE
 		TABLES_PK = #{TABLES_ID}
 	</delete>
-
+	<!-- 根据餐桌ID查询餐桌信息 -->
 	<select id="findTablesById" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT
