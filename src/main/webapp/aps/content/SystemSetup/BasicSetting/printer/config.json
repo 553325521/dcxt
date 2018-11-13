@@ -4,6 +4,7 @@
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/printer/controller.js",
 	"config": {
 		"pageTitle": "打印机列表",
-		"findURL":"json/Print_queryForList_loadPrintList.json"
+		"findURL":"json/Print_queryForList_loadInUsePrintList.json",
+		"findGoodTypeURL" : "json/GoodsType_select_loadGoodsTypeListByPID.json"
 	}
 }

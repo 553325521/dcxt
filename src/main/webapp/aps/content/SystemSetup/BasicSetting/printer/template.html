@@ -15,9 +15,9 @@
 		</div>
 	</div>
 </div>
-<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+<div class="weui_cells weui_cells_form" style="margin-top: 1px;">
 	<div class="weui_cell slidelefts weui_cell_primary slide_cell"
-		ng-repeat="item in type_list">
+		ng-repeat="item in printerList">
 		<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd">
 			<div class="weui_cell_bd list_bd">
 				<p class="label-input" ng-bind="$index + 1"></p>
@@ -26,7 +26,7 @@
 				<p class="label-input" ng-bind="item.PRINTER_NAME"></p>
 			</div>
 			<div class="weui_cell_bd list_bd ">
-				<p class="label-input" ng-bind="item.PRINTER_LEVEL"></p>
+				<p class="label-input" ng-bind="item.PRINTER_LEVEL_NAME"></p>
 			</div>
 			<div class="weui_cell_bd list_bd ">
 				<p class="label-input" ng-bind="item.PRINTER_PAGE_WIDTH"></p>
@@ -35,7 +35,7 @@
 				<p class="label-input">{{item.PRINTER_PAGE_NUMS}}份</p>
 			</div>
 			<div class="weui_cell_bd list_bd ">
-				<p class="label-input" ng-bind="item.PRINTER_NAME"></p>
+				<p class="label-input" ng-bind="item.PRINTER_DISHES_TEXT"></p>
 			</div>
 		</div>
 		<div class="slideleft">

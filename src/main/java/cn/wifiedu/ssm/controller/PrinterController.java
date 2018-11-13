@@ -1,6 +1,9 @@
 package cn.wifiedu.ssm.controller;
 
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -10,11 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -26,9 +24,9 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.ssm.util.Constants;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
+import cn.wifiedu.ssm.util.print.PrintTemplate58MM;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 
@@ -72,25 +70,37 @@ public class PrinterController extends BaseController {
 	@RequestMapping("/Print_insert_addPinterInfo")
 	public void findPlatformTypeList(HttpServletRequest request, HttpSession session) {
 		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+
 			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
 			map.put("INSERT_TIME", StringDeal.getStringDate());
 			map.put("sqlMapId", "addPinterInfo");
+			txManagerController.createTxManager();
 			String res = openService.insert(map);
 			if (res != null) {
-				output("0000", "保存成功!");
+				map.put("sqlMapId", "updatePrinterToUse");
+				if (openService.update(map)) {
+					txManagerController.commit();
+					output("0000", "保存成功!");
+					return;
+				}
 			}
 		} catch (Exception e) {
+			txManagerController.rollback();
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
 	 * @param request
 	 * @param session
 	 * @return void
-	 * @date 2018年8月27日 - 下午2:42:35 
+	 * @date 2018年8月27日 - 下午2:42:35
 	 * @description:查询已购打印机
 	 */
 	@RequestMapping("/Print_queryForList_loadPrintList")
@@ -111,7 +121,6 @@ public class PrinterController extends BaseController {
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
-		output("9999", "");
 		return;
 	}
 
@@ -188,43 +197,65 @@ public class PrinterController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-
-	// @RequestMapping("/Print_insert_doPrint")
-	// HttpServletRequest request, HttpSession session
-	@Test
-	public void doPrint() {
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月27日 - 下午2:42:35
+	 * @description:查询已添加打印机
+	 */
+	@RequestMapping("/Print_queryForList_loadInUsePrintList")
+	public void loadInUsePrintList(HttpServletRequest request, HttpSession session) {
 		try {
-			String host = "127.0.0.1"; // 要连接的服务端IP地址 119.23.71.153
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+
+			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "loadInUsePrintList");
+			List<Map<String, Object>> res = openService.queryForList(map);
+			if (res != null) {
+				output("0000", res);
+				return;
+			}
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+		return;
+	}
+	
+	// @RequestMapping("/Print_insert_doPrint")
+	@Test
+	public void doPrint1() {
+		try {
+			String host = "119.23.71.153"; // 要连接的服务端IP地址 119.23.71.153
 			int port = 8008; // 要连接的服务端对应的监听端口
+			// 发送内容
+			// shopId!!!deviceId!!!orderId!!!content#
+			StringBuilder printStr = new StringBuilder();
+			Map<String, Object> map = new HashMap<>();
+			// shopId
+			printStr.append(UUID.randomUUID().toString().replace("-", ""))
+					.append("!!!")
+					// deviceId
+					.append("1234567")
+					.append("!!!")
+					// orderId
+					.append("2018111200001001")
+					.append("!!!")
+					// content
+					.append("&!*42018111200001001*" + new PrintTemplate58MM(map, map).getInStoreBWTemplate() + "*<qrcA7>www.chsail.com*<BMP203>*<BEEP5000,1,1,2>*<cutA1>#");
 
-			Element root = DocumentHelper.createElement("data");
-			Document document = DocumentHelper.createDocument(root);
-			Element shopId = root.addElement("shopId");
-			shopId.setText(UUID.randomUUID().toString());
+			System.out.println(printStr);
 
-			Element type = root.addElement("type");
-			type.setText(Constants.PRINT_TANGDIAN);
-
-			Element content = root.addElement("content");
-			content.setText(UUID.randomUUID().toString());
-
-			Element deviceId = root.addElement("deviceId");
-			deviceId.setText("123456");
-
-			String requestXml = document.asXML();
-			System.out.println(requestXml);
-
-			// 实例化输出格式对象
-			OutputFormat format = OutputFormat.createPrettyPrint();
-			// 设置输出编码
-			format.setEncoding("UTF-8");
 			// 与服务端建立连接
 			Socket client = new Socket(host, port);
-			// 生成XMLWriter对象，构造函数中的参数为需要输出的文件流.格式默认utf-8
-			XMLWriter writer = new XMLWriter(client.getOutputStream(), format);
-			// 开始写入，write方法中包含上面创建的Document对象
-			writer.write(document);
-			writer.write("eof");
+			Writer writer = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
+			writer.write(printStr.toString());
 			writer.close();
 			client.close();
 		} catch (Exception e) {

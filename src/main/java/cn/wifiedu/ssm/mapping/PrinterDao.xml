@@ -16,7 +16,8 @@
 		PRINTER_DISHES,
 		PRINTER_LEVEL,
 		PRINTER_BILL_HEAD,
-		INSERT_TIME
+		INSERT_TIME,
+		FK_SHOP
 		)
 		values
 		(
@@ -29,7 +30,8 @@
 		#{PRINTER_DISHES_STR},
 		#{PRINTER_LEVEL},
 		#{PRINTER_BILL_HEAD},
-		#{INSERT_TIME}
+		#{INSERT_TIME},
+		#{FK_SHOP}
 		)
 	</insert>
 
@@ -79,10 +81,30 @@
 	</select>
 
 	<!-- 查询已购打印机列表 -->
+	<select id="loadInUsePrintList" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT PRINTER_PK, PRINTER_NAME, PRINTER_KEY,
+		PRINTER_PAGE_NUMS,
+		PRINTER_PAGE_WIDTH, PRINTER_DISHES, PRINTER_LEVEL
+		FROM SC_PRINTER
+		<where>
+			AND FK_SHOP = #{FK_SHOP}
+		</where>
+	</select>
+
+	<!-- 查询已购打印机列表 -->
 	<select id="loadPrintList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT PRINT_BUG_PK, PRINT_WIDTH FROM SC_PRINT_BUG WHERE
 		FK_SHOP = #{FK_SHOP} AND IS_USE = '0'
 	</select>
+
+	<!-- 修改已购打印机为在用 -->
+	<update id="updatePrinterToUse" parameterMap="BaseParameterMap">
+		UPDATE SC_PRINT_BUG SET IS_USE = '1'
+		<where>
+			AND PRINT_BUG_PK = #{PRINTER_KEY}
+		</where>
+	</update>
 
 </mapper>

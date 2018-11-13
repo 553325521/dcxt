@@ -44,22 +44,6 @@
 					}
 				];
 
-				// 打印速度数据源
-				scope.printer_speed = [
-					{
-						title : "低速",
-						value : "001"
-					},
-					{
-						title : "中速",
-						value : "002"
-					},
-					{
-						title : "快速",
-						value : "003"
-					}
-				];
-
 				//初始化 form 表单
 				scope.form = {};
 
@@ -67,10 +51,7 @@
 				scope.form.PRINTER_PAGE_NUMS = 1;
 
 				// 初始化打印速度
-				scope.form.RPINTER_SPEED = scope.printer_speed[0].title;
-
-				// 初始化宽度
-				scope.form.PRINTER_PAGE_WIDTH = '58mm'
+				scope.form.RPINTER_SPEED = '低速';
 
 				// 初始化 菜品列表
 				scope.form.KIND_OF_DISHES = false;
@@ -232,6 +213,13 @@
 								onChange : function(e) {
 									var value = e.value[0]
 									$scope.form.PRINTER_KEY = value
+									for (var item in data.data) {
+										if (data.data[item].PRINT_BUG_PK = value) {
+											scope.form.PRINTER_PAGE_WIDTH = data.data[item].PRINT_WIDTH
+											scope.$apply();
+											break;
+										}
+									}
 								}
 							});
 						}
