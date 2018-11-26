@@ -7,21 +7,21 @@
 	}
 </style>
 	<div class="weui-header" style="background-color:#FFFFFF">
-		<div href="#" class="weui-header-left" ng-click="toHref('advnceSet/BasicSetting/favourablePay/list','')">
+		<div href="#" class="weui-header-left" ng-click="toHref('advnceSet/BasicSetting','')">
 			<a class="icon icon-109" ></a>
 		</div>
 
 		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
 		<div class="weui-header-right" style="top: 0;">
 			<div class="button_sp_area" style="padding: 12px 0;">
-				<div class="bom-radio bom-radio-big" ng-click="toHistory()" style="transform: translateX(-260%);">优惠记录</div>
-				<div class="bom-radio" style="transform: translateX(-210%);" id="attend2" ng-click="reSet()">重置</div>
+				<div class="bom-radio bom-radio-big" ng-click="toHistory()" style="transform: translateX(-180%);">优惠记录</div>
+			<!-- 	<div class="bom-radio" style="transform: translateX(-210%);" id="attend2" ng-click="reSet()">重置</div> -->
 			<div class="bom-radio" id="attend2" ng-click="doAdd()">保存</div>
 			</div>
 		</div>
 	</div>
 
-	<div class="weui_cells weui_cells_form" style="margin-top: 0;">
+	<div class="weui_cells weui_cells_form" style="margin-top: 0;" ng-show="editFavourIsShow">
 		<div class="weui_cell">
 			<div class="weui_cell_hd">
 				<label class="weui_label label">活动名称</label>
@@ -185,7 +185,37 @@
 			</div>
 			</div>
 		</div>
-		<div class="weui_cell" >
+		<div class="weui_cell" ng-show="favourWayIsShow">
+			<div class="weui_cell_hd">
+				<label class="weui_label label" style="width:115px;">是否选择优惠方式</label>
+			</div>
+			<div class="weui_cell_bd weui_cell_primary" style="margin-left:5px">
+				<div class="weui-form">
+					<div class="weui-form-li iblock li-checkbox-self">
+						<input class="weui-form-checkbox" name="is_favourable" id="is_favourable1"
+							value="是" type="radio" ng-model="form.is_favourable"> <label
+							for="is_favourable1"> <i
+							class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>是</p>
+							</div>
+						</label>
+					</div>
+					<div class="weui-form-li iblock li-checkbox-self"
+						style="margin-left: 10px;">
+						<input class="weui-form-checkbox" name="is_favourable" id="is_favourable2"
+							value="否" type="radio" ng-model="form.is_favourable"> <label
+							for="is_favourable2"> <i
+							class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+							<div class="weui-form-text label-input" style="margin: 0;">
+								<p>否</p>
+							</div>
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="weui_cell" ng-show="favourable_way_is_show">
 		<div class="weui_cell_hd">
 			<label class="weui_label label">优惠方式</label>
 		</div>
@@ -233,7 +263,6 @@
 			</div>
 		</div>
 	</div>
-		
 				<div class="weui_cell">
 					<div class="weui_cell_hd">
 						<label class="weui_label label">备注说明</label>
@@ -246,7 +275,9 @@
 			</div>
 		</div>
 	</div>
-		
 	</div>
-
+	 <div class="weui-loadmore"  ng-show="editFavourLoadMoreIsShow">
+        <i class="weui-loading"></i>
+        <span class="weui-loadmore__tips">正在加载</span>
+      </div>
 		

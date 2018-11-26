@@ -51,7 +51,7 @@
 				//根绝索引删除当前元素
 				$scope.tablesDelete = function(obj){
 					
-					$.confirm("您确定要删除 " + obj.name + " 吗?", "确认删除?", function() {
+				/*	$.confirm("您确定要删除 " + obj.name + " 吗?", "确认删除?", function() {*/
 						$scope.form.favPk = obj.preferntial_pk;
 						$httpService.post(config.delFavourListURL, $scope.form).success(function(data) {
 							if (data.code === '0000') {
@@ -63,11 +63,11 @@
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
 						});
-				      }, function() {
+				     /* }, function() {
 				        	//闭合滑块
 				        	$('.slideleft_cell_bd').css('-webkit-transform', 'translateX(0px)');
 				        	
-				      });
+				      });*/
 					
 				}
 				
@@ -84,13 +84,28 @@
 				
 				var getListInfo = function(){
 					$httpService.post(config.getFavourListURL, $scope.form).success(function(data) {
-						if (data.code === '0000') {
+						if (data.code == '0000') {
 							console.info(data.data);
 							$scope.dataList = data.data;
 							for(var i = 0;i < $scope.dataList.length;i++){
-								var goodScopeStr = $scope.dataList[i].good_scope;
-								var goodScopeJsonArray = JSON.parse(goodScopeStr);
-								 $scope.dataList[i].good_scope = goodScopeJsonArray[0].GOODS_AREA;
+								if(scope.dataList[i].is_favourable == "否"){
+									 $scope.dataList[i].good_scope = "无商品可用";
+								}else{
+									var goodScopeStr = $scope.dataList[i].good_scope;
+									if(goodScopeStr == null || goodScopeStr == '' || goodScopeStr == undefined){
+										 var m2 = {
+													"title" : "提示",
+													"contentName" : "modal",
+													"text" : "请先添加优惠设置",
+													"toUrl" : "aps/content/advnceSet/BasicSetting/config.json?fid=" + params.fid,
+												 }
+											 
+										eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+										return;
+									}
+									var goodScopeJsonArray = JSON.parse(goodScopeStr);
+									 $scope.dataList[i].good_scope = goodScopeJsonArray[0].GOODS_AREA;
+								}
 								 $scope.dataList[i].period = JSON.parse($scope.dataList[i].period)[0].periodName;
 							}
 							$scope.$apply();
@@ -104,7 +119,7 @@
 				
 				var getUserInfo = function(){
 					$httpService.post(config.getUserInfo, $scope.form).success(function(data) {
-						if (data.code === '0000') {
+						if (data.code == '0000') {
 							$scope.form.userInfo = data.data;
 							scope.form.shopId = $scope.form.userInfo.shopId;
 							//$scope.form.shopId = $scope.form.userInfo.shopId;

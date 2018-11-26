@@ -239,8 +239,9 @@ public class WxController extends BaseController {
 
 				// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 				CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
-
-				output("0000", openId);
+				
+				map.put("USER_UNIONID", jedisClient.get(RedisConstants.WX_UNIONID + openId));
+				output("0000", map);
 				return;
 			}
 			output("9999", "error");

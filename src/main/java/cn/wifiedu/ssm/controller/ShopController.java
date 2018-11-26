@@ -746,6 +746,54 @@ public class ShopController extends BaseController {
 		}
 		
 	}
+	
+	/**
+	* <p>Title: loadShopSideByUserUnionId</p>
+	* <p>Description:加载店员端报表----根据当前登录用户显示所管理的商铺 </p>
+	*/
+	@RequestMapping("/Shop_load_loadShopSideByUserUnionId")
+	public void loadShopSideByUserUnionId(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "loadShopSideListByUserUNIONID");
+			List<Map<String,Object>> resultList = openService.queryForList(map);
+			output("0000",resultList);
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	@RequestMapping("/Shop_load_loadShopRunData")
+	public void loadShopRunData(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			Map<String,Object> resultMap = new HashMap<String, Object>();
+//			根据前台传的时间参数计算开始时间和结束时间
+			String[] dateStrArray = DateUtil.selectTime(map.get("selectTime").toString());
+			map.put("START_TIME", dateStrArray[0]);
+			map.put("END_TIME", dateStrArray[1]);
+//			计算新增会员个数
+			map.put("sqlMapId","selectNewAddMemberNumberByTime");
+			int addMemberNumber = Integer.parseInt(openService.queryForList(map).get(0).get("VIP_NUMBER").toString());
+			resultMap.put("memberNumber", addMemberNumber);
+			//计算新增店内订单的数量
+			
+			
+			output("0000","000");
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	/*计算总金额*/
 	private double jsTotalMoney(List<Map<String,Object>> moneyList,String key){
 		double sumMoney = 0.0;

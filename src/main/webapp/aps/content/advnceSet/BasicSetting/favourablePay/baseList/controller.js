@@ -8,7 +8,7 @@
 				
 				$scope.addOrChange = function(obj){
 					var m2 = {
-							"url" : "aps/content/advnceSet/BasicSetting/favourablePay/baseEdit/config.json?pk="+obj.preferential_rule_pk,
+							"url" : "aps/content/advnceSet/BasicSetting/favourablePay/baseEdit/config.json?fid=" + params.fid+"&pk="+obj.preferential_rule_pk,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}
@@ -49,7 +49,7 @@
 							
 				//根绝索引删除当前元素
 				$scope.tablesDelete = function(obj){
-					$.confirm("您确定要删除 " + obj.rule_name + " 吗?", "确认删除?", function() {
+//					$.confirm("您确定要删除 " + obj.rule_name + " 吗?", "确认删除?", function() {
 				        
 						$scope.form.rulePk = obj.preferential_rule_pk;
 						$httpService.post(config.deleteURL, $scope.form).success(function(data) {
@@ -65,13 +65,13 @@
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
 						});
-						
-					        
-				      }, function() {
-				        	//闭合滑块
-				        	$('.slideleft_cell_bd').css('-webkit-transform', 'translateX(0px)');
-				        	
-				      });
+//						
+//					        
+//				      }, function() {
+//				        	//闭合滑块
+//				        	$('.slideleft_cell_bd').css('-webkit-transform', 'translateX(0px)');
+//				        	
+//				      });
 					
 				}
 				

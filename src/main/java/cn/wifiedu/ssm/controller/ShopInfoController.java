@@ -122,7 +122,7 @@ public class ShopInfoController extends BaseController {
 		map.put("sqlMapId", "deleteAllRuleGood");
 		if(openService.update(map)) {
 			String goodArea = map.get("goods_area").toString();
-			JSONArray areaArray = JSONObject.parseArray(goodArea);
+			JSONArray areaArray = JSON.parseArray(goodArea);
 			if(areaArray.getJSONObject(0).getString("GOODS_AREA").equals("部分商品")){
 				map.put("fk_preferential_rule", rulePk);
 				JSONArray goodsArray = areaArray.getJSONObject(1).getJSONArray("AREA_DETAIL");
@@ -299,7 +299,7 @@ public class ShopInfoController extends BaseController {
 		map.put("sqlMapId", "saveYouhuimaidan");
 		String rulePk = openService.insert(map);
 		String goodArea = map.get("goods_area").toString();
-		JSONArray areaArray = JSONObject.parseArray(goodArea);
+		JSONArray areaArray = JSON.parseArray(goodArea);
 		if(areaArray.getJSONObject(0).getString("GOODS_AREA").equals("部分商品")){
 			map.put("fk_preferential_rule", rulePk);
 			JSONArray goodsArray = areaArray.getJSONObject(1).getJSONArray("AREA_DETAIL");
@@ -583,6 +583,31 @@ public class ShopInfoController extends BaseController {
 		}
 	}
 	
+	/**
+	* <p>Title: checkFavourableExist</p>
+	* <p>Description: 检查是否设置过商铺的优惠买单</p>
+	*/
+	@RequestMapping("/Shop_select_checkFavourableExist")
+	public void checkFavourableExist(){
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			List<Map<String,Object>> resultMap = new ArrayList<Map<String,Object>>();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("SHOP_ID", userObj.get("FK_SHOP")); 
+			map.put("sqlMapId", "checkFavourableExist");
+			resultMap = openService.queryForList(map);
+			if(resultMap.size() == 0){
+				output("9999", "");
+			}else{
+				output("0000",resultMap.get(0).get("fk_preferntial").toString());
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	
 	/**

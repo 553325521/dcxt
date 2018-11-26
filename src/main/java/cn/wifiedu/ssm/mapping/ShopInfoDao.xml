@@ -12,6 +12,7 @@
 			start_time = #{start_time},
 			end_time = #{end_time},
 			period = #{timePeriodStr},
+			is_favourable = #{is_favourable},
 			fk_rule = #{fk_rule},
 			points = #{jifen},
 			remark = #{remark},
@@ -43,6 +44,7 @@
 			start_time,
 			end_time,
 			period,
+			is_favourable,
 			fk_rule,
 			(select rule_name from sc_preferntial_rule where fk_rule = preferential_rule_pk)rule_name,
 			(select good_scope from sc_preferntial_rule where fk_rule = preferential_rule_pk)good_scope,
@@ -74,6 +76,7 @@
 			start_time,
 			end_time,
 			period,
+			is_favourable,
 			fk_rule,
 			points,
 			remark,
@@ -90,6 +93,7 @@
 			#{start_time},
 			#{end_time},
 			#{timePeriodStr},
+			#{is_favourable},
 			#{fk_rule},
 			#{jifen},
 			#{remark},
@@ -128,6 +132,14 @@
 		where is_use = '0'
 		and fk_user = #{userId}
 	</select>
+	<!-- 检查是否设置过商铺的优惠买单 -->
+	<select id="checkFavourableExist" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		select fk_preferntial
+		from sc_preferntial_shop
+		where delete_flag = '0'
+		and fk_shop = #{SHOP_ID}
+	</select>
+	
 	<update id="deleteAllRuleGood" parameterMap="BaseParameterMap">
 		update sc_preferntial_rule_good set 
 			delete_flag = '1'

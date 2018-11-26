@@ -12,10 +12,21 @@
 				$scope.form.weekList = new Array;
 				$scope.form.timeList = new Array;
 				$scope.remarkLength = "0";
-				
+				scope.editFavourLoadMoreIsShow = "True";
+				scope.editFavourIsShow = "False";
 				$scope.reSet = function(){
 					getUserInfo();
 				}
+				
+				//监听是否选择优惠方式
+				scope.$watch("form.is_favourable",function(newValue,oldValue, scope){
+					console.info(newValue);
+					if(newValue == "否"){
+						scope.favourable_way_is_show = "False";
+					}else{
+							scope.favourable_way_is_show = "True";
+					}
+				});
 				
 				$scope.toHref = function(path) {
 					var m2 = {
@@ -66,7 +77,7 @@
 						if (data.code === '0000') {
 							$.toast("修改成功!");
 							var m2 = {
-								"url" : "aps/content/advnceSet/BasicSetting/favourablePay/list/config.json",
+								"url" : "aps/content/advnceSet/BasicSetting/favourablePay/add/config.json?fid=" + params.fid,
 								"contentName" : "content"
 							}
 							eventBusService.publish(controllerName, 'appPart.load.content', m2);
@@ -106,7 +117,7 @@
 					$("#start_time").datetimePicker({title:"选择日期", toolbarCloseText : '确定',m:1});
 					$("#end_time").datetimePicker({title:"选择日期",toolbarCloseText : '确定',m:1});
 				}
-				initDateStyle();
+				/*initDateStyle();*/
 				/*初始化商铺选择数据源*/
 				scope.shopArray = [];
 				function comboboxInit() {
@@ -134,7 +145,6 @@
 					    	loggingService.info('获取测试信息出错');
 					    });
 				}
-				comboboxInit();
 				$scope.xianTime = function(pa){
 					console.log(pa);
 					if(pa == "0"){
@@ -151,7 +161,7 @@
 				
 				$scope.toHistory = function(){
 					var m2 = {
-							"url" : "aps/content/advnceSet/BasicSetting/favourablePay/history/config.json",
+							"url" : "aps/content/advnceSet/BasicSetting/favourablePay/history/config.json?fid=" + params.fid,
 							"size" : "modal-lg",
 							"contentName" : "content"
 						}
@@ -221,6 +231,11 @@
 							console.info(data.data);
 							$scope.form = data.data[0];
 							$scope.form.favourPK = params.pk;
+							if(scope.form.is_favourable == "否"){
+								$scope.favourable_way_is_show = "False";
+							}else{
+								$scope.favourable_way_is_show = "True";
+							}
 							$scope.form.jifen = data.data[0].points;
 							$("#SHOP_TYPE_2").val($scope.form.shop_name);
 							$("#SHOP_TYPE_1").val($scope.form.rule_name);
@@ -265,7 +280,8 @@
 
 							$scope.form.userId = $scope.userId;
 							$scope.xianTime($scope.form.period);
-							
+							$scope.editFavourIsShow = "True";
+							scope.editFavourLoadMoreIsShow = "False";
 							$scope.$apply();
 						} else {
 							
@@ -284,7 +300,12 @@
 							}
 							console.log($scope.form);
 							console.log(baseStr);
-							
+							if(baseStr.length == 0){
+								scope.favourWayIsShow = "False";
+								scope.favourable_way_is_show = "False";
+							}else{
+								scope.favourWayIsShow = "True";
+							}
 							$("#SHOP_TYPE_1").picker({
 								title : "优惠方式",
 								toolbarCloseText : '确定',
@@ -332,9 +353,12 @@
 						loggingService.info('获取测试信息出错');
 					});
 				}
-				
-				getUserInfo();
-				
+				function initData(){
+					initDateStyle();
+					comboboxInit();
+					getUserInfo();
+				}
+				initData();
 			}
 		];
 	});

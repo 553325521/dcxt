@@ -13,6 +13,9 @@
 				scope.gdmj = "False";
 				scope.sjmj = "False";
 				
+				scope.bfIsShow = "False";
+				
+				
 				$scope.form = {};
 				//初始化备注说明
 				scope.form.remark = "";
@@ -123,7 +126,7 @@
 					$httpService.post(config.saveYouhuimaidan, $scope.form).success(function(data) {
 						if (data.code === '0000') {
 							var m2 = {
-									"url" : "aps/content/advnceSet/BasicSetting/favourablePay/baseList/config.json",
+									"url" : "aps/content/advnceSet/BasicSetting/favourablePay/baseList/config.json?fid=" + params.fid,
 									"contentName" : "content"
 								}
 								eventBusService.publish(controllerName, 'appPart.load.content', m2);
@@ -167,6 +170,9 @@
 							$scope.goodType = data.data;
 							for(var i=0; i<$scope.goodType.length; i++){
 								$scope.goodType[i].checked = false;
+							}
+							if(scope.goodType.length!=0){
+								scope.bfIsShow = "True";
 							}
 							$scope.good_scope("全部商品");
 							$scope.$apply();

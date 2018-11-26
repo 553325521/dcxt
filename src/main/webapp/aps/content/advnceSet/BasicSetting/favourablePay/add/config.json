@@ -8,6 +8,7 @@
 		"getBaseInfo":"json/Open_queryForList_getfavourBaseInfo.json",
 		"getMyShop":"json/Open_queryForList_getMyShop.json",
 		"loadShopDataURL":"json/Shop_queryForList_loadShopListByRedis.json",
-		"saveURL":"json/ShopInfo_savePreferntial.json"
+		"saveURL":"json/ShopInfo_savePreferntial.json",
+		"checkFavourableExistURL":"json/Shop_select_checkFavourableExist.json"
 	}
 }

@@ -3,8 +3,6 @@
 <mapper namespace="starPosPay" >
   <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
   <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
-  
-	
 	<insert id="insertStarPosPayOrder" parameterMap="BaseParameterMap" >
 		INSERT INTO starpos_pay_order
 		(

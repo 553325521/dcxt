@@ -77,6 +77,7 @@ public class PrintTemplate58MM extends PrintTemplate {
 	private static final String QRC = "<qrc>";
 	private static final String CENTER_BLANK = "                ";
 
+	@Override
 	public String getInStoreBWTemplate() {
 		StringBuilder result = new StringBuilder();
 		// 计算空格

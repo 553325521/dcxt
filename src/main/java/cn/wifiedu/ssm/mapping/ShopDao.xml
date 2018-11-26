@@ -47,7 +47,6 @@
 		SELECT sus.FK_SHOP FROM sc_user_shop as sus WHERE
 		sus.FK_USER = #{USER_ID}))
 		s on s.SHOP_ID = u.FK_SHOP;
-
 	</select>
 
 	<!-- 根据shopId查询商铺基本信息 -->
@@ -122,11 +121,31 @@
 		a.FK_USER = #{USER_PK} AND a.FK_ROLE != '7'
 	</select>
 	
+	<!-- 店员端报表查询管理商铺 -->
+	<select id="loadShopSideListByUserUNIONID" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		SELECT s.SHOP_ID,s.SHOP_NAME FROM sc_shop_info s INNER JOIN 
+			(select us.FK_SHOP,us.FK_ROLE from sc_user u INNER JOIN sc_user_shop us 
+			ON u.USER_PK = us.FK_USER 
+			WHERE u.USER_UNIONID = #{unionId}) rs 
+		ON s.SHOP_ID = rs.FK_SHOP
+			WHERE rs.FK_ROLE != 7
+	</select>
+	
 	<!-- 根据商铺ID查询该商铺的抹零规则 -->
 	<select id="selectMoLingByShopPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT m.FK_SHOP,m.SHOP_MOLING_PK,
 			m.SHOP_MOLING_VALUE,m.SHOP_MOLING_TEXT 
 		FROM sc_shop_moling m 
 		WHERE m.FK_SHOP = #{FK_SHOP}
+	</select>
+	<!-- 根据商铺Id和时间查询新增会员个数 -->
+	<select id="selectNewAddMemberNumberByTime" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		select count(*) AS VIP_NUMBER from sc_shop_vcard v inner join sc_user_vcard uv
+		on v.VIP_CARD_FK = uv.VCARD_FK
+		where v.SHOP_FK = #{FK_SHOP}
+		and str_to_date(uv.CREATE_TIME,'%Y-%m-%d%H:%i')
+		between str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+		and str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
 	</select>
 </mapper>
