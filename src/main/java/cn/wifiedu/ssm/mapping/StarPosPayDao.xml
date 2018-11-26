@@ -8,6 +8,7 @@
 		(
 			ORDER_PK,
 			USER_FK,
+			DCXT_ORDER_FK,
 			MERC_ID,
 			TRM_NO,
 			ORG_NO,
@@ -40,6 +41,7 @@
 		(
 			#{UUID},
 			#{USER_ID},
+			#{DCXT_ORDER_FK},	
 		 	#{MERC_ID},
 			#{TRM_NO},
 			#{ORG_NO},

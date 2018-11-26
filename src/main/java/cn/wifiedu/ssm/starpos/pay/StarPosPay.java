@@ -96,6 +96,10 @@ public class StarPosPay {
      * 					selOrderNo : (选填)订单号				
      * 					goods_tag ： (选填)订单优惠说明		
      * 					attach ：(选填)附加字段
+     * 
+     * @param callBackUrl 支付完成后要回调的链接
+     * @param callBackParamMap 支付完成后回调函数所需要的数据
+     *
      * @throws Exception 
      * @return Map	返回的map
      * 	 				returnCode ：000000为成功
@@ -123,7 +127,7 @@ public class StarPosPay {
      *					attach 
      */
     public Map<String, Object> pubSigPay(Map<String, Object> paramsMap, String callBackUrl, Map<String, Object> callBackParamMap) throws Exception {
-    	
+    	pubSigQry();
     	if(!paramsMap.containsKey("amount")){
     		paramsMap.put("returnCode", "");
     		paramsMap.put("message", "amount不能为空！");
@@ -180,12 +184,14 @@ public class StarPosPay {
         	 callBackParamMap.put("callBackUrl", callBackUrl);
         	 //把回调url存入redis，收到新大陆的异步消息后立马回调
       		jedisClient.set(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"), JSON.toJSONString(callBackParamMap));
-      		// 设置过期时间2小时
+      		//设置过期时间2小时
       		jedisClient.expire(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"), 3600 * 2);
+      		
+      		logger.info("------------------starPosPay189redis---------------------------");
+    		logger.info(jedisClient.get(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo")));
          }
  		
- 		 logger.info("------------------redis---------------------------");
- 		 logger.info(jedisClient.get(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo")));
+ 		 
          
         return reMap;
    }
@@ -247,11 +253,25 @@ public class StarPosPay {
     		paramsMap.put("message", "amount不能为空！");
     		return paramsMap;
     	}
-    	if(!paramsMap.containsKey("USER_ID") || StringUtils.isBlank((String)paramsMap.get("USER_ID"))){
+    	
+    	if(!paramsMap.containsKey("authCode") || StringUtils.isBlank((String)paramsMap.get("authCode"))){
     		paramsMap.put("returnCode", "");
-    		paramsMap.put("message", "userId不能为空！");
+    		paramsMap.put("message", "authCode不能为空！");
     		return paramsMap;
     	}
+    	
+//    	if(!paramsMap.containsKey("USER_ID") || StringUtils.isBlank((String)paramsMap.get("USER_ID"))){
+//    		paramsMap.put("returnCode", "");
+//    		paramsMap.put("message", "userId不能为空！");
+//    		return paramsMap;
+//    	}
+//    	
+//    	if(!paramsMap.containsKey("DCXT_ORDER_FK") || StringUtils.isBlank((String)paramsMap.get("DCXT_ORDER_FK"))){
+//    		paramsMap.put("returnCode", "");
+//    		paramsMap.put("message", "DCXT_ORDER_FK不能为空！");
+//    		return paramsMap;
+//    	}
+    	
     	
           paramsMap=initParams(paramsMap);
 
@@ -339,9 +359,19 @@ public class StarPosPay {
     		paramsMap.put("message", "amount不能为空！");
     		return paramsMap;
     	}
+    	if(!paramsMap.containsKey("payChannel")){
+    		paramsMap.put("returnCode", "");
+    		paramsMap.put("message", "payChannel不能为空！");
+    		return paramsMap;
+    	}
     	if(!paramsMap.containsKey("USER_ID") || StringUtils.isBlank((String)paramsMap.get("USER_ID"))){
     		paramsMap.put("returnCode", "");
     		paramsMap.put("message", "userId不能为空！");
+    		return paramsMap;
+    	}
+    	if(!paramsMap.containsKey("DCXT_ORDER_FK") || StringUtils.isBlank((String)paramsMap.get("DCXT_ORDER_FK"))){
+    		paramsMap.put("returnCode", "");
+    		paramsMap.put("message", "DCXT_ORDER_FK不能为空！");
     		return paramsMap;
     	}
         paramsMap = initParams(paramsMap);
@@ -387,7 +417,8 @@ public class StarPosPay {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap = initParams(paramsMap);
         paramsMap.put("qryNo", qryNo);
-
+        paramsMap.remove("total_amount");
+        paramsMap.remove("selOrderNo");
         String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
         String sign = MD5.sign(preStr, testKey, "UTF-8");
         paramsMap.put("signValue",sign);
@@ -533,6 +564,7 @@ public class StarPosPay {
 			map.put("AMOUNT", paramsMap.get("amount"));
 			map.put("TOTAL_AMOUNT", paramsMap.get("total_amount"));
 			map.put("USER_ID", paramsMap.get("USER_ID"));
+			map.put("DCXT_ORDER_FK", paramsMap.get("DCXT_ORDER_FK"));
 			
 			if(paramsMap.containsKey("characterSet")){
 				map.put("CHARACTERSET", paramsMap.get("characterSet"));
@@ -617,19 +649,41 @@ public class StarPosPay {
     
 
 public static void main(String[] args) {
-	Map<String, String> map = new HashMap<String, String>();
+	Map<String, Object> map = new HashMap<String, Object>();
 	
 	try {
+		
+		
+		//pubSigQry();
 //		amount ：金额，单位为分
 //	     * authCode :要扫的条形码。扫码支付授权码，设备读取用户微信或支付宝中的条码或者二维码信息 
 //	     * payChannel ：支付渠道。见静态变量
-		Map<String, Object> paramsMap = new HashMap<String, Object>();
-		paramsMap.put("amount", "1");
-		paramsMap.put("authCode", "283313854606440601");
-		paramsMap.put("payChannel", PAY_CHANNEL_ALIPAY);
-		paramsMap.put("USER_ID", "333");
+//		Map<String, Object> paramsMap = new HashMap<String, Object>();
+//		paramsMap.put("amount", "1");
+//		paramsMap.put("openid", "o93Dw0G2WF0ffPkMAvN9MP0sUL-w");
+//		paramsMap.put("USER_ID", "lupishan");
+//		paramsMap.put("DCXT_ORDER_FK", "lps");
+//////////		paramsMap.put("payChannel", StarPosPay.PAY_CHANNEL_YLPAY);
+//		Map map2 = new StarPosPay().pubSigPay(paramsMap,null,null);
+//		Map map2 = new StarPosPay().psoPay(paramsMap);
+//		query("201811171641962991");
+//		pubSigQry();//286929898784
+//		System.out.println(map2);
 		
-		System.out.println(new StarPosPay().pay(paramsMap));
+		
+//商户扫
+		//map.put("USER_ID", "2222222");
+		map.put("amount", "1"); 
+		map.put("authCode", "22222222");
+		//map.put("DCXT_ORDER_FK", "lps");
+		map.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN); 
+		map.put("authCode", "134533491064161093");
+		
+		Map map2 = new StarPosPay().pay(map);
+		
+		System.out.println(map2);
+		
+		
 	} catch (Exception e) {
 		e.printStackTrace();
 	}

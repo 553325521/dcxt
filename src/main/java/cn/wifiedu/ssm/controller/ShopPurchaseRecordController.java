@@ -5,6 +5,7 @@ package cn.wifiedu.ssm.controller;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +161,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					if("1".equals(payType)){//微信支付
 						
-						/*Map<String, Object> newMap = new HashMap<String, Object>();
+						Map<String, Object> newMap = new HashMap<String, Object>();
 						newMap.putAll(map);
 						
 						//微信生成订单
@@ -173,7 +174,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						if("000000".equals(pubSigPay.get("returnCode"))){
 							output("5555", pubSigPay);
 							return;
-						}*/
+						}
 						output("9999", "微信支付失败");
 						return;
 					}
@@ -188,7 +189,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				}
 			}
 			
-			
+			/**
+			 * 两半的函数
+			 * @author lps
+			 * @date Nov 27, 2018 3:04:18 AM 
+			 * 
+			 * @description: 
+			 * @return void
+			 */
 			@RequestMapping("/starPosPayCallBack_insert_insertShopPurchaseRecord")
 			private void addTransactionRecordNextPart(Map<String, Object> map) {
 				TransactionStatus status = null;

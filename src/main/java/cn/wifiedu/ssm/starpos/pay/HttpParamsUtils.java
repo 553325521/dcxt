@@ -57,6 +57,9 @@ public class HttpParamsUtils {
 			Collections.sort(keys);
 		}
 		for(String key : keys){
+			if(key.contains("USER_ID") || key.contains("DCXT_ORDER_FK")) {
+				continue;
+			}
 			String value = (String)payParams.get(key);
 			if(StringUtils.isEmpty(value)){
 				continue;
