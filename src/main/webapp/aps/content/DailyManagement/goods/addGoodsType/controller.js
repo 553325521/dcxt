@@ -8,7 +8,7 @@
 				// 定义页面标题
 				scope.pageTitle = '商品分类';
 				
-				// 显示范围数据源
+				// 显示范围
 				scope.GTYPE_AREA = [
 					{
 						name : '堂点',
@@ -83,18 +83,22 @@
 				}
 				
 				// 范围勾选
-				scope.selectArea = function(item) {
-					var action = (item.checked ? 'add' : 'remove');
-					if (action == "add") {
-						scope.form.GTYPE_AREA_Array.push({name:item.name,checked:item.checked});
-						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
-					} else {
-						scope.form.GTYPE_AREA_Array.remove({name:item.name,checked:item.checked});
-						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
-					}
-				}
+//				scope.selectArea = function(item) {
+//					var action = (item.checked ? 'add' : 'remove');
+//					console.info(action);
+//					if (action == "add") {
+//						scope.form.GTYPE_AREA_Array.push(item);
+//						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
+//					} else {
+//						scope.form.GTYPE_AREA_Array.remove(item);
+//						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
+//					}
+//					console.info(item);
+//					console.info("appid"+scope.form.GTYPE_AREA);
+//				}
 				
 				scope.doSave = function() {
+					scope.form.GTYPE_AREA = JSON.stringify(scope.GTYPE_AREA);
 					 var m2 = {
 				        		"url":"aps/content/DailyManagement/goods/addGoodsType/config.json",
 				        		"title":"提示",

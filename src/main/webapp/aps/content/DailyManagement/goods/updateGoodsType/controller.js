@@ -134,18 +134,19 @@
 				}
 				
 				// 范围勾选
-				scope.selectArea = function(item) {
-					var action = (item.checked ? 'add' : 'remove');
-					if (action == "add") {
-						scope.form.GTYPE_AREA_Array.push({name:item.name,checked:item.checked});
-						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
-					} else {
-						scope.form.GTYPE_AREA_Array.remove({name:item.name,checked:item.checked});
-						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
-					}
-				}
+//				scope.selectArea = function(item) {
+//					var action = (item.checked ? 'add' : 'remove');
+//					if (action == "add") {
+//						scope.form.GTYPE_AREA_Array.push({name:item.name,checked:item.checked});
+//						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
+//					} else {
+//						scope.form.GTYPE_AREA_Array.remove({name:item.name,checked:item.checked});
+//						scope.form.GTYPE_AREA = JSON.stringify(scope.form.GTYPE_AREA_Array);
+//					}
+//				}
 				
 				scope.doSave = function() {
+					scope.form.GTYPE_AREA = JSON.stringify(scope.GTYPE_AREA);
 					 var m2 = {
 				        		"url":"aps/content/DailyManagement/goods/updateGoodsType/config.json",
 				        		"title":"提示",
@@ -166,6 +167,7 @@
 							scope.form.GTYPE_ORDER = data.data.GTYPE_ORDER;
 							scope.form.GTYPE_PK = data.data.GTYPE_PK;
 							scope.form.GTYPE_OLD_ORDER = data.data.GTYPE_ORDER;
+							scope.GTYPE_AREA = JSON.parse(data.data.GTYPE_AREA);
 							$scope.$apply();
 						}
 						

@@ -18,7 +18,7 @@
         <div class="weui_cell" style="margin-top:10px">
           <div class="weui_cell_hd"><label class="weui_label label">分类名称</label></div>
             <div class="weui_cell_bd">
-            <input class="weui_input label-input" type="text" ng-model="form.GTYPE_NAME"  placeholder="请输入菜名">
+            <input class="weui_input label-input" type="text" ng-model="form.GTYPE_NAME"  placeholder="请输入分类">
           </div>
         </div>
         <div class="weui_cell">
@@ -76,8 +76,7 @@
 						<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
 							value="{{item.name}}" type="checkbox" 
 							ng-checked="item.checked" 
-							ng-model="item.checked"
-							ng-change="selectArea(item)"> 
+							ng-model="item.checked"> <!-- ng-change="selectArea(item)" -->
 							<label for="h{{$index + 1}}"> <i class="weui-icon-checkbox icon-checkbox-self"
 							style="margin: 0;"></i>
 							<div class="weui-form-text label-input" style="margin: 0">
