@@ -148,4 +148,55 @@
 		between str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
 		and str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
 	</select>
+	<!-- 根据商铺Id和时间查询店内订单个数 -->
+	<select id="selectShopOrderNumberByTimeAndShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		select count(o.ORDER_PK) as SHOPINNER_ORDERNUMBER from sc_order o 
+			where o.FK_SHOP = #{FK_SHOP}
+			and o.ORDER_DIVISION = #{ORDER_DIVISION}
+			and str_to_date(o.CREATE_TIME,'%Y-%m-%d%H:%i')
+					between str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+					and str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+	</select>
+	<!-- 查询饿百订单个数 -->
+	<select id="selectShopOutOrderNumberByTimeAndShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT COUNT(b.ORDER_PK) AS OUTORDER_NUMBER FROM sc_waimai_eb_order b
+		WHERE b.SHOP_BAIDU_ID = (
+			SELECT s.EB_SHOP_ID FROM sc_shop_info s
+			WHERE s.SHOP_ID = #{FK_SHOP}
+		)
+		AND  str_to_date(b.CREATE_TIME,'%Y-%m-%d%H:%i')
+				BETWEEN str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+				AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+	</select>
+	<!-- 查询产生或消费的积分 -->
+	<select id="selectShopJFSUMByShopAndTime" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT SUM(vr.VRECORD_NUM) AS SUM_JF FROM sc_vip_card v INNER JOIN sc_vcard_record vr
+		ON v.VCARD_PK = vr.VCARD_FK
+		WHERE v.USE_SHOP  LIKE '%${FK_SHOP}%'
+		AND vr.VRECORD_TYPE = #{TYPE}
+		AND str_to_date(vr.CREATE_TIME,'%Y-%m-%d%H:%i')
+				BETWEEN str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+				AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+	</select>
+	<!-- 统计店内订单各支付方式的分别数量 -->
+	<select id="selectOrderNumberByPayWay" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT COUNT(o.ORDER_PK) AS ORDER_NUMBER FROM sc_order o
+		WHERE o.FK_SHOP = #{FK_SHOP}
+		AND o.ORDER_PAY_WAY = #{PAY_WAY}
+		AND o.ORDER_DIVISION = '0'
+		AND str_to_date(o.CREATE_TIME,'%Y-%m-%d%H:%i')
+				BETWEEN str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+				AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+	</select>
+	<!-- 统计店内订单各支付方式的分别总金额-->
+	<select id="selectOrderMoneyByPayWay" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT SUM(o.ORDER_SHOPMONEY) AS SUM_MONEY FROM sc_order o
+		WHERE o.FK_SHOP = #{FK_SHOP}
+		AND o.ORDER_PAY_WAY = #{PAY_WAY}
+		AND o.ORDER_DIVISION = '0'
+		AND str_to_date(o.CREATE_TIME,'%Y-%m-%d%H:%i')
+				BETWEEN str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+				AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+	</select>
+	
 </mapper>

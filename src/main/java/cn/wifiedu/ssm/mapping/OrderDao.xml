@@ -18,7 +18,10 @@
 	<!-- 根据时间查询订单 -->
 	<select id="selectOrderByTime" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		select o.ORDER_PK,o.ORDER_POSITION,o.ORDER_PAY_WAY,
+		select o.ORDER_PK,
+		(select t.TABLES_NAME   from sc_tables t where 
+			t.TABLES_PK = o.ORDER_POSITION
+		 ) AS ORDER_POSITION,o.ORDER_PAY_WAY,
 		o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
 		o.ARRIVE_TIME,o.CREATE_TIME,o.CREATE_BY,
 		SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,

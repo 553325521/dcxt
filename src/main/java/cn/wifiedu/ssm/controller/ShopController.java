@@ -733,8 +733,12 @@ public class ShopController extends BaseController {
 			List<Map<String,Object>> ebOrderNumberList = openService.queryForList(map);
 			totalQuantity = totalQuantity+Integer.parseInt(ebOrderNumberList.get(0).get("EB_ORDER_NUMBER").toString());
 			resultMap.put("SUM_ORDER",totalQuantity);
-			//计算今日该店铺新增会员个数
-			resultMap.put("SUM_MEMBER",0);
+			//计算当前该店铺新增会员个数
+			map.put("START_TIME", dateArray[0]);
+			map.put("END_TIME", dateArray[1]);
+			map.put("sqlMapId","selectNewAddMemberNumberByTime");
+			int addMemberNumber = Integer.parseInt(openService.queryForList(map).get(0).get("VIP_NUMBER").toString());
+			resultMap.put("SUM_MEMBER", addMemberNumber);
 			output("0000",resultMap);
 			
 		} catch (ExceptionVo e) {
@@ -767,6 +771,10 @@ public class ShopController extends BaseController {
 		}
 		
 	}
+	/**
+	* <p>Title: loadShopRunData</p>
+	* <p>Description: 加载商铺经营概况数据</p>
+	*/
 	@RequestMapping("/Shop_load_loadShopRunData")
 	public void loadShopRunData(){
 		try {
@@ -781,14 +789,107 @@ public class ShopController extends BaseController {
 			int addMemberNumber = Integer.parseInt(openService.queryForList(map).get(0).get("VIP_NUMBER").toString());
 			resultMap.put("memberNumber", addMemberNumber);
 			//计算新增店内订单的数量
-			
-			
-			output("0000","000");
+			map.put("ORDER_DIVISION","0");
+			map.put("sqlMapId", "selectShopOrderNumberByTimeAndShopId");
+			int addInnerOrderNumber = Integer.parseInt(openService.queryForList(map).get(0).get("SHOPINNER_ORDERNUMBER").toString());
+			resultMap.put("innerOrderNumber", addInnerOrderNumber);
+			//计算店外(外卖)订单的数量
+			//计算智慧云外卖订单数量
+			map.put("ORDER_DIVISION","1");
+			map.put("sqlMapId", "selectShopOrderNumberByTimeAndShopId");
+			int zhyOutOrderNumber = Integer.parseInt(openService.queryForList(map).get(0).get("SHOPINNER_ORDERNUMBER").toString());
+			//计算饿百外卖订单数量
+			map.put("sqlMapId", "selectShopOutOrderNumberByTimeAndShopId");
+			int ebOutOrderNumber = Integer.parseInt(openService.queryForList(map).get(0).get("OUTORDER_NUMBER").toString());
+			//计算美团外卖订单数量
+			int mtOutOrderNumber = 0;
+			int totalOutOrderNUmber = zhyOutOrderNumber+ebOutOrderNumber+mtOutOrderNumber;
+			resultMap.put("outOrderNumber", totalOutOrderNUmber);
+			//计算产生的积分
+			int produceJF = 0;
+			map.put("TYPE", "11");
+			map.put("sqlMapId", "selectShopJFSUMByShopAndTime");
+			Map<String,Object> jfMap = new HashMap<String,Object>();
+			jfMap = (Map<String,Object>) openService.queryForObject(map);
+			if(jfMap!=null&&jfMap.containsKey("SUM_JF") && jfMap.get("SUM_JF")!=null){
+				produceJF = Integer.parseInt(jfMap.get("SUM_JF").toString());
+			}
+			resultMap.put("produceJF",produceJF);
+			//计算兑换的积分
+			int customJF = 0;
+			map.put("TYPE", "11");
+			map.put("sqlMapId", "selectShopJFSUMByShopAndTime");
+			if(jfMap!=null){
+				jfMap.clear();
+			}
+			jfMap = (Map<String,Object>) openService.queryForObject(map);
+			if(jfMap!=null&&jfMap.containsKey("SUM_JF") && jfMap.get("SUM_JF")!=null){
+				customJF = Integer.parseInt(jfMap.get("SUM_JF").toString());
+			}
+			resultMap.put("customJF",customJF);
+			//发放电子券统计
+			resultMap.put("sendCardNumber", 0);
+			//使用电子券统计
+			resultMap.put("useCardNumber", 0);
+			//订单数量
+			map.put("PAY_WAY", "0");
+			map.put("sqlMapId", "selectOrderNumberByPayWay");
+			//微信支付的订单数量和金额
+			int wxPay = Integer.parseInt(((Map<String,Object>) openService.queryForObject(map)).get("ORDER_NUMBER").toString());
+			resultMap.put("wxPayOrderNumber", wxPay);
+			map.put("sqlMapId", "selectOrderMoneyByPayWay");
+			double wxPayMoney = 0.0;
+			Map<String,Object> wxMap  = (Map<String,Object>)openService.queryForObject(map);
+			if(wxMap!=null && wxMap.containsKey("SUM_MONEY") && wxMap.get("SUM_MONEY")!=null){
+				wxPayMoney = Double.parseDouble(wxMap.get("SUM_MONEY").toString())/100;
+			}
+			resultMap.put("wxPayOrdeMoney", wxPayMoney);
+			//支付宝支付的数量和金额
+			map.put("PAY_WAY", "1");
+			map.put("sqlMapId", "selectOrderNumberByPayWay");
+			int aliPay = Integer.parseInt(((Map<String,Object>) openService.queryForObject(map)).get("ORDER_NUMBER").toString());
+			resultMap.put("aliPayOrderNumber", aliPay);
+			double aliPayMoney = 0.0;
+			Map<String,Object> aliMap  = (Map<String,Object>)openService.queryForObject(map);
+			if(aliMap!=null && aliMap.containsKey("SUM_MONEY") && aliMap.get("SUM_MONEY")!=null){
+				aliPayMoney = Double.parseDouble(aliMap.get("SUM_MONEY").toString())/100;
+			}
+			resultMap.put("aliPayOrdeMoney", aliPayMoney);
+			//POS支付的数量和金额
+			map.put("PAY_WAY", "2");
+			map.put("sqlMapId", "selectOrderNumberByPayWay");
+			int posPay = Integer.parseInt(((Map<String,Object>) openService.queryForObject(map)).get("ORDER_NUMBER").toString());
+			resultMap.put("posPayOrderNumber", posPay);
+			double posPayMoney = 0.0;
+			Map<String,Object> posMap  = (Map<String,Object>)openService.queryForObject(map);
+			if(posMap!=null && posMap.containsKey("SUM_MONEY") && posMap.get("SUM_MONEY")!=null){
+				posPayMoney = Double.parseDouble(posMap.get("SUM_MONEY").toString())/100;
+			}
+			resultMap.put("posPayOrdeMoney", posPayMoney);
+			//现金支付的数量和金额
+			map.put("PAY_WAY", "2");
+			map.put("sqlMapId", "selectOrderNumberByPayWay");
+			int cashPay = Integer.parseInt(((Map<String,Object>) openService.queryForObject(map)).get("ORDER_NUMBER").toString());
+			resultMap.put("cashPayOrderNumber", cashPay);
+			double cashPayMoney = 0.0;
+			Map<String,Object> cashMap  = (Map<String,Object>)openService.queryForObject(map);
+			if(cashMap!=null && cashMap.containsKey("SUM_MONEY") && cashMap.get("SUM_MONEY")!=null){
+				cashPayMoney = Double.parseDouble(cashMap.get("SUM_MONEY").toString())/100;
+			}
+			resultMap.put("cashPayOrdeMoney", cashPayMoney);
+			//订单总数量
+			double  totalOrderMoney = wxPayMoney+aliPayMoney+posPayMoney+cashPayMoney;
+			int totalOrderNumber = wxPay+aliPay+posPay+cashPay;
+			resultMap.put("totalOrderNumber", totalOrderNumber);
+			resultMap.put("totalOrderMoney", totalOrderMoney);
+			output("0000",resultMap);
 		} catch (ExceptionVo e) {
 			// TODO Auto-generated catch block
+			output("9999","后台请求错误");
 			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
+			output("9999","后台请求错误");
 			e.printStackTrace();
 		}
 	}
