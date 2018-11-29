@@ -66,6 +66,8 @@
 						scope.form.RECEIPT_SHOP_NUMBER = data.data[0].RECEIPT_SHOP_NUMBER;
 						scope.form.PLATFORM_TERMINAL_NUMBER = data.data[0].PLATFORM_TERMINAL_NUMBER;
 						scope.form.POS_WX_APPID = data.data[0].POS_WX_APPID;
+						scope.form.STARPOS_TRM_NO = data.data[0].STARPOS_TRM_NO;
+						scope.form.STARPOS_KEY = data.data[0].STARPOS_KEY;
 					}
 					$scope.$apply();
 				}

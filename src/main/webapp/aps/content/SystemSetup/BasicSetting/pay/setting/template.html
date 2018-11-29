@@ -278,6 +278,28 @@
 				</div>
 				 <i class="weui_icon_warn"></i>
 			</div>
+			<div class="weui_cell" ng-show="pospayShow">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">设备号</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input"  type="text" ng-model="form.STARPOS_TRM_NO"
+						 value="" required 
+						emptyTips="请输入设备号">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
+			<div class="weui_cell" ng-show="pospayShow">
+				<div class="weui_cell_hd">
+					<label class="weui_label label tablessetting-label">商户密钥</label>
+				</div>
+				<div class="weui-cell_bd weui_cell_primary">
+					<input class="weui_input tablessetting-weui_hd_self label-input"  type="text" ng-model="form.STARPOS_KEY"
+						 value="" required 
+						emptyTips="请输入商户密钥">
+				</div>
+				 <i class="weui_icon_warn"></i>
+			</div>
 		</div>
 		<div class="weui-loadmore" ng-hide="pageShow">
 			<i class="weui-loading"></i>
