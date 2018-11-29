@@ -148,6 +148,8 @@
 			BETWEEN str_to_date(#{todayStart},'%Y-%m-%d %H:%i:%s') 
 			AND str_to_date(#{todayEnd},'%Y-%m-%d %H:%i:%s')
 			AND o.FK_SHOP = #{FK_SHOP}
+			AND o.ORDER_DIVISION = '1'
+			AND o.ORDER_PAY_STATE = '1'
 	</select>
 	<!-- 查询今日智慧云订单商品总份数 -->
 	<select id="selectZHYOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
