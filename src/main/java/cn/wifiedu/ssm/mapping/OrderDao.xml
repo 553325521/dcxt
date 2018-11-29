@@ -53,7 +53,10 @@
 	
  	<!-- 根据订单id查询订单详情 -->
  	<select id="selectOrderDetailByOrderPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
- 		select 	o.ORDER_PK,o.ORDER_POSITION,
+ 		select 	o.ORDER_PK,
+ 			(select t.TABLES_NAME   from sc_tables t where 
+			t.TABLES_PK = o.ORDER_POSITION
+		 	) AS ORDER_POSITION,
 			o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
 			o.ARRIVE_TIME,o.CREATE_TIME,
 			od.ORDER_DETAILS_PK,od.ORDER_DETAILS_GNAME,
