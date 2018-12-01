@@ -5,11 +5,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -30,7 +28,6 @@ import cn.wifiedu.ssm.starpos.pay.StartPosUtil;
 import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.QRCode;
-import cn.wifiedu.ssm.util.WXJSUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 	
@@ -242,7 +239,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 								if(!(userJson == null || StringUtils.isEmpty(userJson))) {
 									JSONObject userObj = JSON.parseObject(userJson);
 									newMap.put("USER_ID", userObj.get("USER_PK"));
-									if(shopId.equals((String)userObj.get("FK_APP"))) {
+									if(shopId.equals(userObj.get("FK_APP"))) {
 										newMap.put("openid",userObj.get("USER_WX"));
 										hasOpenId = true;
 									}

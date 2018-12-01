@@ -893,8 +893,67 @@ public class ShopController extends BaseController {
 			e.printStackTrace();
 		}
 	}
-	
-	
+	/**
+	* <p>Title: loadShopOperatorsById</p>
+	* <p>Description:店员端报表--商品统计 --操作员查询</p>
+	*/
+	@RequestMapping(value = "/Shop_load_loadShopOperatorsById",method=RequestMethod.POST)
+	public void loadShopOperatorsById(){
+		try {
+			Map<String,Object> map = getParameterMap();
+			map.put("sqlMapId", "selectOperatorsByShop");
+			List<Map<String,Object>> operatorsList = openService.queryForList(map);
+			if(operatorsList.size()!=0){
+				for(int i = 0;i<operatorsList.size();i++){
+					if(!operatorsList.get(i).containsKey("USER_NAME")){
+						operatorsList.get(i).put("USER_NAME","");
+					}
+				}
+				output("0000",operatorsList);
+			}else{
+				output("9999","没有相关操作员返回");
+			}
+			
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	/**
+	* <p>Title: loadGoodsCountData</p>
+	* <p>Description: 店员端--报表---商品统计</p>
+	*/
+	@RequestMapping(value = "/loadGoodsCountData",method=RequestMethod.POST)
+	public void loadGoodsCountData(){
+		try {
+			Map<String,Object> map = getParameterMap();
+//			根据前台传的时间参数计算开始时间和结束时间
+			String[] dateStrArray = DateUtil.selectTime(map.get("selectTime").toString());
+			String userFk = map.get("FK_USER").toString();
+			if(userFk.equals("0")){
+				map.put("ORDER_DIVISION","2");
+				map.put("FK_USER", null);
+			}else{
+				map.put("ORDER_DIVISION","0");
+			}
+			map.put("START_TIME", dateStrArray[0]);
+			map.put("END_TIME", dateStrArray[1]);
+			map.put("sqlMapId", "selectGoodsDataByTime");
+			List<Map<String,Object>> resultList = openService.queryForList(map);
+			output("0000", resultList);
+		} catch (ExceptionVo e) {
+			output("9999","没有商品统计的数据");
+			e.printStackTrace();
+		} catch (Exception e) {
+			output("9999","没有商品统计的数据");
+			e.printStackTrace();
+		}
+		
+	}
 	/*计算总金额*/
 	private double jsTotalMoney(List<Map<String,Object>> moneyList,String key){
 		double sumMoney = 0.0;

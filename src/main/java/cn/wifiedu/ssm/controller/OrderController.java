@@ -17,6 +17,8 @@ import org.springframework.web.socket.TextMessage;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.core.vo.ExceptionVo;
+import cn.wifiedu.ssm.util.DateUtil;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
@@ -127,6 +129,30 @@ public class OrderController extends BaseController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	/**
+	* <p>Title: loadOrderDataByShopOrTimeOrWay</p>
+	* <p>Description:根据选择商铺、时间、支付方式查询订单 </p>
+	*/
+	@RequestMapping(value = "/Order_load_loadOrderDataByShopOrTimeOrWay", method = RequestMethod.POST)
+	public void loadOrderDataByShopOrTimeOrWay(){
+		try {
+			Map<String,Object> map = getParameterMap();
+//			根据前台传的时间参数计算开始时间和结束时间
+			String[] dateStrArray = DateUtil.selectTime(map.get("selectTime").toString());
+			map.put("START_TIME", dateStrArray[0]);
+			map.put("END_TIME", dateStrArray[1]);
+			map.put("sqlMapId", "selectOrderByShopOrTimeOrPayWay");
+			List<Map<String, Object>> orderDataList = openService.queryForList(map);
+			output("0000", orderDataList);
+		} catch (ExceptionVo e) {
+			output("9999", "获取消费统计失败");
+			e.printStackTrace();
+		} catch (Exception e) {
+			output("9999", "获取消费统计失败");
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**

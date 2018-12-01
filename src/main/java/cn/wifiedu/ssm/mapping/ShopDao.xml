@@ -198,5 +198,37 @@
 				BETWEEN str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
 				AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
 	</select>
+	<!-- 根据商铺Id查询该店的店员角色的用户名称和ID -->
+	<select id="selectOperatorsByShop" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT u.USER_PK,u.USER_NAME,u.USER_SN FROM sc_user_shop s 
+		INNER JOIN sc_user u
+		ON s.FK_USER = u.USER_PK
+		WHERE s.FK_ROLE = (
+			SELECT r.ROLE_PK FROM sc_sys_role r
+			WHERE r.ROLE_NAME = '店员'
+		)
+		AND s.FK_SHOP = #{FK_SHOP}
+	</select>
+	<!-- 根据时间、商铺ID、操作员加载商铺统计数据 -->
+	<select id="selectGoodsDataByTime" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT od.ORDER_DETAILS_GNAME,SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,
+			od.ORDER_DETAILS_GMONEY,
+		SUM((od.ORDER_DETAILS_FS*od.ORDER_DETAILS_GMONEY))AS TOTAL_MONEY 
+		FROM sc_order o 
+		INNER JOIN sc_order_details od
+		ON o.ORDER_PK = od.FK_ORDER
+		WHERE o.ORDER_PAY_STATE = '1'
+		AND o.ORDER_DIVISION = #{ORDER_DIVISION}
+		<if test='FK_USER != null and FK_USER!=""'>
+           AND o.FK_USER = #{FK_USER}
+        </if>
+		AND o.FK_SHOP = #{FK_SHOP}
+		AND str_to_date(o.CREATE_TIME,'%Y-%m-%d%H:%i')
+						BETWEEN str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+						AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+		GROUP BY od.FK_GOODS
+	</select>
+	
+ 
 	
 </mapper>

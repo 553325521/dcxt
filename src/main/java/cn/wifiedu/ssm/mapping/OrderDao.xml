@@ -41,6 +41,30 @@
 		ORDER BY
 		str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') DESC
 	</select>
+	<!-- 根据选择商铺、时间、支付方式查询订单 -->
+	<select id="selectOrderByShopOrTimeOrPayWay" parameterMap="BaseParameterMap"
+		resultMap="BaseResultMap">
+		select o.ORDER_PK,
+		(select t.TABLES_NAME   from sc_tables t where 
+			t.TABLES_PK = o.ORDER_POSITION
+		 ) AS ORDER_POSITION,o.ORDER_PAY_WAY,
+		o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
+		o.ARRIVE_TIME,o.CREATE_TIME,o.CREATE_BY,
+		SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,
+		SUM(od.ORDER_DETAILS_GMONEY/100*od.ORDER_DETAILS_FS) AS TOTAL_MONEY
+		from SC_ORDER o left join SC_ORDER_DETAILS od
+		on
+		o.ORDER_PK = od.FK_ORDER
+		WHERE str_to_date(o.CREATE_TIME,'%Y-%m-%d%H:%i')
+		BETWEEN str_to_date(#{START_TIME},'%Y-%m-%d %H:%i')
+		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+		AND o.ORDER_PAY_STATE = '1'
+		AND o.ORDER_PAY_WAY = #{ORDER_PAY_WAY}
+		AND FK_SHOP = #{FK_SHOP}
+		GROUP BY od.FK_ORDER
+		ORDER BY
+		str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i:%s') DESC
+	</select>
 	<!-- 根据订单ID查询订单总金额 -->
 	<select id="selectOrderTotalMoneyByOrderPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		select 	SUM(od.ORDER_DETAILS_GMONEY/100*od.ORDER_DETAILS_FS) AS TOTAL_MONEY
