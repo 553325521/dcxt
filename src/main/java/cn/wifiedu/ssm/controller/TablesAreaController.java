@@ -193,7 +193,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 * @date 2018年8月1日 下午5:48:29 
 			 * @author lps
 			 * 
-			 * @Description: 
+			 * @Description: 插入桌位区域
 			 * @param request
 			 * @param seesion 
 			 * @return void 

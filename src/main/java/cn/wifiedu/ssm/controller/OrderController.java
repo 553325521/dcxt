@@ -1,5 +1,7 @@
 package cn.wifiedu.ssm.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -231,6 +233,16 @@ public class OrderController extends BaseController {
 	public void createOrder() {
 		try {
 			Map<String, Object> map = getParameterMap();
+			//先查询该桌位是否被使用
+			Map<String, Object> mapTables = getParameterMap();
+			mapTables.put("sqlMapId", "findTablesById");
+			mapTables.put("TABLES_ID", map.get("TABLES_PK"));
+			mapTables = (Map<String, Object>)openService.queryForObject(mapTables);
+			if (mapTables.containsKey("TABLES_ISUSE") && "1".equals(mapTables.get("TABLES_ISUSE"))) {
+				output("3333", "桌位被使用");
+				return;
+			}
+			
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
 			if (StringUtils.isNotBlank(userJson)) {
 				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
@@ -267,11 +279,19 @@ public class OrderController extends BaseController {
 							}
 							
 						}
-
+						
 						map.put("sqlMapId", "updateCartToOrder");
 						if (!openService.update(map)) {
 							throw new RuntimeException();
 						}
+						
+						//更改桌位为已使用
+						map.put("sqlMapId", "updateTablesIsUseByAreaId");
+						map.put("TABLES_ISUSE", 1);
+						if (!openService.update(map)) {
+							throw new RuntimeException();
+						}
+						
 
 						txManagerController.commit();
 						output("0000", "创建成功");

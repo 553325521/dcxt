@@ -77,6 +77,8 @@ public class WxController extends BaseController {
 	@RequestMapping("/Qrcode_testQrcode_data")
 	public void testQrcode(HttpServletRequest request, HttpServletResponse reponse) {
 		try {
+			String  browserDetails  =   request.getHeader("User-Agent");
+	        logger.info("browserDetails-------------->"+browserDetails);
 			Map<String, Object> map = getParameterMap();
 			logger.info(map + "");
 			// String url =
@@ -264,7 +266,6 @@ public class WxController extends BaseController {
 			if (null != code && !"".equals(code)) {
 				String openId = getOpenIdByCode2(code, appid);
 				logger.info("WeChart openId : " + openId);
-
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
 				map.put("sqlMapId", "checkUserWx");
@@ -289,7 +290,6 @@ public class WxController extends BaseController {
 				}
 				// redis存储用户登录信息
 				jedisClient.set(RedisConstants.REDIS_USER_SESSION_KEY + openId, JSON.toJSONString(userMap));
-
 				// 添加写cookie的逻辑，cookie的有效期是关闭浏览器就失效。
 				CookieUtils.setCookie(request, response, "DCXT_TOKEN", openId);
 
@@ -305,7 +305,6 @@ public class WxController extends BaseController {
 
 				// 保存button信息
 				jedisClient.set(RedisConstants.WX_BUTTON_TOKEN + btnToken, obj.toJSONString());
-
 				response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json",
 						"#toOtherPage/msgPage/" + btnToken));
 			}

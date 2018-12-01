@@ -22,7 +22,7 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
-
+				//scope.toHref('ActingCustomerManagement/buyService','');
 				$scope.loadFunctionList = function() {
 					scope.isShow = true
 					$httpService.post(config.findURL, $scope.form).success(function(data) {

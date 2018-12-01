@@ -6,17 +6,20 @@ import java.io.InputStreamReader;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -141,7 +144,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						String callBackUrl = (String) messMap.get("callBackUrl");
 						messMap.remove("callBackUrl");
 						postMap.putAll(messMap);
-						String retStr = CommonUtil.posts(CommonUtil.getPath("project_url").replace("DATA", callBackUrl), JSON.toJSONString(postMap), "utf-8");
+						CommonUtil.posts(CommonUtil.getPath("project_url").replace("DATA", callBackUrl), JSON.toJSONString(postMap), "utf-8");
 						jedisClient.del(RedisConstants.STARPOS_PAY_CALLBACK_URL + reMap.get("logNo"));
 					}
 					
@@ -360,7 +363,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					newMap = starPosPay.pay(newMap);
 					if("000000".equals(newMap.get("returnCode").toString())) {
 						if(!("S".equals(newMap.get("result")))) {
-							Map callBackMap = new HashMap<String, String>();
+							Map<String, String> callBackMap = new HashMap<String, String>();
 							callBackMap.put("DCXT_ORDER_FK", orderId);
 							//如果不是支付成功，那么给他一个回调函数,里边有支付成功后调用的方法，和要发送的数据
 							this.addCallBackMethod((String)newMap.get("logNo"), "ShopScanPay_nextOper", callBackMap);

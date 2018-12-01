@@ -107,5 +107,40 @@
 		SELECT COUNT(TABLES_AREA_PK) AS area_count FROM sc_tables_area WHERE SHOP_FK = #{SHOP_ID};
 	
 	</select>
+	
+
+      <!-- 根据店铺id查询所有区域信息+该区域有没有被使用的信息 -->
+      <select id="findTablesAreaAndTablesUseStatusByShopId"  resultMap="myDept">
+            SELECT t.TABLES_AREA_PK,t.TABLES_AREA_NAME,d.TABLES_PK,d.TABLES_NAME FROM sc_tables_area t
+			INNER JOIN sc_tables d
+			ON t.TABLES_AREA_PK = d.TABLES_AREA_FK
+			WHERE t.SHOP_FK = '30f1bbd3cbbe45d5b34cb8991ca5a886'
+			
+			
+			<!--  SELECT td.*, o.ORDER_PK, o.ORDER_RS, o.CREATE_TIME FROM (SELECT t.TABLES_AREA_PK, t.TABLES_AREA_NAME,t.TABLES_AREA_PXXH, d.TABLES_PK, d.TABLES_SHORT_NAME, d.TABLES_NAME, d.TABLES_NUM,d.TABLES_PXXH, d.TABLES_ISUSE FROM sc_tables d
+			LEFT JOIN sc_tables_area t
+			ON t.TABLES_AREA_PK = d.TABLES_AREA_FK
+			WHERE t.TABLES_AREA_STATUS = '1' AND d.TABLES_STATUS = '1' AND t.SHOP_FK = '30f1bbd3cbbe45d5b34cb8991ca5a886' ORDER BY t.TABLES_AREA_PXXH ASC, d.TABLES_PXXH ASC) td LEFT JOIN (SELECT * FROM sc_order WHERE ORDER_PAY_STATE = '0') o ON td.TABLES_PK = o.ORDER_POSITION ;
+
+
+
+SELECT * FROM sc_order so WHERE so.ORDER_PK = (SELECT MAX(CREATE_TIME) FROM sc_order WHERE ORDER_PK = so.ORDER_PK);
+SELECT * FROM (SELECT * FROM sc_order ORDER BY CREATE_TIME ASC) ttt GROUP BY ttt.ORDER_POSITION; -->
+      </select>
+	
+	 <resultMap id="myDept" type="java.util.HashMap">
+            <id column="TABLES_AREA_PK" property="TABLES_AREA_PK"/>
+            <result column="TABLES_AREA_NAME" property="TABLES_AREA_NAME"/>
+            <!-- collection定义关联集合类型的属性封装规则
+            offType:指定集合中的元素类型
+            -->
+            <collection property="tables" javaType="ArrayList" ofType="java.util.HashMap">
+                <id column="TABLES_PK" property="TABLES_PK"/>
+                <result column="TABLES_NAME" property="TABLES_NAME"/>
+            </collection>
+      </resultMap>
+	
+	
+	
 
 </mapper>

@@ -319,6 +319,14 @@ public class TablesController extends BaseController {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author lps
+	 * @date Nov 29, 2018 2:29:29 AM 
+	 * 
+	 * @description: 根据shopid查询可用区域下的可用餐桌的具体信息
+	 * @return void
+	 */
 	@RequestMapping("/Tables_select_loadTableList")
 	public void loadTableList(HttpServletRequest request, HttpSession seesion) {
 
@@ -335,6 +343,7 @@ public class TablesController extends BaseController {
 			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
+			logger.error("TableController 338"+e);
 			return;
 		}
 	}

@@ -25,7 +25,7 @@
 	<select id="findTablesById" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT
-			TABLES_PK, TABLES_NAME, TABLES_SHORT_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC
+			TABLES_PK, TABLES_NAME, TABLES_SHORT_NAME, TABLES_NUM, TABLES_STATUS, TABLES_PXXH, TABLES_DESC, TABLES_ISUSE
 		FROM
 		sc_tables
 		WHERE
@@ -106,6 +106,7 @@
 		WHERE TABLES_AREA_FK = #{TABLES_AREA_ID};
 	</select>
 
+	<!-- 根据商铺ID查询可用区域下的可用餐桌的具体信息 -->
 	<select id="loadTableList" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		select a.TABLES_AREA_PK, a.TABLES_AREA_NAME,
@@ -124,7 +125,7 @@
 		WHERE
 		TABLES_AREA_FK = #{TABLES_AREA_ID}
 	</delete>
-
+	<!-- 根据区域ID修改该区域下所有桌位的用停状态 -->
 	<update id="updateTablesStatusByAreaId" parameterMap="BaseParameterMap">
 		UPDATE
 		sc_tables
@@ -132,6 +133,16 @@
 		TABLES_STATUS = #{TABLES_AREA_STATUS}
 		WHERE
 		TABLES_AREA_FK = #{TABLES_AREA_ID}
+	</update>
+	
+	<!-- 根据桌位ID修改座位正在被使用还是空台 -->
+	<update id="updateTablesIsUseByAreaId" parameterMap="BaseParameterMap">
+		UPDATE
+		sc_tables
+		SET
+		TABLES_ISUSE = #{TABLES_ISUSE}
+		WHERE
+		TABLES_PK = #{TABLES_PK}
 	</update>
 
 </mapper>

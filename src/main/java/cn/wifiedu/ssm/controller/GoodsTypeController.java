@@ -401,13 +401,13 @@ public class GoodsTypeController extends BaseController {
 								if (cartDataList != null && !cartDataList.isEmpty()) {
 									for (Map<String, Object> cartMap : cartDataList) {
 										if ((cartMap.get("FK_GOODS").toString()).equals(goodInfo.get("GOODS_PK").toString())) {
-											typeCount = Arith.add(typeCount, Double.valueOf(cartMap.get("qity").toString()));
-											goodCount = Arith.add(goodCount, Double.valueOf(cartMap.get("qity").toString()));
+											typeCount = Arith.add(typeCount, Double.valueOf(cartMap.get("qity").toString()));//该分类下点的数量
+											goodCount = Arith.add(goodCount, Double.valueOf(cartMap.get("qity").toString()));//该商品点的数量
 										}
 									}
 								}
-								goodInfo.put("qity", goodCount);
-								goods.add(goodInfo);
+								goodInfo.put("qity", goodCount);//该商品的数量
+								goods.add(goodInfo);//每个商品set进商品列表
 							}
 						}
 						good.put("infos", goods);
