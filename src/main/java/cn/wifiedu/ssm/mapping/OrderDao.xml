@@ -9,7 +9,8 @@
 		select
 		o.ORDER_PAY_STATE,count(*) as ORDER_NUMBER
 		from sc_order o
-		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i')
+		WHERE (o.ORDER_DIVISION = '0' OR o.ORDER_DIVISION = '1')
+		AND str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i')
 		BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i')
 		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
 		AND FK_SHOP = #{FK_SHOP}
@@ -21,7 +22,7 @@
 		select o.ORDER_PK,
 		(select t.TABLES_NAME   from sc_tables t where 
 			t.TABLES_PK = o.ORDER_POSITION
-		 ) AS ORDER_POSITION,o.ORDER_PAY_WAY,
+		 ) AS ORDER_POSITION,o.ORDER_PAY_WAY,o.ORDER_DIVISION,
 		o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
 		o.ARRIVE_TIME,o.CREATE_TIME,o.CREATE_BY,
 		SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,
@@ -29,7 +30,9 @@
 		from SC_ORDER o left join SC_ORDER_DETAILS od
 		on
 		o.ORDER_PK = od.FK_ORDER
-		WHERE str_to_date(CREATE_TIME,'%Y-%m-%d
+		WHERE
+		(o.ORDER_DIVISION = '0' OR o.ORDER_DIVISION = '2')
+		AND str_to_date(CREATE_TIME,'%Y-%m-%d
 		%H:%i')
 		BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i')
 		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
