@@ -2,6 +2,7 @@ package cn.wifiedu.ssm.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -223,6 +224,56 @@ public class OrderController extends BaseController {
 	}
 
 	/**
+	* <p>Title: loadWMOrderData</p>
+	* <p>Description: 加载外卖订单数据</p>
+	*/
+	@RequestMapping(value = "/Order_select_loadWMOrderData", method = RequestMethod.POST)
+	public void loadWMOrderData(){
+		try {
+			Map<String,Object> map = getParameterMap();
+			List<Map<String,Object>> returnData = new ArrayList<Map<String,Object>>();
+			//拿到选择的外卖订单来源
+			String [] orderSourceArray = map.get("selectSource").toString().split(",");
+			//如果包含智慧云端,加载智慧云端数据
+			if(CheckArrayContainsValue(orderSourceArray,"智慧云")){
+				map.put("sqlMapId", "selectZHYWMOrderData");
+				List<Map<String,Object>> zhyResultList = openService.queryForList(map);
+				if(zhyResultList.size()!=0){
+					for(Map<String,Object> o:zhyResultList){
+						o.put("SOURCENAME", "智慧云");
+						returnData.add(o);
+					}
+				}
+				
+			}
+			//如果包含饿了么端，加载饿了么外卖数据
+			if(CheckArrayContainsValue(orderSourceArray,"饿了么")){
+				
+			}
+			
+			output("0000",returnData);
+		} catch (ExceptionVo e) {
+			e.printStackTrace();
+			output("9999","没有外卖订单数据");
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999","没有外卖订单数据");
+		}
+	}
+	/**
+	* <p>Title: CheckArrayContainsValue</p>
+	* <p>Description:检查某个字符串数组是否包含某个值 </p>
+	* @return
+	*/
+	private boolean CheckArrayContainsValue(String [] strArray,String value){
+		for(String s:strArray){
+			if(s.equals(value)){
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
 	 * 
 	 * @author kqs
 	 * @return void
@@ -429,4 +480,5 @@ public class OrderController extends BaseController {
 		output("9999", "操作失败~");
 		return;
 	}
+	
 }
