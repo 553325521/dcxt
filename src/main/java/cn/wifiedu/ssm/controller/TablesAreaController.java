@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
@@ -320,6 +321,34 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					return;
 				}
 			}
+			
+			
+			
+			@RequestMapping("/TablesArea_update_findTablesAreaAndTablesUseStatusByShopId")
+			public void findTablesAreaAndTablesUseStatusByShopId(HttpServletRequest request,HttpSession seesion){
+				
+				try {
+					Map<String, Object> map = getParameterMap();
+					map.put("sqlMapId","findTablesAreaAndTablesUseStatusByShopId");
+					
+					List queryForList = openService.queryForList(map);
+					
+					if(queryForList == null || queryForList.size() == 0) {
+						output("9999", "查询错误");
+						return;
+					}
+					
+					output("0000", queryForList);
+					return;
+					
+				} catch (Exception e) {
+					logger.error("TablesAreaController 339");
+					logger.error(e);
+					e.printStackTrace();
+				}
+			}
+			
+			
 			
 			
 		

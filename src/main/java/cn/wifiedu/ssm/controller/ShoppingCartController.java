@@ -274,10 +274,10 @@ public class ShoppingCartController extends BaseController {
 			}
 			map.put("sqlMapId", "removeAllCart");
 			if (openService.delete(map)) {
-				output("0000", "操作成功~");
+				output("0000", "操作成功");
 				return;
 			}
-			output("9999", "操作失败~");
+			output("9999", "购物车已空");
 			return;
 		} catch (Exception e) {
 			logger.error("error", e);

@@ -81,7 +81,7 @@
  	<!-- 根据订单id查询订单详情 -->
  	<select id="selectOrderDetailByOrderPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
  		select 	o.ORDER_PK,
- 			(select t.TABLES_NAME   from sc_tables t where 
+ 			(select t.TABLES_NAME from sc_tables t where 
 			t.TABLES_PK = o.ORDER_POSITION
 		 	) AS ORDER_POSITION,o.ORDER_PAY_WAY,
 			o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,o.ORDER_MLMONEY,o.ORDER_JFDXMONEY,o.ORDER_YHMONEY,o.ORDER_YFMONEY,o.ORDER_SHOPMONEY,
@@ -94,6 +94,60 @@
 		#{ORDER_PK}
 		AND od.ORDER_DETAILS_GOODS_STATE != '3'
 	</select>
+	
+	 	<!-- 根据订单id查询订单详情(订单具体信息，包括订单所在桌位的信息),结果以集合里边放集合返回 -->
+ 	<select id="selectOrderDetailTableByOrderPK" resultMap="orderTableDetail">
+ 		select ood.ORDER_PK,ood.ORDER_PAY_WAY,
+			ood.ORDER_CODE,ood.ORDER_RS,ood.ORDER_PAY_STATE,ood.ORDER_STATE,ood.ORDER_MLMONEY,ood.ORDER_JFDXMONEY,ood.ORDER_YHMONEY,ood.ORDER_YFMONEY,ood.ORDER_SHOPMONEY,
+			ood.ARRIVE_TIME,ood.CREATE_TIME,
+			ood.ORDER_DETAILS_PK,ood.ORDER_DETAILS_GNAME,
+			ood.ORDER_DETAILS_GMONEY,ood.ORDER_DETAILS_FS,t.TABLES_PK,t.TABLES_NAME,t.TABLES_NUM,t.TABLES_SHORT_NAME FROM (select 	o.ORDER_PK,
+ 			o.ORDER_POSITION,o.ORDER_PAY_WAY,
+			o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,o.ORDER_MLMONEY,o.ORDER_JFDXMONEY,o.ORDER_YHMONEY,o.ORDER_YFMONEY,o.ORDER_SHOPMONEY,
+			o.ARRIVE_TIME,o.CREATE_TIME,
+			od.ORDER_DETAILS_PK,od.ORDER_DETAILS_GNAME,
+			od.ORDER_DETAILS_GMONEY,od.ORDER_DETAILS_FS
+		from SC_ORDER o left join SC_ORDER_DETAILS od
+		on o.ORDER_PK = od.FK_ORDER
+		WHERE o.ORDER_PK =
+		#{ORDER_PK}) ood LEFT JOIN sc_tables t ON t.TABLES_PK = ood.ORDER_POSITION;
+	</select>
+	
+	<resultMap id="orderTableDetail" type="java.util.HashMap">
+            <id column="ORDER_PK" property="ORDER_PK"/>
+            <result column="ORDER_PAY_WAY" property="ORDER_PAY_WAY"/>
+            <result column="ORDER_CODE" property="ORDER_CODE"/>
+            <result column="ORDER_RS" property="ORDER_RS"/>
+            <result column="ORDER_PAY_STATE" property="ORDER_PAY_STATE"/>
+            <result column="ORDER_STATE" property="ORDER_STATE"/>
+            <result column="ORDER_MLMONEY" property="ORDER_MLMONEY"/>
+            <result column="ORDER_JFDXMONEY" property="ORDER_JFDXMONEY"/>
+            <result column="ORDER_YHMONEY" property="ORDER_YHMONEY"/>
+            <result column="ORDER_YFMONEY" property="ORDER_YFMONEY"/>
+            <result column="ORDER_SHOPMONEY" property="ORDER_SHOPMONEY"/>
+            <result column="ARRIVE_TIME" property="ARRIVE_TIME"/>
+            <result column="CREATE_TIME" property="CREATE_TIME"/>
+            <result column="TABLES_PK" property="TABLES_PK"/>
+            <result column="TABLES_NAME" property="TABLES_NAME"/>
+            <result column="TABLES_NUM" property="TABLES_NUM"/>
+            <result column="TABLES_SHORT_NAME" property="TABLES_SHORT_NAME"/>
+               
+            
+            <!-- collection定义关联集合类型的属性封装规则
+            offType:指定集合中的元素类型
+            -->
+            <collection property="orders" javaType="ArrayList" ofType="java.util.HashMap">
+                <id column="ORDER_DETAILS_PK" property="ORDER_DETAILS_PK"/>
+	            <result column="ORDER_DETAILS_GNAME" property="ORDER_DETAILS_GNAME"/>
+	            <result column="ORDER_DETAILS_GMONEY" property="ORDER_DETAILS_GMONEY"/>
+	            <result column="ORDER_DETAILS_FS" property="ORDER_DETAILS_FS"/>
+            </collection>
+      </resultMap>
+	
+	
+	
+	
+	
 	<!-- 根据订单详情id删除订单里某一种菜品 -->
 	<delete id="deleteOrderDetailByORDER_DETAILS_PK" parameterMap="BaseParameterMap">
 		UPDATE  SC_ORDER_DETAILS

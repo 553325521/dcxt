@@ -188,6 +188,42 @@ public class OrderController extends BaseController {
 		}
 	}
 
+	
+	
+	/**
+	 * <p>
+	 * Title: loadOrderDetailByOrderPK
+	 * </p>lps 2018年12月03日06:15:00
+	 * <p>
+	 * Description:根据订单id查询订单详情，优化版,返回list嵌套list
+	 * </p>
+	 */
+	@RequestMapping(value = "/Order_load_loadOrderDetailTableByOrderPK", method = RequestMethod.POST)
+	public void loadOrderDetailTableByOrderPK() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("openid").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("ORDER_PK") || StringUtils.isBlank(map.get("ORDER_PK").toString())) {
+					output("9999", "订单ID无效");
+					return;
+				}
+				map.put("sqlMapId", "selectOrderDetailTableByOrderPK");
+				Map<String, Object> reMap = (Map<String, Object> )openService.queryForObject(map);
+				output("0000", reMap);
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
 	/**
 	 * <p>
 	 * Title: tuiCai
