@@ -179,8 +179,28 @@ public class OrderController extends BaseController {
 					output("9999", "订单ID无效");
 					return;
 				}
-				map.put("sqlMapId", "selectOrderDetailByOrderPK");
+				map.put("sqlMapId", "selectOrderDetailTableByOrderPK");
 				List<Map<String, Object>> orderDataList = openService.queryForList(map);
+				List<Map<String, Object>> orderDetailList = (List<Map<String, Object>>)orderDataList.get(0).get("orders");
+				int totalMoney = 0;
+				int totalFS = 0;
+				if(orderDataList.get(0).containsKey("CREATE_TIME")){
+					String createTime = orderDataList.get(0).get("CREATE_TIME").toString();
+					orderDataList.get(0).put("TIME_YMD",createTime.substring(0,10));
+					orderDataList.get(0).put("TIME_HMS",createTime.substring(11));
+				}
+				if(orderDetailList!=null && orderDetailList.size()!=0){
+					for(Map<String, Object> goods:orderDetailList){
+						if(goods.containsKey("ORDER_DETAILS_GMONEY")){
+							totalMoney = totalMoney + Integer.parseInt(goods.get("ORDER_DETAILS_GMONEY").toString());
+						}
+						if(goods.containsKey("ORDER_DETAILS_FS")){
+							totalFS = totalFS + Integer.parseInt(goods.get("ORDER_DETAILS_FS").toString());
+						}
+					}
+				}
+				orderDataList.get(0).put("totalMoney",totalMoney);
+				orderDataList.get(0).put("totalFS",totalFS);
 				output("0000", orderDataList);
 			} else {
 				output("9999", "token无效");

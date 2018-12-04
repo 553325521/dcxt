@@ -143,11 +143,6 @@
 	            <result column="ORDER_DETAILS_FS" property="ORDER_DETAILS_FS"/>
             </collection>
       </resultMap>
-	
-	
-	
-	
-	
 	<!-- 根据订单详情id删除订单里某一种菜品 -->
 	<delete id="deleteOrderDetailByORDER_DETAILS_PK" parameterMap="BaseParameterMap">
 		UPDATE  SC_ORDER_DETAILS
