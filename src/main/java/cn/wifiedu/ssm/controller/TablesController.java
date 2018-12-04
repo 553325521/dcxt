@@ -347,4 +347,38 @@ public class TablesController extends BaseController {
 			return;
 		}
 	}
+	
+	
+	/**
+	 * 
+	 * @author lps
+	 * @date 2018年12月05日05:46:01
+	 * 
+	 * @description: 根据tableid更改桌位正在使用和不使用
+	 * @return void
+	 */
+	@RequestMapping("/Tables_update_updateTableIsUseByTableId")
+	public void updateTableIsUseByTableId(HttpServletRequest request, HttpSession seesion) {
+
+		try {
+			Map<String, Object> map = getParameterMap();
+			// 先查询当前桌位的排序序号
+			map.put("sqlMapId", "updateTablesIsUseStatusByTableId");
+			
+			if (openService.update(map)) {
+				output("0000", "修改成功");
+				return;
+			}
+			output("9999", "操作失败");
+			return;
+		} catch (Exception e) {
+			output("9999", "操作失败");
+			logger.error("TableController 338"+e);
+			return;
+		}
+	}
+	
+	
+	
+	
 }

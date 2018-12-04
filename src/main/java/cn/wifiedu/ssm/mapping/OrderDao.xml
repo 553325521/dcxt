@@ -101,7 +101,7 @@
 			ood.ORDER_CODE,ood.ORDER_RS,ood.ORDER_PAY_STATE,ood.ORDER_STATE,ood.ORDER_MLMONEY,ood.ORDER_JFDXMONEY,ood.ORDER_YHMONEY,ood.ORDER_YFMONEY,ood.ORDER_SHOPMONEY,
 			ood.ARRIVE_TIME,ood.CREATE_TIME,
 			ood.ORDER_DETAILS_PK,ood.ORDER_DETAILS_GNAME,
-			ood.ORDER_DETAILS_GMONEY,ood.ORDER_DETAILS_FS,t.TABLES_PK,t.TABLES_NAME,t.TABLES_NUM,t.TABLES_SHORT_NAME FROM (select 	o.ORDER_PK,
+			ood.ORDER_DETAILS_GMONEY,ood.ORDER_DETAILS_FS,t.TABLES_ISUSE,t.TABLES_PK,t.TABLES_NAME,t.TABLES_NUM,t.TABLES_SHORT_NAME FROM (select 	o.ORDER_PK,
  			o.ORDER_POSITION,o.ORDER_PAY_WAY,
 			o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,o.ORDER_MLMONEY,o.ORDER_JFDXMONEY,o.ORDER_YHMONEY,o.ORDER_YFMONEY,o.ORDER_SHOPMONEY,
 			o.ARRIVE_TIME,o.CREATE_TIME,
@@ -131,7 +131,7 @@
             <result column="TABLES_NAME" property="TABLES_NAME"/>
             <result column="TABLES_NUM" property="TABLES_NUM"/>
             <result column="TABLES_SHORT_NAME" property="TABLES_SHORT_NAME"/>
-               
+            <result column="TABLES_ISUSE" property="TABLES_ISUSE"/>
             
             <!-- collection定义关联集合类型的属性封装规则
             offType:指定集合中的元素类型
@@ -455,6 +455,5 @@
 			</if>
 			${operaMoney} WHERE ORDER_PK = #{ORDER_PK};
 	 </update>
-	
 	
 </mapper>

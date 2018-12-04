@@ -135,8 +135,8 @@
 		TABLES_AREA_FK = #{TABLES_AREA_ID}
 	</update>
 	
-	<!-- 根据桌位ID修改座位正在被使用还是空台 -->
-	<update id="updateTablesIsUseByAreaId" parameterMap="BaseParameterMap">
+	<!-- 根据桌位ID修改该桌子使用和被使用 -->
+	<update id="updateTablesIsUseStatusByTableId" parameterMap="BaseParameterMap">
 		UPDATE
 		sc_tables
 		SET
@@ -144,5 +144,6 @@
 		WHERE
 		TABLES_PK = #{TABLES_PK}
 	</update>
+	
 
 </mapper>
