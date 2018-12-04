@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.socket.TextMessage;
 
+import com.alibaba.fastjson.JSON;
+
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
@@ -669,6 +671,193 @@ public class OrderController extends BaseController {
 	}
 	public static void main(String[] args) {
 		System.out.println(new OrderController().jTime("2018-12-04 15:30:00").substring(11,16));
+	}
+	
+	
+	/**
+	 * 
+	 * @author lps
+	 * @return void
+	 * @date 2018年12月05日03:47:20
+	 * @description:订单加菜-本地购物车
+	 */
+	@RequestMapping(value = "/Order_insert_OrderAddGoods", method = RequestMethod.POST)
+	public void OrderAddGoods() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "shopid无效");
+					return;
+				}
+				//获取购物车信息
+				Map<String, Object> shoppingCart = (Map<String, Object>)JSON.parse((String)map.get("SHOPPING_CART"));
+				
+				txManagerController.createTxManager();
+				
+				for (Map<String, Object> good : (List<Map<String, Object>>)shoppingCart.get("goods")) {
+					Map<String, Object> goodMap = new HashMap<String,Object>();
+					goodMap.put("FK_ORDER", map.get("ORDER_PK"));
+					goodMap.put("FK_SHOP", map.get("FK_SHOP").toString());
+					goodMap.put("ORDER_DETAILS_GNAME", good.get("GOODS_NAME").toString());
+					goodMap.put("ORDER_DETAILS_FS", good.get("GOODS_NUMBER").toString());
+					Object price;
+					if(good.containsKey("GOODS_TRUE_PRICE")) {
+						price = good.get("GOODS_TRUE_PRICE");
+					}else {
+						price = good.get("GOODS_PRICE");
+					}
+					goodMap.put("ORDER_DETAILS_GMONEY", price);
+					goodMap.put("ORDER_DETAILS_FORMAT", good.get("GOODS_FORMAT").toString());
+					goodMap.put("ORDER_DETAILS_TASTE", good.get("GOODS_TASTE").toString());
+					goodMap.put("ORDER_DETAILS_MAKING", good.get("GOODS_MAKING").toString());
+					goodMap.put("ORDER_DETAILS_DW", good.get("GOODS_DW").toString());
+					goodMap.put("FK_GOODS", good.get("GOODS_PK").toString());
+					goodMap.put("CREATE_BY", map.get("FK_USER").toString());
+					
+					goodMap.put("sqlMapId", "insertCartOrderDeatilInfo");
+					String result1 = openService.insert(goodMap);
+					if (result1 == null) {
+						throw new RuntimeException();
+					}
+					
+				}
+				
+				map.put("sqlMapId", "updateOrderOrderYfmoneyByOrderId");
+				map.put("opera","1");
+				map.put("operaMoney", shoppingCart.get("totalMoney"));
+				
+				if(!openService.update(map)) {
+					throw new RuntimeException();
+				}
+				
+				txManagerController.commit();
+				output("0000", "已加菜");
+				return;
+			} else {
+				output("9999", "token无效");
+				return;
+			}
+		} catch (Exception e) {
+			logger.error("error", e);
+			txManagerController.rollback();
+		}
+		output("9999", "系统错误");
+		return;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @author lps
+	 * @return void
+	 * @date 2018年12月05日01:59:14
+	 * @description:根据购物车创建订单
+	 */
+	@RequestMapping(value = "/Order_insert_shoppingcreateOrder", method = RequestMethod.POST)
+	public void shoppingCreateOrder() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			System.out.println("");
+			
+			Map<String, Object> orderMap =  (Map<String, Object>)JSON.parse((String)map.get("SHOPPING_CART"));
+			Map<String, Object> tableMap = (Map<String, Object>)orderMap.get("table");
+			
+			Map<String, Object> checkMap = getParameterMap();
+			
+			checkMap.put("sqlMapId", "findTablesById");
+			checkMap.put("TABLES_ID", tableMap.get("TABLES_PK"));
+			checkMap = (Map<String, Object>)openService.queryForObject(checkMap);
+			if (checkMap.containsKey("TABLES_ISUSE") && "1".equals(checkMap.get("TABLES_ISUSE"))) {
+				output("3333", "桌位被使用");
+				return;
+			}
+			
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
+			if (StringUtils.isNotBlank(userJson)) {
+				if (!map.containsKey("FK_SHOP") || StringUtils.isBlank(map.get("FK_SHOP").toString())) {
+					output("9999", "商铺参数无效");
+					return;
+				}
+				if (!map.containsKey("FK_USER") || StringUtils.isBlank(map.get("FK_USER").toString())) {
+					output("9999", "USER参数无效");
+					return;
+				}
+				List<Map<String, Object>> goodsList = (List<Map<String, Object>>)orderMap.get("goods");
+				if(goodsList == null || goodsList.size() < 1) {
+					output("9999", "购物车没有商品");
+					return;
+				}
+				
+				Map<String, Object> insertOrderMap = new HashMap<>();
+				insertOrderMap.put("ORDER_POSITION", tableMap.get("TABLES_PK").toString());
+				insertOrderMap.put("ORDER_CODE", this.getOrderCode(map));
+				insertOrderMap.put("ORDER_RS", orderMap.get("personNum").toString());
+				insertOrderMap.put("CREATE_BY", map.get("FK_USER").toString());
+				insertOrderMap.put("FK_USER", map.get("FK_USER").toString());
+				insertOrderMap.put("FK_SHOP", map.get("FK_SHOP").toString());
+				insertOrderMap.put("ORDER_YFMONEY", orderMap.get("totalMoney").toString());
+				insertOrderMap.put("ORDER_DIVISION", map.get("ORDER_DIVISION").toString());
+				insertOrderMap.put("sqlMapId", "insertCartOrderInfo");
+				txManagerController.createTxManager();
+				String result = openService.insert(insertOrderMap);
+				if(result == null) {
+					throw new RuntimeException();
+				}
+				//循环插入订单详情信息
+				for (Map<String, Object> good : goodsList) {
+					Map<String, Object> goodMap = new HashMap<String,Object>();
+					goodMap.put("FK_ORDER", result);
+					goodMap.put("FK_SHOP", map.get("FK_SHOP").toString());
+					goodMap.put("ORDER_DETAILS_GNAME", good.get("GOODS_NAME").toString());
+					goodMap.put("ORDER_DETAILS_FS", good.get("GOODS_NUMBER").toString());
+					Object price;
+					if(good.containsKey("GOODS_TRUE_PRICE")) {
+						price = good.get("GOODS_TRUE_PRICE");
+					}else {
+						price = good.get("GOODS_PRICE");
+					}
+					goodMap.put("ORDER_DETAILS_GMONEY", price);
+					goodMap.put("ORDER_DETAILS_FORMAT", good.get("GOODS_FORMAT").toString());
+					goodMap.put("ORDER_DETAILS_TASTE", good.get("GOODS_TASTE").toString());
+					goodMap.put("ORDER_DETAILS_MAKING", good.get("GOODS_MAKING").toString());
+					goodMap.put("ORDER_DETAILS_DW", good.get("GOODS_DW").toString());
+					goodMap.put("FK_GOODS", good.get("GOODS_PK").toString());
+					goodMap.put("CREATE_BY", map.get("FK_USER").toString());
+					
+					goodMap.put("sqlMapId", "insertCartOrderDeatilInfo");
+					String result1 = openService.insert(goodMap);
+					if (result1 == null) {
+						throw new RuntimeException();
+					}
+					
+				}
+				
+				//更改桌位为已使用
+				Map<String, Object> updateTableMap = new HashMap<String, Object>();
+				updateTableMap.put("sqlMapId", "updateTablesIsUseByAreaId");
+				updateTableMap.put("TABLES_ISUSE", 1);
+				updateTableMap.put("TABLES_PK", tableMap.get("TABLES_PK"));
+				if (!openService.update(updateTableMap)) {
+					throw new RuntimeException();
+				}
+				
+				txManagerController.commit();
+				output("0000", "创建成功");
+				//通知客户端创建订单  lps通知客户端来订单了
+				//不能放在这，用户收不到信息我就返回错误了
+				systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
+				return;
+			}
+			output("9999", "USER参数无效");
+			return;
+		} catch (Exception e) {
+			logger.error("Order_insert_createOrder error", e);
+			txManagerController.rollback();
+			output("9999", "操作失败，请查看订单列表是否操作成功");
+		}
 	}
 	
 }

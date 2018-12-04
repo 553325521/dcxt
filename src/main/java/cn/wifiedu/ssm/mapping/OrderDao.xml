@@ -191,6 +191,43 @@
 			#{CREATE_BY},
 		</trim>
 	</insert>
+	
+	<!-- 插入购物车订单信息，lps 2018年12月05日02:40:20 -->
+		<insert id="insertCartOrderInfo" parameterMap="BaseParameterMap">
+		INSERT INTO SC_ORDER
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ORDER_PK,
+			ORDER_POSITION,
+			ORDER_CODE,
+			ORDER_RS,
+			ORDER_PAY_STATE,
+			ORDER_STATE,
+			ARRIVE_TIME,
+			FK_USER,
+			FK_SHOP,
+			CREATE_TIME,
+			CREATE_BY,
+			ORDER_YFMONEY,
+			ORDER_DIVISION
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{UUID},
+			#{ORDER_POSITION},
+			#{ORDER_CODE},
+			#{ORDER_RS},
+			'0',
+			'3',
+			NOW(),
+			#{FK_USER},
+			#{FK_SHOP},
+			NOW(),
+			#{CREATE_BY},
+			#{ORDER_YFMONEY},
+			#{ORDER_DIVISION}
+		</trim>
+	</insert>
+	
+	
 
 	<insert id="insertOrderDeatilInfo" parameterMap="BaseParameterMap">
 		INSERT INTO SC_ORDER_DETAILS
@@ -219,6 +256,40 @@
 			#{FK_GOODS},
 		</trim>
 	</insert>
+	
+	
+	<!-- 插入订单里边的订单详情 lps 2018年12月05日02:48:25 -->
+		<insert id="insertCartOrderDeatilInfo" parameterMap="BaseParameterMap">
+		INSERT INTO SC_ORDER_DETAILS
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			ORDER_DETAILS_PK,
+			ORDER_DETAILS_GNAME,
+			ORDER_DETAILS_FS,
+			ORDER_DETAILS_GMONEY,
+			FK_ORDER,
+			ORDER_DETAILS_FORMAT,
+			ORDER_DETAILS_TASTE,
+			ORDER_DETAILS_MAKING,
+			ORDER_DETAILS_DW,
+			FK_GOODS
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			#{UUID},
+			#{ORDER_DETAILS_GNAME},
+			#{ORDER_DETAILS_FS},
+			#{ORDER_DETAILS_GMONEY},
+			#{FK_ORDER},
+			#{ORDER_DETAILS_FORMAT},
+			#{ORDER_DETAILS_TASTE},
+			#{ORDER_DETAILS_MAKING},
+			#{ORDER_DETAILS_DW},
+			#{FK_GOODS}
+		</trim>
+	</insert>
+	
+	
+	
+	
 	<!-- 查询今日智慧云订单消费总金额 -->
 	<select id="selectZHYMoney" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT o.ORDER_SHOPMONEY  FROM sc_order o WHERE str_to_date(o.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
@@ -363,6 +434,27 @@
 		ON o.ORDER_PK = od.FK_ORDER
 		WHERE o.ORDER_PK = #{ORDER_PK}
 	</select>
+	
+	
+	<!-- 根据订单ID结账，多表修改，一起修改的是桌位使用状态置位0 -->
+	<update id="updataSettleAccountsByOrderId" parameterMap="BaseParameterMap">
+		UPDATE sc_tables t, sc_order o
+		SET t.TABLES_ISUSE = 0, o.ORDER_PAY_WAY = #{ORDER_PAY_WAY}, o.ORDER_PAY_STATE = #{ORDER_PAY_STATE}, ORDER_MLMONEY = #{ORDER_MLMONEY}, ORDER_JFDXMONEY = #{ORDER_JFDXMONEY},
+			ORDER_YHMONEY = #{ORDER_YHMONEY}, ORDER_SHOPMONEY = #{ORDER_SHOPMONEY}
+		WHERE o.ORDER_PK = #{ORDER_PK} AND t.TABLES_PK = o.ORDER_POSITION;
+	</update>
+	
+	<!-- 根据订单id增加或减少订单应付金额, -->
+	<update id="updateOrderOrderYfmoneyByOrderId" parameterMap="BaseParameterMap">
+		UPDATE sc_order SET ORDER_YFMONEY = ORDER_YFMONEY
+			<if test="opera == '1'.toString()">
+			+
+			</if>
+			<if test="opera == '0'.toString()">
+			-
+			</if>
+			${operaMoney} WHERE ORDER_PK = #{ORDER_PK};
+	 </update>
 	
 	
 </mapper>

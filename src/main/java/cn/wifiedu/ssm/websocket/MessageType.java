@@ -11,7 +11,7 @@ public class MessageType {
 
 	//更新订单数量消息类型
 	 public static final String UPDATE_ORDERNUMBER = "0";
-	 //创建订单消息类型
+	 //创建订单消息类型           lps店员已下单
 	 public static final String UPDATE_ORDERDATA = "101";
 	 
 	 
