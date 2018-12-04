@@ -92,7 +92,7 @@
 		on o.ORDER_PK = od.FK_ORDER
 		WHERE o.ORDER_PK =
 		#{ORDER_PK}
-		AND od.ORDER_DETAILS_GOODS_STATE != '3'
+		<!-- AND od.ORDER_DETAILS_GOODS_STATE != '3' -->
 	</select>
 	
 	 	<!-- 根据订单id查询订单详情(订单具体信息，包括订单所在桌位的信息),结果以集合里边放集合返回 -->
@@ -271,14 +271,102 @@
 	</select>
 <!-- 查询智慧云订单数据 -->
 	<select id="selectZHYWMOrderData"  parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-			SELECT o.ORDER_PK,o.CREATE_TIME,o.ORDER_SHOPMONEY,o.WM_ORDER_USERNAME,o.WM_USERPHONE 
-				FROM sc_order o
-				WHERE o.WM_ORDER_STATE = '1'
-				AND o.FK_SHOP = '6e7c30e587904c24915c561836b3092e'
+			SELECT o.ORDER_PK,o.CREATE_TIME,o.ORDER_SHOPMONEY,o.WM_ORDER_USERNAME,o.WM_USERPHONE,
+			o.WM_ORDER_DELIVERY_PARTY,
+			(SELECT COUNT(od.ORDER_DETAILS_PK) FROM sc_order_details od
+				WHERE od.FK_ORDER = o.ORDER_PK
+			) AS GOODS_FS FROM sc_order o
+				WHERE o.WM_ORDER_STATE = #{orderStatus}
+				AND o.FK_SHOP = #{FK_SHOP}
 				AND o.ORDER_DIVISION = '1'
 				AND str_to_date(o.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
-							BETWEEN str_to_date('2018-10-1 15:13:26','%Y-%m-%d %H:%i:%s') 
-							AND str_to_date('2018-12-3 15:13:37','%Y-%m-%d %H:%i:%s')
+							BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') 
+							AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+	</select>
+	<!-- 查询饿百外卖数据 -->
+	<select id="selectEBWMOrderData" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT eo.ORDER_PK,eo.CREATE_TIME,
+			eo.ORDER_SHOP_FEE AS ORDER_SHOPMONEY,
+			eo.USER_NAME AS WM_ORDER_USERNAME,
+			eo.USER_PHONE AS WM_USERPHONE,
+			eo.ORDER_DELIVERY_PARTY AS WM_ORDER_DELIVERY_PARTY,
+			(SELECT COUNT(od.ORDER_DETAILS_PK) FROM sc_order_details od
+				WHERE od.FK_ORDER = eo.ORDER_PK
+			) AS GOODS_FS
+			FROM sc_waimai_eb_order eo
+			WHERE eo.SHOP_BAIDU_ID  = (
+				SELECT s.EB_SHOP_ID FROM sc_shop_info s
+				WHERE s.SHOP_ID = #{FK_SHOP}
+			)
+			AND eo.ORDER_STATUS = #{orderStatus}
+			AND eo.ORDER_FROM = #{ORDER_FROM}
+			AND str_to_date(eo.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+				BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') 
+				AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+	</select>
+	<!-- 查询智慧云订单状态的分别数量 -->
+	<select id="loadZHYOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT o.WM_ORDER_STATE,COUNT(o.ORDER_PK) AS ORDER_NUMBER
+				FROM sc_order o
+				WHERE  o.FK_SHOP = #{FK_SHOP}
+				AND o.ORDER_DIVISION = '1'
+				AND str_to_date(o.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+					BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') 
+					AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+				GROUP BY o.WM_ORDER_STATE
+	</select>
+	<!-- 查询饿百订单状态的分别数量 -->
+	<select id="loadEBOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT eo.ORDER_STATUS AS WM_ORDER_STATE,COUNT(eo.ORDER_PK) AS ORDER_NUMBER
+			FROM sc_waimai_eb_order eo
+			WHERE eo.SHOP_BAIDU_ID  = (
+				SELECT s.EB_SHOP_ID FROM sc_shop_info s
+				WHERE s.SHOP_ID = #{FK_SHOP}
+			)
+			AND eo.ORDER_FROM = #{ORDER_FROM}
+			AND str_to_date(eo.CREATE_TIME,'%Y-%m-%d %H:%i:%s') 
+				BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') 
+				AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+			GROUP BY eo.ORDER_STATUS
+	</select>
+	<resultMap id="wmOrderDetail" type="java.util.HashMap">
+            <id column="ORDER_PK" property="ORDER_PK"/>
+            <result column="ORDER_CODE" property="ORDER_CODE"/>
+            <result column="CREATE_TIME" property="CREATE_TIME"/>
+            <result column="WM_ORDER_SEND_TIME" property="WM_ORDER_SEND_TIME"/>
+            <result column="WM_ORDER_SEND_FEE" property="WM_ORDER_SEND_FEE"/>
+            <result column="WM_ORDER_PACKAGE_FEE" property="WM_ORDER_PACKAGE_FEE"/>
+            <result column="ORDER_YHMONEY" property="ORDER_YHMONEY"/>
+            <result column="ORDER_YFMONEY" property="ORDER_YFMONEY"/>
+            <result column="ORDER_SHOPMONEY" property="ORDER_SHOPMONEY"/>
+            <result column="WM_ORDER_REMARK" property="WM_ORDER_REMARK"/>
+            <result column="WM_ORDER_USERNAME" property="WM_ORDER_USERNAME"/>
+            <result column="WM_USERPHONE" property="WM_USERPHONE"/>
+            <result column="WM_USER_ADDRESS" property="WM_USER_ADDRESS"/>
+            <result column="WM_ORDER_STATE" property="WM_ORDER_STATE"/>
+            <result column="WM_ORDER_DELIVERY_PARTY" property="WM_ORDER_DELIVERY_PARTY"/>
+            <!-- collection定义关联集合类型的属性封装规则
+            offType:指定集合中的元素类型
+            -->
+            <collection property="orderDetailList" javaType="ArrayList" ofType="java.util.HashMap">
+                <id column="ORDER_DETAILS_PK" property="ORDER_DETAILS_PK"/>
+	            <result column="ORDER_DETAILS_GNAME" property="ORDER_DETAILS_GNAME"/>
+	            <result column="ORDER_DETAILS_GMONEY" property="ORDER_DETAILS_GMONEY"/>
+	            <result column="ORDER_DETAILS_FS" property="ORDER_DETAILS_FS"/>
+            </collection>
+      </resultMap>
+	<!-- 根据PK查询智慧云订单详情 -->
+	<select id="selectZHYOrderDetailByPk" resultMap="wmOrderDetail">
+		SELECT o.ORDER_PK,o.ORDER_CODE,o.CREATE_TIME,
+		o.WM_ORDER_SEND_TIME,o.WM_ORDER_SEND_FEE,o.WM_ORDER_PACKAGE_FEE,
+		od.ORDER_DETAILS_GNAME,od.ORDER_DETAILS_PK,od.ORDER_DETAILS_FS,
+		od.ORDER_DETAILS_GMONEY,o.ORDER_YHMONEY,o.ORDER_YFMONEY,o.ORDER_SHOPMONEY,
+		o.WM_ORDER_REMARK,o.WM_ORDER_USERNAME,o.WM_USERPHONE,o.WM_USER_ADDRESS,
+		o.WM_ORDER_STATE,o.WM_ORDER_DELIVERY_PARTY
+		FROM sc_order o 
+		LEFT JOIN sc_order_details od
+		ON o.ORDER_PK = od.FK_ORDER
+		WHERE o.ORDER_PK = #{ORDER_PK}
 	</select>
 	
 	

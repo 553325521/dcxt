@@ -2,7 +2,10 @@ package cn.wifiedu.ssm.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -267,11 +270,17 @@ public class OrderController extends BaseController {
 	public void loadWMOrderData(){
 		try {
 			Map<String,Object> map = getParameterMap();
+			Map<String,Object> returnMap = new HashMap<String,Object>();
 			List<Map<String,Object>> returnData = new ArrayList<Map<String,Object>>();
+			Map<String,Object> numberData = new HashMap<String,Object>();
+			int noConfirmNumber = 0;
+			int isConfirmNumber = 0;
+			int isFinishNumber = 0;
 			//拿到选择的外卖订单来源
 			String [] orderSourceArray = map.get("selectSource").toString().split(",");
 			//如果包含智慧云端,加载智慧云端数据
 			if(CheckArrayContainsValue(orderSourceArray,"智慧云")){
+				//订单数据
 				map.put("sqlMapId", "selectZHYWMOrderData");
 				List<Map<String,Object>> zhyResultList = openService.queryForList(map);
 				if(zhyResultList.size()!=0){
@@ -280,14 +289,84 @@ public class OrderController extends BaseController {
 						returnData.add(o);
 					}
 				}
+				//订单数量
+				map.put("sqlMapId", "loadZHYOrderNumber");
+				List<Map<String,Object>> zhyNumberResultList = openService.queryForList(map);
+				if(zhyNumberResultList.size()!=0){
+					for(Map<String,Object> o:zhyNumberResultList){
+						if(o.get("WM_ORDER_STATE").equals("1")){
+							noConfirmNumber = noConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.get("WM_ORDER_STATE").equals("9")){
+							isFinishNumber = isFinishNumber+Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.get("WM_ORDER_STATE").equals("5")){
+							isConfirmNumber = isConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}
+					}
+				}
 				
 			}
-			//如果包含饿了么端，加载饿了么外卖数据
+			//如果包含百度外卖端，加载百度外卖数据
+			if(CheckArrayContainsValue(orderSourceArray,"百度外卖")){
+				map.put("ORDER_FROM","1");
+				map.put("sqlMapId", "selectEBWMOrderData");
+				List<Map<String,Object>> bdResultList = openService.queryForList(map);
+				if(bdResultList.size()!=0){
+					for(Map<String,Object> o:bdResultList){
+						o.put("SOURCENAME", "百度外卖");
+						returnData.add(o);
+					}
+				}
+				//订单数量
+				map.put("sqlMapId", "loadEBOrderNumber");
+				List<Map<String,Object>> bdNumberResultList = openService.queryForList(map);
+				if(bdNumberResultList.size()!=0){
+					for(Map<String,Object> o:bdNumberResultList){
+						if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("1")){
+							noConfirmNumber = noConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("9")){
+							isFinishNumber = isFinishNumber+Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("5")){
+							isConfirmNumber = isConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}
+					}
+				}
+			}
+			//如果包含饿了么外卖端，加载饿了么外卖数据
 			if(CheckArrayContainsValue(orderSourceArray,"饿了么")){
+				map.put("ORDER_FROM","2");
+				map.put("sqlMapId", "selectEBWMOrderData");
+				List<Map<String,Object>> bdResultList = openService.queryForList(map);
+				if(bdResultList.size()!=0){
+					for(Map<String,Object> o:bdResultList){
+						o.put("SOURCENAME", "饿了么");
+						returnData.add(o);
+					}
+				}
+				//订单数量
+				map.put("sqlMapId", "loadEBOrderNumber");
+				List<Map<String,Object>> eNumberResultList = openService.queryForList(map);
+				if(eNumberResultList.size()!=0){
+					for(Map<String,Object> o:eNumberResultList){
+						if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("1")){
+							noConfirmNumber = noConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("9")){
+							isFinishNumber = isFinishNumber+Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("5")){
+							isConfirmNumber = isConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}
+					}
+				}
+			}
+			//如果包含美团外卖端，加载美团外卖数据
+			if(CheckArrayContainsValue(orderSourceArray,"美团外卖")){
 				
 			}
-			
-			output("0000",returnData);
+			numberData.put("noConfirmNumber",noConfirmNumber);
+			numberData.put("isFinishNumber",isFinishNumber);
+			numberData.put("isConfirmNumber",isConfirmNumber);
+			returnMap.put("orderData", returnData);
+			returnMap.put("orderNumber", numberData);
+			output("0000",returnMap);
 		} catch (ExceptionVo e) {
 			e.printStackTrace();
 			output("9999","没有外卖订单数据");
@@ -295,6 +374,58 @@ public class OrderController extends BaseController {
 			e.printStackTrace();
 			output("9999","没有外卖订单数据");
 		}
+	}
+	/**
+	* <p>Title: loadWMDetailsDataByOrderPk</p>
+	* <p>Description:加载外卖订单详情数据 </p>
+	*/
+	@RequestMapping(value = "/Order_select_loadWMDetailsDataByOrderPk", method = RequestMethod.POST)
+	public void loadWMDetailsDataByOrderPk(){
+		try {
+			Map<String,Object> map = getParameterMap();
+			String partName = map.get("partName").toString();
+			if(partName.equals("智慧云")){
+				map.put("sqlMapId", "selectZHYOrderDetailByPk");
+				List<Map<String,Object>> orderList = openService.queryForList(map);
+				String sendTime = orderList.get(0).get("WM_ORDER_SEND_TIME").toString();
+				String createTime = orderList.get(0).get("CREATE_TIME").toString();
+				List<Map<String,Object>> goodsList = ((List<Map<String,Object>>)orderList.get(0).get("orderDetailList"));
+				int goodsNumber = 0;
+				for(Map<String,Object> goods : goodsList){
+					if(goods.containsKey("ORDER_DETAILS_FS")){
+						goodsNumber = goodsNumber+Integer.parseInt(goods.get("ORDER_DETAILS_FS").toString());
+					}
+				}
+				if(sendTime!=null &&!sendTime.equals("")){
+					String sendTimePeriod = jTime(sendTime).substring(11,16)+"-"+sendTime.substring(11,16);
+					orderList.get(0).put("WM_ORDER_SEND_TIME",sendTimePeriod);
+					orderList.get(0).put("CREATE_TIME",createTime.substring(11, 16));
+				}
+				orderList.get(0).put("GOODS_NUMBER",goodsNumber);
+				output("0000", orderList);
+			}
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			output("9999", "无法加载外卖订单详情数据");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			output("9999", "无法加载外卖订单详情数据");
+		}
+		 
+	}
+	private String jTime(String dateStr){
+		SimpleDateFormat sdf = new SimpleDateFormat(DateUtil.DATE_TIME_FMT);
+		try {
+			Date date = sdf.parse(dateStr);
+			Long time = date.getTime()-45*60*1000;
+			return sdf.format(time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	/**
 	* <p>Title: CheckArrayContainsValue</p>
@@ -515,6 +646,9 @@ public class OrderController extends BaseController {
 		}
 		output("9999", "操作失败~");
 		return;
+	}
+	public static void main(String[] args) {
+		System.out.println(new OrderController().jTime("2018-12-04 15:30:00").substring(11,16));
 	}
 	
 }
