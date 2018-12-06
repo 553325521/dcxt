@@ -216,16 +216,26 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//从map中取出来userid和订单id
 					//链接里边有个参数，传过来订单id
 					//TODO 根据userid和订单id查询出多少钱，然后进行支付（算了，不要userid了，下边入如果是微信支付的话直接获取，对。）
-					String orderId = "222";
+					String orderId = (String)map.get("orderId");
+					if(orderId == null || orderId == "") {
+						return;
+					}
+					
 					String code = (String)map.get("code");
 					logger.info(code);
-					logger.error("172");
+	
 					Map<String, Object> newMap = new HashMap<String, Object>();
-					newMap.put("DCXT_ORDER_FK", "lps");  //订单id
+					newMap.put("DCXT_ORDER_FK", orderId);  //订单id
 					//第一步：根据订单id查出来消费了多少和该店铺是哪个店，再查出来该店铺的公众号appid，查不出来就滚蛋return"不支持聚合支付"
+					
+					map.put("sqlMapId", "selectOrderFinalMoneyAndShopAppidByOrderId");
+					map.put("ORDER_PK", map.get("orderId"));
+					Map<String,Object> orderMap = (Map<String,Object>)openService.queryForObject(map);
+					String amount = (String)orderMap.get("ORDER_SHOPMONEY");
+					
 					newMap.put("amount", "1");//假设根据订单id查出来消费了多少
-					String shopId = "wx6041a1eff32d3c5e";//假设拿到了appid
-					String appid = "wx6041a1eff32d3c5e";
+					String shopId = (String)orderMap.get("FK_APP");//假设拿到了appid
+					String appid = (String)orderMap.get("FK_APP");
 					String payPay ="";
 					if(code == null || StringUtils.isEmpty(code)) {
 						payPay = StartPosUtil.checkPayWay(request.getHeader("user-agent"));
@@ -339,21 +349,22 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public void ShopScanPay(HttpServletRequest request, HttpServletResponse reponse){
 				try {
 					Map<String, Object> map = getParameterMap();//里边有商铺id,订单id,还有条形码，支付渠道
-					String payWay = (String) map.get("payWay");
+					String payWay = ((String) map.get("payWay")).substring(0,1);
 					
-					String orderId = "lps";
+					String orderId = "lps";//map里边一定是ORDER_PK
 					Map<String, Object> newMap = new HashMap<String, Object>();
 					newMap.put("DCXT_ORDER_FK", orderId);  //订单id
 					//根据订单id查出来需要多少钱
 					newMap.put("USER_ID", "2222222");
+					
 					newMap.put("amount", "1"); 
 					newMap.put("authCode", map.get("qrCode"));
 					//支付渠道
-					if("1".equals(payWay)) {
+					if("2".equals(payWay)) {
 						newMap.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN); 
-					}else if("2".equals(payWay)){
+					}else if("3".equals(payWay)){
 						newMap.put("payChannel", StarPosPay.PAY_CHANNEL_ALIPAY); 
-					}else if("3".equals(payWay)) {
+					}else if("9".equals(payWay)) {
 						newMap.put("payChannel", StarPosPay.PAY_CHANNEL_YLPAY); 
 					}else {
 						output("9999", "支付方式不对");
@@ -365,8 +376,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						if(!("S".equals(newMap.get("result")))) {
 							Map<String, String> callBackMap = new HashMap<String, String>();
 							callBackMap.put("DCXT_ORDER_FK", orderId);
-							//如果不是支付成功，那么给他一个回调函数,里边有支付成功后调用的方法，和要发送的数据
-							this.addCallBackMethod((String)newMap.get("logNo"), "ShopScanPay_nextOper", callBackMap);
+							//如果不是立即支付成功，那么给他一个回调函数,里边有支付成功后调用的方法，和要发送的数据
+							this.addCallBackMethod((String)newMap.get("logNo"), "ShopScanPay_nextOper", map);
 						}
 						logger.info(newMap);
 						output("0000", newMap);
@@ -395,14 +406,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public void ShopScanPayNextOper(HttpServletRequest request,HttpSession seesion){
 				try {
 					Map<String, Object> map = getParameterMap();//里边有订单id
+					
 					logger.info("ShopScanPay_nextOper   360");
 					logger.info(map);
 					
 					//TODO修改订单状态为支付成功
+					map.put("sqlMapId", "updateOrderPayStatusSuccessByOrderId");
+					openService.update(map);
 					
-					
-				} catch (ExceptionVo e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					logger.info(e);
+					logger.info("starposPayController pay success but status is not setting 1  ---408line");
 				}
 				
 			}

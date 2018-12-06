@@ -107,6 +107,19 @@
 		LIMIT 0,1
 	</select>
 
-
+	<!-- 根据shopId和openid（或userid）查询用户对该店的权限 -->
+	<select id="selectUserRoleByShopIdAndOpenId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+	SELECT FK_ROLE FROM sc_user_shop us 
+	WHERE FK_USER IN (
+		SELECT lu.USER_PK FROM sc_user lu INNER JOIN sc_user ru ON lu.USER_UNIONID = ru.USER_UNIONID 
+		WHERE 
+		<if test="OPEN_ID != null">
+			ru.USER_WX = #{OPEN_ID}) 
+			</if>
+			<if test="USER_PK != null">
+			ru.USER_PK = #{USER_PK}) 
+			</if>
+	AND FK_SHOP = #{SHOP_FK}  AND IS_USE = '1'; 
+	</select>
 
 </mapper>

@@ -145,9 +145,9 @@
       </resultMap>
 	<!-- 根据订单详情id删除订单里某一种菜品 -->
 	<delete id="deleteOrderDetailByORDER_DETAILS_PK" parameterMap="BaseParameterMap">
-		UPDATE  SC_ORDER_DETAILS
-		SET ORDER_DETAILS_GOODS_STATE = '3'
-		WHERE ORDER_DETAILS_PK = #{ORDER_DETAILS_PK};
+	UPDATE  SC_ORDER_DETAILS od, sc_order o
+		SET od.ORDER_DETAILS_GOODS_STATE = '3', o.ORDER_YFMONEY = o.ORDER_YFMONEY - od.ORDER_DETAILS_GMONEY
+		WHERE o.ORDER_PK = od.FK_ORDER AND od.ORDER_DETAILS_PK = #{ORDER_DETAILS_PK} AND od.ORDER_DETAILS_GOODS_STATE != '3';
 	</delete>
 
 	<select id="countByExample" parameterMap="BaseParameterMap"
@@ -455,5 +455,25 @@
 			</if>
 			${operaMoney} WHERE ORDER_PK = #{ORDER_PK};
 	 </update>
+	 
+	 <!-- 根据订单id修改订单状态为支付成功 -->
+	<update id="updateOrderPayStatusSuccessByOrderId" parameterMap="BaseParameterMap">
+		UPDATE sc_order SET o.ORDER_PAY_STATE = '1' WHERE ORDER_PK = #{ORDER_PK};
+	</update>
+	
+	 <!-- 根据订单id修改订单的支付类型和支付状态 -->
+	<update id="updateOrderPayWayAndStatusByOrderId" parameterMap="BaseParameterMap">
+		UPDATE sc_order o LEFT JOIN sc_tables t ON t.TABLES_PK = o.ORDER_POSITION SET t.TABLES_ISUSE = '0', o.ORDER_PAY_WAY = #{ORDER_PAY_WAY},o.ORDER_PAY_STATE = #{ORDER_PAY_STATE}  WHERE o.ORDER_PK = #{ORDER_PK};
+	</update>
+	
+	<!-- 根据订单id查询该订单的金额和该订单对应的商户的appid -->
+	<select id="selectOrderFinalMoneyAndShopAppidByOrderId" parameterMap="BaseParameterMap" resultMap="wmOrderDetail">
+		SELECT o.ORDER_SHOPMONEY,sa.FK_APP FROM sc_order o LEFT JOIN sc_shop_app sa ON o.FK_SHOP = sa.FK_SHOP WHERE o.ORDER_PK = #{ORDER_PK};
+	</select>
+	
+	<!-- 根据订单id查询订单支付状态 -->
+	<select id="selectOrderPayStatusByOrderId" parameterMap="BaseParameterMap" resultMap="wmOrderDetail">
+		SELECT ORDER_PAY_STATE FROM sc_order WHERE ORDER_PK = #{ORDER_PK}
+	</select>
 	
 </mapper>

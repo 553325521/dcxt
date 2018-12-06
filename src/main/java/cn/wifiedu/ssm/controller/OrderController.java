@@ -184,7 +184,6 @@ public class OrderController extends BaseController {
 				map.put("sqlMapId", "selectOrderDetailTableByOrderPK");
 				List<Map<String, Object>> orderDataList = openService.queryForList(map);
 				List<Map<String, Object>> orderDetailList = (List<Map<String, Object>>)orderDataList.get(0).get("orders");
-				int totalMoney = 0;
 				int totalFS = 0;
 				if(orderDataList.get(0).containsKey("CREATE_TIME")){
 					String createTime = orderDataList.get(0).get("CREATE_TIME").toString();
@@ -193,15 +192,11 @@ public class OrderController extends BaseController {
 				}
 				if(orderDetailList!=null && orderDetailList.size()!=0){
 					for(Map<String, Object> goods:orderDetailList){
-						if(goods.containsKey("ORDER_DETAILS_GMONEY")){
-							totalMoney = totalMoney + Integer.parseInt(goods.get("ORDER_DETAILS_GMONEY").toString());
-						}
 						if(goods.containsKey("ORDER_DETAILS_FS")){
 							totalFS = totalFS + Integer.parseInt(goods.get("ORDER_DETAILS_FS").toString());
 						}
 					}
 				}
-				orderDataList.get(0).put("totalMoney",totalMoney);
 				orderDataList.get(0).put("totalFS",totalFS);
 				output("0000", orderDataList);
 			} else {
@@ -265,7 +260,7 @@ public class OrderController extends BaseController {
 			if (StringUtils.isNotBlank(userJson)) {
 				if (!map.containsKey("ORDER_DETAILS_PK")
 						|| StringUtils.isBlank(map.get("ORDER_DETAILS_PK").toString())) {
-					output("9999", "退菜ID无效");
+//					output("9999", "退菜ID无效");
 					return;
 				}
 				map.put("sqlMapId", "deleteOrderDetailByORDER_DETAILS_PK");
@@ -526,7 +521,7 @@ public class OrderController extends BaseController {
 						}
 						
 						//更改桌位为已使用
-						map.put("sqlMapId", "updateTablesIsUseByAreaId");
+						map.put("sqlMapId", "updateTablesIsUseStatusByTableId");
 						map.put("TABLES_ISUSE", 1);
 						if (!openService.update(map)) {
 							throw new RuntimeException();
@@ -758,15 +753,16 @@ public class OrderController extends BaseController {
 	 */
 	@RequestMapping(value = "/Order_insert_shoppingcreateOrder", method = RequestMethod.POST)
 	public void shoppingCreateOrder() {
+		Map<String, Object> map = null;
 		try {
-			Map<String, Object> map = getParameterMap();
+			map = getParameterMap();
 			System.out.println("");
 			
 			Map<String, Object> orderMap =  (Map<String, Object>)JSON.parse((String)map.get("SHOPPING_CART"));
 			Map<String, Object> tableMap = (Map<String, Object>)orderMap.get("table");
 			
 			Map<String, Object> checkMap = getParameterMap();
-			
+			//TODO 查询设置的，查询选择开台了没，选择开台就不差啊桌位被使用了
 			checkMap.put("sqlMapId", "findTablesById");
 			checkMap.put("TABLES_ID", tableMap.get("TABLES_PK"));
 			checkMap = (Map<String, Object>)openService.queryForObject(checkMap);
@@ -837,7 +833,7 @@ public class OrderController extends BaseController {
 				
 				//更改桌位为已使用
 				Map<String, Object> updateTableMap = new HashMap<String, Object>();
-				updateTableMap.put("sqlMapId", "updateTablesIsUseByAreaId");
+				updateTableMap.put("sqlMapId", "updateTablesIsUseStatusByTableId");
 				updateTableMap.put("TABLES_ISUSE", 1);
 				updateTableMap.put("TABLES_PK", tableMap.get("TABLES_PK"));
 				if (!openService.update(updateTableMap)) {
@@ -845,18 +841,98 @@ public class OrderController extends BaseController {
 				}
 				
 				txManagerController.commit();
-				output("0000", "创建成功");
+				output("0000", result);
 				//通知客户端创建订单  lps通知客户端来订单了
 				//不能放在这，用户收不到信息我就返回错误了
-				systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
+				
+			}else {
+				output("9999", "USER参数无效");
 				return;
 			}
-			output("9999", "USER参数无效");
-			return;
 		} catch (Exception e) {
 			logger.error("Order_insert_createOrder error", e);
 			txManagerController.rollback();
-			output("9999", "操作失败，请查看订单列表是否操作成功");
+			output("9999", "操作失败");
+		}
+//		systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toS tring(),new TextMessage(MessageType.UPDATE_ORDERDATA));
+		return;
+	}
+	
+	
+	/**
+	 * 
+	 * @author lps
+	 * @date Dec 5, 2018 7:46:51 PM 
+	 * 
+	 * @description: 用户端支付
+	 * @return void
+	 * @throws ExceptionVo 
+	 */
+	@RequestMapping(value = "/Order_update_OrderShopSettleAccounts", method = RequestMethod.POST)
+	public void OrderShopSettleAccounts() throws ExceptionVo {
+		//TODO
+		//先查询该用户对该订单有没有操作的权限  优惠支付，等一些东西都没弄好
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId","selectOrderPayStatusByOrderId");
+			
+			Map<String, Object> payStatusMap = (Map<String, Object>)openService.queryForObject(map);
+			if(payStatusMap != null) {
+				String payStatus = (String)payStatusMap.get("ORDER_PAY_STATE");
+				if(payStatus!= null && "1".equals(payStatus)) {
+					output("9999","订单已支付，请勿重复提交订单");
+					return;
+				}
+			}
+			
+			
+			txManagerController.createTxManager();
+			
+			//OPEN_ID或者USER_PK， SHOP_FK
+			map.put("sqlMapId", "selectUserRoleByShopIdAndOpenId");
+			Map<String,String> userRoleMap = (Map<String,String>)openService.queryForObject(map);
+			if(userRoleMap == null || "2".equals(userRoleMap.get("FK_ROLE"))) {//说明权限不足，return
+				System.out.println("权限不足");//现在是测试，先注释
+				//return;
+			}
+			//TODO 支付前未验证价格信息，需验证
+			String payWay = (String)map.get("payWay");
+			String payWayList[] = {"1","20","30","4","5","6","21","22","31","32"};
+			int payWayIndex = -1;
+			for (int i=0;i<payWayList.length;i++) {
+				if(payWayList[i].equals(payWay)) {
+					payWayIndex = i;
+				}
+			}
+			if(payWayIndex == -1) {
+				return;
+			}
+			
+			
+			
+			//先判断是不是储值支付
+			if(payWay.equals("5")) {
+				//储值支付，开始吧
+			}
+			
+			
+			map.put("sqlMapId", "updateOrderPayWayAndStatusByOrderId");
+			map.put("ORDER_PAY_WAY", payWay);
+			if(payWayIndex < 6) {//都不需要后续操作，直接支付成功
+				map.put("ORDER_PAY_STATE", 1);
+			}else {
+				map.put("ORDER_PAY_STATE", 0);
+			}
+			if(!openService.update(map)) {
+				throw new RuntimeException();
+			}
+			txManagerController.commit();
+			output("0000", "成功");
+			return;
+		} catch (Exception e) {
+			txManagerController.rollback();
+			logger.error(e);
+			output("0000","操作失败");
 		}
 	}
 	
