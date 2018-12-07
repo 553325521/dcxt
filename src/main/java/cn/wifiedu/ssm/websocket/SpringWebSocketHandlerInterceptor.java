@@ -26,11 +26,11 @@ public class SpringWebSocketHandlerInterceptor extends  HttpSessionHandshakeInte
         System.out.println("Before Handshake");
         //获取当前Session
         if (request instanceof ServletServerHttpRequest) {
-        	ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
+        	/*ServletServerHttpRequest servletRequest = (ServletServerHttpRequest) request;
             HttpSession session = servletRequest.getServletRequest().getSession(false);
             attributes.put("openId",session.getAttribute("openId"));
             attributes.put("shopId",session.getAttribute("shopId"));
-            System.out.println("用户openId"+session.getAttribute("openId"));
+            System.out.println("用户openId"+session.getAttribute("openId"));*/
         }
         System.out.println("连接到我了");
         return super.beforeHandshake(request, response, wsHandler, attributes);

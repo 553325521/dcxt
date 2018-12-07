@@ -3,6 +3,8 @@ package cn.wifiedu.ssm.websocket;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -12,6 +14,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
+
+import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.ssm.controller.WxController;
 
@@ -25,11 +29,8 @@ import cn.wifiedu.ssm.controller.WxController;
 @Service
 public class SystemWebSocketHandler implements WebSocketHandler  {
     
-    private static Map<String,WebSocketSession> userMap = new HashMap<String, WebSocketSession>();
     
-    private static Map<String,String> userShopMap = new HashMap<String,String>();
-    
-    private static ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();
+    private static Map<String,Map<String,WebSocketSession>> shopUsersSessionMap = new Hashtable<String,Map<String,WebSocketSession>>();
     
 	private static Logger logger = Logger.getLogger(WxController.class);
     /* （非 Javadoc）
@@ -43,12 +44,6 @@ public class SystemWebSocketHandler implements WebSocketHandler  {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         //System.out.print("连接成功");
         logger.info("连接成功");
-        String openId = session.getHandshakeAttributes().get("openId").toString();
-        String shopId = session.getHandshakeAttributes().get("shopId").toString();
-        userMap.put(openId, session);
-        userShopMap.put(openId,shopId);
-        users.add(session);
-        logger.info("当前用户数量: " + userMap.keySet().size());
         sendMessagesToUsers(new TextMessage("今天晚上服务器维护,请注意"));
     }
 
@@ -63,24 +58,54 @@ public class SystemWebSocketHandler implements WebSocketHandler  {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
     	String schatMessage = (String)message.getPayload();//用户输入
+    	JSONObject msgJson = JSONObject.parseObject(schatMessage);
+    	//连接成功后，接收客户端发来的用户和商铺信息
+    	if(msgJson.containsKey("msgType") && msgJson.get("msgType").toString().equals("0")){
+    		JSONObject msgContent = (JSONObject)msgJson.get("msgContent");
+    		Map<String,WebSocketSession> userMap = new Hashtable<String, WebSocketSession>();
+    		if(msgContent.containsKey("shopid") && msgContent.get("shopid") != null){
+    			if(shopUsersSessionMap.containsKey(msgContent.get("shopid"))){
+    				userMap = shopUsersSessionMap.get(msgContent.get("shopid"));
+    			}
+    			shopUsersSessionMap.put(msgContent.get("shopid").toString(), userMap);
+    		}
+    		if(msgContent.containsKey("openid") && msgContent.get("openid") != null){
+    			userMap.put(msgContent.get("openid").toString(), session);
+    		}
+    		
+    		sendMessageToUser(msgContent.getString("shopid"),msgContent.getString("openid"),new TextMessage("123"));
+    	}
+    	logger.info("店员端在线数量:"+shopUsersSessionMap.size());
     	 logger.info("用户输入:" + schatMessage);
-        session.sendMessage(message);  
-     // 将消息进行转化，因为是消息是json数据，可能里面包含了发送给某个人的信息，所以需要用json相关的工具类处理之后再封装成TextMessage，
-        // 我这儿并没有做处理，消息的封装格式一般有{from:xxxx,to:xxxxx,msg:xxxxx}，来自哪里，发送给谁，什么消息等等
-       /*  TextMessage msg = (TextMessage)message.getPayload();*/
-        // 给所有用户群发消息
-       // sendMessagesToUsers(msg);
-        // 给指定用户群发消息
-        //sendMessageToUser(userId, msg);
+        
     }
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-    	 userMap.remove(session.getHandshakeAttributes().get("openId").toString());
-         userShopMap.remove(session.getHandshakeAttributes().get("openId").toString());
+    	
+    	String shopKey = "";
+    	String openKey = "";
+    	for(String key : shopUsersSessionMap.keySet()){
+    		Map<String,WebSocketSession> mapValue = shopUsersSessionMap.get(key);
+    		for(String openIdKey:mapValue.keySet()){
+    			WebSocketSession currentSession = mapValue.get(openIdKey);
+    			if(currentSession == session){
+    				shopKey = key;
+    				openKey = openIdKey;
+    				break;
+    			}
+    		}
+    		if(!shopKey.equals("") && !openKey.equals("")){
+    			break;
+    		}
+    	}
+    	if(!shopKey.equals("") && !openKey.equals("")){
+    		shopUsersSessionMap.get(shopKey).remove(openKey);
+    	}
         if (session.isOpen()) {
             session.close();
         }
+        logger.info("因传输错误退出websocket");
     }
 
     /* （非 Javadoc）
@@ -94,8 +119,25 @@ public class SystemWebSocketHandler implements WebSocketHandler  {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
     	 
-    	userMap.remove(session.getHandshakeAttributes().get("openId").toString());
-    	 userShopMap.remove(session.getHandshakeAttributes().get("openId").toString());
+    	String shopKey = "";
+    	String openKey = "";
+    	for(String key : shopUsersSessionMap.keySet()){
+    		Map<String,WebSocketSession> mapValue = shopUsersSessionMap.get(key);
+    		for(String openIdKey:mapValue.keySet()){
+    			WebSocketSession currentSession = mapValue.get(openIdKey);
+    			if(currentSession == session){
+    				shopKey = key;
+    				openKey = openIdKey;
+    				break;
+    			}
+    		}
+    		if(!shopKey.equals("") && !openKey.equals("")){
+    			break;
+    		}
+    	}
+    	if(!shopKey.equals("") && !openKey.equals("")){
+    		shopUsersSessionMap.get(shopKey).remove(openKey);
+    	}
     	if (session.isOpen()) {
             session.close();
         }
@@ -106,32 +148,39 @@ public class SystemWebSocketHandler implements WebSocketHandler  {
      * 给所有的用户发送消息
      */
     public void sendMessagesToUsers(TextMessage message) {
-        for (WebSocketSession user : userMap.values()) {
-            try {
-                // isOpen()在线就发送
-                if (user.isOpen()) {
-                    user.sendMessage(message);
+    	
+    	for(String key : shopUsersSessionMap.keySet()){
+    		Map<String,WebSocketSession> mapValue = shopUsersSessionMap.get(key);
+    		for(String openIdKey:mapValue.keySet()){
+    			WebSocketSession currentSession = mapValue.get(openIdKey);
+    			  // isOpen()在线就发送
+                if (currentSession.isOpen()) {
+                	try {
+						currentSession.sendMessage(message);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    		}
+    	}
     }
     
     /**
      * 更新订单数量和数据发送消息给指定的用户
      */
-    public void sendMessageToUser(String shopId, TextMessage message) {
+    public void sendMessageToUser(String shopId,String openId, TextMessage message) {
     	try {
-	    	String [] userKeys = SystemWebSocketHandler.getKeys(userShopMap, shopId);
-	    	if(userKeys.length!=0){
-	    		for(String k:userKeys){
-	    			WebSocketSession user = userMap.get(k);
-	    			if(user.isOpen()){
-						user.sendMessage(message);
-	    			}
-	    		}
-	    	}
+    		if(shopUsersSessionMap.containsKey(shopId) && shopUsersSessionMap.get(shopId).containsKey(openId)){
+    			WebSocketSession session = shopUsersSessionMap.get(shopId).get(openId);
+    			if(session.isOpen()){
+    				session.sendMessage(message);
+    			}else{
+    				logger.info("当前用户不在线");
+    			}
+    		}else{
+    			logger.info("当前用户不在线");
+    		}
     	} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,15 +190,4 @@ public class SystemWebSocketHandler implements WebSocketHandler  {
     public boolean supportsPartialMessages() {
         return false;
     }
-    
-    private static String[] getKeys(Map<String,String> map,String value){
-		StringBuilder key=new StringBuilder();
-		for (Map.Entry<String, String> entry : map.entrySet()) {
-			if(value.equals(entry.getValue())){
-				key.append(entry.getKey()).append(",");
-			}
-		}
-		String[] result = key.deleteCharAt(key.length() - 1).toString().split(",");
-		return result;
-	}
 }
