@@ -389,6 +389,22 @@ public class EBWaiMai {
     public static void main(String[] args) {
     	try {
 	    	String orderId = "15398542101242";
+	    	Map<String,Object> map = new HashMap<String,Object>();
+	    	map.put("cmd", "sku.list");
+	    	
+	    	//在body中添加需要输入的参数
+	    	Map<String, Object> body = new HashMap<>();
+	    	body.put("shop_id", "test_781544_62863");
+	    	body.put("page", "1");
+	    	map.put("body", body);
+	    	map.put("body",JSON.toJSON(map.get("body")));
+	    	
+	    	String initParams = initParams(map);
+	    	
+	    	String result = CommonUtil.posts(ebUrl, initParams,"UTF-8");
+	    	System.out.print(result);
+	    	
+	   
 	//    	EBOrderConfirm(orderId);//确认订单ß
 	//    	EBOrderCancel(orderId);//取消订单
 	//    	EBOrderSendout(orderId,"");//订单送出  -- 只支持饿了么
@@ -399,7 +415,7 @@ public class EBWaiMai {
 	//      String result = HttpRequestUtil.sendPost(ebUrl, requestParams);
 	//      System.out.print(result);
     	
-			System.out.println(EBOrderGet(orderId));
+	//		System.out.println(EBOrderGet(orderId));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
