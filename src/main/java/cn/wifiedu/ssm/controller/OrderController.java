@@ -278,6 +278,8 @@ public class OrderController extends BaseController {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
 	/**
 	* <p>Title: loadWMOrderData</p>
@@ -531,8 +533,8 @@ public class OrderController extends BaseController {
 						txManagerController.commit();
 						output("0000", "创建成功");
 						//通知客户端创建订单
-						systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
-						return;
+//						systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
+//						return;
 					}
 				}
 				output("9999", "购物车空空如也~");
@@ -858,6 +860,36 @@ public class OrderController extends BaseController {
 		return;
 	}
 	
+	@RequestMapping(value = "/Order_update_cancelOrder", method = RequestMethod.POST)
+	public void cancelOrder(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			//判断当前用户是否是店员，否则不具有退单的操作
+			map.put("sqlMapId", "selectUserRoleByShopIdAndOpenId");
+			Map<String,String> userRoleMap = (Map<String,String>)openService.queryForObject(map);
+//			if(userRoleMap == null || !"6".equals(userRoleMap.get("FK_ROLE"))) {//说明权限不足，return
+//				logger.info("没有退单的权限");
+//				output("9999", "退单失败");
+//				return;
+//			}
+			map.put("ORDER_STATE", "1");
+			map.put("sqlMapId", "updateOrderState");
+			boolean updateResult = openService.update(map);
+			if(updateResult){
+				output("0000", "退单成功");
+				return;
+			}
+			output("9999", "退单失败");
+			
+		} catch (ExceptionVo e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 	/**
 	 * 
@@ -867,6 +899,7 @@ public class OrderController extends BaseController {
 	 * @description: 用户端支付
 	 * @return void
 	 * @throws ExceptionVo 
+	 * 
 	 */
 	@RequestMapping(value = "/Order_update_OrderShopSettleAccounts", method = RequestMethod.POST)
 	public void OrderShopSettleAccounts() throws ExceptionVo {

@@ -24,6 +24,8 @@
 			t.TABLES_PK = o.ORDER_POSITION
 		 ) AS ORDER_POSITION,o.ORDER_PAY_WAY,o.ORDER_DIVISION,
 		o.ORDER_CODE,o.ORDER_RS,o.ORDER_PAY_STATE,o.ORDER_STATE,
+		o.ORDER_YFMONEY,o.ORDER_YHMONEY,o.ORDER_MLMONEY,
+		o.ORDER_JFDXMONEY,o.ORDER_SHOPMONEY,
 		o.ARRIVE_TIME,o.CREATE_TIME,o.CREATE_BY,
 		SUM(od.ORDER_DETAILS_FS) AS TOTAL_FS,
 		SUM(od.ORDER_DETAILS_GMONEY/100*od.ORDER_DETAILS_FS) AS TOTAL_MONEY
@@ -457,6 +459,15 @@
 			</if>
 			${operaMoney} WHERE ORDER_PK = #{ORDER_PK};
 	 </update>
+	 <!-- 根据订单id更新订单的状态 -->
+	<update id="updateOrderState" parameterMap="BaseParameterMap">
+		UPDATE sc_order 
+		SET ORDER_STATE = #{ORDER_STATE},
+		UPDATE_TIME = NOW(),
+		UPDATE_BY = #{OPEN_ID}
+		WHERE ORDER_PK = #{ORDER_PK}
+	 </update>
+	 
 	 
 	 <!-- 根据订单id修改订单状态为支付成功 -->
 	<update id="updateOrderPayStatusSuccessByOrderId" parameterMap="BaseParameterMap">
