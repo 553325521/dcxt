@@ -267,4 +267,33 @@ public class FunctionController extends BaseController {
 		}
 		return;
 	}
+	
+	/**
+	 * 
+	 * @author lps
+	 * @date Dec 12, 2018 5:21:20 PM 
+	 * 
+	 * @description: 小程序获取配置开关
+	 * @return void
+	 */
+	@RequestMapping("/FunctionSwitch_select_XCXloadFuncSwitchList")
+	public void XCXloadFuncSwitchList(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String shopid = (String)map.get("FK_SHOP");
+			if (StringUtils.isNotBlank(shopid)) {
+				map.put("FK_SHOP", shopid);
+				map.put("sqlMapId", "loadFuncSwitchList");
+				Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
+				if (reMap != null) {
+					output("0000", reMap);
+					return;
+				}
+			}
+			output("9999", "查询失败!");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
 }

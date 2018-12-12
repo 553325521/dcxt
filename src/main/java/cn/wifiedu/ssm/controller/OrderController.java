@@ -534,7 +534,7 @@ public class OrderController extends BaseController {
 						output("0000", "创建成功");
 						//通知客户端创建订单
 //						systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
-//						return;
+						return;
 					}
 				}
 				output("9999", "购物车空空如也~");
@@ -818,9 +818,19 @@ public class OrderController extends BaseController {
 						price = good.get("GOODS_PRICE");
 					}
 					goodMap.put("ORDER_DETAILS_GMONEY", price);
-					goodMap.put("ORDER_DETAILS_FORMAT", good.get("GOODS_FORMAT").toString());
-					goodMap.put("ORDER_DETAILS_TASTE", good.get("GOODS_TASTE").toString());
-					goodMap.put("ORDER_DETAILS_MAKING", good.get("GOODS_MAKING").toString());
+					Object goodsFormat = good.get("GOODS_FORMAT");
+					if(goodsFormat != null) {
+						goodMap.put("ORDER_DETAILS_FORMAT", goodsFormat.toString());
+					}
+					Object goodsTaste = good.get("GOODS_TASTE");
+					if(goodsTaste != null) {
+						goodMap.put("ORDER_DETAILS_TASTE", goodsTaste.toString());
+					}
+					Object goodsMaking = good.get("ORDER_DETAILS_MAKING");
+					if(goodsMaking != null) {
+						goodMap.put("ORDER_DETAILS_MAKING", goodsMaking.toString());
+					}
+					
 					goodMap.put("ORDER_DETAILS_DW", good.get("GOODS_DW").toString());
 					goodMap.put("FK_GOODS", good.get("GOODS_PK").toString());
 					goodMap.put("CREATE_BY", map.get("FK_USER").toString());
@@ -925,8 +935,8 @@ public class OrderController extends BaseController {
 			map.put("sqlMapId", "selectUserRoleByShopIdAndOpenId");
 			Map<String,String> userRoleMap = (Map<String,String>)openService.queryForObject(map);
 			if(userRoleMap == null || "2".equals(userRoleMap.get("FK_ROLE"))) {//说明权限不足，return
-				System.out.println("权限不足");//现在是测试，先注释
-				//return;
+				System.out.println("权限不足");
+				//return;		//现在是测试，先注释
 			}
 			//TODO 支付前未验证价格信息，需验证
 			String payWay = (String)map.get("payWay");
