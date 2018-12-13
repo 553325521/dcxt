@@ -35,7 +35,7 @@
 	<select id="selectBaseGoosListByGid" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
 		SELECT GOODS_PK, GOODS_NAME, GOODS_TYPE, GOODS_PRICE,
-		GOODS_TRUE_PRICE, GOODS_DW
+		GOODS_TRUE_PRICE, GOODS_DW,GOODS_PXXH
 		FROM sc_goods
 		WHERE GTYPE_FK = #{GTYPE_ID}
 		ORDER BY CAST(GOODS_PXXH AS SIGNED integer);

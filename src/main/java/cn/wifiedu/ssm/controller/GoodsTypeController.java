@@ -82,21 +82,21 @@ public class GoodsTypeController extends BaseController {
 			JSONObject userObj = JSON.parseObject(userJson);
 			map.put("SHOP_FK", userObj.get("FK_SHOP"));
 			map.put("sqlMapId", "loadGoodsTypeOrder");
-			int maxOrder = 0;
-			Map<String, Object> reMapOrder = (Map<String, Object>) openService.queryForObject(map);
-			if (reMapOrder != null) {
-				maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
-			}
+		/*	int maxOrder = 0;*/
+//			Map<String, Object> reMapOrder = (Map<String, Object>) openService.queryForObject(map);
+//			if (reMapOrder != null) {
+//				maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
+//			}
 			int userSROrder = Integer.parseInt(map.get("GTYPE_ORDER").toString());
-			if (userSROrder <= 0 || userSROrder > maxOrder + 1) {
-				output("5555", "输入的序号不合法");
+			if (userSROrder <= 0) {
+				output("5555", "输入的序号不能为负数");
 			} else {
-				if (userSROrder < maxOrder + 1) {
-					map.put("PID", map.get("GTYPE_PID"));
-					map.put("GTYPE_OLD_ORDER", maxOrder + 1);
-					map.put("sqlMapId", "updateGoodsTypeOrderChangeSmall");
-					openService.update(map);
-				}
+//				if (userSROrder < maxOrder + 1) {
+//					map.put("PID", map.get("GTYPE_PID"));
+//					map.put("GTYPE_OLD_ORDER", maxOrder + 1);
+//					map.put("sqlMapId", "updateGoodsTypeOrderChangeSmall");
+//					openService.update(map);
+//				}
 				map.put("GTYPE_ATTACH", 0);
 				map.put("CREATE_BY", userObj.get("USER_NAME"));
 				map.put("sqlMapId", "insertGoodsType");
@@ -254,23 +254,23 @@ public class GoodsTypeController extends BaseController {
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
 			map.put("SHOP_FK", userObj.get("FK_SHOP"));
-			boolean updateOrderResult = false;
-			int oldOrder = Integer.parseInt(map.get("GTYPE_OLD_ORDER").toString());
+		/*	boolean updateOrderResult = false;
+			int oldOrder = Integer.parseInt(map.get("GTYPE_OLD_ORDER").toString());*/
 			int userSROrder = Integer.parseInt(map.get("GTYPE_ORDER").toString());
-			map.put("sqlMapId", "loadGoodsTypeOrder");
+		/*	map.put("sqlMapId", "loadGoodsTypeOrder");
 			Map<String, Object> reMapOrder = (Map<String, Object>) openService.queryForObject(map);
-			int maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());
-			if (userSROrder <= 0 || userSROrder > maxOrder) {
-				output("5555", "输入的序号不合法");
+			int maxOrder = Integer.parseInt(reMapOrder.get("GTYPE_ORDER").toString());*/
+			if (userSROrder <= 0) {
+				output("5555", "输入的序号不能为负数！");
 			} else {
-				if (Integer.parseInt(map.get("GTYPE_OLD_ORDER").toString()) < Integer
+		/*		if (Integer.parseInt(map.get("GTYPE_OLD_ORDER").toString()) < Integer
 						.parseInt(map.get("GTYPE_ORDER").toString())) {
 					map.put("sqlMapId", "updateGoodsTypeOrderChangeLarge");
 					updateOrderResult = openService.update(map);
 				} else {
 					map.put("sqlMapId", "updateGoodsTypeOrderChangeSmall");
 					updateOrderResult = openService.update(map);
-				}
+				}*/
 				map.put("UPDATE_BY", userObj.get("USER_NAME"));
 				map.put("sqlMapId", "updateGoodsType");
 				boolean result = openService.update(map);

@@ -21,7 +21,7 @@
 		<div class="weui_cell slidelefts" ng-repeat="item in goods_list">
 			<div class="weui_cell_bd weui_cell_primary slideleft_cell_bd animated"  style="display:flex;transform: translateX(0px);" ng-click="toHref('DailyManagement/goods/general_goods_setting',item.GOODS_PK)">
 				<div class="weui_cell_bd " style="margin-right:10px;">
-					<span>{{$index+1}}</span>
+					<span>{{item.GOODS_PXXH}}</span>
 				</div>
 				<div class="weui_cell_bd weui_cell_primary">
 					<span>{{item.GOODS_NAME}}</span>

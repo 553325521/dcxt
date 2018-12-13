@@ -177,10 +177,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					if(pxxh <= 0){
 						output("9999", "排序序号不允许为负数！");
 						return;
-					}else if(pxxh > goodsCount + 1){
-						output("9999", "排序序号不允许大于商品总数量！");
-						return;
 					}
+//					else if(pxxh > goodsCount + 1){
+//						output("9999", "排序序号不允许大于商品总数量！");
+//						return;
+//					}
 					
 					//元转换成分存数据库
 					map.put("GOODS_PRICE", (long)(Double.parseDouble((String)map.get("GOODS_PRICE"))*100));
@@ -213,15 +214,15 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					/**排序序号操作*/
 					
 					//判断，如果当前排序序号不是最后一个，开始把当前序号后边的依次加一
-					if(pxxh - 1 != goodsCount){
-						map.put("sqlMapId", "updateGoodsPxxhById");
-						map.put("SMALL_GOODS_PXXH", pxxh);
-						boolean b = openService.update(map);
-						if(!b){
-							output("9999", "添加失败！");
-							return;
-						}
-					}
+//					if(pxxh - 1 != goodsCount){
+//						map.put("sqlMapId", "updateGoodsPxxhById");
+//						map.put("SMALL_GOODS_PXXH", pxxh);
+//						boolean b = openService.update(map);
+//						if(!b){
+//							output("9999", "添加失败！");
+//							return;
+//						}
+//					}
 					
 					//开始插入
 					map.put("sqlMapId", "insertGoods");
@@ -309,10 +310,10 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Map reMap2 = (Map)openService.queryForObject(map);
 					long goodsCount = (long) reMap2.get("goodsCount");
 					//判断序号如果大于总数，返回错误
-					if(after_pxxh > goodsCount){
-						output("9999", "排序序号不允许大于商品总数量！");
-						return;
-					}
+//					if(after_pxxh > goodsCount){
+//						output("9999", "排序序号不允许大于商品总数量！");
+//						return;
+//					}
 					
 					//取出新的pic信息和旧的pic信息
 					List<String> newPicList = (List<String>)JSON.parse((String) map.get("PICTURE_URL"));

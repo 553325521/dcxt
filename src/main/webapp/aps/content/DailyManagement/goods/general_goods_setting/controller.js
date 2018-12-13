@@ -93,7 +93,7 @@
 										scope.form.GOODS_TRUE_PRICE = Number(scope.form.GOODS_TRUE_PRICE)/100;
 									}
 									//解决下拉选择框默认是第一个的问题
-									$("#pxxh_select").val(scope.form.GOODS_PXXH);
+								//	$("#pxxh_select").val(scope.form.GOODS_PXXH);
 									$("#unit_select").val(scope.form.GOODS_DW);
 									
 									$scope.$apply();
@@ -129,7 +129,7 @@
 									//赋初值
 //									scope.form.GTYPE_ID = goods_type[0];
 									scope.form.GOODS_DW = goods_dw[0];
-									scope.form.GOODS_PXXH = goods_count+1;
+									//scope.form.GOODS_PXXH = goods_count+1;
 									
 									$scope.$apply();
 									comboboxInit();
@@ -191,7 +191,7 @@
 						});
 //						scope.form.GTYPE_ID = $("#fs_select").val();
 						scope.form.GOODS_DW = $("#unit_select").val();
-						scope.form.GOODS_PXXH = $("#pxxh_select").val();
+						//scope.form.GOODS_PXXH = $("#pxxh_select").val();
 						scope.form.GOODS_ID = scope.form.GOODS_ID === undefined ? "":scope.form.GOODS_ID;
 						
 						//至少选择一个，不然return;
