@@ -151,7 +151,8 @@ public class GoodsTypeController extends BaseController {
 						goodsTypeArea += jsonObject.getString("name") + "/";
 					}
 				}
-				if (goodsTypeArea.lastIndexOf("/") == goodsTypeArea.length() - 1) {
+				
+				if (!goodsTypeArea.equals("")&&goodsTypeArea.lastIndexOf("/") == goodsTypeArea.length() - 1) {
 					goodsTypeArea = goodsTypeArea.substring(0, goodsTypeArea.length() - 1);
 				}
 				reList.get(i).put("GTYPE_AREA", goodsTypeArea);

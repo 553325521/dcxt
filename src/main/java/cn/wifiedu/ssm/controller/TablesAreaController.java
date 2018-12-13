@@ -18,7 +18,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;

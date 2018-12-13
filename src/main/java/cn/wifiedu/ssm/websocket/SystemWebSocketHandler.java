@@ -1,10 +1,7 @@
 package cn.wifiedu.ssm.websocket;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -15,6 +12,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.ssm.controller.WxController;
@@ -58,7 +56,7 @@ public class SystemWebSocketHandler implements WebSocketHandler  {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
     	String schatMessage = (String)message.getPayload();//用户输入
-    	JSONObject msgJson = JSONObject.parseObject(schatMessage);
+    	JSONObject msgJson = JSON.parseObject(schatMessage);
     	//连接成功后，接收客户端发来的用户和商铺信息
     	if(msgJson.containsKey("msgType") && msgJson.get("msgType").toString().equals("0")){
     		JSONObject msgContent = (JSONObject)msgJson.get("msgContent");

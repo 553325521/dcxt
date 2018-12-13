@@ -1,7 +1,5 @@
 package cn.wifiedu.ssm.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,8 +17,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.socket.TextMessage;
-
 import com.alibaba.fastjson.JSON;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -30,7 +26,6 @@ import cn.wifiedu.ssm.util.DateUtil;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
-import cn.wifiedu.ssm.websocket.MessageType;
 import cn.wifiedu.ssm.websocket.SystemWebSocketHandler;
 
 @Controller

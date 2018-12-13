@@ -23,6 +23,7 @@
 		FROM sc_goods_type
 		WHERE GTYPE_PID = #{GTYPE_PID}
 		AND
+	<!-- 	SHOP_FK = #{SHOP_FK} -->
 		SHOP_FK = #{SHOP_FK}
 		ORDER BY GTYPE_ORDER
 	</select>
