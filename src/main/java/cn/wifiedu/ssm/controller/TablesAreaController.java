@@ -309,10 +309,10 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						return;
 					}
 					//判断区域状态是不是改变，是的话是不是改成已停用，如果是，就把子节点全都改成已停用
-					if(!bef_status.equals(map.get("TABLES_AREA_STATUS")) && bef_status.equals("1")){
-						map.put("sqlMapId", "updateTablesStatusByAreaId");
-						update = openService.update(map);
-					}
+//					if(!bef_status.equals(map.get("TABLES_AREA_STATUS")) && bef_status.equals("1")){
+//						map.put("sqlMapId", "updateTablesStatusByAreaId");
+//						update = openService.update(map);
+//					}
 					
 					output("0000", "修改成功！");
 					return;
