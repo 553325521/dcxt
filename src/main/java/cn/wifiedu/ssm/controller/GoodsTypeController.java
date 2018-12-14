@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.Arith;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -228,6 +229,30 @@ public class GoodsTypeController extends BaseController {
 		}
 	}
 
+	/**
+	* <p>Title: selectNoChildGoodsType</p>
+	* <p>Description:根据商铺ID查询没有子分类且开启状态的商品类别  </p>
+	*/
+	@RequestMapping(value = "/GoodsType_select_selectNoChildGoodsType", method = RequestMethod.POST)
+	public void selectNoChildGoodsType(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("SHOP_FK", userObj.get("FK_SHOP"));
+			map.put("sqlMapId", "selectNoChildGoodsType");
+			List<Map<String, Object>> reList = openService.queryForList(map);
+			output("0000", reList);
+		} catch (ExceptionVo e) {
+			e.printStackTrace();
+			output("9999","no data");
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999","no data");
+		}
+	
+	}
 	/**
 	 * wjl 查询商品分类编辑时候的父分类(查询跟父分类同级且没有商品的分类)
 	 */

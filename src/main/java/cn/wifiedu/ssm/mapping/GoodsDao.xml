@@ -169,6 +169,7 @@
 		sc_goods
 		SET
 		GOODS_NAME = #{GOODS_NAME},
+		GTYPE_FK = #{GTYPE_ID},
 		GOODS_TYPE = #{GOODS_TYPE},
 		GOODS_PRICE =
 		#{GOODS_PRICE},

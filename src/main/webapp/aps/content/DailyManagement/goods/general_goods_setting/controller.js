@@ -32,6 +32,10 @@
 					goods_count = Number(params.goods_count);
 					scope.form.IS_USE = "1"
 					scope.form.GOODS_TYPE = "2"
+					//保存查询的分类名称
+					scope.NOCHILD_GOODS_TYPE_NAME = [];
+					//保存查询的分类ID
+					scope.NOCHILD_GOODS_TYPE_PK = [];
 					//标签库
 					scope.label_library = {
 							"不吃辣" : true,
@@ -53,6 +57,20 @@
 					})
 						
 					var init = function(){
+						
+						//加载将要选择的分类
+						//发送post请求
+						$httpService.post(config.loadNoChildGoodsTypeURL,scope.form).success(function(data) {
+							if(data.code == '0000' && data.data.length !=0){
+								for(var i = 0;i < data.data.length;i++){
+									scope.NOCHILD_GOODS_TYPE_NAME[i] = data.data[i].GTYPE_NAME;
+									scope.NOCHILD_GOODS_TYPE_PK[i] = data.data[i].GTYPE_PK;
+								}
+								scope.$apply();
+							}
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
 						//判断
 						if(scope.form.GOODS_ID != undefined && scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
 							//是修改
@@ -111,11 +129,11 @@
 									loggingService.info(data.data);
 								} else {
 									scope.form.GTYPE_NAME = data.data.GTYPE_NAME;//类别名字
+									$('#fs_select').val(scope.form.GTYPE_NAME);
 									gtype_area = angular.fromJson(data.data.GTYPE_AREA);//该商品类别的范围
 									angular.forEach(gtype_area, function(mapdata,index,array){
 										scope.SHOW_RANGE[mapdata.name] = mapdata.checked;
 									});
-									
 									scope.pageShow = "True";
 									// 定义页面标题
 									scope.pageTitle = '添加商品';
@@ -184,6 +202,20 @@
 					$form.form();
 					//保存
 					scope.doSave = function(){
+						//获取选择的商品分类名称
+						var gName = $("#fs_select").val();
+						var currentIndex = -1;
+						for(var i = 0;i < scope.NOCHILD_GOODS_TYPE_NAME.length;i++){
+							if(gName == scope.NOCHILD_GOODS_TYPE_NAME[i]){
+								currentIndex = i;
+								break;
+							}
+						}
+						if(currentIndex != -1){
+							scope.form.GTYPE_NAME = scope.NOCHILD_GOODS_TYPE_NAME[currentIndex];
+							scope.form.GTYPE_ID = scope.NOCHILD_GOODS_TYPE_PK[currentIndex];
+						}
+						
 						//由于下拉选择框的值不同步，所以要获取一下
 						var specifications = angular.element('.size_select');
 						angular.forEach(specifications, function(data,index,array){
@@ -317,6 +349,17 @@
 									textAlign : 'center',
 									values : goods_dw,
 									displayValues : goods_dw
+								}
+							]
+						});
+						$("#fs_select").picker({
+							title : "选择分类",
+							toolbarCloseText : '确定',
+							cols : [
+								{
+									textAlign : 'center',
+									values : scope.NOCHILD_GOODS_TYPE_NAME,
+									displayValues : scope.NOCHILD_GOODS_TYPE_NAME
 								}
 							]
 						});

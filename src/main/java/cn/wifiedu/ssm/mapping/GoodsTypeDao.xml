@@ -160,4 +160,21 @@
 		ORDER BY
 		CONVERT(a.GTYPE_ORDER, SIGNED)
 	</select>
+	<!-- 根据商铺ID查询没有子分类且开启状态的商品类别 -->
+	<select id="selectNoChildGoodsType" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT gt.GTYPE_PK,gt.GTYPE_NAME
+		
+		FROM sc_goods_type gt
+		
+		WHERE gt.SHOP_FK = #{SHOP_FK}
+		
+		AND gt.GTYPE_STATE = '1'
+		
+		AND gt.GTYPE_ATTACH = '0'
+		
+		AND NOT EXISTS(
+			SELECT 1 FROM sc_goods_type gt1
+			WHERE gt.GTYPE_PK = gt1.GTYPE_PID
+		)
+	</select>
 </mapper>
