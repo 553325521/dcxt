@@ -158,7 +158,7 @@
 		a.GTYPE_ATTACH = '0' AND
 		a.GTYPE_STATE = '1' AND a.SHOP_FK = #{FK_SHOP} AND b.IS_USE = '1'
 		ORDER BY
-		CONVERT(a.GTYPE_ORDER, SIGNED)
+		CAST(a.GTYPE_ORDER AS DECIMAL),CAST(b.GOODS_PXXH AS DECIMAL);
 	</select>
 	<!-- 根据商铺ID查询没有子分类且开启状态的商品类别 -->
 	<select id="selectNoChildGoodsType" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
