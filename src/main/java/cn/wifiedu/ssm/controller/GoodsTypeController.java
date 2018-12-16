@@ -393,6 +393,7 @@ public class GoodsTypeController extends BaseController {
 					output("9999", "参数无效");
 					return;
 				}
+			
 				map.put("FK_SHOP", map.get("shopid").toString());
 				map.put("sqlMapId", "loadGoodTypeByShopId");
 				List<Map<String, Object>> reMap = openService.queryForList(map);
@@ -432,12 +433,12 @@ public class GoodsTypeController extends BaseController {
 										}
 									}
 								}
-								goodInfo.put("qity", goodCount);//该商品的数量
+//								goodInfo.put("qity", goodCount);//该商品的数量
 								goods.add(goodInfo);//每个商品set进商品列表
 							}
 						}
 						good.put("infos", goods);
-						good.put("GTYPE_QITY", typeCount);
+//						good.put("GTYPE_QITY", typeCount);
 						goodsList.add(good);
 					}
 				}

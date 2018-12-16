@@ -1,9 +1,12 @@
 package cn.wifiedu.ssm.starpos.pay;
 
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -28,12 +31,12 @@ public class StarPosPay {
 	
 	private static Logger logger = Logger.getLogger(StarPosPay.class);
 
-    public static String testMchId="800690000005418";
-    public static String testTrmNo="XA080976";
-    public static String testKey="150F7C9C8A6E2EFE58829A77B2BDF927";
+    public static String testMchId="800690000005418";//800690000001460
+    public static String testTrmNo="XA080976";//XA081618
+    public static String testKey="150F7C9C8A6E2EFE58829A77B2BDF927";//01D20C737C6ECD94943EA38E4ABFEAED
     public static String testHeadUrl="http://gateway.starpos.com.cn/adpweb/ehpspos3";
     public static String testOrgNo="9137";
-
+  
     
     @Resource
 	OpenService openService;
@@ -60,6 +63,9 @@ public class StarPosPay {
     	}
     	if(!map.containsKey("trmNo")){
     		map.put("trmNo",CommonUtil.getPath("spTrmNo"));
+    	}
+    	if(!map.containsKey("spKey")){
+    		map.put("spKey",CommonUtil.getPath("spKey"));
     	}
     	 if(!map.containsKey("total_amount")){
     		 //订单总金额
@@ -127,14 +133,14 @@ public class StarPosPay {
      *					attach 
      */
     public Map<String, Object> pubSigPay(Map<String, Object> paramsMap, String callBackUrl, Map<String, Object> callBackParamMap) throws Exception {
-    	pubSigQry();
+    	pubSigQry(paramsMap);
     	if(!paramsMap.containsKey("amount")){
-    		paramsMap.put("returnCode", "");
+    		paramsMap.put("returnCode", "9999");
     		paramsMap.put("message", "amount不能为空！");
     		return paramsMap;
     	}
     	if(!paramsMap.containsKey("USER_ID") || StringUtils.isBlank((String)paramsMap.get("USER_ID"))){
-    		paramsMap.put("returnCode", "");
+    		paramsMap.put("returnCode", "9999");
     		paramsMap.put("message", "userId不能为空！");
     		return paramsMap;
     	}
@@ -147,9 +153,11 @@ public class StarPosPay {
     	if(!paramsMap.containsKey("trmNo")){
     		 paramsMap.put("trmNo",testTrmNo);
     	}
+    
     	if(!(paramsMap.containsKey("amount") && paramsMap.containsKey("openid") || paramsMap.containsKey("code"))){
     		paramsMap.clear();
-    		paramsMap.put("returnCode", "参数不完整");
+    		paramsMap.put("returnCode", "9999");
+    		paramsMap.put("message", "参数不完整");
     		return paramsMap;
     	}
     	if(!paramsMap.containsKey("total_amount")){
@@ -260,27 +268,28 @@ public class StarPosPay {
     		return paramsMap;
     	}
     	
-//    	if(!paramsMap.containsKey("USER_ID") || StringUtils.isBlank((String)paramsMap.get("USER_ID"))){
-//    		paramsMap.put("returnCode", "");
-//    		paramsMap.put("message", "userId不能为空！");
-//    		return paramsMap;
-//    	}
-//    	
-//    	if(!paramsMap.containsKey("DCXT_ORDER_FK") || StringUtils.isBlank((String)paramsMap.get("DCXT_ORDER_FK"))){
-//    		paramsMap.put("returnCode", "");
-//    		paramsMap.put("message", "DCXT_ORDER_FK不能为空！");
-//    		return paramsMap;
-//    	}
+    	if(!paramsMap.containsKey("USER_ID") || StringUtils.isBlank((String)paramsMap.get("USER_ID"))){
+    		paramsMap.put("returnCode", "");
+    		paramsMap.put("message", "userId不能为空！");
+    		return paramsMap;
+    	}
+    	
+    	if(!paramsMap.containsKey("DCXT_ORDER_FK") || StringUtils.isBlank((String)paramsMap.get("DCXT_ORDER_FK"))){
+    		paramsMap.put("returnCode", "");
+    		paramsMap.put("message", "DCXT_ORDER_FK不能为空！");
+    		return paramsMap;
+    	}
     	
     	
           paramsMap=initParams(paramsMap);
+          String spKey = paramsMap.get("spKey").toString();
+          paramsMap.remove("spKey");
 
           String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
           System.out.println("排序后："+preStr);
           String sign = MD5.sign(preStr, CommonUtil.getPath("spKey"), "utf-8");
           System.out.println("signValue："+sign);
           paramsMap.put("signValue",sign);
-
           logger.info("------------------qingqiiu_Map---------------------------");
           logger.info(paramsMap);
 
@@ -375,15 +384,17 @@ public class StarPosPay {
     		return paramsMap;
     	}
         paramsMap = initParams(paramsMap);
+        String spKey = paramsMap.get("spKey").toString();
+        paramsMap.remove("spKey");
         /** 按key排序，将value拼接字符串**/
         String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
         System.out.println("排序后："+preStr);
         /**md5加密**/
-        String sign = MD5.sign(preStr, testKey, "utf-8");
+        String sign = MD5.sign(preStr, spKey, "utf-8");
         System.out.println("signValue："+sign);
         paramsMap.put("signValue",sign);
         System.out.println("paramsMap = " + paramsMap);
-        
+      
         logger.info("------------------qingqiiu_Map---------------------------");
         logger.info(paramsMap);
 
@@ -419,8 +430,10 @@ public class StarPosPay {
         paramsMap.put("qryNo", qryNo);
         paramsMap.remove("total_amount");
         paramsMap.remove("selOrderNo");
+        String spKey = paramsMap.get("spKey").toString();
+        paramsMap.remove("spKey");
         String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
-        String sign = MD5.sign(preStr, testKey, "UTF-8");
+        String sign = MD5.sign(preStr, spKey, "UTF-8");
         paramsMap.put("signValue",sign);
 
         logger.info("------------------qingqiiu_Map---------------------------");
@@ -450,9 +463,11 @@ public class StarPosPay {
         {
             paramsMap.put("txnAmt", txnAmt);
         }
+        String spKey = paramsMap.get("spKey").toString();
+        paramsMap.remove("spKey");
         String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
         System.out.println(preStr);
-        String sign = MD5.sign(preStr, testKey, "UTF-8");
+        String sign = MD5.sign(preStr, spKey, "UTF-8");
         paramsMap.put("signValue",sign);
 
 
@@ -474,9 +489,10 @@ public class StarPosPay {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap = initParams(paramsMap);
         paramsMap.put("qryNo", qryNo);
-
+        String spKey = paramsMap.get("spKey").toString();
+        paramsMap.remove("spKey");
         String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
-        String sign = MD5.sign(preStr, testKey, "UTF-8");
+        String sign = MD5.sign(preStr, spKey, "UTF-8");
         paramsMap.put("signValue",sign);
 
         System.out.println("paramsMap = " + paramsMap);
@@ -492,17 +508,18 @@ public class StarPosPay {
      * 公众号查询
      * 必须再生产环境下调试，若要自己得公众号支付必须先配置再调试
      */
-    public static void pubSigQry() throws Exception {
+    public static void pubSigQry(Map<String, Object> map) throws Exception {
         Map<String, Object> paramsMap = new HashMap<String, Object>();
-        paramsMap.put("orgNo",testOrgNo);         //机构号
-        paramsMap.put("mercId",testMchId);
-        paramsMap.put("trmNo",testTrmNo);
+        paramsMap.put("orgNo",CommonUtil.getPath("spOrgNo"));         //机构号
+        paramsMap.put("mercId",map.get("mercId"));
+        paramsMap.put("trmNo",map.get("trmNo"));
         paramsMap.put("txnTime",  new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
         paramsMap.put("signType","MD5");
 
         paramsMap.put("version","V1.0.1");
+        String spKey = map.get("spKey").toString();
         String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
-        String sign = MD5.sign(preStr, testKey, "UTF-8");
+        String sign = MD5.sign(preStr, spKey, "UTF-8");
         paramsMap.put("attach","1231");
         paramsMap.put("signValue",sign);
 
@@ -532,8 +549,10 @@ public class StarPosPay {
          paramsMap.put("userData",userData);
          paramsMap.put("version","V1.0.0");
          paramsMap.put("signType","MD5");
+         String spKey = paramsMap.get("spKey").toString();
+         paramsMap.remove("spKey");
          String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
-         String sign = MD5.sign(preStr, testKey, "UTF-8");
+         String sign = MD5.sign(preStr, spKey, "UTF-8");
          paramsMap.put("signValue",sign);
     	 String reqUrl = testHeadUrl + "/qryAuthorizationcode.json";
     	  String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
@@ -663,25 +682,31 @@ public static void main(String[] args) {
 //		paramsMap.put("openid", "o93Dw0G2WF0ffPkMAvN9MP0sUL-w");
 //		paramsMap.put("USER_ID", "lupishan");
 //		paramsMap.put("DCXT_ORDER_FK", "lps");
-//////////		paramsMap.put("payChannel", StarPosPay.PAY_CHANNEL_YLPAY);
+////////////		paramsMap.put("payChannel", StarPosPay.PAY_CHANNEL_YLPAY);
 //		Map map2 = new StarPosPay().pubSigPay(paramsMap,null,null);
 //		Map map2 = new StarPosPay().psoPay(paramsMap);
 //		query("201811171641962991");
 //		pubSigQry();//286929898784
 //		System.out.println(map2);
-		
-		
 //商户扫
 		//map.put("USER_ID", "2222222");
-		map.put("amount", "1"); 
-		map.put("authCode", "22222222");
-		//map.put("DCXT_ORDER_FK", "lps");
-		map.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN); 
-		map.put("authCode", "134533491064161093");
-		
-		Map map2 = new StarPosPay().pay(map);
-		
-		System.out.println(map2);
+//		map.put("amount", "1"); 
+//		map.put("authCode", "22222222");
+//		//map.put("DCXT_ORDER_FK", "lps");
+//		map.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN); 
+//		map.put("authCode", "134533491064161093");
+//		
+//		Map map2 = new StarPosPay().pay(map);
+//		
+//		System.out.println(map2);
+//		
+//		Map<String, Object> newMap = new HashMap<String, Object>();
+//		
+//		newMap.put("USER_ID", "zhy");
+//		newMap.put("amount", "1");
+//		newMap.put("DCXT_ORDER_FK", "zhy");
+//		newMap.put("payChannel", StarPosPay.PAY_CHANNEL_ALIPAY);
+//		System.out.println(new StarPosPay().psoPay(newMap));
 		
 		
 	} catch (Exception e) {

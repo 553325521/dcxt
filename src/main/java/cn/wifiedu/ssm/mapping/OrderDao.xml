@@ -480,12 +480,12 @@
 	</update>
 	
 	<!-- 根据订单id查询该订单的金额和该订单对应的商户的appid -->
-	<select id="selectOrderFinalMoneyAndShopAppidByOrderId" parameterMap="BaseParameterMap" resultMap="wmOrderDetail">
+	<select id="selectOrderFinalMoneyAndShopAppidByOrderId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT o.ORDER_SHOPMONEY,sa.FK_APP FROM sc_order o LEFT JOIN sc_shop_app sa ON o.FK_SHOP = sa.FK_SHOP WHERE o.ORDER_PK = #{ORDER_PK};
 	</select>
 	
 	<!-- 根据订单id查询订单支付状态 -->
-	<select id="selectOrderPayStatusByOrderId" parameterMap="BaseParameterMap" resultMap="wmOrderDetail">
+	<select id="selectOrderPayStatusByOrderId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT ORDER_PAY_STATE FROM sc_order WHERE ORDER_PK = #{ORDER_PK}
 	</select>
 	

@@ -209,34 +209,40 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 */
 			@RequestMapping(value = "/pay")
 			public void aggregationPay(HttpServletRequest request, HttpServletResponse reponse){
-				
-				
 				try {
 					Map<String, Object> map = getParameterMap();
+					logger.error("215");
+					logger.error(map);
 					//从map中取出来userid和订单id
 					//链接里边有个参数，传过来订单id
 					//TODO 根据userid和订单id查询出多少钱，然后进行支付（算了，不要userid了，下边入如果是微信支付的话直接获取，对。）
 					String orderId = (String)map.get("orderId");
+					logger.error("orderId"+orderId);
 					if(orderId == null || orderId == "") {
 						return;
 					}
 					
 					String code = (String)map.get("code");
-					logger.info(code);
+					if(code != null)
+						logger.info(code);
 	
 					Map<String, Object> newMap = new HashMap<String, Object>();
 					newMap.put("DCXT_ORDER_FK", orderId);  //订单id
 					//第一步：根据订单id查出来消费了多少和该店铺是哪个店，再查出来该店铺的公众号appid，查不出来就滚蛋return"不支持聚合支付"
 					
 					map.put("sqlMapId", "selectOrderFinalMoneyAndShopAppidByOrderId");
-					map.put("ORDER_PK", map.get("orderId"));
+					map.put("ORDER_PK", orderId);
+					logger.error("234");
 					Map<String,Object> orderMap = (Map<String,Object>)openService.queryForObject(map);
 					String amount = (String)orderMap.get("ORDER_SHOPMONEY");
-					
+					logger.error("amount"+amount);
+					logger.error("orderMap"+orderMap);
+					logger.error("237");
 					newMap.put("amount", "1");//假设根据订单id查出来消费了多少
 					String shopId = (String)orderMap.get("FK_APP");//假设拿到了appid
-					String appid = (String)orderMap.get("FK_APP");
+					String appid = shopId;
 					String payPay ="";
+					logger.error("242");
 					if(code == null || StringUtils.isEmpty(code)) {
 						payPay = StartPosUtil.checkPayWay(request.getHeader("user-agent"));
 						if("".equals(payPay)) {
@@ -245,13 +251,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						}
 						//第二步：判断是微信的话，拿到openid
 						if (payPay.equals(StarPosPay.PAY_CHANNEL_WEIXIN)) {
+							logger.error("248");
 							boolean hasOpenId = false;
 							String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+							logger.error("251");
 							if(!(token == null || StringUtils.isEmpty(token))) {//如果用户cookie里边没有记录，说明没关注过公众号或者cookie过期了
 								String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+								logger.error("254");
 								if(!(userJson == null || StringUtils.isEmpty(userJson))) {
 									JSONObject userObj = JSON.parseObject(userJson);
 									newMap.put("USER_ID", userObj.get("USER_PK"));
+									logger.error("258");
 									if(shopId.equals(userObj.get("FK_APP"))) {
 										newMap.put("openid",userObj.get("USER_WX"));
 										hasOpenId = true;
@@ -260,11 +270,18 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							}
 							
 							if(!hasOpenId){
-								//授权获取appid
+								logger.error("267");
+								//授权获取openid
 								String url = CommonUtil.getPath("Auth-wx-qrcode-url-plat");
+								logger.error(url);
+								//https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=snsapi_userinfo&state=STATE&component_appid=wx623296bf9fc03f81#wechat_redirect
+								logger.error("appid"+appid);
+								logger.error("orderId"+orderId);
 								url = url.replace("APPID", appid).replace("snsapi_userinfo", "snsapi_base").replace("REDIRECT_URI", 
-										URLEncoder.encode("https://m.ddera.com/json/pay.json&orderId=" + orderId, "UTF-8"));
+										URLEncoder.encode("https://m.ddera.com/json/pay.json?orderId=" + orderId, "UTF-8"));
+								logger.error("272");
 								logger.info("qrcodeURL:" + url);
+								logger.error("274");
 								response.sendRedirect(url);
 								return;
 							}
@@ -466,6 +483,62 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				return false;
 			} 
 			
+			/**
+			 * 
+			 * @author lps
+			 * @date Dec 17, 2018 2:13:18 AM 
+			 * 
+			 * @description: 根据商铺ID 获取 新大陆下绑定的公众号appid，没有则返回智慧云appid
+			 * @return String
+			 * @throws Exception 
+			 */
+			public String getStarPosWxAppidByShopId(String shopId) throws Exception {
+				Map appidMap = new HashMap<String, String>();
+				appidMap.put("sqlMapId", "selectByShopFK");
+				appidMap.put("SHOP_FK", shopId);
+				logger.info("496");
+				Map paySetting = (Map) openService.queryForObject(appidMap);
+				String appid = (String)paySetting.get("POS_WX_APPID");
+				logger.info("499");
+				logger.info(appid);
+				if(StringUtils.isBlank(appid)) {
+					appid = CommonUtil.getPath("AppID");
+				}
+				logger.info(appid);
+				return appid;
+			}
+			
+
+//			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2018年12月17日03:39:46
+			 * 
+			 * @description: 根据商铺ID 获取 新大陆的识别号和终端号,没有则返回空map
+			 * @return String
+			 * @throws Exception 
+			 */
+			public Map<String, Object> getStarPosMessageByShopId(String shopId) throws Exception {
+				Map<String, Object> paySettingMap = new HashMap<String, Object>();
+				//获取新大陆设备号
+				paySettingMap.put("sqlMapId", "selectByShopFK");
+				paySettingMap.put("SHOP_FK", shopId);
+				paySettingMap = (Map<String, Object>) openService.queryForObject(paySettingMap);
+				if(paySettingMap != null) {
+					String mercId = (String) paySettingMap.get("SHOP_IDENTIFY_NUMBER");
+					String trmNo = (String) paySettingMap.get("STARPOS_TRM_NO");
+					String spKey = (String) paySettingMap.get("STARPOS_KEY");
+					Map<String, Object> newMap = new HashMap<String, Object>();
+					if(StringUtils.isNotBlank(mercId) && StringUtils.isNotBlank(trmNo) && StringUtils.isNotBlank(spKey)) {
+						newMap.put("mercId", mercId);
+						newMap.put("trmNo", trmNo);
+						newMap.put("spKey", spKey);
+						return newMap;
+					}
+				}
+				return null;
+			}
 			
 			
 		}
