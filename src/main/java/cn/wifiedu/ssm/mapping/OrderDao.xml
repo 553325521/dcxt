@@ -10,9 +10,9 @@
 		o.ORDER_PAY_STATE,count(*) as ORDER_NUMBER
 		from sc_order o
 		WHERE (o.ORDER_DIVISION = '0' OR o.ORDER_DIVISION = '2')
-		AND str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i')
+		<!-- AND str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i')
 		BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i')
-		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i') -->
 		AND FK_SHOP = #{FK_SHOP}
 		group by o.ORDER_PAY_STATE
 	</select>
@@ -34,10 +34,9 @@
 		o.ORDER_PK = od.FK_ORDER
 		WHERE
 		(o.ORDER_DIVISION = '0' OR o.ORDER_DIVISION = '2')
-		AND str_to_date(CREATE_TIME,'%Y-%m-%d
-		%H:%i')
+		<!-- AND str_to_date(CREATE_TIME,'%Y-%m-%d %H:%i')
 		BETWEEN str_to_date(#{CREATE_TIME},'%Y-%m-%d %H:%i')
-		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i')
+		AND str_to_date(#{END_TIME},'%Y-%m-%d %H:%i') -->
 		<if test="ORDER_PAY_STATE != null">
 			AND ORDER_PAY_STATE = #{ORDER_PAY_STATE}
 		</if>
