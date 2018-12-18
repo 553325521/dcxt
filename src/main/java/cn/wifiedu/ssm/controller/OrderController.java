@@ -912,6 +912,17 @@ public class OrderController extends BaseController {
 		//先查询该用户对该订单有没有操作的权限  优惠支付，等一些东西都没弄好
 		try {
 			Map<String, Object> map = getParameterMap();
+			String shouldMoneyStr = (String) map.get("trueMoney");
+			if(shouldMoneyStr == null) {
+				return;
+			}
+			Integer shouldMoney = Integer.parseInt(shouldMoneyStr);
+			if(shouldMoney < 0) {//判断支付的金额是否违规
+				return;
+			}
+			
+			//TODO 查询应付金额和数据库的对不对应
+			
 			map.put("sqlMapId","selectOrderPayStatusByOrderId");
 			
 			Map<String, Object> payStatusMap = (Map<String, Object>)openService.queryForObject(map);
@@ -924,7 +935,7 @@ public class OrderController extends BaseController {
 			}
 			
 			
-			txManagerController.createTxManager();
+			
 			
 			//OPEN_ID或者USER_PK， SHOP_FK
 			map.put("sqlMapId", "selectUserRoleByShopIdAndOpenId");
@@ -935,7 +946,7 @@ public class OrderController extends BaseController {
 			}
 			//TODO 支付前未验证价格信息，需验证
 			String payWay = (String)map.get("payWay");
-			String payWayList[] = {"1","20","30","4","5","6","21","22","31","32"};
+			String payWayList[] = {"1","2","3","4","5","6"};
 			int payWayIndex = -1;
 			for (int i=0;i<payWayList.length;i++) {
 				if(payWayList[i].equals(payWay)) {
@@ -946,17 +957,57 @@ public class OrderController extends BaseController {
 				return;
 			}
 			
-			
-			
+			String vcardPk = "";//要支付的会员卡ID
 			//先判断是不是储值支付
 			if(payWay.equals("5")) {
 				//储值支付，开始吧
+				//查询有没有，或者储值够不够
+				Map<String, Object> vipCardMap = new HashMap<String, Object>();
+				vipCardMap.put("sqlMapId", "selectVcardInfoByShopIdAndOpenId");
+				vipCardMap.put("OPEN_ID", map.get("OPEN_ID"));
+				vipCardMap.put("SHOP_FK", map.get("SHOP_FK"));
+				List<Map<String,Object>> vipCardList = openService.queryForList(vipCardMap);
+				if(vipCardList == null || vipCardList.size() == 0) {
+					output("9999", "您还没有会员卡");
+					return;
+				}else {
+					for (Map<String, Object> map2 : vipCardList) {
+						String chuzhiStr = (String)map2.get("USER_VCARD_CZ");
+						if(chuzhiStr == null) {
+							output("9999", "储值不足");
+							return;
+						}
+						Integer chuzhi = Integer.parseInt(chuzhiStr);
+						if(chuzhi >= shouldMoney) {
+							vcardPk = (String) map2.get("USER_VCARD_PK");
+							break;
+						}
+					}
+					if("".equals(vcardPk)) {
+						output("9999", "储值不足");
+						return;
+					}
+				}
 			}
 			
+			txManagerController.createTxManager();
+			
+			if(payWay.equals("5")) {//开始储值支付
+				Map<String, Object> czPayMap = new HashMap<String, Object>();
+				czPayMap.put("sqlMapId", "updaeteSubUserVipCardCZById");
+				czPayMap.put("USER_VCARD_CZ", shouldMoney);
+				czPayMap.put("USER_VCARD_PK", vcardPk);
+				
+				boolean update = openService.update(czPayMap);
+				if(!update) {
+					output("9999", "支付失败");
+					throw new RuntimeException("支付失败");
+				}
+			}
 			
 			map.put("sqlMapId", "updateOrderPayWayAndStatusByOrderId");
 			map.put("ORDER_PAY_WAY", payWay);
-			if(payWayIndex < 6) {//都不需要后续操作，直接支付成功
+			if(!"2".equals(payWay) || !"3".equals(payWay)) {//都不需要后续操作，直接支付成功
 				map.put("ORDER_PAY_STATE", 1);
 			}else {
 				map.put("ORDER_PAY_STATE", 0);
@@ -965,7 +1016,7 @@ public class OrderController extends BaseController {
 				throw new RuntimeException();
 			}
 			txManagerController.commit();
-			output("0000", "成功");
+			output("0000", "支付成功");
 			return;
 		} catch (Exception e) {
 			txManagerController.rollback();

@@ -29,6 +29,10 @@ public class StarPosPay {
 	public static final String PAY_CHANNEL_ALIPAY = "ALIPAY";//支付宝支付
 	public static final String PAY_CHANNEL_YLPAY = "YLPAY";//银联支付
 	
+	public static final String[] PAY_WEIXIN_HEADCODE = {"10","11","12","13","14","15"};
+	public static final String[] PAY_ALIPAY_HEADCODE = {"28"};
+	public static final String[] PAY_YLPAY_HEADCODE = {"62"};
+	
 	private static Logger logger = Logger.getLogger(StarPosPay.class);
 
     public static String testMchId="800690000005418";//800690000001460
@@ -403,9 +407,13 @@ public class StarPosPay {
         
         String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
         Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
-        
+       
         logger.info("------------------back_Map---------------------------");
         logger.info(reMap);
+        if("S".equals(reMap.get("result")) && "交易成功".equals(reMap.get("message"))) {
+        	reMap.put("result", "A");
+        	reMap.put("message", "等待支付");
+        }
         
         String insertMessage = insertMessage(paramsMap, reMap);
         if(insertMessage == null){
@@ -700,13 +708,13 @@ public static void main(String[] args) {
 //		
 //		System.out.println(map2);
 //		
-//		Map<String, Object> newMap = new HashMap<String, Object>();
-//		
-//		newMap.put("USER_ID", "zhy");
-//		newMap.put("amount", "1");
-//		newMap.put("DCXT_ORDER_FK", "zhy");
-//		newMap.put("payChannel", StarPosPay.PAY_CHANNEL_ALIPAY);
-//		System.out.println(new StarPosPay().psoPay(newMap));
+		Map<String, Object> newMap = new HashMap<String, Object>();
+		
+		newMap.put("USER_ID", "zhy");
+		newMap.put("amount", "1");
+		newMap.put("DCXT_ORDER_FK", "zhy");
+		newMap.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN);
+		System.out.println(new StarPosPay().psoPay(newMap));
 		
 		
 	} catch (Exception e) {

@@ -470,7 +470,10 @@
 	 
 	 <!-- 根据订单id修改订单状态为支付成功 -->
 	<update id="updateOrderPayStatusSuccessByOrderId" parameterMap="BaseParameterMap">
-		UPDATE sc_order SET o.ORDER_PAY_STATE = '1' WHERE ORDER_PK = #{ORDER_PK};
+		UPDATE sc_order SET o.ORDER_PAY_STATE = '1' 
+		<if test="ORDER_PAY_WAY != null">
+			,ORDER_PAY_WAY = #{ORDER_PAY_WAY}) 
+		</if> WHERE ORDER_PK = #{ORDER_PK};
 	</update>
 	
 	 <!-- 根据订单id修改订单的支付类型和支付状态 -->

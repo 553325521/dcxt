@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -295,14 +296,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					logger.error("217");
 					newMap.put("USER_ID", "lupishan");//userid是我自己设置的必须的，酌情去除
 					newMap.put("payChannel", payPay);
-
+					String payWay = "";
 					if(payPay.equals(StarPosPay.PAY_CHANNEL_ALIPAY)) {
 						newMap = starPosPay.psoPay(newMap);
 						if("000000".equals(newMap.get("returnCode").toString())) {
 							logger.info("payCode)"+newMap.get("payCode"));
 							reponse.sendRedirect((String) newMap.get("payCode"));
-							return;
 						}
+						payWay = "2";
 					}else{
 						logger.error("228");
 						newMap = starPosPay.pubSigPay(newMap,null,null);
@@ -310,13 +311,21 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							logger.info(newMap);
 							request.setAttribute("payMap", newMap);
 							request.getRequestDispatcher("/pay.jsp").forward(request, response);
-							return;
 						}
+						payWay = "1";
 					}
 					
-					logger.error("支付未成功-->"+newMap);
+					map.put("ORDER_PAY_WAY", "3"+payWay);
+					if("000000".equals(newMap.get("returnCode"))) {
+						this.addCallBackMethod((String)newMap.get("logNo"), "ShopCodePay_nextOper", map);
+						return;
+					}else {
+						logger.error("支付未成功-->"+newMap);
+					}
+					
 				} catch (Exception e) {
 					logger.error(e);
+					output("9999","支付失败，请在账单中查看是否扣款！");
 				}
 			}
 			
@@ -366,16 +375,33 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public void ShopScanPay(HttpServletRequest request, HttpServletResponse reponse){
 				try {
 					Map<String, Object> map = getParameterMap();//里边有商铺id,订单id,还有条形码，支付渠道
-					String payWay = ((String) map.get("payWay")).substring(0,1);
+					String code = (String) map.get("qrCode");
+					if(code == null) {
+						return;
+					}
+					//根据条形码判断是哪家的
+					String headFlag = code.substring(0,2);
+					String payWay = "";
+					if(Arrays.asList(StarPosPay.PAY_WEIXIN_HEADCODE).contains(headFlag)) {
+						payWay = "1";
+					}else if(Arrays.asList(StarPosPay.PAY_ALIPAY_HEADCODE).contains(headFlag)) {
+						payWay = "2";
+					}else if(Arrays.asList(StarPosPay.PAY_YLPAY_HEADCODE).contains(headFlag)) {
+						payWay = "3";
+					}else {
+						output("9999", "无效支付码");
+						return;
+					}
 					
-					String orderId = "lps";//map里边一定是ORDER_PK
+					
+					String orderId = (String) map.get("ORDER_PK");//map里边一定是ORDER_PK
 					Map<String, Object> newMap = new HashMap<String, Object>();
 					newMap.put("DCXT_ORDER_FK", orderId);  //订单id
 					//根据订单id查出来需要多少钱
 					newMap.put("USER_ID", "2222222");
 					
 					newMap.put("amount", "1"); 
-					newMap.put("authCode", map.get("qrCode"));
+					newMap.put("authCode", code);
 					//支付渠道
 					if("2".equals(payWay)) {
 						newMap.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN); 
@@ -391,10 +417,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					newMap = starPosPay.pay(newMap);
 					if("000000".equals(newMap.get("returnCode").toString())) {
 						if(!("S".equals(newMap.get("result")))) {
-							Map<String, String> callBackMap = new HashMap<String, String>();
-							callBackMap.put("DCXT_ORDER_FK", orderId);
 							//如果不是立即支付成功，那么给他一个回调函数,里边有支付成功后调用的方法，和要发送的数据
+							map.put("ORDER_PAY_WAY", "2"+payWay);
 							this.addCallBackMethod((String)newMap.get("logNo"), "ShopScanPay_nextOper", map);
+						}else {
+							map.put("sqlMapId", "updateOrderPayStatusSuccessByOrderId");
+							map.put("ORDER_PAY_STATE", "1");
+							boolean update = openService.update(map);
+							if(!update) {
+								output("9999", "交易成功，订单状态修改失败！");
+								return;
+							}
 						}
 						logger.info(newMap);
 						output("0000", newMap);
@@ -419,6 +452,37 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 * @description: 新大陆支付成功后回调函数，完成对订单的支付状态修改
 			 * @return void
 			 */
+			@RequestMapping(value = "/ShopCodePay_nextOper", method = RequestMethod.POST)
+			public void ShopCodePayNextOper(HttpServletRequest request,HttpSession seesion){
+				try {
+					Map<String, Object> map = getParameterMap();//里边有订单id
+					
+					logger.info("ShopCodePay_nextOper   360");
+					logger.info(map);
+					
+					//TODO修改订单状态为支付成功
+					map.put("sqlMapId", "updateOrderPayStatusSuccessByOrderId");
+					map.put("ORDER_PAY_STATE", "1");
+					
+					openService.update(map);
+					
+				} catch (Exception e) {
+					logger.info(e);
+					logger.info("starposPayController pay success but status is not setting 1  ---471line");
+				}
+				
+			}
+			
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date Nov 27, 2018 3:24:59 AM 
+			 * 
+			 * @description: 新大陆支付成功后回调函数，完成对订单的支付状态修改
+			 * @return void
+			 */
 			@RequestMapping(value = "/ShopScanPay_nextOper", method = RequestMethod.POST)
 			public void ShopScanPayNextOper(HttpServletRequest request,HttpSession seesion){
 				try {
@@ -429,6 +493,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					
 					//TODO修改订单状态为支付成功
 					map.put("sqlMapId", "updateOrderPayStatusSuccessByOrderId");
+					map.put("ORDER_PAY_STATE", "1");
+					
 					openService.update(map);
 					
 				} catch (Exception e) {

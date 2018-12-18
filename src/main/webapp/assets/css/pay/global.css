@@ -389,6 +389,7 @@ html {
 	margin-top: .8rem;
 }
 .but input{
+	width:100%;
 	color: #FFFFFF;
 	font-size: .36rem;
 	line-height: .7rem;

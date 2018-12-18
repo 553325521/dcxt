@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="userVipCard" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+	
+	<!-- 根据会员卡id减少会员卡储值 -->
+	<update id="updaeteSubUserVipCardCZById" parameterMap="BaseParameterMap" >
+		UPDATE sc_user_vcard SET 
+			USER_VCARD_CZ = cast(USER_VCARD_CZ as SIGNED INTEGER) - cast(#{USER_VCARD_CZ} as SIGNED INTEGER)
+			
+		WHERE 
+			USER_VCARD_PK = #{USER_VCARD_PK};
+	</update>
+	
+		<!-- 根据shopId和openid（或userid）查询用户在该店的会员卡信息 -->
+	<select id="selectVcardInfoByShopIdAndOpenId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+	SELECT luv.USER_VCARD_PK,luv.USER_FK,luv.VCARD_FK,luv.USER_VCARD_JF,luv.USER_VCARD_CZ,luv.USER_VCARD_XFDS,luv.USER_VCARD_CSJF, luv.CREATE_TIME,rvc.VCARD_NAME 
+	FROM (SELECT * FROM sc_user_vcard uv
+	WHERE USER_FK IN (
+		SELECT lu.USER_PK FROM sc_user lu INNER JOIN sc_user ru ON lu.USER_UNIONID = ru.USER_UNIONID 
+		WHERE 
+		<if test="OPEN_ID != null">
+			ru.USER_WX = #{OPEN_ID}) 
+			</if>
+			<if test="USER_PK != null">
+			ru.USER_PK = #{USER_PK})
+			</if>) luv
+			INNER JOIN sc_vip_card rvc ON luv.VCARD_FK = rvc.VCARD_PK WHERE  rvc.USE_SHOP like '%${SHOP_FK}%' AND rvc.IS_USE = '1' ORDER BY luv.CREATE_TIME desc; 
+		</select>
+</mapper>
