@@ -467,13 +467,23 @@
 		WHERE ORDER_PK = #{ORDER_PK}
 	 </update>
 	 
+	 <!-- 根据订单id更新订单的状态, 同时置桌位状态为未使用 -->
+	 <update id="updateOrderStateAndTableIsNoUse" parameterMap="BaseParameterMap">
+		UPDATE sc_tables t, sc_order o
+		SET t.TABLES_ISUSE = 0, o.ORDER_STATE = #{ORDER_STATE},
+		o.UPDATE_TIME = NOW(),
+		o.UPDATE_BY = #{OPEN_ID}
+		WHERE o.ORDER_PK = #{ORDER_PK} AND t.TABLES_PK = o.ORDER_POSITION;
+	 </update>
 	 
-	 <!-- 根据订单id修改订单状态为支付成功 -->
+
+	 
+	 <!-- 根据订单id修改订单状态为支付成功, 同时置桌位状态为未使用 -->
 	<update id="updateOrderPayStatusSuccessByOrderId" parameterMap="BaseParameterMap">
-		UPDATE sc_order SET o.ORDER_PAY_STATE = '1' 
+		UPDATE sc_order o LEFT JOIN sc_tables t on t.TABLES_PK = o.ORDER_POSITION SET t.TABLES_ISUSE = '0',o.ORDER_PAY_STATE = '1', o.UPDATE_TIME = NOW()
 		<if test="ORDER_PAY_WAY != null">
-			,ORDER_PAY_WAY = #{ORDER_PAY_WAY}) 
-		</if> WHERE ORDER_PK = #{ORDER_PK};
+			,o.ORDER_PAY_WAY = #{ORDER_PAY_WAY}
+		</if>  WHERE o.ORDER_PK = #{ORDER_PK};
 	</update>
 	
 	 <!-- 根据订单id修改订单的支付类型和支付状态 -->

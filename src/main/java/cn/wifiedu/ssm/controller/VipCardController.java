@@ -91,7 +91,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							StringUtils.isBlank((String)map.get("VCARD_JFXS")) ||
 							StringUtils.isBlank((String)map.get("START_MONEY")) ||
 							StringUtils.isBlank((String)map.get("START_JF")) || 
-							StringUtils.isBlank((String)map.get("USE_SHOP")) || 
+//							StringUtils.isBlank((String)map.get("USE_SHOP")) || 
 							StringUtils.isBlank((String)map.get("VCARD_LOGO")) || 
 							StringUtils.isBlank((String)map.get("BACKGROUND_IMAGE"))
 							){
@@ -280,15 +280,42 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							map.put("sqlMapId", "insertVipCard");
 							String insert = openService.insert(map);
 							if(insert != null){
-								//添加商铺会员卡对应关系表
-								String shopsStr = (String)map.get("USE_SHOP");
-								String[] shops = shopsStr.split(",");
+								//查询店铺信息
+								Map shopMap = new HashMap<String, Object>();
+								shopMap.put("sqlMapId", "selectShopInfoById");
+								shopMap.put("SHOP_ID", userObj.getString("FK_SHOP"));
+								Map<String,Object> shopInfo = (Map<String, Object>) openService.queryForObject(shopMap);
+								String isChain = (String) shopInfo.get("SHOP_IS_CHAIN"); 
 								map.put("sqlMapId", "insertShopVipCard");
-								for(int i=0;i<shops.length;i++){
-									map.put("SHOP_ID", shops[i]);
+								if("1".equals(isChain)) {//是连锁
+									//根据用户查询管理的店铺
+									Map manageShopMap = new HashMap<String, Object>();
+									manageShopMap.put("sqlMapId", "selectManagerShopIdAndNameByUserId");
+									
+									manageShopMap.put("USER_ID", userObj.get("USER_PK")); 
+									//商铺的名字和id
+									List<Map<String,Object>> manageShopList = openService.queryForList(manageShopMap);
+									//添加商铺会员卡对应关系表
+									for(Map manageShop : manageShopList){
+										map.put("SHOP_ID", manageShop.get("value"));
+										map.put("VIP_CARD_ID", insert);
+										openService.insert(map);
+									}
+								}else {//不是连锁
+									map.put("SHOP_ID", userObj.getString("FK_SHOP"));
 									map.put("VIP_CARD_ID", insert);
 									openService.insert(map);
 								}
+								
+//								//添加商铺会员卡对应关系表
+//								String shopsStr = (String)map.get("USE_SHOP");
+//								String[] shops = shopsStr.split(",");
+//								map.put("sqlMapId", "insertShopVipCard");
+//								for(int i=0;i<shops.length;i++){
+//									map.put("SHOP_ID", shops[i]);
+//									map.put("VIP_CARD_ID", insert);
+//									openService.insert(map);
+//								}
 								output("0000","添加成功");
 								return;
 							}else{
@@ -381,13 +408,40 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							boolean delete = openService.delete(map);
 							if(delete){
 								//再添加现在的会员卡关系
-								String shopsStr = (String)map.get("USE_SHOP");
-								String[] shops = shopsStr.split(",");
 								map.put("sqlMapId", "insertShopVipCard");
-								for(int i=0;i<shops.length;i++){
-									map.put("SHOP_ID", shops[i]);
+								Map shopMap = new HashMap<String, Object>();
+								shopMap.put("sqlMapId", "selectShopInfoById");
+								shopMap.put("SHOP_ID", userObj.getString("FK_SHOP"));
+								Map<String,Object> shopInfo = (Map<String, Object>) openService.queryForObject(shopMap);
+								String isChain = (String) shopInfo.get("SHOP_IS_CHAIN"); 
+								map.put("sqlMapId", "insertShopVipCard");
+								if("1".equals(isChain)) {//是连锁
+									//根据用户查询管理的店铺
+									Map manageShopMap = new HashMap<String, Object>();
+									manageShopMap.put("sqlMapId", "selectManagerShopIdAndNameByUserId");
+									
+									manageShopMap.put("USER_ID", userObj.get("USER_PK")); 
+									//商铺的名字和id
+									List<Map<String,Object>> manageShopList = openService.queryForList(manageShopMap);
+									//添加商铺会员卡对应关系表
+									for(Map manageShop : manageShopList){
+										map.put("SHOP_ID", manageShop.get("value"));
+										openService.insert(map);
+									}
+								}else {//不是连锁
+									map.put("SHOP_ID", userObj.getString("FK_SHOP"));
 									openService.insert(map);
 								}
+								
+								
+								
+//								String shopsStr = (String)map.get("USE_SHOP");
+//								String[] shops = shopsStr.split(",");
+//								map.put("sqlMapId", "insertShopVipCard");
+//								for(int i=0;i<shops.length;i++){
+//									map.put("SHOP_ID", shops[i]);
+//									openService.insert(map);
+//								}
 							}else{
 								output("9999","修改失败");
 								return;

@@ -137,33 +137,45 @@ public class StarPosPay {
      *					attach 
      */
     public Map<String, Object> pubSigPay(Map<String, Object> paramsMap, String callBackUrl, Map<String, Object> callBackParamMap) throws Exception {
-    	pubSigQry(paramsMap);
+    	logger.error("140");
+    	
     	if(!paramsMap.containsKey("amount")){
     		paramsMap.put("returnCode", "9999");
     		paramsMap.put("message", "amount不能为空！");
     		return paramsMap;
     	}
+    	logger.error("146");
     	if(!paramsMap.containsKey("USER_ID") || StringUtils.isBlank((String)paramsMap.get("USER_ID"))){
     		paramsMap.put("returnCode", "9999");
     		paramsMap.put("message", "userId不能为空！");
     		return paramsMap;
     	}
+    	logger.error("153");
     	if(!paramsMap.containsKey("mercId")){
     		paramsMap.put("mercId",testMchId);
     	}
     	if(!paramsMap.containsKey("orgNo")){
     		paramsMap.put("orgNo",testOrgNo);         //机构号
     	}
+    	logger.error("160");
     	if(!paramsMap.containsKey("trmNo")){
     		 paramsMap.put("trmNo",testTrmNo);
     	}
-    
+    	if(!paramsMap.containsKey("trmNo")){
+   		 paramsMap.put("trmNo",testTrmNo);
+    	}
+    	if(!paramsMap.containsKey("spKey")) {
+    		 paramsMap.put("spKey",testKey);
+    	}
+    	pubSigQry(paramsMap);
+    	paramsMap.remove("spKey");
     	if(!(paramsMap.containsKey("amount") && paramsMap.containsKey("openid") || paramsMap.containsKey("code"))){
     		paramsMap.clear();
     		paramsMap.put("returnCode", "9999");
     		paramsMap.put("message", "参数不完整");
     		return paramsMap;
     	}
+    	logger.error("168");
     	if(!paramsMap.containsKey("total_amount")){
     		paramsMap.put("total_amount", paramsMap.get("amount"));
     	}
@@ -517,25 +529,30 @@ public class StarPosPay {
      * 必须再生产环境下调试，若要自己得公众号支付必须先配置再调试
      */
     public static void pubSigQry(Map<String, Object> map) throws Exception {
+    	logger.error("522");
         Map<String, Object> paramsMap = new HashMap<String, Object>();
         paramsMap.put("orgNo",CommonUtil.getPath("spOrgNo"));         //机构号
         paramsMap.put("mercId",map.get("mercId"));
         paramsMap.put("trmNo",map.get("trmNo"));
         paramsMap.put("txnTime",  new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
         paramsMap.put("signType","MD5");
-
+        logger.error("532");
         paramsMap.put("version","V1.0.1");
+        logger.error("534");
         String spKey = map.get("spKey").toString();
+        logger.error("536");
         String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
         String sign = MD5.sign(preStr, spKey, "UTF-8");
         paramsMap.put("attach","1231");
         paramsMap.put("signValue",sign);
 
+        
 
         String reqUrl = testHeadUrl + "/pubSigQry.json";
         String posts = URLDecoder.decode(CommonUtil.posts(reqUrl, JSON.toJSONString(paramsMap), "UTF-8"),"UTF-8");
         Map<String, Object> reMap = JSON.parseObject(posts, Map.class);
         System.out.println("map = " + reMap);
+        logger.error("542");
     }
 
     

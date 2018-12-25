@@ -46,10 +46,10 @@
 							scope.pageTitle = "修改会员卡";
 							//发送post请求查询会员卡信息
 							$httpService.post(config.findURL,scope.form).success(function(data) {
+								scope.pageShow = "True";
 								if (data.code != '0000') {
 									loggingService.info(data.data);
 								} else {
-									scope.pageShow = "True";
 									scope.form = data.data
 									scope.form.START_MONEY = Number(scope.form.START_MONEY)/100;
 									scope.twjs = angular.fromJson(scope.form.VCARD_TWJS);
@@ -57,10 +57,10 @@
 										scope.twjs = []
 									}
 									//根据商铺的id得到商铺的名字
-									scope.USE_SHOP_NAMES = scope.form.USE_SHOP
-									angular.forEach(item,function(d,index,array){
-										scope.USE_SHOP_NAMES = scope.USE_SHOP_NAMES.replace(d.value, d.title)	
-									});
+//									scope.USE_SHOP_NAMES = scope.form.USE_SHOP
+//									angular.forEach(item,function(d,index,array){
+//										scope.USE_SHOP_NAMES = scope.USE_SHOP_NAMES.replace(d.value, d.title)	
+//									});
 									//分割日期
 									if(scope.form.ALLOTTED_TIME == 2){
 										scope.START_TIME = scope.form.ALLOTTED_TIME_PERIOD.split(' ')[0]
@@ -85,7 +85,7 @@
 						}
 					}
 					
-					init();
+					init2();
 					
 					scope.addTWJS = function(){
 						scope.twjs.push({'img':'','text':''});

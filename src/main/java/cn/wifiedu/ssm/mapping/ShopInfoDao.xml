@@ -382,4 +382,10 @@
 	<select id="selectShopNameByShopId" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
 		SELECT SHOP_NAME FROM sc_shop_info WHERE SHOP_ID = #{SHOP_ID};
 	</select>
+	
+	<!-- 根据店铺ID查询店铺全部信息 -->
+	<select id="selectShopInfoById" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT * FROM sc_shop_info WHERE SHOP_ID = #{SHOP_ID};
+	</select>
+	
 </mapper>

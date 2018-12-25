@@ -878,9 +878,11 @@ public class OrderController extends BaseController {
 //				return;
 //			}
 			map.put("ORDER_STATE", "1");
-			map.put("sqlMapId", "updateOrderState");
+			map.put("sqlMapId", "updateOrderStateAndTableIsNoUse");
 			boolean updateResult = openService.update(map);
 			if(updateResult){
+				
+				
 				output("0000", "退单成功");
 				return;
 			}

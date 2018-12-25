@@ -168,7 +168,7 @@
 		 <i class="weui_icon_warn"></i>
 	</div>
 	 
-	<div class="weui_cell tablessetting-weui_select">
+	<!-- <div class="weui_cell tablessetting-weui_select">
 		<div class="weui_cell_hd">
 			<label class="weui_label label tablessetting-label">适用门店</label>
 		</div>
@@ -176,7 +176,7 @@
 			<input class="weui_input label-input dcxt-right-label" type="text" id="d3"
 				value="{{USE_SHOP_NAMES}}" date placeholder="至少选择一个门店" required emptyTips="请选择门店">
 		</div>
-	</div>
+	</div> -->
 		
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
@@ -186,7 +186,7 @@
         	<ul class="weui_uploader_files" id="img2x">
           		<li>
 		           	<div class="weui_uploader_file" style="background-image:url({{form.VCARD_LOGO}})">
-		            	<div class="hide-input {{form.IMG_LOGO == null || form.IMG_LOGO == ''?'weui_uploader_input_wrp':''}}">
+		            	<div class="hide-input {{form.VCARD_LOGO == null || form.VCARD_LOGO == ''?'weui_uploader_input_wrp':''}}">
 			                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" accept="image/jpg,image/jpeg,image/png,image/gif" id="i1" >
 		             	</div>
 		           	</div>
@@ -194,7 +194,7 @@
            		</li>
 	           <li style="margin-left:20px;">
 		           	<div class="weui_uploader_file" style="background-image:url({{form.BACKGROUND_IMAGE}})">
-		            	<div class="hide-input {{form.IMG_BODAY == null || form.IMG_BODAY == ''?'weui_uploader_input_wrp':''}}">
+		            	<div class="hide-input {{form.BACKGROUND_IMAGE == null || form.BACKGROUND_IMAGE == ''?'weui_uploader_input_wrp':''}}">
 			                <input class="weui_uploader_input" type="file" onchange="previewImage(this)" value="{{form.IMG_BODAY}}" accept="image/jpg,image/jpeg,image/png,image/gif" id="i2" 
 							>
 		             	</div>

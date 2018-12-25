@@ -186,7 +186,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					//里边会有订单id
 					Map<String, Object> map = getParameterMap(); //orderId
 					String orderId = (String) map.get("orderId");
-					String url = "https://m.ddera.com/json/pay.json?orderId="+orderId;
+					String orderType = (String) map.get("orderType");
+					String money = (String) map.get("money");
+					String url = "https://m.ddera.com/json/pay.json?orderId="+orderId+"&orderType" + orderType+"&money="+money;
 					BufferedImage image = QRCode.genBarcode(url, 200, 200);
 					response.setContentType("image/png");
 					response.setHeader("pragma", "no-cache");
@@ -212,6 +214,21 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public void aggregationPay(HttpServletRequest request, HttpServletResponse reponse){
 				try {
 					Map<String, Object> map = getParameterMap();
+					String orderType = (String) map.get("orderType");
+					if("2".equals(orderType)) {
+						//生成订单
+						Map generateMap = new HashMap<String, Object>();
+						generateMap.put("sqlMapId", "insertCartOrderInfo");
+						generateMap.put("ORDER_YFMONEY", map.get("money"));
+						generateMap.put("ORDER_DIVISION", map.get("5"));
+						String insert = openService.insert(generateMap);
+						if(insert == null) {
+							output("9999", "支付失败！");
+							return;
+						}
+						map.put("orderId", insert);
+					}
+					
 					logger.error("215");
 					logger.error(map);
 					//从map中取出来userid和订单id
@@ -305,8 +322,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						}
 						payWay = "2";
 					}else{
-						logger.error("228");
+						logger.error("308");
 						newMap = starPosPay.pubSigPay(newMap,null,null);
+						logger.error("310");
 						if("000000".equals(newMap.get("returnCode").toString())) {
 							logger.info(newMap);
 							request.setAttribute("payMap", newMap);
@@ -318,9 +336,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					map.put("ORDER_PAY_WAY", "3"+payWay);
 					if("000000".equals(newMap.get("returnCode"))) {
 						this.addCallBackMethod((String)newMap.get("logNo"), "ShopCodePay_nextOper", map);
+						output("0000",newMap);
 						return;
 					}else {
 						logger.error("支付未成功-->"+newMap);
+						output("9999", "支付失败！");
 					}
 					
 				} catch (Exception e) {
@@ -393,6 +413,21 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						return;
 					}
 					
+					String orderType = (String) map.get("orderType");
+					if("2".equals(orderType)) {
+						//生成订单
+						Map generateMap = new HashMap<String, Object>();
+						generateMap.put("sqlMapId", "insertCartOrderInfo");
+						generateMap.put("ORDER_YFMONEY", map.get("money"));
+						generateMap.put("ORDER_DIVISION", map.get("5"));
+						String insert = openService.insert(generateMap);
+						if(insert == null) {
+							output("9999", "支付失败！");
+							return;
+						}
+						map.put("ORDER_PK", insert);
+					}
+					
 					
 					String orderId = (String) map.get("ORDER_PK");//map里边一定是ORDER_PK
 					Map<String, Object> newMap = new HashMap<String, Object>();
@@ -403,11 +438,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					newMap.put("amount", "1"); 
 					newMap.put("authCode", code);
 					//支付渠道
-					if("2".equals(payWay)) {
+					if("1".equals(payWay)) {
 						newMap.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN); 
-					}else if("3".equals(payWay)){
+					}else if("2".equals(payWay)){
 						newMap.put("payChannel", StarPosPay.PAY_CHANNEL_ALIPAY); 
-					}else if("9".equals(payWay)) {
+					}else if("3".equals(payWay)) {
 						newMap.put("payChannel", StarPosPay.PAY_CHANNEL_YLPAY); 
 					}else {
 						output("9999", "支付方式不对");
@@ -421,6 +456,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							map.put("ORDER_PAY_WAY", "2"+payWay);
 							this.addCallBackMethod((String)newMap.get("logNo"), "ShopScanPay_nextOper", map);
 						}else {
+							map.put("ORDER_PAY_WAY", "2"+payWay);
 							map.put("sqlMapId", "updateOrderPayStatusSuccessByOrderId");
 							map.put("ORDER_PAY_STATE", "1");
 							boolean update = openService.update(map);
@@ -438,7 +474,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					output("9999", newMap);
 					return;
 				} catch (Exception e) {
-					e.printStackTrace();
+					output("9999", "交易失败");
+					logger.error(e);
 				}
 			}
 			
@@ -458,13 +495,19 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					Map<String, Object> map = getParameterMap();//里边有订单id
 					
 					logger.info("ShopCodePay_nextOper   360");
-					logger.info(map);
+					map = getCallBackMapParam(map);
+//					logger.info(request);
 					
 					//TODO修改订单状态为支付成功
 					map.put("sqlMapId", "updateOrderPayStatusSuccessByOrderId");
-					map.put("ORDER_PAY_STATE", "1");
 					
-					openService.update(map);
+					map.put("ORDER_PAY_STATE", "1");
+					logger.info(map);
+					boolean update = openService.update(map);
+					if(!update) {
+						logger.info("update fail");
+					}
+					
 					
 				} catch (Exception e) {
 					logger.info(e);
@@ -474,7 +517,23 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			}
 			
 			
-			
+			/**
+			 * 
+			 * @author lps
+			 * @date Dec 24, 2018 2:17:43 AM 
+			 * 
+			 * @description: 新大陆支付异步回调函数调用后转换Map
+			 * @return Map<String,Object>
+			 */
+			private Map<String, Object> getCallBackMapParam(Map<String, Object> map) {
+				String callBackString = (map.toString());
+				callBackString = callBackString.split("\\{")[2].split("\\}")[0].replaceAll("\\\\", "").replaceAll("=", ":");
+				callBackString = "{" + callBackString + "}";
+				System.err.println(callBackString);
+				map = (Map) JSON.parse(callBackString);
+				return map;
+			}
+
 			/**
 			 * 
 			 * @author lps
@@ -488,9 +547,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				try {
 					Map<String, Object> map = getParameterMap();//里边有订单id
 					
-					logger.info("ShopScanPay_nextOper   360");
+					logger.info("ShopScanPay_nextOper   495");
 					logger.info(map);
-					
+					map = getCallBackMapParam(map);
 					//TODO修改订单状态为支付成功
 					map.put("sqlMapId", "updateOrderPayStatusSuccessByOrderId");
 					map.put("ORDER_PAY_STATE", "1");
@@ -605,7 +664,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				}
 				return null;
 			}
-			
+			public static void main(String[] args) {
+				String s = "{OperatingSystem=未知, userInfo=null, AccessIp=127.0.0.1, {\"mercId\"=\"800690000005418\",\"logNo\":\"201812241991909142\",\"OperatingSystem\":\"??\",\"tradingTime\":\"20181224010938\",\"AccessIp\":\"122.97.178.29\",\"orderId\":\"4411f2a2e20e44f683f93f80b6b73575\",\"openid\":\"2088702092854894\",\"sessionId\":\"C4433A74D434DDB48AAC3321A368AAA6\",\"ORDER_PAY_WAY\":\"32\",\"sqlMapId\":\"selectOrderFinalMoneyAndShopAppidByOrderId\",\"ORDER_PK\":\"4411f2a2e20e44f683f93f80b6b73575\",\"officeId\":\"20181224010938626082\",\"Browser\":\"??\"}, sessionId=9965FCF2864F4A5335E55F1C4A513BCF, token=null, Browser=其它}";
+				s = s.split("\\{")[2].split("\\}")[0].replaceAll("\\\\", "").replaceAll("=", ":");
+				s = "{" + s + "}";
+				System.err.println(s);
+				Map map = (Map) JSON.parse(s);
+				System.out.println(map);
+			}
 			
 		}
 

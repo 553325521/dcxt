@@ -14,6 +14,7 @@
 		SHOP_TYPE,
 		SHOP_AREA,
 		SHOP_ADDRESS,
+		SHOP_IS_CHAIN,
 		SERVICETYPE_FK,
 		CREATE_TIME,
 		CREATE_BY
@@ -25,6 +26,7 @@
 		#{SHOP_TYPE},
 		#{SHOP_AREA},
 		#{SHOP_ADDRESS},
+		#{SHOP_IS_CHAIN},
 		#{SERVICETYPE_FK},
 		NOW(),
 		#{CREATE_BY}
@@ -53,7 +55,7 @@
 	<select id="SelectByPrimaryKey" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		select
-		SHOP_NAME,SHOP_TEL,SHOP_TYPE,SHOP_AREA,SHOP_ADDRESS,SHOP_TEL from SC_SHOP_INFO
+		SHOP_NAME,SHOP_TEL,SHOP_TYPE,SHOP_AREA,SHOP_ADDRESS,SHOP_TEL,SHOP_IS_CHAIN from SC_SHOP_INFO
 		where SHOP_ID = #{SHOP_FK};
 	</select>
 
