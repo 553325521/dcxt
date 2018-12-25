@@ -9,6 +9,9 @@
 				//初始化form表单
 				scope.form={}
 				
+				//是否连锁是否显示(添加时候显示)
+				scope.isAddShowCHAIN = "True";
+				//是否连锁默认值
 				scope.form.SHOP_IS_CHAIN = '0';
 				/*//商铺类型
 				shop_type_first = ['餐饮行业','水果行业'];
@@ -61,7 +64,8 @@
 								loggingService.info(data.data);
 							} else {
 								scope.form = data.data;//获取商铺信息
-								console.info(scope.form)
+								//是否连锁是否显示(更新时候不显示)
+								scope.isAddShowCHAIN = "False";
 								//初始化商铺类型
 								//分割商铺类型
 								scope.form.SHOP_ID = shop_id;
