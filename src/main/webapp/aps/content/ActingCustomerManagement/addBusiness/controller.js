@@ -9,6 +9,7 @@
 				//初始化form表单
 				scope.form={}
 				
+				scope.form.SHOP_IS_CHAIN = '0';
 				/*//商铺类型
 				shop_type_first = ['餐饮行业','水果行业'];
 				shop_type_second = ['火锅','垃圾'];*/
@@ -60,9 +61,10 @@
 								loggingService.info(data.data);
 							} else {
 								scope.form = data.data;//获取商铺信息
-								
+								console.info(scope.form)
 								//初始化商铺类型
 								//分割商铺类型
+								scope.form.SHOP_ID = shop_id;
 								shop_type = scope.form.SHOP_TYPE.split(" ");
 								scope.form.SHOP_TYPE_FIRSET = shop_type[0];
 								scope.form.SHOP_TYPE_SECOND = shop_type[1];

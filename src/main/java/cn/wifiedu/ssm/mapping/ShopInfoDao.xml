@@ -148,6 +148,21 @@
 	</update>
 	
 	
+	
+	<!-- 根据商铺Pk查询优惠买单 -->
+	<select id="selectFavourByShop" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT * FROM sc_preferntial p INNER JOIN sc_preferntial_rule r
+		ON p.fk_rule = r.preferential_rule_pk
+		WHERE p.preferntial_pk IN(
+			SELECT ps.fk_preferntial FROM sc_preferntial_shop ps
+			WHERE ps.fk_shop = 'c3a1f69158e04e0b8d072e5bc1f47b31'
+		)
+		AND p.is_use = '1'
+		AND r.is_use = '1'
+		AND p.delete_flag = '0'
+		AND r.delete_flag = '0'
+	</select>
+	
 	<select id="getGoodTypeForRule" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
 		select
 			sc_preferntial_rule_good_pk,
@@ -160,6 +175,12 @@
 		where fk_preferntial_rule = #{rulePk}
 		and delete_flag = '0'
 	</select>
+	
+	<update id="deleteFavourBaseInfoByShop" parameterMap="BaseParameterMap">
+		update sc_preferntial_shop set 
+			delete_flag = '1'
+		where fk_shop = #{fk_shop}
+	</update>
 	
 	<update id="deleteFavourBaseInfo" parameterMap="BaseParameterMap">
 		update sc_preferntial_rule set

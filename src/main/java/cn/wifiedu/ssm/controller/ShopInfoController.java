@@ -205,6 +205,9 @@ public class ShopInfoController extends BaseController {
 				String [] shopFkArray = map.get("SHOPID").toString().split(",");
 				for(String fk_shop:shopFkArray){
 					map.put("fk_shop", fk_shop);
+					map.put("sqlMapId", "deleteFavourBaseInfoByShop");
+					//添加的时候删除原来商铺对应的优惠买单
+					openService.update(map);
 					map.put("sqlMapId", "savePreferntialShop");
 					openService.insert(map);
 				}
@@ -233,10 +236,15 @@ public class ShopInfoController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
+			if(map.get("SHOPID") == null || map.get("SHOPID").toString().equals("")){
+				output("9999", "请选择适用门店");
+				return;
+			}
 			map.put("userId", userObj.get("USER_PK")); 
 			map.put("sqlMapId", "editFavour");
 			boolean b = openService.update(map);
 			if(b){
+				
 				map.put("favPk", map.get("favourPK"));
 				map.put("sqlMapId", "delPreferntialShop");
 				if(openService.update(map)){

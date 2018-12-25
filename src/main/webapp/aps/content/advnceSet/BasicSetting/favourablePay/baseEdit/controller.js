@@ -98,6 +98,7 @@
 								$scope.good_scope("部分商品");
 								dealGoodType(areaJsonArray[1].AREA_DETAIL);
 							}
+							
 							$scope.$apply();
 						} else {
 							
