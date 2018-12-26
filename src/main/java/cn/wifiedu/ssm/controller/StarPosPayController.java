@@ -188,7 +188,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					String orderId = (String) map.get("orderId");
 					String orderType = (String) map.get("orderType");
 					String money = (String) map.get("money");
-					String url = "https://m.ddera.com/json/pay.json?orderId="+orderId+"&orderType" + orderType+"&money="+money;
+					String shopId = (String) map.get("shopId");
+					String url = "https://m.ddera.com/json/pay.json?orderId="+orderId+"&orderType=" + orderType+"&money="+money+"&shopId="+shopId;
 					BufferedImage image = QRCode.genBarcode(url, 200, 200);
 					response.setContentType("image/png");
 					response.setHeader("pragma", "no-cache");
@@ -221,6 +222,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						generateMap.put("sqlMapId", "insertCartOrderInfo");
 						generateMap.put("ORDER_YFMONEY", map.get("money"));
 						generateMap.put("ORDER_DIVISION", map.get("5"));
+						generateMap.put("FK_SHOP", map.get("shopId"));
 						String insert = openService.insert(generateMap);
 						if(insert == null) {
 							output("9999", "支付失败！");
@@ -420,6 +422,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						generateMap.put("sqlMapId", "insertCartOrderInfo");
 						generateMap.put("ORDER_YFMONEY", map.get("money"));
 						generateMap.put("ORDER_DIVISION", map.get("5"));
+						generateMap.put("FK_SHOP", map.get("shopId"));
 						String insert = openService.insert(generateMap);
 						if(insert == null) {
 							output("9999", "支付失败！");
