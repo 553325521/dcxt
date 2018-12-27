@@ -98,7 +98,7 @@
 	
 	 	<!-- 根据订单id查询订单详情(订单具体信息，包括订单所在桌位的信息),结果以集合里边放集合返回 -->
  	<select id="selectOrderDetailTableByOrderPK" resultMap="orderTableDetail">
- 		select ood.ORDER_PK,ood.ORDER_PAY_WAY,
+ 		select ood.ORDER_PK,ood.ORDER_PAY_WAY,ood.FK_GOODS,
 			ood.ORDER_CODE,ood.ORDER_RS,ood.ORDER_PAY_STATE,ood.ORDER_STATE,ood.ORDER_MLMONEY,ood.ORDER_JFDXMONEY,ood.ORDER_YHMONEY,ood.ORDER_YFMONEY,ood.ORDER_SHOPMONEY,
 			ood.ARRIVE_TIME,ood.CREATE_TIME,
 			ood.ORDER_DETAILS_PK,ood.ORDER_DETAILS_GNAME,ood.ORDER_DETAILS_GOODS_STATE,
@@ -108,7 +108,7 @@
 			o.ARRIVE_TIME,o.CREATE_TIME,
 			od.ORDER_DETAILS_PK,od.ORDER_DETAILS_GNAME,
 			od.ORDER_DETAILS_GMONEY,od.ORDER_DETAILS_FS,
-			od.ORDER_DETAILS_GOODS_STATE
+			od.ORDER_DETAILS_GOODS_STATE,od.FK_GOODS
 		from SC_ORDER o left join SC_ORDER_DETAILS od
 		on o.ORDER_PK = od.FK_ORDER
 		WHERE o.ORDER_PK =
@@ -140,6 +140,7 @@
             -->
             <collection property="orders" javaType="ArrayList" ofType="java.util.HashMap">
                 <id column="ORDER_DETAILS_PK" property="ORDER_DETAILS_PK"/>
+                <result column="FK_GOODS" property="FK_GOODS"/>
 	            <result column="ORDER_DETAILS_GNAME" property="ORDER_DETAILS_GNAME"/>
 	            <result column="ORDER_DETAILS_GMONEY" property="ORDER_DETAILS_GMONEY"/>
 	            <result column="ORDER_DETAILS_FS" property="ORDER_DETAILS_FS"/>

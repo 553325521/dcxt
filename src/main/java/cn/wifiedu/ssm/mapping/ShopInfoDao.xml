@@ -149,18 +149,21 @@
 	
 	
 	
-	<!-- 根据商铺Pk查询优惠买单 -->
-	<select id="selectFavourByShop" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
-		SELECT * FROM sc_preferntial p INNER JOIN sc_preferntial_rule r
-		ON p.fk_rule = r.preferential_rule_pk
-		WHERE p.preferntial_pk IN(
-			SELECT ps.fk_preferntial FROM sc_preferntial_shop ps
-			WHERE ps.fk_shop = 'c3a1f69158e04e0b8d072e5bc1f47b31'
-		)
-		AND p.is_use = '1'
-		AND r.is_use = '1'
-		AND p.delete_flag = '0'
+	<!-- 根据商铺Pk查询优惠规则-->
+	<select id="selectPreferntialRuleByShop" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT r.preferential_rule_pk,r.rule_name,
+			r.rule_model,r.remark,r.good_scope
+ 		FROM sc_preferntial_rule r
+		WHERE r.is_use = '1'
 		AND r.delete_flag = '0'
+		AND r.fk_shop = 'c3a1f69158e04e0b8d072e5bc1f47b31'
+	</select>
+	<!-- 根据优惠规则Pk查询优惠规则-->
+	<select id="selectPreferntialRuleByRulePK" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT r.preferential_rule_pk,r.rule_name,
+			r.rule_model,r.remark,r.good_scope
+ 		FROM sc_preferntial_rule r
+		WHERE r.preferential_rule_pk = #{RULE_PK}
 	</select>
 	
 	<select id="getGoodTypeForRule" resultMap="BaseResultMap" parameterMap="BaseParameterMap">

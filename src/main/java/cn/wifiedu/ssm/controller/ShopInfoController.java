@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -78,7 +79,175 @@ public class ShopInfoController extends BaseController {
 		output(map);
 	}
 	
-	
+	/**
+	* <p>Title: computeFavorMoney</p>
+	* <p>Description:wjl-计算优惠金额 </p>
+	*/
+	@RequestMapping("/ShopInfo_select_loadFavorMoney")
+	public void computeFavorMoney(){
+		try {
+			//优惠金额(单位：分)
+			int favourMoney = 0;
+			Map<String,Object> map = getParameterMap();
+			//查询选择的优惠规则
+			map.put("sqlMapId", "selectPreferntialRuleByRulePK");
+			Map<String,Object> rule = (Map<String,Object>)openService.queryForObject(map);
+			//查询当前订单信息
+			map.put("sqlMapId", "selectOrderDetailTableByOrderPK");
+			Map<String,Object> order = (Map<String,Object>)openService.queryForObject(map);
+			//得到优惠规则中的优惠方式
+			JSONArray favorWayArray = JSONObject.parseArray(rule.get("rule_model").toString());
+			//优惠方式名称
+			String favorName = favorWayArray.getJSONObject(0).getString("YH_WAY");
+			//当前订单的应收金额
+			int yfMoney = Integer.parseInt(order.get("ORDER_YFMONEY").toString());
+			JSONObject favorDetail = favorWayArray.getJSONObject(1).getJSONArray("WAY_DETAIL").getJSONObject(0);
+			//优惠适用商品范围
+			JSONArray areaArray = JSONObject.parseArray(rule.get("good_scope").toString());
+			//全部商品/部分商品
+			String areaName = areaArray.getJSONObject(0).getString("GOODS_AREA");
+			JSONArray areaDetailArray = areaArray.getJSONObject(1).getJSONArray("AREA_DETAIL");
+			//获取当前订单中所有商品的ID集合
+			List<String> goodsPKList = new ArrayList<String>();
+			List<Map<String, Object>> orderDetailList = (List<Map<String, Object>>)order.get("orders");
+			for(Map<String,Object> od:orderDetailList){
+				if(od.get("FK_GOODS")!=null){
+					goodsPKList.add(od.get("FK_GOODS").toString());
+				}
+			}
+			//订单中所有商品分类的集合
+			List<Map<String,Object>> typePathList = null;
+			if(areaName.equals("部分商品")){
+				map.put("list",goodsPKList);
+				map.put("sqlMapId","selectTypeByGoodsPKList");
+				//返回商品所属分类的集合
+				typePathList = openService.queryForList(map);
+			}
+			//当选择的优惠为折扣优惠时
+			if(favorName.equals("折扣优惠")){
+				int sm = Integer.parseInt(favorDetail.get("zk_smallmoney").toString());
+				int bm = Integer.parseInt(favorDetail.get("zk_bigmoney").toString());
+				int z = Integer.parseInt(favorDetail.get("zk_discount").toString());
+				if(yfMoney >= sm*100 && yfMoney <= bm*100 && areaName.equals("全部商品")){
+					favourMoney = (new Double(yfMoney * z * 0.1)).intValue();
+				}
+				if(yfMoney >= sm*100 && yfMoney <= bm*100 && areaName.equals("部分商品")){
+					List<String> gPKList = returnFavorGoods(typePathList,areaDetailArray);
+					for(Map<String,Object> od:orderDetailList){
+						for(String s:gPKList){
+							String odGoodsPK = od.get("FK_GOODS").toString();
+							if(odGoodsPK.equals(s)){
+								//当前订单中某个商品的价格
+								int price = Integer.parseInt(od.get("ORDER_DETAILS_GMONEY").toString());
+								//当前订单中某个商品的数量
+								int count = Integer.parseInt(od.get("ORDER_DETAILS_FS").toString());
+								
+								int fm = (new Double(price*count*z*0.1)).intValue();
+								
+								favourMoney = favourMoney+fm;
+							}
+						}
+					}
+				}
+				//当选择的优惠为固定满减优惠时
+			}else if(favorName.equals("固定满减")){
+				int gsm = Integer.parseInt(favorDetail.get("gd_smallmoney").toString());
+				int gbm = Integer.parseInt(favorDetail.get("gd_bigmoney").toString());
+				int gd = Integer.parseInt(favorDetail.get("gd_jmoney").toString());
+				if(yfMoney >= gsm*100 && yfMoney <= gbm*100 && areaName.equals("全部商品")){
+					favourMoney = gd*100;
+				}
+				//当选择的优惠为随机满减优惠时
+			}else{
+				int sjsm = Integer.parseInt(favorDetail.get("sj_smallmoney").toString());
+				int sjbm = Integer.parseInt(favorDetail.get("sj_bigmoney").toString());
+				int sjjsm = Integer.parseInt(favorDetail.get("sj_jsmallmoney").toString());
+				int sjjbm = Integer.parseInt(favorDetail.get("sj_jbigmoney").toString());
+				if(yfMoney >= sjsm*100 && yfMoney <= sjbm*100 && areaName.equals("全部商品")){
+					Random r = new Random();
+					int randomNumber = r.nextInt(sjjbm*100-sjjsm*100) + sjjsm*100;
+					favourMoney = randomNumber;
+				}
+				
+			}
+			output("0000", favourMoney);
+			
+		} catch (ExceptionVo e) {
+			output("9999", "计算优惠金额失败");
+			e.printStackTrace();
+		} catch (Exception e) {
+			output("9999", "计算优惠金额失败");
+			e.printStackTrace();
+		}
+	}
+	/*根据商品集合和类别集合返回可优惠的商品PK集合*/
+	private List<String> returnFavorGoods(List<Map<String,Object>> typePathList,JSONArray areaDetailArray ){
+		List<String> gPKList = new ArrayList<String>();
+		for(Map<String,Object> m: typePathList){
+			for(Object o:areaDetailArray){
+				JSONObject j = JSONObject.parseObject(o.toString());
+				String areaTypePK = j.getString("GTYPE_PK");
+				String gTypePath = m.get("GTYPE_PATH").toString();
+				if(gTypePath.indexOf(areaTypePK)!=-1){
+					gPKList.add(m.get("GOODS_PK").toString());
+				}
+			}
+		}
+		return gPKList;
+	}
+	/**
+	* <p>Title: loadPreferntialRuleByShop</p>
+	* <p>Description: wjl -- 根据商铺加载优惠规则</p>
+	*/
+	@RequestMapping("/ShopInfo_select_loadPreferntialRuleByShop")
+	public void loadPreferntialRuleByShop(){
+		try {
+			Map<String,Object> map = getParameterMap();
+			map.put("sqlMapId", "selectPreferntialRuleByShop");
+			List<Map<String,Object>> resultList = openService.queryForList(map);
+			for(Map<String,Object> r:resultList){
+				//得到优惠规则中的优惠方式
+				JSONArray favorWayArray = JSONObject.parseArray(r.get("rule_model").toString());
+				String favorName = favorWayArray.getJSONObject(0).getString("YH_WAY");
+				JSONObject favorDetail = favorWayArray.getJSONObject(1).getJSONArray("WAY_DETAIL").getJSONObject(0);
+				//根据不同的优惠方式执行不同的操作
+				if(favorName.equals("折扣优惠")){
+					String sm = favorDetail.get("zk_smallmoney").toString();
+					String bm = favorDetail.get("zk_bigmoney").toString();
+					int z = Integer.parseInt(favorDetail.get("zk_discount").toString());
+					String favorWayShowStr = "消费"+sm+"-"+bm+"元"+(10-z)+"折";
+					r.put("yhContent", favorWayShowStr);
+				}else if(favorName.equals("固定满减")){
+					String gsm = favorDetail.get("gd_smallmoney").toString();
+					String gbm = favorDetail.get("gd_bigmoney").toString();
+					String gd = favorDetail.get("gd_jmoney").toString();
+					String favorWayShowStr = "消费"+gsm+"-"+gbm+"元减"+gd+"元";
+					r.put("yhContent", favorWayShowStr);
+				}else{
+					String sjsm = favorDetail.get("sj_smallmoney").toString();
+					String sjbm = favorDetail.get("sj_bigmoney").toString();
+					String sjjsm = favorDetail.get("sj_jsmallmoney").toString();
+					String sjjbm = favorDetail.get("sj_jbigmoney").toString();
+					String favorWayShowStr = "消费"+sjsm+"-"+sjbm+"元随机减"+sjjsm+"-"+sjjbm+"元";
+					r.put("yhContent", favorWayShowStr);
+				}
+				//处理全部商品/部分商品
+				JSONArray areaArray = JSONObject.parseArray(r.get("good_scope").toString());
+				String areaName = areaArray.getJSONObject(0).getString("GOODS_AREA");
+				JSONArray areaDetailArray = areaArray.getJSONObject(1).getJSONArray("AREA_DETAIL");
+				r.put("areaName", areaName);
+				
+			}
+			output("0000",resultList);
+		} catch (ExceptionVo e) {
+			output("9999","加载优惠规则失败");
+			e.printStackTrace();
+		} catch (Exception e) {
+			output("9999","加载优惠规则失败");
+			e.printStackTrace();
+		}
+		
+	}
 	
 	@RequestMapping("/ShopInfo_editYouhuimaidan_data")
 	public void editYouhuimaidan() throws Exception {

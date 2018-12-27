@@ -67,6 +67,17 @@
 		FROM sc_goods_type
 		WHERE GTYPE_PK = #{GTYPE_PID}
 	</select>
+	<!-- 查询商品集合的类别集合 -->
+	<select id="selectTypeByGoodsPKList" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT g.GOODS_PK,t.GTYPE_PATH FROM sc_goods g 
+		INNER JOIN sc_goods_type t
+		ON g.GTYPE_FK = t.GTYPE_PK
+		WHERE g.GOODS_PK IN (
+			<foreach collection ="list" item="gpk" index= "index" separator =",">
+			 	#{gpk}
+			</foreach>
+		)
+	</select>
 	<!-- 查询跟父分类同级且没有商品的分类 -->
 	<select id="selectGTypeNameButNoGoodsByPID" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
