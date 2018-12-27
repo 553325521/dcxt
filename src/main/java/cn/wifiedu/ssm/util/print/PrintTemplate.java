@@ -29,10 +29,10 @@ public abstract class PrintTemplate {
 
     public static String dealBillId(String billId) {
         StringBuilder result = new StringBuilder();
-        String part1 = billId.substring(0, 4);
-        String part2 = billId.substring(4, 8);
-        String part3 = billId.substring(8, 12);
-        String part4 = billId.substring(12, 16);
+        String part1 = billId.substring(0, 6);
+        String part2 = billId.substring(6, 10);
+        String part3 = billId.substring(10, 14);
+        String part4 = billId.substring(14, 16);
         return result.append(part1).append(" ")
                 .append(part2).append(" ")
                 .append(part3).append(" ")

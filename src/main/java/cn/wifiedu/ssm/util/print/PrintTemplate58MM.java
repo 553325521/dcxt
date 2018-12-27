@@ -1,18 +1,10 @@
 package cn.wifiedu.ssm.util.print;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cn.wifiedu.ssm.util.StringDeal;
 
-/**
- * 58mm打印机
- * 生成各类打印样式模板
- * 每行32个英文字母，16个中文字母
- * Created by Matrix on 2016/10/21.
- */
 /**
  * 58mm打印机
  * 
@@ -81,17 +73,7 @@ public class PrintTemplate58MM extends PrintTemplate {
 	public String getInStoreBWTemplate() {
 		StringBuilder result = new StringBuilder();
 		// 计算空格
-		//List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
-		List<Map<String, Object>> orderGoodsList = new ArrayList<Map<String, Object>>(){
-			{
-				add(new HashMap<>());
-				add(new HashMap<>());
-				add(new HashMap<>());
-				add(new HashMap<>());
-				add(new HashMap<>());
-				add(new HashMap<>());
-			}
-		};
+		List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
 		String dishesSize = orderGoodsList.size() + "";
 		// 总份数
 		int total = 0;
@@ -101,9 +83,9 @@ public class PrintTemplate58MM extends PrintTemplate {
 		}
 		String blank = "";
 		// 人数
-		int dinnerCount = 5;
-		// order.getTableInfo().getRemark() 桌台备注
-		String tableInfoRemark = "桌台01";
+		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		// 桌台备注
+		String tableInfoRemark = order.get("TABLES_NAME").toString();
 		for (int i = 0; i < 19 - (dinnerCount + getStrLen(tableInfoRemark)); i++) {
 			blank += " ";
 		}
@@ -112,29 +94,33 @@ public class PrintTemplate58MM extends PrintTemplate {
 		int n = 0;
 		for (Map<String, Object> orderGoods : orderGoodsList) {
 			// 计算空格
-			int nameLen = getStrLen("菜品" + n);
+			int nameLen = getStrLen(orderGoods.get("ORDER_DETAILS_GNAME").toString());
 			String middleBlank1 = "";
 			for (int i = 0; i < 16 - nameLen; i++) {
 				middleBlank1 += " ";
 			}
 			String countStr = (n + 1) + "";
 			String middleBlank2 = "";
-			for (int i = 0; i < (14 - getStrLen("大份")) - countStr.length(); i++) {
+			String ORDER_DETAILS_FORMAT = "大份";
+			if (orderGoods.containsKey("ORDER_DETAILS_FORMAT")) {
+				ORDER_DETAILS_FORMAT = orderGoods.get("ORDER_DETAILS_FORMAT").toString();
+			}
+			for (int i = 0; i < (14 - getStrLen(ORDER_DETAILS_FORMAT)) - countStr.length(); i++) {
 				middleBlank2 += " ";
 			}
 			middleBlank2 = middleBlank2.substring(0, middleBlank2.length() - 1);
-			billData += BOLD + ("菜品" + n) + middleBlank1 + "大份" + middleBlank2 + (n + 1)
-					+ "份" + LINE;
-			total += (n + 1);
+			billData += BOLD + (orderGoods.get("ORDER_DETAILS_GNAME").toString()) + middleBlank1 + ORDER_DETAILS_FORMAT + middleBlank2 + (n + 1)
+					+ orderGoods.get("ORDER_DETAILS_DW").toString() + LINE;
+			total += Integer.valueOf(orderGoods.get("ORDER_DETAILS_FS").toString());
 		}
-		return result.append(CENTER_BOLD).append("地锅香大酒店").append(BWL).append(LINE).append(STARLINE)
-				.append(LINE).append(BOLD).append(BILLID).append(dealBillId("2018111200001001")).append(LINE).append(BOLD)
+		return result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(BWL).append(LINE).append(STARLINE)
+				.append(LINE).append(BOLD).append(BILLID).append(dealBillId(order.get("ORDER_CODE").toString())).append(LINE).append(BOLD)
 				.append(BILL_CREATE_TIME).append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate()))).append(LINE).append(BOLD)
 				.append(DINNER_COUNT).append(dinnerCount).append(DINNER_UNIT).append(blank).append(TABLE_SIT)
 				.append(tableInfoRemark).append(LINE).append(SUBLINE).append(LINE).append(BOLD)
 				.append(DISHES_NAME).append("        ").append(NOTES).append("       ").append(COUNTS).append(LINE)
 				.append(billData).append(SUBLINE).append(LINE).append(BOLD).append(CENTER_BLANK).append(TOTAL)
-				.append(blankSpace).append(total).append("份").append(LINE).append(RIGHT_BOLD).append("一定要好吃！")
+				.append(blankSpace).append(total).append("份").append(LINE).append(RIGHT_BOLD).append("")
 				.toString();
 	}
 

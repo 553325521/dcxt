@@ -115,6 +115,18 @@
 		#{ORDER_PK}) ood LEFT JOIN sc_tables t ON t.TABLES_PK = ood.ORDER_POSITION;
 	</select>
 	
+	<!-- 根据orderId 获取对应订单头信息 -->
+	<select id="loadOrderInfoById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT a.*, b.TABLES_NAME, b.TABLES_DESC, c.SHOP_NAME FROM sc_order a LEFT JOIN sc_tables b ON a.ORDER_POSITION = b.TABLES_PK LEFT JOIN sc_shop_info c ON a.FK_SHOP = c.SHOP_ID WHERE a.ORDER_PK =
+		#{ORDER_PK}
+	</select>
+	
+	<!-- 根据orderId 获取对应订单头信息 -->
+	<select id="loadOrderDetailInfoById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT a.* FROM sc_order_details a WHERE a.FK_ORDER =
+		#{ORDER_PK}
+	</select>
+	
 	<resultMap id="orderTableDetail" type="java.util.HashMap">
             <id column="ORDER_PK" property="ORDER_PK"/>
             <result column="ORDER_PAY_WAY" property="ORDER_PAY_WAY"/>

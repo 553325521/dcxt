@@ -197,7 +197,7 @@ public class PrinterController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -227,37 +227,59 @@ public class PrinterController extends BaseController {
 		}
 		return;
 	}
-	
-	// @RequestMapping("/Print_insert_doPrint")
-	@Test
-	public void doPrint1() {
+
+	@RequestMapping("/Print_insert_doPrint")
+	public void doPrint() {
 		try {
 			String host = "119.23.71.153"; // 要连接的服务端IP地址 119.23.71.153
 			int port = 8008; // 要连接的服务端对应的监听端口
-			// 发送内容
-			// shopId!!!deviceId!!!orderId!!!content#
-			StringBuilder printStr = new StringBuilder();
-			Map<String, Object> map = new HashMap<>();
-			// shopId
-			printStr.append(UUID.randomUUID().toString().replace("-", ""))
-					.append("!!!")
-					// deviceId
-					.append("1234567")
-					.append("!!!")
-					// orderId
-					.append("2018111200001001")
-					.append("!!!")
-					// content
-					.append("&!*42018111200001001*" + new PrintTemplate58MM(map, map).getInStoreBWTemplate() + "*<qrcA7>www.chsail.com*<BMP203>*<BEEP5000,1,1,2>*<cutA1>#");
 
-			System.out.println(printStr);
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
 
-			// 与服务端建立连接
-			Socket client = new Socket(host, port);
-			Writer writer = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
-			writer.write(printStr.toString());
-			writer.close();
-			client.close();
+			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", map.get("FK_SHOP"));
+			map.put("sqlMapId", "loadInUsePrintList");
+			// 先获取到所有的打印机
+			List<Map<String, Object>> res = openService.queryForList(map);
+			// 先拿第一个打印机之后再完善
+			if (res != null && !res.isEmpty()) {
+				map.put("sqlMapId", "loadOrderInfoById");
+				// 根据orderId 获取对应订单头
+				Map<String, Object> order = (Map<String, Object>) openService.queryForObject(map);
+				map.put("sqlMapId", "loadOrderDetailInfoById");
+				// 根据orderId 获取对应订单详情
+				List<Map<String, Object>> orderInfo = openService.queryForList(map);
+				order.put("orderGoodsList", orderInfo);
+				// 发送内容
+				// shopId!!!deviceId!!!orderId!!!content#
+				StringBuilder printStr = new StringBuilder();
+				// shopId
+				printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
+						// deviceId
+						.append(res.get(0).get("PRINTER_NAME")).append("!!!")
+						// orderId
+						.append(order.get("ORDER_CODE")).append("!!!")
+						// content
+						.append("&!*4" + order.get("ORDER_CODE") + "*"
+								+ new PrintTemplate58MM(order, map).getInStoreBWTemplate()
+								+ "*<qrcA7>www.chsail.com*<BMP203>*<BEEP5000,1,1,2>*<cutA1>#");
+
+				System.out.println(printStr);
+
+				// 与服务端建立连接
+//				Socket client = new Socket(host, port);
+//				Writer writer = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
+//				writer.write(printStr.toString());
+//				writer.close();
+//				client.close();
+				output("0000", " 打印成功! ");
+				return;
+			}
+			output("9999", " 暂无可用打印机! ");
+			return;
+
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
