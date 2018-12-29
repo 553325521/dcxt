@@ -36,6 +36,9 @@ public class OrderController extends BaseController {
 
 	@Resource
 	OpenService openService;
+	
+	@Resource
+	private FunSwitchController funSwitchController;
 
 	@Resource
 	private JedisClient jedisClient;
@@ -701,9 +704,9 @@ public class OrderController extends BaseController {
 						price = good.get("GOODS_PRICE");
 					}
 					goodMap.put("ORDER_DETAILS_GMONEY", price);
-					goodMap.put("ORDER_DETAILS_FORMAT", good.get("GOODS_FORMAT").toString());
-					goodMap.put("ORDER_DETAILS_TASTE", good.get("GOODS_TASTE").toString());
-					goodMap.put("ORDER_DETAILS_MAKING", good.get("GOODS_MAKING").toString());
+					goodMap.put("ORDER_DETAILS_FORMAT", good.get("GOODS_FORMAT"));
+					goodMap.put("ORDER_DETAILS_TASTE", good.get("GOODS_TASTE"));
+					goodMap.put("ORDER_DETAILS_MAKING", good.get("GOODS_MAKING"));
 					goodMap.put("ORDER_DETAILS_DW", good.get("GOODS_DW").toString());
 					goodMap.put("FK_GOODS", good.get("GOODS_PK").toString());
 					goodMap.put("CREATE_BY", map.get("FK_USER").toString());
@@ -758,15 +761,23 @@ public class OrderController extends BaseController {
 			Map<String, Object> orderMap =  (Map<String, Object>)JSON.parse((String)map.get("SHOPPING_CART"));
 			Map<String, Object> tableMap = (Map<String, Object>)orderMap.get("table");
 			
-			Map<String, Object> checkMap = getParameterMap();
-			//TODO 查询设置的，查询选择开台了没，选择开台就不差啊桌位被使用了
-			checkMap.put("sqlMapId", "findTablesById");
-			checkMap.put("TABLES_ID", tableMap.get("TABLES_PK"));
-			checkMap = (Map<String, Object>)openService.queryForObject(checkMap);
-			if (checkMap.containsKey("TABLES_ISUSE") && "1".equals(checkMap.get("TABLES_ISUSE"))) {
-				output("3333", "桌位被使用");
-				return;
+			
+			//查询选择开台了没
+			Map funcSwitchMap = funSwitchController.getFuncSwitch(map.get("FK_SHOP").toString());
+			
+			//开台的话就检查桌位被使用了没
+			if("true".equals(funcSwitchMap.get("CHECK_TDKT"))) {
+				Map<String, Object> checkMap = getParameterMap();
+				checkMap.put("sqlMapId", "findTablesById");
+				checkMap.put("TABLES_ID", tableMap.get("TABLES_PK"));
+				checkMap = (Map<String, Object>)openService.queryForObject(checkMap);
+				if (checkMap.containsKey("TABLES_ISUSE") && "1".equals(checkMap.get("TABLES_ISUSE"))) {
+					output("3333", "桌位被使用");
+					return;
+				}
 			}
+			
+			
 			
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
 			if (StringUtils.isNotBlank(userJson)) {

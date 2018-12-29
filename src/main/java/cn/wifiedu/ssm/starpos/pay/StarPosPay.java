@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import com.alibaba.fastjson.JSON;
 import cn.wifiedu.core.service.OpenService;
@@ -21,7 +22,7 @@ import cn.wifiedu.ssm.util.CommonUtil;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.redis.RedisConstants;
 
-@Controller
+@Component
 @Scope("prototype")
 public class StarPosPay {
 	
