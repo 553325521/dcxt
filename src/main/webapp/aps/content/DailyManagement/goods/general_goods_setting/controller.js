@@ -36,25 +36,7 @@
 					scope.NOCHILD_GOODS_TYPE_NAME = [];
 					//保存查询的分类ID
 					scope.NOCHILD_GOODS_TYPE_PK = [];
-					//标签库
-					scope.label_library = {
-							"不吃辣" : true,
-							"少放辣" : true,
-							"多放辣" : true,
-							"不吃醋" : true,
-							"少放醋" : true,
-							"多放醋" : true,
-							"不吃蒜" : true,
-							"不吃香菜" : true,
-							"少放盐" : true,
-							"多放饭" : true,
-						}
-					//当前选择的标签
-					scope.LABEL = []
-					
-					angular.forEach(scope.label_library, function(data, index, array) {
-						scope.LABEL.push(index)
-					})
+				
 						
 					var init = function(){
 						
@@ -71,6 +53,54 @@
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
 						});
+						
+						
+						//加载标签
+						//发送post请求
+						$httpService.post(config.getLabel).success(function(data) {
+							if(data.code == '0000'){
+								
+								debugger
+								//标签库
+								scope.label_library = {}
+								angular.forEach(data.data, function(data, index, array) {
+									scope.label_library[data.SHOP_TAG_NAME] = "false"
+								})
+								
+//								scope.label_library  = data.data
+//								scope.label_library = {
+//										"不吃辣" : true,
+//										"少放辣" : true,
+//										"多放辣" : true,
+//										"不吃醋" : true,
+//										"少放醋" : true,
+//										"多放醋" : true,
+//										"不吃蒜" : true,
+//										"不吃香菜" : true,
+//										"少放盐" : true,
+//										"多放饭" : true,
+//									}
+								//当前选择的标签
+								scope.LABEL = []
+								
+								angular.forEach(scope.label_library, function(data, index, array) {
+									scope.LABEL.push(index)
+								})
+								
+								
+								
+								for(var i = 0;i < data.data.length;i++){
+									scope.NOCHILD_GOODS_TYPE_NAME[i] = data.data[i].GTYPE_NAME;
+									scope.NOCHILD_GOODS_TYPE_PK[i] = data.data[i].GTYPE_PK;
+								}
+								scope.$apply();
+							}
+						}).error(function(data) {
+							loggingService.info('获取测试信息出错');
+						});
+						
+						
+						
 						//判断
 						if(scope.form.GOODS_ID != undefined && scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
 							//是修改

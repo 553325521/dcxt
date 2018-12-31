@@ -9,6 +9,7 @@
 		"updateURL":"json/Goods_update_updateGoodsById.json",
 		"getConfig":"json/Wx_getWxConfigMess.json",
 		"loadNoChildGoodsTypeURL":"json/GoodsType_select_selectNoChildGoodsType.json",
+		"getLabel":"json/ShopTag_select_selectShopGoodsTagById.json",
 		"menu":{	
 	            "buttons":[
 		        	{
