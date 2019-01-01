@@ -127,6 +127,16 @@ public class OrderController extends BaseController {
 				}
 				map.put("sqlMapId", "selectOrderByTime");
 				List<Map<String, Object>> orderDataList = openService.queryForList(map);
+				//如果是未支付状态，把退单的订单过滤掉
+				if(map.get("ORDER_PAY_STATE")!=null&&map.get("ORDER_PAY_STATE").toString().equals("0")){
+					for(int i = 0;i < orderDataList.size();i++){
+						Map<String,Object> m = orderDataList.get(i);
+						if(m.containsKey("ORDER_STATE")&&m.get("ORDER_STATE").toString().equals("1")){
+							orderDataList.remove(m);
+							i--;
+						}
+					}
+				}
 				output("0000", orderDataList);
 			} else {
 				output("9999", "token无效");
