@@ -15,6 +15,40 @@
 					//初始化使用须知和特权说明
 					scope.form.VCARD_SYXZ = "";
 					scope.form.VCARD_TQSM = "";
+					
+					/*初始化颜色数据源*/
+					scope.colorArray = [
+						{'colorName':'Color010','colorNumber':'	#63b359'},
+						{'colorName':'Color020','colorNumber':'	#2c9f67'},
+						{'colorName':'Color030','colorNumber':'	#509fc9'},
+						{'colorName':'Color040','colorNumber':'	#5885cf'},
+						{'colorName':'Color050','colorNumber':'	#9062c0'},
+						{'colorName':'Color060','colorNumber':'	#d09a45'},
+						{'colorName':'Color070','colorNumber':'	#e4b138'},
+						{'colorName':'Color080','colorNumber':'	#ee903c'},
+						{'colorName':'Color081','colorNumber':'	#f08500'},
+						{'colorName':'Color082','colorNumber':'	#a9d92d'},
+						{'colorName':'Color090','colorNumber':'	#dd6549'},
+						{'colorName':'Color100','colorNumber':'	#cc463d'},
+						{'colorName':'Color101','colorNumber':'	#cf3e36'},
+						{'colorName':'Color102','colorNumber':'	#5E6671'},
+					]
+					
+				
+					/*初始化默认选择卡券颜色*/
+					scope.form.confirmColor = "#63b359";
+					
+					scope.form.confirmName="Color010";
+					
+					/*选择颜色调用方法*/
+					scope.selectColor = function(currentSelect){
+						$("i").remove(".singleColor");
+						$("div[user-attr='"+currentSelect.item.colorName+"']").after(`<i class="icon-caret-up singleColor" style="margin-left:15%"></i>`);
+						scope.form.confirmColor = currentSelect.item.colorNumber;
+						
+						scope.form.confirmName=currentSelect.item.colorName;
+					}
+					
 					var init = function(){
 						$httpService.post(config.initURL).success(function(data) {
 							if (data.code != '0000') {

@@ -10,6 +10,7 @@
 		(
 			VCARD_PK,
 			VCARD_IDNUMBER,
+			VCARD_COLOR,
 			VCARD_NAME,
 			IS_USE,
 			ALLOTTED_TIME,
@@ -31,6 +32,7 @@
 		(
 			#{UUID},
 			#{VCARD_IDNUMBER},
+			#{confirmName},
 			#{VCARD_NAME},
 			#{IS_USE},
 			#{ALLOTTED_TIME},

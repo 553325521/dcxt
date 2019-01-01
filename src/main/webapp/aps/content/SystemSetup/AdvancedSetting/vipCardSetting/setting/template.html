@@ -168,6 +168,21 @@
 		 <i class="weui_icon_warn"></i>
 	</div>
 	 
+	 <div class="weui_cell" style="height:44px;margin-top:4%;padding:0">
+                <div class="weui_cell_hd"><label class="weui_label" style="font-size: 14px;width: 125px;text-align: center;">选择卡券颜色</label></div>
+                <div class="weui_cell_bd" style="margin-left:40%;background-color:{{form.confirmColor}};width:10%;height:30%">
+                </div>
+              <!--   <div class="weui_cell_bd" style="margin-left:5%" ng-click="switchColor()">
+                	<i class="icon-refresh"  style="color:#04be02"></i>
+                </div> -->
+         </div>
+	     <div class="weui_cell test">
+				<div class="weui_cell_bd" style="width: 5%;height: 18px;margin-left:2%" ng-repeat="item in colorArray" ng-click="selectColor(this)">
+					<div  style="margin-left: 1%;width: 100%;height:100%;background-color:{{item.colorNumber}}" user-attr="{{item.colorName}}">
+					</div>
+					<!-- <i class="icon-caret-up" class="singleColor" style="margin-left:15%"></i> -->
+                </div>
+		 </div>
 	<!-- <div class="weui_cell tablessetting-weui_select">
 		<div class="weui_cell_hd">
 			<label class="weui_label label tablessetting-label">适用门店</label>
