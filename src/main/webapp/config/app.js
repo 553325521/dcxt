@@ -54,7 +54,7 @@
 				templateUrl : 'html/main.html',
 				controller : 'MainController'
 			})
-			.when('/ActingCustomerManagement/:LOCALPATH', {
+			.when('/:LOCALPATH', {
 				templateUrl : 'html/main.html',
 				controller : 'MainController'
 			})
