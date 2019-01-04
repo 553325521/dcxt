@@ -134,6 +134,11 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					logger.info(params);
 					
 					logger.info("----------MDYS----------");
+					map.put("sqlMapId", "insertMtShopMapping");
+					String insert = openService.insert(map);
+					if(insert == null) {
+						return;
+					}
 					logger.info(map);
 					reponse.getWriter().write("{\"data\":\"success\"}");
 					return;
@@ -216,6 +221,115 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					e.printStackTrace();
 				}
 			}
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2018年10月5日 下午4:01:16 
+			 * 
+			 * @description: 美团外卖订单完成
+			 * @return void
+			 */
+			@RequestMapping("/test/MT_Order_Finish")
+			public void MTOrderFinish(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MT_Order_Finish-------------------");
+					logger.info(params);
+					
+					logger.info("----------MT_Order_Finish----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"success\"}");
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2018年10月5日 下午4:01:16 
+			 * 
+			 * @description: 美团外卖订单确认
+			 * @return void
+			 */
+			@RequestMapping("/test/MT_Order_Enter")
+			public void MTOrderEnter(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MT_Order_Enter-------------------");
+					logger.info(params);
+					
+					logger.info("----------MT_Order_Enter----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"success\"}");
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2018年10月5日 下午4:01:16 
+			 * 
+			 * @description: 美团外卖订单确认
+			 * @return void
+			 */
+			@RequestMapping("/test/MT_Order_Status")
+			public void MTOrderStatus(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MT_Order_Status-------------------");
+					logger.info(params);
+					
+					logger.info("----------MT_Order_Status----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"success\"}");
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			
+			
 			
 			/**
 			 * 

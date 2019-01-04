@@ -1,0 +1,156 @@
+<style>
+	.slidelefts .weui_cell_bd:active{
+		background-color:#ececec;
+	}
+	.slidelefts .weui_cell_bd{
+		background-color: inherit;
+	}
+	.dcxt_active .weui_cells{
+		background-color: inherit;
+	}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0;
+	}
+	.tablessetting-font-style .weui_cell_bd .weui_cell_bd {
+    padding: 0px 10px;
+}
+</style>
+	<div class="weui-header" style="background-color:#FFFFFF">
+		<div href="#" class="weui-header-left" ng-click="toHref('SystemSetup/AdvancedSetting')">
+			<a class="icon icon-109" ></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+ 		<div class="weui-header-right" style="top: 0;right:95px">
+			<div class="button_sp_area">
+				<div class="bom-radio" style="width:80px"  ng-click="toHref('SystemSetup/AdvancedSetting/waiMaiSetting/authorization_manager')">授权管理</div>
+			</div>
+		</div>
+		<div class="weui-header-right" style="top: 0;">
+			<div class="button_sp_area">
+				<div class="bom-radio" id="attend2" ng-click="doSave()">保存</div>
+			</div>
+		</div>
+	</div>
+
+<div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow">
+	<div class="weui_cell">
+    	<div class="weui_cell_hd"><label class="weui_label label tablessetting-label">配送时段</label></div>
+        	<div class="weui_cell_bd weui_cell_primary" style="margin-right: 16px;">
+            <input class="weui_input label-input dcxt-right-label" type="text" placeholder="如：08:00-20:00 多个以,号分开"  ng-model="form.WM_PSSD" required emptyTips="请输入配送时段"/>
+        </div>
+        <div class="weui_cell_hd">
+        	<i class="weui_icon_warn"></i>
+        </div>
+     </div>
+     <div class="weui_cell">
+    	<div class="weui_cell_hd"><label class="weui_label label tablessetting-label">起配价格</label></div>
+        	<div class="weui_cell_bd weui_cell_primary" style="margin-right: 16px;">
+            <input class="weui_input label-input dcxt-right-label" type="text" placeholder="达到多少金额可以配送"  ng-model="form.WM_QPJG" required emptyTips="请输入起配价格"/>
+        </div>
+        <div class="weui_cell_hd">
+        	<i class="weui_icon_warn"></i>
+        </div>
+     </div>
+      <div class="weui_cell">
+    	<div class="weui_cell_hd"><label class="weui_label label tablessetting-label">配送价格</label></div>
+        	<div class="weui_cell_bd weui_cell_primary" style="margin-right: 16px;">
+            <input class="weui_input label-input dcxt-right-label" type="text" placeholder="输入配送费"  ng-model="form.WM_PSJG" required emptyTips="请输入配送费"/>
+        </div>
+        <div class="weui_cell_hd">
+        	<i class="weui_icon_warn"></i>
+        </div>
+     </div>
+      <div class="weui_cell">
+    	<div class="weui_cell_hd"><label class="weui_label label tablessetting-label">免配送费</label></div>
+        	<div class="weui_cell_bd weui_cell_primary" style="margin-right: 16px;">
+            <input class="weui_input label-input dcxt-right-label" type="text" placeholder="金额高于多少免配送费"  ng-model="form.WM_MPSF" required emptyTips="请输入金额高于多少免配送费"/>
+        </div>
+        <div class="weui_cell_hd">
+        	<i class="weui_icon_warn"></i>
+        </div>
+     </div>
+      <div class="weui_cell">
+    	<div class="weui_cell_hd"><label class="weui_label label tablessetting-label">配送半径</label></div>
+        	<div class="weui_cell_bd weui_cell_primary" style="margin-right: 16px;">
+            <input class="weui_input label-input dcxt-right-label" type="text" placeholder="输入配送半径公里数"  ng-model="form.WM_PSBJ" required emptyTips="请输入配送半径"/>
+        </div>
+        <div class="weui_cell_hd">
+        	<i class="weui_icon_warn"></i>
+        </div>
+     </div>
+      <div class="weui_cell">
+    	<div class="weui_cell_hd"><label class="weui_label label tablessetting-label">配送区域</label></div>
+        	<div class="weui_cell_bd weui_cell_primary" style="margin-right: 16px;">
+            <input class="weui_input label-input dcxt-right-label" type="text" readonly  placeholder="定位配送区域"  ng-model="form.WM_PSQY" required emptyTips="请定位配送区域"/>
+        </div>
+        <div style="margin-right:15px;" ng-click="getLocation()">
+			<span class="icon icon-68 f-green"></span>
+		</div>
+        <div class="weui_cell_hd">
+        	<i class="weui_icon_warn"></i>
+        </div>
+     </div>
+     
+     
+     <div class="weui_cell dcxt_active">
+		<div class="weui_cell_hd">
+			<label class="weui_label label tablessetting-label">配送半径外是否允许下单</label>
+		</div>
+		<div class="weui_cell_bd weui_cell_primary">
+			<div class="weui-form" style="text-align:right;margin-right: 16px;">
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left:10%">
+					<input class="weui-form-checkbox" name="f2" id="g1" value="1"
+							type="radio" ng-model="form.WM_PSWXD"> 
+					<label for="g1"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>开启</p>
+						</div>
+					</label>
+				</div>
+				<div class="weui-form-li iblock li-checkbox-self" style="margin-left: 10%;">
+					<input class="weui-form-checkbox" name="f2" id="g2" value="0" type="radio" ng-model="form.WM_PSWXD"> 
+					<label for="g2"> 
+						<i class="weui-icon-radio icon-checkbox-self" style="margin: 0;"></i>
+						<div class="weui-form-text label-input" style="margin: 0;">
+							<p>关闭</p>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+	</div>
+
+		
+
+		
+		
+	
+</div>
+		
+		
+		<!-- <div class="weui_cell no-broder">
+			<div class="weui_cell_bd weui_cell_primary">
+					<span style="color:#B2B2B2;font-size: 11px;" >
+						  优惠券同时可以活动激活状态多个，自动发送只能激活一个，启用一个其他自动关闭。</span>
+			</div>
+		</div> -->
+		
+	
+	
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	
+
+		

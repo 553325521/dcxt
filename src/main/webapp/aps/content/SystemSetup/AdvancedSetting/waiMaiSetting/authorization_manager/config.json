@@ -1,0 +1,24 @@
+{
+	"name": "authorization_manager",
+	"viewUrl": "aps/content/SystemSetup/AdvancedSetting/waiMaiSetting/authorization_manager/template.html",
+	"controllerUrl": "aps/content/SystemSetup/AdvancedSetting/waiMaiSetting/authorization_manager/controller.js",
+	"config": {
+		"pageTitle":"授权管理",
+		"findURL":"json/WaiMaiSetting_select_findWaiMaiSettingByShopId.json",
+		"updateURL":"json/WaiMaiSetting_update_updateThirdWaiMaiSettingById.json",
+		"cancalSQURL":"json/WaiMaiSetting_cancalSQ",
+		"SQURL":"json/WaiMaiSetting_SQ",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"authorization_manager.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"authorization_manager.confirm"
+		        	}
+				]
+			}
+	}
+}

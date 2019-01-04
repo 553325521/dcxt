@@ -1,0 +1,97 @@
+<style>
+	.cancelBorder:before{
+		width:0;
+	}
+	.hide-input{
+		float: left;
+		position: relative;
+		margin-right: 9px;
+		margin-bottom: 9px;
+		width: 77px;
+		height: 77px;
+	}
+	.weui_search_bar {
+    	padding: 6px 6px;
+	}
+	
+	.weui_search_outer:after {
+	    border: 0px solid #e6e6ea;
+	}
+	
+	.weui_search_outer:after {
+    	border-radius: 0px;
+	}
+	.border_left:before{
+		left:5px;
+	}
+	.cancelBorder:before{
+	width:0;
+	}
+	.cancelBorderBottom:after{
+	width:0;
+	}
+	.cancelPadding{
+		padding:0
+	}
+	.weui_uploader_files li{
+	 	width:79px;
+	 	float:left;
+	 	margin-right: 9px;
+	}
+	
+	.weui_cell:active{
+		background-color:#ececec;
+	}
+
+</style>
+   <div class="weui-header" style="background-color:#FFFFFF;overflow：auto;">
+		<div class="weui-header-left">
+			<a class="icon icon-109"  ng-click="toHref('SystemSetup/AdvancedSetting/waiMaiSetting')"></a>
+		</div>
+		<h1 class="weui-header-title weui-header-self">{{pageTitle}}</h1>
+	</div>
+	
+<div class="weui_cells weui_cells_form" style="margin-top:0" id="form" ng-show="pageShow"> 
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary" ng-switch="tagList.MTYS_PK">
+			<p ng-switch-when="undefined">美团外卖(<span style='color:#4492C7;font-size:14px;' ng-click="SQ('1')">授权</span>)</p>
+			<p ng-switch-default>美团外卖(<span style='color:#4492C7;font-size:14px;' ng-click="cancalSQ('1')">取消授权</span>)</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('MT_SWITCH')" ng-model="tagList.MT_SWITCH">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary" ng-switch="tagList.EBYS_PK">
+		<p ng-switch-when="undefined">饿百外卖(<span style='color:#4492C7;font-size:14px;' ng-click="SQ('2')">授权</span>)</p>
+			<p ng-switch-default>饿百外卖(<span style='color:#4492C7;font-size:14px;' ng-click="cancalSQ('2')">取消授权</span>)</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('EB_SWITCH')" ng-model="tagList.EB_SWITCH">
+		</div>
+	</div>
+	<div class="weui_cell">
+		<div class="weui_cell_bd weui_cell_primary">
+			<p>自动确认订单</p>
+		</div>
+		<div class="weui_cell_ft">
+			<input class="weui_switch" type="checkbox"
+				ng-change="changeUseStatus('WM_ZDQRDD')" ng-model="tagList.WM_ZDQRDD">
+		</div>
+	</div>
+</div>
+	
+		 <div class="weui_cell no-broder">
+			<div class="weui_cell_bd weui_cell_primary">
+					<span style="color:#B2B2B2;font-size: 11px;" >
+						  授权后开启</span>
+			</div>
+		</div> 
+	
+	<div class="weui-loadmore" ng-hide="pageShow">
+		<i class="weui-loading"></i>
+		<span class="weui-loadmore-tips">正在加载</span>
+	</div>
+	

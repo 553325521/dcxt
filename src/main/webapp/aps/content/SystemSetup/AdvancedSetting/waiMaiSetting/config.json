@@ -1,0 +1,22 @@
+{
+	"name": "waiMaiSetting",
+	"viewUrl": "aps/content/SystemSetup/AdvancedSetting/waiMaiSetting/template.html",
+	"controllerUrl": "aps/content/SystemSetup/AdvancedSetting/waiMaiSetting/controller.js",
+	"config": {
+		"pageTitle": "外卖设置",
+		"saveURL":"json/WaiMaiSetting_save_insertWaiMaiSetting.json",
+		"findURL":"json/WaiMaiSetting_select_findWaiMaiSettingByShopId.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"waiMaiSetting.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"waiMaiSetting.confirm"
+		        	}
+				]
+			}
+	}
+}

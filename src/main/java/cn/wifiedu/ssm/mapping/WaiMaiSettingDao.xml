@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="waiMaiSetting" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+  
+  <!-- 查询外卖设置信息 -->
+	<select id="selectWaiMaiSettingByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT a.*,m.MTYS_PK FROM sc_waimai_setting a LEFT JOIN sc_mt_shop_mapping m ON a.SHOP_FK = m.MTYS_EPOILD WHERE SHOP_FK = #{SHOP_ID};
+	</select>
+	
+	<!-- 插入外卖设置 -->
+	<insert id="insertWaiMaiSetting" parameterMap="BaseParameterMap" >
+		INSERT INTO sc_waimai_setting 
+		(
+			WM_PK,
+			WM_PSSD,
+			WM_QPJG,
+			WM_PSJG,
+			WM_MPSF,
+			WM_PSBJ,
+			WM_PSQY,
+			WM_PSWXD,
+			SHOP_FK,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		VALUES
+		(
+			#{UUID},
+			#{WM_PSSD},
+			#{WM_QPJG},
+			#{WM_PSJG},
+			#{WM_MPSF},
+			#{WM_PSBJ},
+			#{WM_PSQY},
+			#{WM_PSWXD},
+			#{SHOP_ID},
+			NOW(),
+			#{CREATE_BY}
+		)
+	</insert>
+	
+		<!-- 插入第三方外卖开关设置 -->
+	<insert id="insertThirdWaiMaiSetting" parameterMap="BaseParameterMap" >
+		INSERT INTO sc_waimai_setting 
+		(
+			WM_PK,
+			SHOP_FK,
+			MT_SWITCH,
+			EB_SWITCH,
+			WM_ZDQRDD,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		VALUES
+		(
+			#{UUID},
+			#{SHOP_ID},
+			#{MT_SWITCH},
+			#{EB_SWITCH},
+			#{WM_ZDQRDD},
+			NOW(),
+			#{CREATE_BY}
+		)
+	</insert>
+	
+	<!-- 更新第三方外卖开关 -->
+	<update id="updateThirdWaiMaiSettingByWaiMaiId" parameterMap="BaseParameterMap" >
+		UPDATE sc_waimai_setting SET MT_SWITCH = #{MT_SWITCH}, EB_SWITCH=#{EB_SWITCH},WM_ZDQRDD=#{WM_ZDQRDD}, UPDATE_TIME=NOW(),UPDATE_BY=#{UPDATE_BY} WHERE WM_PK = #{WM_PK};
+	</update>
+	
+	<update id="updateWaiMaiSettingByWaiMaiId" parameterMap="BaseParameterMap" >
+		UPDATE sc_waimai_setting SET WM_PSSD = #{WM_PSSD}, WM_QPJG=#{WM_QPJG}, WM_PSJG=#{WM_PSJG}, WM_MPSF=#{WM_MPSF}, 
+			WM_PSBJ=#{WM_PSBJ},WM_PSQY=#{WM_PSQY},WM_PSWXD=#{WM_PSWXD},UPDATE_TIME=NOW(),UPDATE_BY=#{UPDATE_BY} WHERE WM_PK = #{WM_PK};
+	</update>
+
+</mapper>
