@@ -1,6 +1,8 @@
 package cn.wifiedu.ssm.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +12,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
@@ -927,6 +931,133 @@ public class WxController extends BaseController {
 		} catch (ExceptionVo e) {
 			e.printStackTrace();
 			output("9999", e);
+		}
+	}
+	
+	/**
+	* <p>Title: toActiveMemberCardPage</p>
+	* <p>Description:接受微信激活会员卡跳转的商户界面 </p>
+	* @param request
+	*/
+	@RequestMapping("/toActiveMemberCardPage")
+	public void toActiveMemberCardPage(HttpServletRequest request,HttpServletResponse response){
+		try {
+			String card_id = request.getParameter("card_id");
+			String openid = request.getParameter("openid");
+			String activate_ticket = request.getParameter("activate_ticket");
+			String jmCode = request.getParameter("encrypt_code");
+			logger.info("encrypt_code"+jmCode);
+			logger.info("active_card_id"+card_id);
+			logger.info("active_openid"+openid);
+			logger.info("解码前active_activate_ticket"+activate_ticket);
+			String decodeAfter = URLEncoder.encode(activate_ticket,"UTF-8");
+			logger.info("编码后active_activate_ticket"+decodeAfter);
+			/*获取appid*/
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			logger.info("redis日志:激活会员卡userJson"+userJson);
+			JSONObject userObj = JSON.parseObject(userJson);
+			String accessToken = "";
+			String appid = userObj.getString("FK_APP");
+			System.out.println("创建会员卡的appid:"+appid);
+			/*获取accessToken*/
+			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+				accessToken = WxUtil.getWxAccessToken(appid,
+						interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+			} else {
+				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+			}
+			String url = CommonUtil.getPath("Wx_GetVIPUserSubmitInfo");
+			url = url.replace("ACCESS_TOKEN", accessToken);
+			JSONObject postData = new JSONObject();
+			postData.put("activate_ticket",decodeAfter);
+			String result = CommonUtil.WxPOST(url, postData.toJSONString(), "UTF-8");
+			JSONObject u = JSONObject.parseObject(result);
+			//状态码
+			String errcode  =  u.getString("errcode");
+			if(errcode.equals("0")){
+				JSONObject info = u.getJSONObject("info");
+				JSONArray common_field_list = info.getJSONArray("common_field_list");
+				for(Object o:common_field_list){
+					JSONObject j = JSONObject.parseObject(o.toString());
+					if(j.getString("name").equals("USER_FORM_INFO_FLAG_MOBILE")){
+						request.setAttribute("userPhone", j.get("value").toString());
+					}
+				}
+			}
+			request.setAttribute("jmCode",jmCode);
+			request.setAttribute("card_id",card_id);
+			logger.info("获取用户信息返回结果"+result);
+			request.getRequestDispatcher("/confirmActive.jsp").forward(request, response);
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	* <p>Title: activeVIPCard</p>
+	* <p>Description: wjl 激活会员卡</p>
+	*/
+	@RequestMapping("/activeVIPCard")
+	public void activeVIPCard(HttpServletRequest request){
+		try {
+			Map<String,Object> map = getParameterMap();
+			map.put("VCARD_PK", map.get("card_id").toString());
+			map.put("sqlMapId", "selectVipCardByCardId");
+			Map<String,Object> vipInfo = openService.queryForList(map).get(0);
+			int initJF = (int)Double.parseDouble(vipInfo.get("START_JF").toString());
+			JSONObject postData = new JSONObject();
+			postData.put("membership_number",map.get("userPhone"));
+			postData.put("init_bonus",initJF);
+			postData.put("card_id",map.get("card_id"));
+			String jmCode = map.get("jmCode").toString();
+			/*获取appid*/
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			String accessToken = "";
+			String appid = userObj.getString("FK_APP");
+			/*获取accessToken*/
+			if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
+				accessToken = WxUtil.getWxAccessToken(appid,
+						interfaceController.getComponentAccessToken(), interfaceController.getRefreshTokenByAppId(appid));
+				jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + appid, accessToken);
+				jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + appid, 3600 * 1);
+			} else {
+				accessToken = jedisClient.get(RedisConstants.WX_ACCESS_TOKEN + appid);
+			}
+			String jmUrl = CommonUtil.getPath("Wx_jm_code");
+			jmUrl = jmUrl.replace("ACCESS_TOKEN", accessToken);
+			JSONObject codePostData = new JSONObject();
+			codePostData.put("encrypt_code",jmCode);
+			String jmCodeResult = CommonUtil.WxPOST(jmUrl, codePostData.toJSONString(), "UTF-8");
+			logger.info("codema: "+jmCodeResult);
+			JSONObject codeJSON = JSONObject.parseObject(jmCodeResult);
+			String vipCode = "";
+			if(codeJSON.getString("errcode").equals("0")){
+				vipCode = codeJSON.getString("code");
+			}
+			postData.put("code",vipCode);
+			String activeUrl = CommonUtil.getPath("Wx_active_memberCard");
+			activeUrl = activeUrl.replace("ACCESS_TOKEN", accessToken);
+			String activeResult = CommonUtil.WxPOST(activeUrl, postData.toJSONString(), "UTF-8");
+			logger.info(activeResult);
+			output("0000", "激活成功");
+			
+		} catch (ExceptionVo e) {
+			output("9999", "激活失败");
+			e.printStackTrace();
+		} catch (Exception e) {
+			output("9999", "激活失败");
+			e.printStackTrace();
 		}
 	}
 }

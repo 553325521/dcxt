@@ -157,6 +157,15 @@ public class ShopInfoController extends BaseController {
 				if(yfMoney >= gsm*100 && yfMoney <= gbm*100 && areaName.equals("全部商品")){
 					favourMoney = gd*100;
 				}
+				//如果含有部分商品，就有优惠金额，否则为0
+				if(yfMoney >= gsm*100 && yfMoney <= gbm*100 && areaName.equals("部分商品")){
+					List<String> gPKList = returnFavorGoods(typePathList,areaDetailArray);
+					if(gPKList.size() != 0){
+						favourMoney = gd*100;
+					}else{
+						favourMoney = 0;
+					}
+				}
 				//当选择的优惠为随机满减优惠时
 			}else{
 				int sjsm = Integer.parseInt(favorDetail.get("sj_smallmoney").toString());
@@ -168,9 +177,23 @@ public class ShopInfoController extends BaseController {
 					int randomNumber = r.nextInt(sjjbm*100-sjjsm*100) + sjjsm*100;
 					favourMoney = randomNumber;
 				}
+				//如果含有部分商品，就有优惠金额，否则为0
+				if(yfMoney >= sjsm*100 && yfMoney <= sjbm*100 && areaName.equals("部分商品")){
+					List<String> gPKList = returnFavorGoods(typePathList,areaDetailArray);
+					if(gPKList.size() != 0){
+						Random r = new Random();
+						int randomNumber = r.nextInt(sjjbm*100-sjjsm*100) + sjjsm*100;
+						favourMoney = randomNumber;
+					}else{
+						favourMoney = 0;
+					}
+				}
 				
 			}
-			output("0000", favourMoney);
+			Map<String,Object> resultMap = new HashMap<String, Object>();
+			resultMap.put("favorName", favorName);
+			resultMap.put("favourMoney", favourMoney);
+			output("0000", resultMap);
 			
 		} catch (ExceptionVo e) {
 			output("9999", "计算优惠金额失败");

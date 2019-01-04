@@ -86,6 +86,16 @@
 			VCARD_PK = #{VCARD_PK};
 	</select>
 	
+	<!-- 根据会员卡Card_id查询会员卡信息 -->
+	<select id="selectVipCardByCardId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			VCARD_PK, VCARD_IDNUMBER, VCARD_NAME, IS_USE, ALLOTTED_TIME, ALLOTTED_TIME_PERIOD, VCARD_ZKXS, VCARD_JFXS, START_MONEY, START_JF, USE_SHOP, VCARD_LOGO, BACKGROUND_IMAGE, VCARD_SYXZ, VCARD_TQSM, VCARD_TWJS
+		FROM 
+			 sc_vip_card
+		WHERE 
+			VCARD_IDNUMBER = #{VCARD_PK};
+	</select>
+	
 	<!-- 根据店铺id查询该店铺所有会员卡基本信息 -->
 	<select id="selectVipCardListByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT 

@@ -139,6 +139,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					JSONObject userObj = JSON.parseObject(userJson);
 					String accessToken = "";
 					String appid = userObj.getString("FK_APP");
+					System.out.println("创建会员卡的appid:"+appid);
 					/*获取accessToken*/
 					if (!jedisClient.isExit(RedisConstants.WX_ACCESS_TOKEN + appid)) {
 						accessToken = WxUtil.getWxAccessToken(appid,
@@ -231,7 +232,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						baseInfoJsonObj.put("code_type","CODE_TYPE_TEXT");
 						baseInfoJsonObj.put("title",map.get("VCARD_NAME"));
 						baseInfoJsonObj.put("color",map.get("confirmName"));
-						baseInfoJsonObj.put("use_custom_code",true);
+						baseInfoJsonObj.put("use_custom_code",false);
 						baseInfoJsonObj.put("notice","结账时出示会员卡");
 						baseInfoJsonObj.put("description",map.get("VCARD_SYXZ"));
 						baseInfoJsonObj.put("sku",skuJsonObj);
@@ -251,8 +252,12 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						swipeJsonObj.put("is_swipe_card", true);
 						baseInfoJsonObj.put("is_pay_and_qrcode", true);
 						memberCardJsonObj.put("prerogative",map.get("VCARD_TQSM"));
-						memberCardJsonObj.put("auto_activate",true);
+//						memberCardJsonObj.put("auto_activate",true);
 						memberCardJsonObj.put("wx_activate",true);
+						memberCardJsonObj.put("wx_activate_after_submit",true);
+						//接受用户提交信息的商家界面链接
+						String submitInfoUrl = CommonUtil.getPath("project_url").replace("DATA", "toActiveMemberCardPage");
+						memberCardJsonObj.put("wx_activate_after_submit_url",submitInfoUrl);
 						memberCardJsonObj.put("supply_bonus", true);
 						memberCardJsonObj.put("supply_balance", false);
 						memberCardJsonObj.put("custom_field1",customJsonObj);
@@ -262,6 +267,14 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						advanceJsonObj.put("text_image_list",instroduceJsonArray);
 						memberCardJsonObj.put("discount",((int)Double.parseDouble(map.get("VCARD_ZKXS").toString()))/10-1);
 						memberCardJsonObj.put("bonus_rule",bonusRuleJsonObj);
+					/*	bonusRuleJsonObj.put("cost_money_unit",10000);
+						bonusRuleJsonObj.put("increase_bonus",10);
+						bonusRuleJsonObj.put("max_increase _bonus",100);
+						bonusRuleJsonObj.put("init_increase _bonus",5);
+						bonusRuleJsonObj.put("cost_bonus_unit",5);
+						bonusRuleJsonObj.put("reduce_money",50);p40NVwbooz1RGO07t85XadG_yW-4
+						bonusRuleJsonObj.put("least_moneyto_use_bonus",500);
+						bonusRuleJsonObj.put("max_reduce _bonus",100);*/
 						bonusRuleJsonObj.put("cost_money_unit",10000);
 						bonusRuleJsonObj.put("increase_bonus",(int)Double.parseDouble(map.get("VCARD_JFXS").toString()));
 						bonusRuleJsonObj.put("init_increase_bonus",(int)Double.parseDouble(map.get("START_JF").toString()));
@@ -277,6 +290,19 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 							output(createCard.getString("errcode"),"创建失败");
 							return;
 						}else{
+							JSONObject setFormPost = new JSONObject();
+							setFormPost.put("card_id",createCard.get("card_id"));
+							JSONObject required_form = new JSONObject();
+							setFormPost.put("required_form",required_form);
+							required_form.put("can_modify", false);
+							String [] common_field_id_list = new String[]{"USER_FORM_INFO_FLAG_MOBILE"};
+							required_form.put("common_field_id_list", common_field_id_list);
+							String setUrl = CommonUtil.getPath("Wx_Set_activateUserForm");
+							setUrl = setUrl.replace("ACCESS_TOKEN", accessToken);
+							logger.info("提交参数"+setFormPost.toJSONString());
+							String aResult = CommonUtil.WxPOST(setUrl, setFormPost.toJSONString(), "UTF-8");
+							System.out.println(aResult);
+							logger.info("创建form返回结果"+aResult);
 							map.put("VCARD_IDNUMBER",createCard.get("card_id"));
 							map.put("sqlMapId", "insertVipCard");
 							String insert = openService.insert(map);
@@ -598,5 +624,19 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					e.printStackTrace();
 				}
 			}
-}
+			public static void main(String[] args) {
+				String s = "{\"card_id\": \"p40NVwZqsQW4EN-R9q6sDI-4f0AA\",\"service_statement\":{\"name\": \"会员守则\",\"url\": \"https://www.qq.com\"},\"bind_old_card\": { \"name\": \"老会员绑定\",\"url\": \"https://www.qq.com\"},\"required_form\": {\"can_modify\":false,\"rich_field_list\": [{\"type\": \"FORM_FIELD_RADIO\",\"name\": \"兴趣\", \"values\": [\"钢琴\",\"舞蹈\",\"足球\"]},{ \"type\": \"FORM_FIELD_SELECT\",\"name\": \"喜好\",\"values\": [\"郭敬明\",\"韩寒\",\"南派三叔\"]},{\"type\": \"FORM_FIELD_CHECK_BOX\",\"name\": \"职业\",\"values\": [ \"赛车手\", \"旅行家\"]}],\"common_field_id_list\": [\"USER_FORM_INFO_FLAG_MOBILE\"]},\"optional_form\": {\"can_modify\":false,\"common_field_id_list\": [\"USER_FORM_INFO_FLAG_LOCATION\",\"USER_FORM_INFO_FLAG_BIRTHDAY\"],\"custom_field_list\": [\"喜欢的电影\"]}}";
+				JSONObject j = JSONObject.parseObject(s);
+				String addurl = "https://api.weixin.qq.com/card/membercard/activateuserform/set?access_token=TOKEN";
+				addurl = addurl.replace("ACCESS_TOKEN", "17_NQcWpSx2bjtELfZnuWj5wNcNjTxTRZFDx1-ZnBvcVHtl4fCLTsj9E84xVe6leyPs8YBkFj8PRO7Qod4Fz6qd7cdxS6rEwKfsR8RujhdkRoSq1BmA58JwPUTiOxToThnO0Ne7idABv0tekgSWHVOgAKDYMF");
+				try {
+					System.out.println(j.toJSONString());
+					String aResult = CommonUtil.WxPOST(addurl, j.toJSONString(), "UTF-8");
+					System.out.println(aResult);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+		}}
 
