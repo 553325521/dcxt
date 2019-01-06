@@ -38,5 +38,8 @@
 	</select>
 	
 	<!-- 删除门店映射 -->
+	<delete id="deleteMtShopMappingByShopId" parameterMap="BaseParameterMap">
+		DELETE FROM sc_mt_shop_mapping WHERE MTYS_EPOILD = #{epoiId};
+	</delete>
 	
 </mapper>

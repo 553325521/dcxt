@@ -217,10 +217,31 @@ import cn.wifiedu.ssm.util.waimai.MTYSUtil;
 					
 					map.put("SHOP_ID", userObj.get("FK_SHOP")); 
 					
+					String col = (String) map.get("col");
+					if(col == null) {
+						return;
+					}
+					
 					//TODO
+					//先查询授权的appAuthToken
+					if("1".equals(col)) {//美团外卖
+						
+						map.put("sqlMapId", "selectMtShopMappingByShopId");
+						Map mtShopMappingMap = (Map) openService.queryForObject(map);
+						if(mtShopMappingMap == null || mtShopMappingMap.get("MTYS_APPAUTHTOKEN") == null) {
+							output("9999", "该店铺暂未授权美团外卖");
+							return;
+						}
+						
+						//美团门店映射
+						output("0000", MTYSUtil.getcancalYSUrl((String)mtShopMappingMap.get("MTYS_APPAUTHTOKEN")));
+						return;
+					}else if("2".equals(col)) {
+						output("0000", "https://be.ele.me/crm?qt=apishopunbindpage");
+						return;
+					}
 					
-					
-					output("0000", "保存成功");
+					output("9999", "失败");
 					return;
 				} catch (Exception e) {
 					logger.error("error", e);
@@ -274,6 +295,12 @@ import cn.wifiedu.ssm.util.waimai.MTYSUtil;
 						
 						//美团门店映射
 						output("0000", MTYSUtil.getYSUrl((String)userObj.get("FK_SHOP"), (String)shopMap.get("SHOP_NAME")));
+						return;
+					}else if("2".equals(col)) {
+						
+						
+						
+						output("0000", "https://be.ele.me/crm?qt=apishopbindpage&source=F3DE3551DA3874B09C4CBFCB8F4D7AE43D8DD2DF8BD78C1B84EB07DA7565F9A2");
 						return;
 					}
 					

@@ -122,13 +122,13 @@
 						});
 					}
 					
-					//授权
+					//取消授权
 					$scope.cancalSQ = function(col) {
 						a = {}
 						a.col = col
 						$httpService.post(config.cancalSQURL, a).success(function(data) {
 							if (data.code == '0000') {
-								windows.location.href=data.data
+								window.location.href=data.data
 							}else{
 								var m2 = {
 										"title" : "提示",

@@ -5,6 +5,14 @@ import java.security.MessageDigest;
 public class MTYSUtil {
 	
 	
+	/**
+	 * 
+	 * @author lps
+	 * @date Jan 5, 2019 3:52:52 PM 
+	 * 
+	 * @description: 获取门店映射URL
+	 * @return String
+	 */
 	public static String getYSUrl(String shopId, String shopName) {
 		
 		String timestamp = System.currentTimeMillis()+"";
@@ -13,8 +21,18 @@ public class MTYSUtil {
 		String sign = sha1Encrypt(signBefore);
 		
 		return "https://open-erp.meituan.com/storemap?charset=UTF-8&developerId=101471&businessId=2&ePoiId="+shopId+"&ePoiName="+shopName+"&timestamp="+timestamp+"&sign="+sign;
-		
-		
+	}
+	
+	/**
+	 * 
+	 * @author lps
+	 * @date Jan 5, 2019 3:57:03 PM 
+	 * 
+	 * @description: 门店解绑url
+	 * @return String
+	 */
+	public static String getcancalYSUrl(String appAuthToken) {
+		return "https://open-erp.meituan.com/releasebinding?signKey=hy6gv1gonp0r0kuq&businessId=2&appAuthToken="+appAuthToken;
 	}
 	
 	

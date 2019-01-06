@@ -66,16 +66,21 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 *
 			 */
 			@RequestMapping("/test/MT_Heartbeat_CallBack")
-			public void heartbeatCallBack(HttpServletRequest request,HttpSession seesion){
+			public void heartbeatCallBack(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
 				
-				Map map;
+				Map map = null;
 				try {
 					map = getParameterMap();
-					logger.info("----------美团外卖心跳包----------");
+					logger.info("----------MT_Heartbeat_CallBack----------");
 					logger.info(map);
 					
-				} catch (ExceptionVo e) {
-					e.printStackTrace();
+
+					reponse.getWriter().write("{\"data\":\"success\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MT_Heartbeat_CallBack fail-------------------");
+					logger.error(map);
+					logger.error(e);
 				}
 				
 				
@@ -92,15 +97,32 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 *
 			 */
 			@RequestMapping("/test/MT_Push_Order")
-			public void pushOrder(HttpServletRequest request,HttpSession seesion){
-				Map map;
+			public void pushOrder(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
 				try {
 					map = getParameterMap();
-					logger.info("----------外卖订单推送----------");
+					
+
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MT_Push_Order-------------------");
+					logger.info(params);
+					
+					logger.info("----------MT_Push_Order----------");
 					logger.info(map);
 					
-				} catch (ExceptionVo e) {
-					e.printStackTrace();
+					reponse.getWriter().write("{\"data\":\"success\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MT_Push_Order fail-------------------");
+					logger.error(map);
+					logger.error(e);
 				}
 			}
 			
@@ -118,20 +140,20 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 */
 			@RequestMapping("/test/MT_Shop_Map")
 			public void shopMap(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
-				Map map;
+				Map map = null;
 				try {
 					map = getParameterMap();
 					
-					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-					StringBuffer sb = new StringBuffer("");
-					String temp;
-					while ((temp = br.readLine()) != null) {
-					sb.append(temp);
-					}
-					br.close();
-					String params = sb.toString();
-					logger.info("-------------MD-------------------");
-					logger.info(params);
+//					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+//					StringBuffer sb = new StringBuffer("");
+//					String temp;
+//					while ((temp = br.readLine()) != null) {
+//					sb.append(temp);
+//					}
+//					br.close();
+//					String params = sb.toString();
+//					logger.info("-------------MD-------------------");
+//					logger.info(params);
 					
 					logger.info("----------MDYS----------");
 					map.put("sqlMapId", "insertMtShopMapping");
@@ -143,7 +165,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					reponse.getWriter().write("{\"data\":\"success\"}");
 					return;
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("-------------MTYS fail-------------------");
+					logger.error(map);
+					logger.error(e);
 				}
 			}
 			
@@ -162,27 +186,23 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 */
 			@RequestMapping("/test/MT_Shop_RelieveMap")
 			public void shopRelieveMap(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
-				Map map;
+				Map map = null;
 				try {
 					map = getParameterMap();
 					
-					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-					StringBuffer sb = new StringBuffer("");
-					String temp;
-					while ((temp = br.readLine()) != null) {
-					sb.append(temp);
-					}
-					br.close();
-					String params = sb.toString();
-					logger.info("-------------MDunun-------------------");
-					logger.info(params);
-					
 					logger.info("----------MDYSunun----------");
+					map.put("sqlMapId", "deleteMtShopMappingByShopId");
+					boolean delete = openService.delete(map);
+					if(!delete) {
+						return;
+					}
 					logger.info(map);
 					reponse.getWriter().write("{\"data\":\"success\"}");
 					return;
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("-------------MTcancalYS fail-------------------");
+					logger.error(map);
+					logger.error(e);
 				}
 			}
 			
@@ -198,7 +218,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 */
 			@RequestMapping("/test/MT_Cancel_Order")
 			public void cancelOrder(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
-				Map map;
+				Map map = null;
 				try {
 					map = getParameterMap();
 					
@@ -218,7 +238,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					reponse.getWriter().write("{\"data\":\"success\"}");
 					return;
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("-------------MDCancel fail-------------------");
+					logger.error(map);
+					logger.error(e);
 				}
 			}
 			
@@ -374,7 +396,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 * @author lps
 			 * @date 2018年10月5日 下午9:26:13 
 			 * 
-			 * @description: 饿了么百度测试
+			 * @description: 饿百测试
 			 * @return void
 			 */
 			@RequestMapping("eb/test/Push_Message")
@@ -507,7 +529,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 * @author lps
 			 * @date 2018年10月5日 下午9:26:13 
 			 * 
-			 * @description: 饿了么百度
+			 * @description: 饿百
 			 * @return void
 			 */
 			@RequestMapping("eb/Push_Message")
@@ -539,14 +561,21 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 		            boolean flag = SignUtil.checkSign(map, config);
 	                //设置返回结果
 	                Result res = new Result(map);
-
+	                
+	                //订单下行 - order.create-创建订单
 	                if ("order.create".equals(map.get("cmd"))) {
-	                    res.setCreateResult(config, flag,"");
+	                	String ZHYOrderId = orderCreate(map,flag);
+	                  //创建返回信息
+	                    res.setCreateResult(config, flag, ZHYOrderId);
 	                } else if ("order.status.push".equals(map.get("cmd"))) {
 	                    res.setPushStatusResult(config, flag);
 	                } else if ("order.user.cancel".equals(map.get("cmd"))) {
 	                    res.setCancelResult(config, flag);
 	                } else if ("order.partrefund.push".equals(map.get("cmd"))) {
+	                    res.setPartRefundPushResult(config, flag);
+	                }else if ("shop.bind.msg".equals(map.get("cmd"))) {//门店绑定信息推送
+	                    res.setPartRefundPushResult(config, flag);
+	                }else if ("shop.unbind.msg".equals(map.get("cmd"))) {//门店解绑消息推送
 	                    res.setPartRefundPushResult(config, flag);
 	                }else {
 	                	return;
@@ -564,6 +593,63 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			}
 			
 			
+			
+			//订单下行 - order.create-创建订单
+			public String orderCreate(Map map,boolean flag) throws Exception {
+				//从推送的信息取出订单
+            	String orderId = JSON.parseObject(map.get("body").toString()).getString("order_id");
+            	 //后续操作
+            	String ZHYOrderId = "";
+                if(flag) {
+                	//开始查询订单详细信息，然后插入数据库，并推送给用户
+                	//发送请求取订单详细信息
+                	String ebOrderMessage = EBWaiMai.EBOrderGet(orderId);
+                	//订单详细信息结果集转换 json->object
+                	Map parse = (Map)JSON.parse(ebOrderMessage);
+    				Map reBody = (Map)parse.get("body");
+    				//判断获取订单返回码
+    				if(!"0".equals(reBody.get("errno").toString())) {
+    					throw new ExceptionVo("get Order Message Result error:", ebOrderMessage);
+    				}
+    				Map reData = (Map)reBody.get("data");
+                	Map reShop = (Map)reData.get("shop");
+                	Map reOrder = (Map)reData.get("order");
+                	Map reUser = (Map)reData.get("user");
+                	List reProducts = (List)reData.get("products");
+                	
+                	//先插入到数据库
+                	Map<String, Object> beMap = new HashMap<String,Object>();
+                	beMap.put("sqlMapId", "insertWaimaiOrder");
+                	beMap.put("ORDER_ID", orderId);
+                	beMap.put("SHOP_BAIDU_ID", reShop.get("baidu_shop_id"));
+                	beMap.put("ORDER_FROM", reOrder.get("order_from"));
+                	beMap.put("ORDER_SEND_IMMEDIATELY", reOrder.get("send_immediately"));
+                	beMap.put("ORDER_STATUS", reOrder.get("status"));
+                	beMap.put("ORDER_STATUS_TIME", reOrder.get("create_time"));
+                	beMap.put("ORDER_REMARK", reOrder.get("remark"));
+                	beMap.put("ORDER_PACKAGE_FEE", reOrder.get("package_fee"));
+                	beMap.put("ORDER_SEND_FEE", reOrder.get("send_fee"));
+                	beMap.put("ORDER_DISCOUNT_FEE", reOrder.get("discount_fee"));
+                	beMap.put("ORDER_USER_FEE", reOrder.get("user_fee"));
+                	beMap.put("ORDER_TOTAL_FEE", reOrder.get("total_fee"));
+                	beMap.put("ORDER_SHOP_FEE", reOrder.get("shop_fee"));
+                	beMap.put("ORDER_SEND_TIME", reOrder.get("send_time"));
+                	beMap.put("ORDER_CREATE_TIME", reOrder.get("create_time"));
+                	
+                	beMap.put("USER_NAME", reUser.get("name"));
+                	beMap.put("USER_PHONE", reUser.get("phone"));
+                	beMap.put("USER_GENDER", reUser.get("gender"));
+                	beMap.put("USER_ADDRESS", reUser.get("address"));
+                	
+                	beMap.put("SHOP_NAME", reShop.get("name"));
+                	beMap.put("PRODUCTS", reProducts.toString());
+                	beMap.put("CREATE_BY", "admin");
+                	
+                	ZHYOrderId = openService.insert(beMap);
+                	return ZHYOrderId;
+                }
+                return null;
+			}
 			
 			
 			
