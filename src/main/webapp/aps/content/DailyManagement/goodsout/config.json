@@ -5,7 +5,7 @@
 	"config": {
 		"pageTitle": "商品估清",
 		"findURL":"json/Shop_query_findAllGoodsBySopIdGradeByCate.json",
-		"updateURL":"json/Shop_update_updateGoodsNumByGoodsId.json",
+		"updateURL":"json/Shop_update_updateGoodsNumByGoodsIdList.json",
 		"menu":{	
 	            "buttons":[
 		        	{

@@ -10,17 +10,25 @@
 				// 定义页面标题
 				scope.pageTitle = config.pageTitle;
 				scope.form = {}
+				scope.goods = {};
 				scope.all_goods = {};
 				
-				scope.form.CURRENT_CLICK = "";
+//				scope.form.CURRENT_CLICK = "";
 				
 				//点击事件
 				scope.clickGoods = function(goods_id){
-					if(scope.form.CURRENT_CLICK != goods_id){
-						scope.form.CURRENT_CLICK = goods_id;
-					}else{
-						scope.form.CURRENT_CLICK = ""
-					}
+					
+//					debugger;
+					
+					//当前选择的服务类型
+					angular.forEach(scope.all_goods,function(data, index, array) {
+						angular.forEach(data,function(data2, index2, array2) {
+							if(data2.GOODS_PK == goods_id){
+								data2.GOODS_NUM = data2.GOODS_NUM == '0' ? '1':'0'; 
+								scope.goods[data2.GOODS_PK] = data2.GOODS_NUM;
+							}
+						});
+					});
 				}
 				
 				
@@ -30,6 +38,11 @@
 							loggingService.info(data.data);
 						} else {
 							scope.all_goods = data.data;
+							angular.forEach(scope.all_goods,function(data, index, array) {
+								angular.forEach(data,function(data2, index2, array2) {
+										scope.goods[data2.GOODS_PK] = data2.GOODS_NUM
+								});
+							});
 						}
 						scope.pageShow = "True";
 						scope.$apply();
@@ -51,9 +64,9 @@
 				
 				//估清按钮
 				scope.goodsOut = function(){
-					if(scope.form.CURRENT_CLICK === ""){
-						return;
-					}
+//					if(scope.form.CURRENT_CLICK === ""){
+//						return;
+//					}
 					var m2 = {
 						"url" : "aps/content/DailyManagement/goodsout/config.json",
 						"title" : "提示",
@@ -65,11 +78,16 @@
 				
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					scope.form.goods = JSON.stringify(scope.goods)
+					
+					console.info(scope.goods)
+					console.info(JSON.stringify(scope.goods))
+
 					 $httpService.post(config.updateURL,scope.form).success(function(data){
 						 if(data.code == "0000"){
 							 scope.all_goods = {};
 							 //估清完清除当前点击对象
-							 scope.form.CURRENT_CLICK = "";
+//							 scope.form.CURRENT_CLICK = "";
 							 scope.pageShow = "False";
 							 init();
 						 }

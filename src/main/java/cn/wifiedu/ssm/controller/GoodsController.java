@@ -434,6 +434,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					map.put("SHOP_ID", userObj.get("FK_SHOP"));
 					//先根据shopId查询出该店铺所有商品
 					map.put("sqlMapId", "findAllGoodsByShopId");
+					map.put("ALL_GOODS", true);
 					map.put("IS_USE", true);
 					List<Map<String,String>> goodsList =  openService.queryForList(map);
 					
@@ -483,27 +484,31 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			 * 
 			 * @author lps
 			 * 
-			 * @Description:  通过商品Id修改商品数量
+			 * @Description:  通过商铺商品Id列表修改商品数量为0
 			 * @return void 
 			 *
 			 */
-			@RequestMapping("Shop_update_updateGoodsNumByGoodsId")
+			@RequestMapping("Shop_update_updateGoodsNumByGoodsIdList")
 			public void updateGoodsNumByGoodsId(){
 				try {
 					Map map = getParameterMap();
+					
+					String goods = (String) map.get("goods");
+					
+					Map<String, String> goodsMap = (Map<String, String>)JSON.parse(goods);
 					map.put("sqlMapId", "updateGoodsNumByGoodId");
-					map.put("GOODS_NUM", "0");
-					map.put("GOODS_ID", map.get("CURRENT_CLICK"));
-					
-					boolean b = openService.update(map);
-					
-					if(b){
-						output("0000", "操作成功");
-						return;
+					for(Map.Entry<String, String> good : goodsMap.entrySet()) {
+						map.put("GOODS_NUM", good.getValue());
+						map.put("GOODS_ID", good.getKey());
+						boolean b = openService.update(map);
+						if(!b) {
+							output("9999", "操作失败");
+							return;
+						}
 					}
-					output("9999", "操作失败");
-					return;
 					
+					output("0000", "操作成功");
+					return;
 				} catch (Exception e) {
 					e.printStackTrace();
 					output("9999", "操作失败");

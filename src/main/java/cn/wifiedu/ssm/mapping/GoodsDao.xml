@@ -204,10 +204,10 @@
 		g2.GTYPE_FK AND gt.GTYPE_PK = g.GTYPE_FK;
 	</select>
 
-	<!-- 根据shopId查询该店铺所有商品(商品主键， 商品所属类别ID， 商品名字) -->
+	<!-- 根据shopId查询该店铺所有商品(商品主键， 商品所属类别ID， 商品名字,商品数量) -->
 	<select id="findAllGoodsByShopId" parameterMap="BaseParameterMap"
 		resultMap="BaseResultMap">
-		SELECT GOODS_PK, GTYPE_FK, GOODS_NAME FROM sc_goods WHERE
+		SELECT GOODS_PK, GTYPE_FK, GOODS_NAME,GOODS_NUM FROM sc_goods WHERE
 		<if test="IS_USE == true">
 			IS_USE = '1' AND
 		</if>

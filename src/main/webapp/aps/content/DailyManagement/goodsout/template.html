@@ -46,7 +46,7 @@
 			</div>
 			<div class="weui_cell" style="display: -webkit-box;display: -webkit-flex; padding-right:0px;padding-bottom:4px;">
 				<div class="weui_cell_bd" style="padding:4px 0;">
-					<span class="{{form.CURRENT_CLICK == item.GOODS_PK ? ' bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="item in value" ng-click="clickGoods(item.GOODS_PK)">{{item.GOODS_NAME}}</span>
+					<span class="{{item.GOODS_NUM == '0' ? ' bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="item in value" ng-click="clickGoods(item.GOODS_PK)">{{item.GOODS_NAME}}</span>
 				</div>
 			</div>
 		</div>

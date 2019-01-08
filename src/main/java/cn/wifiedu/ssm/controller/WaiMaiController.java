@@ -117,7 +117,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					logger.info("----------MT_Push_Order----------");
 					logger.info(map);
 					
-					reponse.getWriter().write("{\"data\":\"success\"}");
+					reponse.getWriter().write("{\"data\":\"OK\"}");
 					return;
 				} catch (Exception e) {
 					logger.error("-------------MT_Push_Order fail-------------------");
@@ -350,7 +350,41 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 				}
 			}
 			
-			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2018年10月5日 下午4:01:16 
+			 * 
+			 * @description: 美团隐私号降级
+			 * @return void
+			 */
+			@RequestMapping("/test/MT_YSHJJ")
+			public void mtYSHJJ(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MT_YSHJJ-------------------");
+					logger.info(params);
+					
+					logger.info("----------MT_YSHJJ----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"OK\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MT_YSHJJ fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
 			
 			
 			/**
