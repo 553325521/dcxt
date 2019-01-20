@@ -29,10 +29,10 @@ public abstract class PrintTemplate {
 
     public static String dealBillId(String billId) {
         StringBuilder result = new StringBuilder();
-        String part1 = billId.substring(0, 6);
-        String part2 = billId.substring(6, 10);
-        String part3 = billId.substring(10, 14);
-        String part4 = billId.substring(14, 16);
+        String part1 = billId.substring(0, 4);
+        String part2 = billId.substring(4, 8);
+        String part3 = billId.substring(8, 12);
+        String part4 = billId.substring(12, 14);
         return result.append(part1).append(" ")
                 .append(part2).append(" ")
                 .append(part3).append(" ")
@@ -43,10 +43,15 @@ public abstract class PrintTemplate {
         return HOURSANDMINUTES.format(date);
     }
 
-    public abstract String getActivityForecastTemplate();
-
+    // 堂点备物
     public abstract String getInStoreBWTemplate();
-
+    // 外卖备物
+    public abstract String getOutStoreBWTemplate();
+    // 堂点对账
+    public abstract String getInStoreDZTemplate();
+    // 堂点结算
+    public abstract String getInStoreJSTemplate();
+    
     public static int getStrLen(String data) {
         int length = 0;
         try {

@@ -17,7 +17,9 @@
 		PRINTER_LEVEL,
 		PRINTER_BILL_HEAD,
 		INSERT_TIME,
-		FK_SHOP
+		FK_SHOP,
+		PRINTER_TG_TEXT,
+		PRINTER_SAMLL_DZ
 		)
 		values
 		(
@@ -31,7 +33,9 @@
 		#{PRINTER_LEVEL},
 		#{PRINTER_BILL_HEAD},
 		#{INSERT_TIME},
-		#{FK_SHOP}
+		#{FK_SHOP},
+		#{PRINTER_TG_TEXT},
+		#{PRINTER_SAMLL_DZ}
 		)
 	</insert>
 
@@ -50,7 +54,7 @@
 		)
 		values
 		(
-		#{UUID},
+		#{PRINT_BUG_PK},
 		#{PRINT_PK},
 		#{PRINT_WIDTH},
 		#{PRINT_TYPE},
@@ -85,14 +89,16 @@
 		parameterMap="BaseParameterMap">
 		SELECT PRINTER_PK, PRINTER_NAME, PRINTER_KEY,
 		PRINTER_PAGE_NUMS,
-		PRINTER_PAGE_WIDTH, PRINTER_DISHES, PRINTER_LEVEL
+		PRINTER_PAGE_WIDTH, PRINTER_DISHES, PRINTER_LEVEL,
+		PRINTER_TG_TEXT,
+		PRINTER_SAMLL_DZ
 		FROM SC_PRINTER
 		<where>
 			AND FK_SHOP = #{FK_SHOP}
 		</where>
 	</select>
 
-	<!-- 查询已购打印机列表 -->
+	<!-- 查询已购打印机列表 --> 
 	<select id="loadPrintList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT PRINT_BUG_PK, PRINT_WIDTH FROM SC_PRINT_BUG WHERE
@@ -106,5 +112,11 @@
 			AND PRINT_BUG_PK = #{PRINTER_KEY}
 		</where>
 	</update>
+	
+	<!-- 查询已购打印机列表 -->
+	<select id="loadPrintCount" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		SELECT count(*) as PRINT_COUNT from SC_PRINT_BUG 
+	</select>
 
 </mapper>

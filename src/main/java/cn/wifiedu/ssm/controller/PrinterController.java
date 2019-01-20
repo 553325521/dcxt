@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -24,6 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.ssm.util.Arith;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.print.PrintTemplate58MM;
@@ -91,6 +91,32 @@ public class PrinterController extends BaseController {
 		} catch (Exception e) {
 			txManagerController.rollback();
 			output("9999", " Exception ", e);
+		}
+	}
+
+	/**
+	 * @author kqs
+	 * @param string
+	 * @return
+	 * @return Object
+	 * @date 2018年12月30日 - 下午10:19:18 
+	 * @description:创建该商铺的打印设备id
+	*/
+	private String createPrintNum(String shopId) {
+		try {
+			Map<String, Object> res = (Map<String, Object>) openService.queryForObject(new HashMap<String, Object>(){
+				{
+					put("sqlMapId", "loadPrintCount");
+				}
+			});
+			String printCount = "";
+			int PRINT_COUNT = Integer.valueOf(res.get("PRINT_COUNT").toString()) + 1;
+			for (int i = 0; i < 12 - (String.valueOf(PRINT_COUNT)).length(); i++) {
+				printCount += "0";
+			}
+			return printCount + PRINT_COUNT;
+		} catch (Exception e) {
+			throw new RuntimeException();
 		}
 	}
 
@@ -186,14 +212,24 @@ public class PrinterController extends BaseController {
 			map.put("INSERT_TIME", StringDeal.getStringDate());
 			map.put("CREATER", userObj.getString("USER_WX"));
 			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
-			map.put("sqlMapId", "addPirntBug");
-			String res = openService.insert(map);
-			if (res != null) {
-				output("0000", "购买成功！");
-				return;
+			int count = Integer.valueOf(map.get("PRINT_BUG_NUM").toString());
+			txManagerController.createTxManager();
+			String PRINT_PRICE = map.get("PRINT_PRICE").toString();
+			for (int i = 0; i < count; i++) {
+				map.put("PRINT_BUG_PK", this.createPrintNum(userObj.getString("FK_SHOP")));
+				map.put("PRINT_BUG_NUM", (i + 1));
+				map.put("PRINT_PRICE", Arith.div(Double.valueOf(PRINT_PRICE), count));
+				map.put("sqlMapId", "addPirntBug");
+				String res = openService.insert(map);
+				if (res == null) {
+					throw new RuntimeException();
+				}
 			}
-			output("9999", "购买失败！");
+			txManagerController.commit();
+			output("0000", "购买成功！");
+			return;
 		} catch (Exception e) {
+			txManagerController.rollback();
 			output("9999", " Exception ", e);
 		}
 	}
@@ -248,10 +284,16 @@ public class PrinterController extends BaseController {
 				map.put("sqlMapId", "loadOrderInfoById");
 				// 根据orderId 获取对应订单头
 				Map<String, Object> order = (Map<String, Object>) openService.queryForObject(map);
+				
 				map.put("sqlMapId", "loadOrderDetailInfoById");
 				// 根据orderId 获取对应订单详情
 				List<Map<String, Object>> orderInfo = openService.queryForList(map);
 				order.put("orderGoodsList", orderInfo);
+				
+				map.put("sqlMapId", "getShopInfo");
+				map.put("SHOP_ID", map.get("FK_SHOP"));
+				// 根据shopid 获取对应订单头
+				Map<String, Object> shop = (Map<String, Object>) openService.queryForObject(map);
 				// 发送内容
 				// shopId!!!deviceId!!!orderId!!!content#
 				StringBuilder printStr = new StringBuilder();
@@ -263,17 +305,16 @@ public class PrinterController extends BaseController {
 						.append(order.get("ORDER_CODE")).append("!!!")
 						// content
 						.append("&!*4" + order.get("ORDER_CODE") + "*"
-								+ new PrintTemplate58MM(order, map).getInStoreBWTemplate()
-								+ "*<qrcA7>www.chsail.com*<BMP203>*<BEEP5000,1,1,2>*<cutA1>#");
+								+ new PrintTemplate58MM(order, shop).getInStoreJSTemplate());
 
 				System.out.println(printStr);
 
 				// 与服务端建立连接
-//				Socket client = new Socket(host, port);
-//				Writer writer = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
-//				writer.write(printStr.toString());
-//				writer.close();
-//				client.close();
+				Socket client = new Socket(host, port);
+				Writer writer = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
+				writer.write(printStr.toString());
+				writer.close();
+				client.close();
 				output("0000", " 打印成功! ");
 				return;
 			}
@@ -284,5 +325,35 @@ public class PrinterController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
+	
+	/**
+	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月27日 - 下午2:42:35
+	 * @description:查询所有的商品标签
+	 */
+	@RequestMapping("/ShopTag_queryForList_selectShopGoodsTagByWhere")
+	public void selectShopGoodsTagByWhere(HttpServletRequest request, HttpSession session) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
 
+			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "selectShopGoodsTagByWhere");
+			List<Map<String, Object>> res = openService.queryForList(map);
+			if (res != null) {
+				output("0000", res);
+				return;
+			}
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+		return;
+	}
+	
 }

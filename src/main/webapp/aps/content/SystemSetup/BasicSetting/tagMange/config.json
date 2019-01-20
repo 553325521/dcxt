@@ -1,0 +1,9 @@
+{
+	"name": "tagMange_list",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/tagMange/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/tagMange/controller.js",
+	"config": {
+		"pageTitle": "标签列表", 
+		"findURL":"json/ShopTag_queryForList_selectShopGoodsTagByWhere.json"
+	}
+}

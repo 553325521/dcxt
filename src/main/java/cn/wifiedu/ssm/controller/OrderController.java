@@ -569,8 +569,8 @@ public class OrderController extends BaseController {
 			Map<String, Object> reMap = (Map<String, Object>) openService.queryForObject(map);
 			if (reMap != null && !reMap.isEmpty()) {
 				int count = Integer.valueOf(reMap.get("ORDER_COUNT").toString()) + 1;
-				String orderCode = "DD" + StringDeal.getStringDateShort1();
-				for (int i = 0; i < (6 - String.valueOf(count).length()); i++) {
+				String orderCode = StringDeal.getStringDateShort1();
+				for (int i = 0; i < (8 - String.valueOf(count).length()); i++) {
 					orderCode += "0";
 				}
 				map.put("ORDER_CODE", orderCode + count);

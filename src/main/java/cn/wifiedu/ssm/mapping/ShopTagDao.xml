@@ -4,8 +4,6 @@
 	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
 	
-	
-
 	<!-- 根据shopId查询商铺基本信息 -->
 	<select id="selectShopGoodsTagById" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
@@ -13,8 +11,19 @@
 		SHOP_TAG_NAME from SC_SHOP_TAG
 		where FK_SHOP = #{SHOP_ID} and SHOP_TAG_TYPE = '0';
 	</select>
-
 	
+	<!-- 根据where条件查询商铺所有的标签 -->
+	<select id="selectShopGoodsTagByWhere" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		select SHOP_TAG_PK,
+		SHOP_TAG_NAME, SHOP_TAG_TYPE from SC_SHOP_TAG
+		<where>
+			AND FK_SHOP = #{FK_SHOP}
+			<if test="SHOP_TAG_TYPE != null">
+			AND SHOP_TAG_TYPE = #{SHOP_TAG_TYPE}
+			</if>
+		</where>
+		ORDER BY SHOP_TAG_TYPE, INSERT_TIME DESC
+	</select>	
  
-	
 </mapper>
