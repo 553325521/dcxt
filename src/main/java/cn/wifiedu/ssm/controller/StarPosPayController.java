@@ -231,8 +231,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						map.put("orderId", insert);
 					}
 					
-					logger.error("215");
-					logger.error(map);
+					logger.info("215");
+					logger.info(map);
 					//从map中取出来userid和订单id
 					//链接里边有个参数，传过来订单id
 					//TODO 根据userid和订单id查询出多少钱，然后进行支付（算了，不要userid了，下边入如果是微信支付的话直接获取，对。）
@@ -259,8 +259,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					logger.error("orderMap"+orderMap);
 					logger.error("237");
 					newMap.put("amount", "1");//假设根据订单id查出来消费了多少
-					String shopId = (String)orderMap.get("FK_APP");//假设拿到了appid
-					String appid = shopId;
+					String shopId = (String)orderMap.get("FK_SHOP");
+					String appid = (String)orderMap.get("FK_APP");
 					String payPay ="";
 					logger.error("242");
 					if(code == null || StringUtils.isEmpty(code)) {
@@ -282,7 +282,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 									JSONObject userObj = JSON.parseObject(userJson);
 									newMap.put("USER_ID", userObj.get("USER_PK"));
 									logger.error("258");
-									if(shopId.equals(userObj.get("FK_APP"))) {
+									if(appid.equals(userObj.get("FK_APP"))) {
 										newMap.put("openid",userObj.get("USER_WX"));
 										hasOpenId = true;
 									}
@@ -308,14 +308,24 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						}
 						
 					}else {
-						logger.error("213");
+						logger.info("213");
 						newMap.put("openid", wxController.getOpenIdByCode2(code,appid));
 						payPay = StarPosPay.PAY_CHANNEL_WEIXIN;
 					}
-					logger.error("217");
+					logger.info("217");
 					newMap.put("USER_ID", "lupishan");//userid是我自己设置的必须的，酌情去除
 					newMap.put("payChannel", payPay);
 					String payWay = "";
+					
+					Map starPosPayMap = getStarPosMessageByShopId(shopId);
+					if(starPosPayMap != null) {
+						newMap.putAll(starPosPayMap);
+					}
+					
+					logger.info(shopId+"shopId");
+					
+					logger.info(starPosPayMap);
+					
 					if(payPay.equals(StarPosPay.PAY_CHANNEL_ALIPAY)) {
 						newMap = starPosPay.psoPay(newMap);
 						if("000000".equals(newMap.get("returnCode").toString())) {
@@ -370,6 +380,8 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					newMap.put("USER_ID", "2222222");
 					newMap.put("amount", "1"); 
 					newMap.put("openid",map.get("openid"));
+					
+					
 					
 					newMap = starPosPay.pubSigPay(newMap,null,null);
 					if("000000".equals(newMap.get("returnCode").toString())) {
@@ -452,6 +464,11 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						return;
 					}
 					
+					Map starPosPayMap = getStarPosMessageByShopId((String)map.get("shopId"));
+					if(starPosPayMap != null) {
+						newMap.putAll(starPosPayMap);
+					}
+					logger.info(newMap);
 					newMap = starPosPay.pay(newMap);
 					if("000000".equals(newMap.get("returnCode").toString())) {
 						if(!("S".equals(newMap.get("result")))) {
@@ -510,8 +527,6 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 					if(!update) {
 						logger.info("update fail");
 					}
-					
-					
 				} catch (Exception e) {
 					logger.info(e);
 					logger.info("starposPayController pay success but status is not setting 1  ---471line");
@@ -667,13 +682,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				}
 				return null;
 			}
-			public static void main(String[] args) {
-				String s = "{OperatingSystem=未知, userInfo=null, AccessIp=127.0.0.1, {\"mercId\"=\"800690000005418\",\"logNo\":\"201812241991909142\",\"OperatingSystem\":\"??\",\"tradingTime\":\"20181224010938\",\"AccessIp\":\"122.97.178.29\",\"orderId\":\"4411f2a2e20e44f683f93f80b6b73575\",\"openid\":\"2088702092854894\",\"sessionId\":\"C4433A74D434DDB48AAC3321A368AAA6\",\"ORDER_PAY_WAY\":\"32\",\"sqlMapId\":\"selectOrderFinalMoneyAndShopAppidByOrderId\",\"ORDER_PK\":\"4411f2a2e20e44f683f93f80b6b73575\",\"officeId\":\"20181224010938626082\",\"Browser\":\"??\"}, sessionId=9965FCF2864F4A5335E55F1C4A513BCF, token=null, Browser=其它}";
-				s = s.split("\\{")[2].split("\\}")[0].replaceAll("\\\\", "").replaceAll("=", ":");
-				s = "{" + s + "}";
-				System.err.println(s);
-				Map map = (Map) JSON.parse(s);
-				System.out.println(map);
+			public static void main(String[] args) throws Exception {
+				
+				System.out.println(new StarPosPayController().getStarPosMessageByShopId("f11099f4816f4a6c99e511c4a7aa82d0"));
 			}
 			
 		}

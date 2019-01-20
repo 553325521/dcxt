@@ -98,12 +98,21 @@ public class ShopTagController extends BaseController {
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
 			map.put("SHOP_ID", userObj.get("FK_SHOP"));
+			
+			//查询商品标签
 			map.put("sqlMapId", "selectShopGoodsTagById");
-
 			List reList =  openService.queryForList(map);
 			
+			//查询打印标签
+			map.put("sqlMapId", "selectShopGoodsPrintTagById");
+			List printLabelList =  openService.queryForList(map);
 			
-			output("0000", reList);
+			Map labelMap = new HashMap<String, List>();
+			
+			labelMap.put("goodTag", reList);
+			labelMap.put("printTag", printLabelList);
+			
+			output("0000", labelMap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			output("9999", "查询失败");

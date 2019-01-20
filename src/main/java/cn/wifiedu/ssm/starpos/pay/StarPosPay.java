@@ -304,7 +304,7 @@ public class StarPosPay {
 
           String preStr = HttpParamsUtils.buildPayValues(paramsMap,false,true);
           System.out.println("排序后："+preStr);
-          String sign = MD5.sign(preStr, CommonUtil.getPath("spKey"), "utf-8");
+          String sign = MD5.sign(preStr, spKey, "utf-8");
           System.out.println("signValue："+sign);
           paramsMap.put("signValue",sign);
           logger.info("------------------qingqiiu_Map---------------------------");
@@ -726,13 +726,13 @@ public static void main(String[] args) {
 //		
 //		System.out.println(map2);
 //		
-		Map<String, Object> newMap = new HashMap<String, Object>();
-		
-		newMap.put("USER_ID", "zhy");
-		newMap.put("amount", "1");
-		newMap.put("DCXT_ORDER_FK", "zhy");
-		newMap.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN);
-		System.out.println(new StarPosPay().psoPay(newMap));
+//		Map<String, Object> newMap = new HashMap<String, Object>();
+//		
+//		newMap.put("USER_ID", "zhy");
+//		newMap.put("amount", "1");
+//		newMap.put("DCXT_ORDER_FK", "zhy");
+//		newMap.put("payChannel", StarPosPay.PAY_CHANNEL_WEIXIN);
+//		System.out.println(new StarPosPay().psoPay(newMap));
 		
 		
 	} catch (Exception e) {

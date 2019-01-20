@@ -60,132 +60,143 @@
 						$httpService.post(config.getLabel).success(function(data) {
 							if(data.code == '0000'){
 								
-								debugger
-								//标签库
+								//商品标签库
 								scope.label_library = {}
-								angular.forEach(data.data, function(data, index, array) {
+								angular.forEach(data.data.goodTag, function(data, index, array) {
 									scope.label_library[data.SHOP_TAG_NAME] = "false"
 								})
 								
-//								scope.label_library  = data.data
-//								scope.label_library = {
-//										"不吃辣" : true,
-//										"少放辣" : true,
-//										"多放辣" : true,
-//										"不吃醋" : true,
-//										"少放醋" : true,
-//										"多放醋" : true,
-//										"不吃蒜" : true,
-//										"不吃香菜" : true,
-//										"少放盐" : true,
-//										"多放饭" : true,
-//									}
-								//当前选择的标签
-								scope.LABEL = []
 								
-								angular.forEach(scope.label_library, function(data, index, array) {
-									scope.LABEL.push(index)
+								//打印标签库
+								scope.print_label_library={}
+								angular.forEach(data.data.printTag, function(data, index, array) {
+									scope.print_label_library[data.SHOP_TAG_NAME] = "false"
 								})
 								
+								//当前选择的标签
+								scope.LABEL = []
+								scope.PRINT_LABEL = []
+								
+//								angular.forEach(scope.label_library, function(data, index, array) {
+//									scope.LABEL.push(index)
+//								})
+//								
+//								angular.forEach(scope.print_label_library, function(data, index, array) {
+//									scope.PRINT_LABEL.push(index)
+//								})
 								
 								
 								for(var i = 0;i < data.data.length;i++){
 									scope.NOCHILD_GOODS_TYPE_NAME[i] = data.data[i].GTYPE_NAME;
 									scope.NOCHILD_GOODS_TYPE_PK[i] = data.data[i].GTYPE_PK;
 								}
+								
+								
+								//判断
+								if(scope.form.GOODS_ID != undefined && scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
+									//是修改
+									// 定义页面标题
+									scope.pageTitle = '修改商品';
+									//初始化排序序号列表
+									pxxh_select = Array(goods_count).fill().map((v,i) => i+1);//填充排序列表 1-n
+									
+									//发送post请求
+									$httpService.post(config.findURL,scope.form).success(function(data) {
+										if (data.code != '0000') {
+											loggingService.info(data.data);
+										} else {
+											scope.pageShow = "True";
+											scope.form = data.data;
+											scope.form.GOODS_ID = scope.form.GOODS_PK
+											//字符串转json
+											scope.SHOW_RANGE = angular.fromJson(scope.form.SHOW_RANGE);
+											scope.GOODS_RECIPE = angular.fromJson(scope.form.GOODS_RECIPE);
+											scope.GOODS_SPECIFICATION = angular.fromJson(scope.form.GOODS_SPECIFICATION);
+											scope.GOODS_TASTE = angular.fromJson(scope.form.GOODS_TASTE);
+											scope.picMap = angular.fromJson(scope.form.PICTURE_URL);
+											//去掉map中的value组成list
+											angular.forEach(scope.picMap, function(data,index,array){
+												scope.PICTURE_URL.push(index)
+											});
+											//标签赋值
+											scope.LABEL = JSON.parse(scope.form.GOODS_LABEL);
+											angular.forEach(scope.label_library,function(data,index,array){
+												if(scope.LABEL.indexOf(index) != -1){
+													 scope.label_library[index] = "true"
+												}
+											})
+											if(scope.form.GOODS_PRINT_LABEL == undefined || scope.form.GOODS_PRINT_LABEL.length == 0){
+												scope.form.GOODS_PRINT_LABEL = '[]'
+											}
+											
+											scope.PRINT_LABEL = JSON.parse(scope.form.GOODS_PRINT_LABEL);
+											angular.forEach(scope.print_label_library,function(data,index,array){
+												if(scope.PRINT_LABEL.indexOf(index) != -1){
+													 scope.print_label_library[index] = "true"
+												}
+											})
+											
+											//分转换成元
+											scope.form.GOODS_PRICE = Number(scope.form.GOODS_PRICE)/100;
+											if(scope.form.GOODS_TRUE_PRICE != ""){
+												scope.form.GOODS_TRUE_PRICE = Number(scope.form.GOODS_TRUE_PRICE)/100;
+											}
+											//解决下拉选择框默认是第一个的问题
+										//	$("#pxxh_select").val(scope.form.GOODS_PXXH);
+											$("#unit_select").val(scope.form.GOODS_DW);
+											
+											$scope.$apply();
+											comboboxInit()
+										}
+									}).error(function(data) {
+										loggingService.info('获取测试信息出错');
+									});
+									
+								}else{
+									
+									//发送post请求
+									$httpService.post(config.initURL,scope.form).success(function(data) {
+										if (data.code != '0000') {
+											loggingService.info(data.data);
+										} else {
+											scope.form.GTYPE_NAME = data.data.GTYPE_NAME;//类别名字
+											$('#fs_select').val(scope.form.GTYPE_NAME);
+											gtype_area = angular.fromJson(data.data.GTYPE_AREA);//该商品类别的范围
+											angular.forEach(gtype_area, function(mapdata,index,array){
+												scope.SHOW_RANGE[mapdata.name] = mapdata.checked;
+											});
+											scope.pageShow = "True";
+											// 定义页面标题
+											scope.pageTitle = '添加商品';
+											//初始化排序序号列表
+											pxxh_select = Array(goods_count+1).fill().map((v,i) => i+1);//填充排序列表 1-n
+											
+											//这几行是解决下拉框默认选择第一个的问题
+//											$("#fs_select").val(goods_type[0]);
+											$("#unit_select").val(goods_dw[0]);
+											$("#pxxh_select").val(goods_count+1);
+											//赋初值
+//											scope.form.GTYPE_ID = goods_type[0];
+											scope.form.GOODS_DW = goods_dw[0];
+											//scope.form.GOODS_PXXH = goods_count+1;
+											
+											$scope.$apply();
+											comboboxInit();
+										}
+									}).error(function(data) {
+										loggingService.info('获取测试信息出错');
+									});
+								}
+								
+								
+								
+								
 								scope.$apply();
 							}
 						}).error(function(data) {
 							loggingService.info('获取测试信息出错');
 						});
-						
-						
-						
-						//判断
-						if(scope.form.GOODS_ID != undefined && scope.form.GOODS_ID != 'undefined' && scope.form.GOODS_ID != ''){
-							//是修改
-							// 定义页面标题
-							scope.pageTitle = '修改商品';
-							//初始化排序序号列表
-							pxxh_select = Array(goods_count).fill().map((v,i) => i+1);//填充排序列表 1-n
-							
-							//发送post请求
-							$httpService.post(config.findURL,scope.form).success(function(data) {
-								if (data.code != '0000') {
-									loggingService.info(data.data);
-								} else {
-									scope.pageShow = "True";
-									scope.form = data.data;
-									scope.form.GOODS_ID = scope.form.GOODS_PK
-									//字符串转json
-									scope.SHOW_RANGE = angular.fromJson(scope.form.SHOW_RANGE);
-									scope.GOODS_RECIPE = angular.fromJson(scope.form.GOODS_RECIPE);
-									scope.GOODS_SPECIFICATION = angular.fromJson(scope.form.GOODS_SPECIFICATION);
-									scope.GOODS_TASTE = angular.fromJson(scope.form.GOODS_TASTE);
-									scope.picMap = angular.fromJson(scope.form.PICTURE_URL);
-									//去掉map中的value组成list
-									angular.forEach(scope.picMap, function(data,index,array){
-										scope.PICTURE_URL.push(index)
-									});
-									//标签赋值
-									scope.LABEL = JSON.parse(scope.form.GOODS_LABEL);
-									angular.forEach(scope.label_library,function(data,index,array){
-										if(scope.LABEL.indexOf(index) == -1){
-											 scope.label_library[index] = false
-										}
-									})
-									
-									//分转换成元
-									scope.form.GOODS_PRICE = Number(scope.form.GOODS_PRICE)/100;
-									if(scope.form.GOODS_TRUE_PRICE != ""){
-										scope.form.GOODS_TRUE_PRICE = Number(scope.form.GOODS_TRUE_PRICE)/100;
-									}
-									//解决下拉选择框默认是第一个的问题
-								//	$("#pxxh_select").val(scope.form.GOODS_PXXH);
-									$("#unit_select").val(scope.form.GOODS_DW);
-									
-									$scope.$apply();
-									comboboxInit()
-								}
-							}).error(function(data) {
-								loggingService.info('获取测试信息出错');
-							});
-							
-						}else{
-							
-							//发送post请求
-							$httpService.post(config.initURL,scope.form).success(function(data) {
-								if (data.code != '0000') {
-									loggingService.info(data.data);
-								} else {
-									scope.form.GTYPE_NAME = data.data.GTYPE_NAME;//类别名字
-									$('#fs_select').val(scope.form.GTYPE_NAME);
-									gtype_area = angular.fromJson(data.data.GTYPE_AREA);//该商品类别的范围
-									angular.forEach(gtype_area, function(mapdata,index,array){
-										scope.SHOW_RANGE[mapdata.name] = mapdata.checked;
-									});
-									scope.pageShow = "True";
-									// 定义页面标题
-									scope.pageTitle = '添加商品';
-									//初始化排序序号列表
-									pxxh_select = Array(goods_count+1).fill().map((v,i) => i+1);//填充排序列表 1-n
-									
-									//这几行是解决下拉框默认选择第一个的问题
-//									$("#fs_select").val(goods_type[0]);
-									$("#unit_select").val(goods_dw[0]);
-									$("#pxxh_select").val(goods_count+1);
-									//赋初值
-//									scope.form.GTYPE_ID = goods_type[0];
-									scope.form.GOODS_DW = goods_dw[0];
-									//scope.form.GOODS_PXXH = goods_count+1;
-									
-									$scope.$apply();
-									comboboxInit();
-								}
-							}).error(function(data) {
-								loggingService.info('获取测试信息出错');
-							});
-						}
+				
 					}
 					init();
 					
@@ -199,16 +210,31 @@
 					scope.clickLabel = function(text){
 						console.info(scope.LABEL)
 						if(scope.label_library[text] != undefined){
-							scope.label_library[text] = scope.label_library[text] ? false : true;
-							if(scope.label_library[text]){
+							scope.label_library[text] = scope.label_library[text] == "true" ? "false" : "true";
+							if(scope.label_library[text] == "true"){
 								scope.LABEL.push(text);
 							}else{
 								scope.LABEL.splice(scope.LABEL.indexOf(text), 1)
 							}
 						}
+						console.info(scope.label_library)
 						console.info(scope.LABEL)
 					}
 					
+					//点击了打印标签
+					scope.clickPrintLabel = function(text){
+						console.info(scope.PRINT_LABEL)
+						if(scope.print_label_library[text] != undefined){
+							scope.print_label_library[text] = scope.print_label_library[text] == "true" ? "false" : "true";
+							if(scope.print_label_library[text] == "true"){
+								scope.PRINT_LABEL.push(text);
+							}else{
+								scope.PRINT_LABEL.splice(scope.PRINT_LABEL.indexOf(text), 1)
+							}
+						}
+						console.info(scope.print_label_library)
+						console.info(scope.PRINT_LABEL)
+					}
 					
 					/*返回按钮点击方法*/
 					scope.returnClick = function(){
@@ -273,6 +299,7 @@
 						scope.form.GOODS_TASTE = JSON.stringify(scope.GOODS_TASTE);
 						scope.form.PICTURE_URL = JSON.stringify(scope.PICTURE_URL);
 						scope.form.GOODS_LABEL = JSON.stringify(scope.LABEL);
+						scope.form.GOODS_PRINT_LABEL = JSON.stringify(scope.PRINT_LABEL);
 						
 						console.info(scope.form)
 						$form.validate(function(error) {
