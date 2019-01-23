@@ -514,4 +514,30 @@
 		SELECT ORDER_PAY_STATE FROM sc_order WHERE ORDER_PK = #{ORDER_PK}
 	</select>
 	
+	<!-- 根绝订单ID查询打印字段 -->
+	<select id="selectPrintData1ByOrderId" resultMap="printData1">
+		SELECT our.ORDER_PAY_WAY, our.PAY_TIME, our.VCARD_NUMBER, vr.VRECORD_TYPE, vr.VRECORD_NUM,(SELECT COUNT(1) 
+		FROM sc_card_order 
+		WHERE ORDER_FK = #{ORDER_PK}) AS CARD_NUM
+		FROM (SELECT o.ORDER_PAY_WAY, o.PAY_TIME, ur.VCARD_NUMBER, ur.USER_VCARD_PK 
+		FROM sc_order o LEFT JOIN sc_user_vcard ur ON o.IS_USE_VCARD = '1' AND o.USER_VCARD_FK = ur.USER_VCARD_PK 
+		WHERE o.ORDER_PK = #{ORDER_PK}) our LEFT JOIN sc_vcard_record vr ON our.USER_VCARD_PK = vr.USER_VCARD_FK 
+		WHERE vr.ORDER_FK = #{ORDER_PK};
+	</select>
+	<!--  -->
+	<resultMap type="java.util.HashMap" id="printData1">
+		 <!-- 一个ID结果；标记出作为ID的结果可以帮助提高整体性能 -->
+            <result column="ORDER_PAY_WAY" property="ORDER_PAY_WAY"/>
+            <result column="PAY_TIME" property="PAY_TIME"/>
+            <result column="VCARD_NUMBER" property="VCARD_NUMBER"/>
+            <result column="CARD_NUM" property="CARD_NUM"/>
+            <!-- collection定义关联集合类型的属性封装规则
+                 offType:指定集合中的元素类型-->
+            <collection property="vard_record" javaType="ArrayList" ofType="java.util.HashMap">
+                <result column="VRECORD_TYPE" property="VRECORD_TYPE"/>
+                <result column="VRECORD_NUM" property="VRECORD_NUM"/>
+            </collection>
+	
+	</resultMap>
+	
 </mapper>
