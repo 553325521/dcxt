@@ -860,6 +860,44 @@ public class ShopInfoController extends BaseController {
 		}
 	}
 	
+	/**
+	 * 
+	 * @author lps
+	 * @date Jan 23, 2019 2:38:31 PM 
+	 * 
+	 * @description: 根据unionid查询所在公众号选择的店铺
+	 * @return void
+	 */
+	@RequestMapping("/getGZHShopIdByXCX")
+	public void getGZHShopIdByXCX(){
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "selectAllOpenidByUnionid");
+			map.put("USER_UNIONID", map.get("unionid"));
+			
+			List<Map<String, Object>> queryForList = openService.queryForList(map);
+			for(Map openidMap : queryForList) {
+				String token = (String) openidMap.get("USER_WX");
+				String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+				if(userJson != null) {
+					JSONObject userObj = JSON.parseObject(userJson);
+					String shopId = (String) userObj.get("FK_SHOP");
+					if(shopId != null) {
+						output("0000", shopId);
+						return;
+					}
+				}
+				
+				
+			}
+			output("9999", "请在公众号选择商铺");
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	
 	public static void main(String[] args) {

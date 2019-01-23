@@ -23,4 +23,9 @@
 				USER_PHONE = #{USER_PHONE}
 		where USER_UNIONID = #{USER_UNIONID} 
 	</update>
+	
+	<!-- 根据用户unionid查询所有的openid -->
+	<select id="selectAllOpenidByUnionid" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT USER_WX FROM sc_user WHERE USER_UNIONID = #{USER_UNIONID};
+	</select>
 </mapper>

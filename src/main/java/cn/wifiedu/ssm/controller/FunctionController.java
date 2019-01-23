@@ -290,7 +290,7 @@ public class FunctionController extends BaseController {
 					return;
 				}
 			}
-			output("9999", "查询失败!");
+			output("9999", "您还没有设置功能开关。");
 			return;
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
