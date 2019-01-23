@@ -540,4 +540,12 @@
 	
 	</resultMap>
 	
+	
+	<!-- 根据ORDER_PK查询所在订单使用的会员卡所剩积分和储值 -->
+	<select id="selectJFCZByOrderId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT ur.VCARD_NUMBER, ur.USER_VCARD_JF, ur.USER_VCARD_CZ 
+		FROM sc_order o LEFT JOIN sc_user_vcard ur ON o.IS_USE_VCARD = '1' AND o.USER_VCARD_FK = ur.USER_VCARD_PK 
+		WHERE o.ORDER_PK = #{ORDER_PK};
+	</select>
+	
 </mapper>
