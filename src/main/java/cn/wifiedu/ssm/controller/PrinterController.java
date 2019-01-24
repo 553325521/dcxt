@@ -3,6 +3,8 @@ package cn.wifiedu.ssm.controller;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,12 +101,12 @@ public class PrinterController extends BaseController {
 	 * @param string
 	 * @return
 	 * @return Object
-	 * @date 2018年12月30日 - 下午10:19:18 
+	 * @date 2018年12月30日 - 下午10:19:18
 	 * @description:创建该商铺的打印设备id
-	*/
+	 */
 	private String createPrintNum(String shopId) {
 		try {
-			Map<String, Object> res = (Map<String, Object>) openService.queryForObject(new HashMap<String, Object>(){
+			Map<String, Object> res = (Map<String, Object>) openService.queryForObject(new HashMap<String, Object>() {
 				{
 					put("sqlMapId", "loadPrintCount");
 				}
@@ -264,68 +266,390 @@ public class PrinterController extends BaseController {
 		return;
 	}
 
-	@RequestMapping("/Print_insert_doPrint")
-	public void doPrint() {
+	/**
+	 * 
+	 * @author kqs
+	 * @param shopId
+	 * @param orderId
+	 * @param type
+	 *            打印类型
+	 * @return void
+	 * @date 2019年1月21日 - 上午12:01:48
+	 * @description: tdjs:堂点结算 wmjs:外卖结算
+	 */
+	@RequestMapping("/Print_insert_doPrintJS")
+	public void doPrintJS(String shopId, String orderId, String type) {
 		try {
-			String host = "119.23.71.153"; // 要连接的服务端IP地址 119.23.71.153
-			int port = 8008; // 要连接的服务端对应的监听端口
 
-			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
-			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
-			JSONObject userObj = JSON.parseObject(userJson);
+//			shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
+//			orderId = "0151f0c7738f4957b62e20ec3287c107";
+//			type = "wmjs";
 
 			Map<String, Object> map = getParameterMap();
-			map.put("FK_SHOP", map.get("FK_SHOP"));
+			map.put("FK_SHOP", shopId);
+			// 根据shopid 去查对应的打印机
 			map.put("sqlMapId", "loadInUsePrintList");
 			// 先获取到所有的打印机
 			List<Map<String, Object>> res = openService.queryForList(map);
-			// 先拿第一个打印机之后再完善
 			if (res != null && !res.isEmpty()) {
+				map.put("ORDER_PK", orderId);
 				map.put("sqlMapId", "loadOrderInfoById");
 				// 根据orderId 获取对应订单头
 				Map<String, Object> order = (Map<String, Object>) openService.queryForObject(map);
-				
+
 				map.put("sqlMapId", "loadOrderDetailInfoById");
-				// 根据orderId 获取对应订单详情
+				// 根据orderId 获取对应订单详情 总的 给其他打印联用
 				List<Map<String, Object>> orderInfo = openService.queryForList(map);
 				order.put("orderGoodsList", orderInfo);
-				
+
 				map.put("sqlMapId", "getShopInfo");
 				map.put("SHOP_ID", map.get("FK_SHOP"));
 				// 根据shopid 获取对应订单头
 				Map<String, Object> shop = (Map<String, Object>) openService.queryForObject(map);
-				// 发送内容
-				// shopId!!!deviceId!!!orderId!!!content#
-				StringBuilder printStr = new StringBuilder();
-				// shopId
-				printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
-						// deviceId
-						.append(res.get(0).get("PRINTER_NAME")).append("!!!")
-						// orderId
-						.append(order.get("ORDER_CODE")).append("!!!")
-						// content
-						.append("&!*4" + order.get("ORDER_CODE") + "*"
-								+ new PrintTemplate58MM(order, shop).getInStoreJSTemplate());
 
-				System.out.println(printStr);
-
-				// 与服务端建立连接
-				Socket client = new Socket(host, port);
-				Writer writer = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
-				writer.write(printStr.toString());
-				writer.close();
-				client.close();
+				map.put("sqlMapId", "selectJFCZByOrderId");
+				// 根据orderId 获取会员卡信息
+				Map<String, Object> hys = (Map<String, Object>) openService.queryForObject(map);
+				// 会员卡号
+				if (hys.containsKey("VCARD_NUMBER")) {
+					order.put("VCARD_NUMBER", hys.get("VCARD_NUMBER"));
+				}
+				if (hys.containsKey("USER_VCARD_JF")) {
+					// 积分
+					order.put("JIFEN", hys.get("USER_VCARD_JF"));
+				}
+				if (hys.containsKey("USER_VCARD_CZ")) {
+					// 储值
+					order.put("CHUZHI", hys.get("USER_VCARD_CZ"));
+				}
+				// 卡券总数
+				if (hys.containsKey("CARD_NUM")) {
+					order.put("KAQUAN", "-" + hys.get("CARD_NUM").toString());
+				}
+				// 遍历打印机 找对应联的打印机
+				for (Map<String, Object> p : res) {
+					if ("58mm".equals(p.get("PRINTER_PAGE_WIDTH").toString())
+							&& (p.get("PRINTER_LEVEL").toString()).indexOf("3") >= 0) {
+						if ("tdjs".equals(type)) {
+							// 堂点对账58mm
+							// 发送内容
+							// shopId!!!deviceId!!!orderId!!!content#
+							StringBuilder printStr = new StringBuilder();
+							// shopId
+							printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
+									// deviceId
+									.append(res.get(0).get("PRINTER_KEY")).append("!!!")
+									// orderId
+									.append(order.get("ORDER_CODE")).append("!!!")
+									// content
+									.append("&!*4" + order.get("ORDER_CODE") + "*"
+											+ new PrintTemplate58MM(order, shop).getInStoreJSTemplate());
+							contPrintService(printStr);
+						} else {
+							// 外卖对账 58mm
+							// 发送内容
+							// shopId!!!deviceId!!!orderId!!!content#
+							StringBuilder printStr = new StringBuilder();
+							// shopId
+							printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
+									// deviceId
+									.append(res.get(0).get("PRINTER_KEY")).append("!!!")
+									// orderId
+									.append(order.get("ORDER_CODE")).append("!!!")
+									// content
+									.append("&!*4" + order.get("ORDER_CODE") + "*"
+											+ new PrintTemplate58MM(order, shop).getOutStoreJSTemplate());
+							contPrintService(printStr);
+						}
+					} else if ("80mm".equals(p.get("PRINTER_PAGE_WIDTH").toString())
+							&& (p.get("PRINTER_LEVEL").toString()).indexOf("3") >= 0) {
+						// TODO 80mm 备物联样式
+					}
+				}
 				output("0000", " 打印成功! ");
 				return;
 			}
 			output("9999", " 暂无可用打印机! ");
 			return;
-
 		} catch (Exception e) {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param shopId
+	 * @param orderId
+	 * @param type
+	 *            打印类型
+	 * @return void
+	 * @date 2019年1月21日 - 上午12:01:48
+	 * @description: tddz:堂点对账 wmdz:外卖对账
+	 */
+	@RequestMapping("/Print_insert_doPrintDZ")
+	public void doPrintDZ(String shopId, String orderId, String type) {
+		try {
+
+			// shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
+			// orderId = "0151f0c7738f4957b62e20ec3287c107";
+			// type = "wmdz";
+
+			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", shopId);
+			// 根据shopid 去查对应的打印机
+			map.put("sqlMapId", "loadInUsePrintList");
+			// 先获取到所有的打印机
+			List<Map<String, Object>> res = openService.queryForList(map);
+			if (res != null && !res.isEmpty()) {
+				map.put("ORDER_PK", orderId);
+				map.put("sqlMapId", "loadOrderInfoById");
+				// 根据orderId 获取对应订单头
+				Map<String, Object> order = (Map<String, Object>) openService.queryForObject(map);
+
+				map.put("sqlMapId", "loadOrderDetailInfoById");
+				// 根据orderId 获取对应订单详情 总的 给其他打印联用
+				List<Map<String, Object>> orderInfo = openService.queryForList(map);
+				order.put("orderGoodsList", orderInfo);
+
+				map.put("sqlMapId", "getShopInfo");
+				map.put("SHOP_ID", map.get("FK_SHOP"));
+				// 根据shopid 获取对应订单头
+				Map<String, Object> shop = (Map<String, Object>) openService.queryForObject(map);
+
+				map.put("sqlMapId", "selectPrintData1ByOrderId");
+				// 根据orderId 获取会员卡信息
+				Map<String, Object> hys = (Map<String, Object>) openService.queryForObject(map);
+				if (hys.containsKey("vard_record")) {
+					List<Map<String, Object>> hyInfo = (List<Map<String, Object>>) hys.get("vard_record");
+					if (hyInfo != null && !hyInfo.isEmpty()) {
+						// 会员卡号
+						if (hys.containsKey("VCARD_NUMBER")) {
+							order.put("VCARD_NUMBER", hys.get("VCARD_NUMBER"));
+							// 消耗类型
+							for (Map<String, Object> hy : hyInfo) {
+								if (hy.containsKey("VRECORD_TYPE")) {
+									String codeTypes[] = hy.get("VRECORD_TYPE").toString().split("");
+									String str = "";
+									if (codeTypes[0].equals("1")) {
+										str = "+";
+									} else {
+										str = "-";
+									}
+									if (codeTypes[1].equals("1")) {
+										str = str + hy.get("VRECORD_NUM").toString();
+										// 积分
+										order.put("JIFEN", str);
+									} else {
+										String chuzhi = String.valueOf(
+												Arith.div(Double.valueOf(hy.get("VRECORD_NUM").toString()), 100, 2));
+										str = str + chuzhi;
+										// 储值
+										order.put("CHUZHI", str);
+									}
+								}
+							}
+						}
+						// 卡券总数
+						if (hys.containsKey("CARD_NUM")) {
+							order.put("KAQUAN", "-" + hys.get("CARD_NUM").toString());
+						}
+						// 支付时间
+						order.put("PAY_TIME", hys.get("PAY_TIME").toString().substring(11, 16));
+					}
+				}
+				// 遍历打印机 找对应联的打印机
+				for (Map<String, Object> p : res) {
+					if ("58mm".equals(p.get("PRINTER_PAGE_WIDTH").toString())
+							&& (p.get("PRINTER_LEVEL").toString()).indexOf("2") >= 0) {
+						if ("tddz".equals(type)) {
+							// 堂点对账58mm
+							// 发送内容
+							// shopId!!!deviceId!!!orderId!!!content#
+							StringBuilder printStr = new StringBuilder();
+							// shopId
+							printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
+									// deviceId
+									.append(res.get(0).get("PRINTER_KEY")).append("!!!")
+									// orderId
+									.append(order.get("ORDER_CODE")).append("!!!")
+									// content
+									.append("&!*4" + order.get("ORDER_CODE") + "*"
+											+ new PrintTemplate58MM(order, shop).getInStoreDZTemplate());
+							contPrintService(printStr);
+						} else {
+							// 外卖对账 58mm
+							// 发送内容
+							// shopId!!!deviceId!!!orderId!!!content#
+							StringBuilder printStr = new StringBuilder();
+							// shopId
+							printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
+									// deviceId
+									.append(res.get(0).get("PRINTER_KEY")).append("!!!")
+									// orderId
+									.append(order.get("ORDER_CODE")).append("!!!")
+									// content
+									.append("&!*4" + order.get("ORDER_CODE") + "*"
+											+ new PrintTemplate58MM(order, shop).getOutStoreBWTemplate());
+							contPrintService(printStr);
+						}
+					} else if ("80mm".equals(p.get("PRINTER_PAGE_WIDTH").toString())
+							&& (p.get("PRINTER_LEVEL").toString()).indexOf("2") >= 0) {
+						// TODO 80mm 备物联样式
+					}
+				}
+				output("0000", " 打印成功! ");
+				return;
+			}
+			output("9999", " 暂无可用打印机! ");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+
+	/**
+	 * 
+	 * @author kqs
+	 * @param shopId
+	 *            商铺id
+	 * @param orderId
+	 *            订单id
+	 * @param type
+	 *            打印类型
+	 * @return void
+	 * @date 2019年1月21日 - 上午12:01:48
+	 * @description: tdbw:堂点备物 wmbw:外卖备物
+	 */
+	@RequestMapping("/Print_insert_doPrintBW")
+	public void doPrint(String shopId, String orderId, String type) {
+		try {
+
+			// shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
+			// orderId = "4ee530d5468a430b84a9077e8c1ed83a";
+			// type = "tdbw";
+
+			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", shopId);
+			// 根据shopid 去查对应的打印机
+			map.put("sqlMapId", "loadInUsePrintList");
+			// 先获取到所有的打印机
+			List<Map<String, Object>> res = openService.queryForList(map);
+			if (res != null && !res.isEmpty()) {
+				map.put("ORDER_PK", orderId);
+				map.put("sqlMapId", "loadOrderInfoById");
+				// 根据orderId 获取对应订单头
+				Map<String, Object> order = (Map<String, Object>) openService.queryForObject(map);
+
+				map.put("sqlMapId", "loadOrderDetailInfoById");
+				// 根据orderId 获取对应订单详情 总的 给其他打印联用
+				List<Map<String, Object>> orderInfo = openService.queryForList(map);
+				order.put("orderGoodsList", orderInfo);
+
+				map.put("sqlMapId", "getShopInfo");
+				map.put("SHOP_ID", map.get("FK_SHOP"));
+				// 根据shopid 获取对应订单头
+				Map<String, Object> shop = (Map<String, Object>) openService.queryForObject(map);
+
+				if (type.indexOf("bw") >= 0) {
+					// 打印备物联
+					// 遍历打印机 获取打印标签
+					Map<String, String> labels = new HashMap<>();
+					// 标签对应打印机集合
+					Map<String, List<Map<String, Object>>> printers = new HashMap<>();
+					for (Map<String, Object> rs : res) {
+						String onces[] = rs.get("PRINTER_DISHES").toString().split(",");
+						for (String once : onces) {
+							labels.put(once, once);
+							List<Map<String, Object>> printer = new ArrayList<>();
+							if (printers.containsKey(once) && (rs.get("PRINTER_LEVEL").toString()).indexOf("1") >= 0) {
+								printer = printers.get(once);
+							}
+							printer.add(rs);
+							printers.put(once, printer);
+						}
+					}
+					// 非重 标签列表
+					Collection<String> valueCollection = labels.values();
+					List<String> valueList = new ArrayList<String>(valueCollection);
+
+					// 打印备物联
+					for (String label : valueList) {
+						// 该标签要打印的组
+						List<Map<String, Object>> goodsList = new ArrayList<>();
+						for (Map<String, Object> goods : orderInfo) {
+							if ((goods.get("GOODS_PRINT_LABEL").toString()).indexOf(label) >= 0) {
+								// 如果标签相同 就放进去
+								goodsList.add(goods);
+							}
+						}
+						// 该标签打印机
+						List<Map<String, Object>> pList = printers.get(label);
+						for (Map<String, Object> p : pList) {
+							if ("58mm".equals(p.get("PRINTER_PAGE_WIDTH").toString())) {
+								if ("tdbw".equals(type)) {
+									// 堂点备物58mm
+									// 发送内容
+									// shopId!!!deviceId!!!orderId!!!content#
+									StringBuilder printStr = new StringBuilder();
+									order.put("orderGoodsList", goodsList);
+									// shopId
+									printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
+											// deviceId
+											.append(res.get(0).get("PRINTER_KEY")).append("!!!")
+											// orderId
+											.append(order.get("ORDER_CODE")).append("!!!")
+											// content
+											.append("&!*4" + order.get("ORDER_CODE") + "*"
+													+ new PrintTemplate58MM(order, shop).getInStoreBWTemplate());
+									contPrintService(printStr);
+								} else {
+									// 外卖备物 58mm
+									// 发送内容
+									// shopId!!!deviceId!!!orderId!!!content#
+									StringBuilder printStr = new StringBuilder();
+									// shopId
+									printStr.append(UUID.randomUUID().toString().replace("-", "")).append("!!!")
+											// deviceId
+											.append(res.get(0).get("PRINTER_KEY")).append("!!!")
+											// orderId
+											.append(order.get("ORDER_CODE")).append("!!!")
+											// content
+											.append("&!*4" + order.get("ORDER_CODE") + "*"
+													+ new PrintTemplate58MM(order, shop).getOutStoreBWTemplate());
+									contPrintService(printStr);
+								}
+							} else if ("80mm".equals(p.get("PRINTER_PAGE_WIDTH").toString())) {
+								// TODO 80mm 备物联样式
+							}
+						}
+					}
+				}
+				output("0000", " 打印成功! ");
+				return;
+			}
+			output("9999", " 暂无可用打印机! ");
+			return;
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
+
+	public void contPrintService(StringBuilder printStr) {
+		String host = "119.23.71.153"; // 要连接的服务端IP地址 119.23.71.153
+		int port = 8008; // 要连接的服务端对应的监听端口
+		try {
+			// 与服务端建立连接
+			Socket client = new Socket(host, port);
+			Writer writer = new OutputStreamWriter(client.getOutputStream(), "UTF-8");
+			writer.write(printStr.toString());
+			writer.close();
+			client.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * 
 	 * @author kqs
@@ -355,5 +679,28 @@ public class PrinterController extends BaseController {
 		}
 		return;
 	}
-	
+
+	/**
+	 * 
+	 */
+	@RequestMapping("/ShopTag_insert_addShopGoodsTag")
+	public void addShopGoodsTag(HttpServletRequest request, HttpSession session) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+
+			Map<String, Object> map = getParameterMap();
+			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
+			map.put("sqlMapId", "selectShopGoodsTagByWhere");
+			List<Map<String, Object>> res = openService.queryForList(map);
+			if (res != null) {
+				output("0000", res);
+				return;
+			}
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+		return;
+	}
 }

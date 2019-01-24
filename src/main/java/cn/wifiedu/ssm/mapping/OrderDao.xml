@@ -123,7 +123,7 @@
 	
 	<!-- 根据orderId 获取对应订单头信息 -->
 	<select id="loadOrderDetailInfoById" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
-		SELECT a.* FROM sc_order_details a WHERE a.FK_ORDER =
+		SELECT a.*, b.GOODS_PRINT_LABEL FROM sc_order_details a LEFT JOIN sc_goods b ON a.FK_GOODS = b.GOODS_PK WHERE a.FK_ORDER =
 		#{ORDER_PK}
 	</select>
 	

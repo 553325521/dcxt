@@ -49,8 +49,12 @@ public abstract class PrintTemplate {
     public abstract String getOutStoreBWTemplate();
     // 堂点对账
     public abstract String getInStoreDZTemplate();
+    // 外卖对账
+    public abstract String getOutStoreDZTemplate();
     // 堂点结算
     public abstract String getInStoreJSTemplate();
+    // 外卖结算
+    public abstract String getOutStoreJSTemplate();
     
     public static int getStrLen(String data) {
         int length = 0;

@@ -40,6 +40,9 @@ public class PrintTemplate58MM extends PrintTemplate {
 	public static final String FKFS = "付款方式：";
 	public static final String FKSJ = "付款时间：";
 	public static final String LXDH = "联系电话：";
+	public static final String SYY = "收银员：";
+	public static final String PSDH = "配送电话：";
+	public static final String PSDZ = "配送地址：";
 
 	// 订单
 	private Map<String, Object> order;
@@ -130,6 +133,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 					+ orderGoods.get("ORDER_DETAILS_DW").toString() + LINE;
 			total += Integer.valueOf(orderGoods.get("ORDER_DETAILS_FS").toString());
 		}
+		String remark = "";
+		if (order.containsKey("WM_ORDER_REMARK")) {
+			remark = order.get("WM_ORDER_REMARK").toString();
+		}
 		return result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(BWL).append(LINE)
 				.append(STARLINE).append(LINE).append(BOLD).append(BILLID)
 				.append(dealBillId(order.get("ORDER_CODE").toString())).append(LINE).append(BOLD)
@@ -138,8 +145,8 @@ public class PrintTemplate58MM extends PrintTemplate {
 				.append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(SUBLINE).append(LINE).append(BOLD)
 				.append(DISHES_NAME).append("        ").append(NOTES).append("       ").append(COUNTS).append(LINE)
 				.append(billData).append(SUBLINE).append(LINE).append(BOLD).append(CENTER_BLANK).append(TOTAL)
-				.append(blankSpace).append(total).append("份").append(LINE).append(RIGHT_BOLD)
-				.append(order.get("WM_ORDER_REMARK").toString()).append(LINE).append(STARLINE).append(OVER).toString();
+				.append(blankSpace).append(total).append("份").append(LINE).append(RIGHT_BOLD).append(remark)
+				.append(LINE).append(STARLINE).append(OVER).toString();
 	}
 
 	@Override
@@ -192,17 +199,21 @@ public class PrintTemplate58MM extends PrintTemplate {
 					+ orderGoods.get("ORDER_DETAILS_DW").toString() + LINE;
 			total += Integer.valueOf(orderGoods.get("ORDER_DETAILS_FS").toString());
 		}
+		String remark = "";
+		if (order.containsKey("WM_ORDER_REMARK")) {
+			remark = order.get("WM_ORDER_REMARK").toString();
+		}
 
 		return result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(BWL).append(LINE)
 				.append(STARLINE).append(LINE).append(BOLD).append(BILLID)
 				.append(dealBillId(order.get("ORDER_CODE").toString())).append(LINE).append(BOLD).append(MEAL_TIME)
 				.append(order.get("WM_ORDER_SEND_TIME").toString()).append(LINE).append(BOLD).append(DINNER_COUNT)
-				.append(dinnerCount).append(DINNER_UNIT).append(blank).append(SHIP_METHOD)
+				.append(dinnerCount).append(DINNER_UNIT).append(blank).append(LINE).append(BOLD).append(SHIP_METHOD)
 				.append(WM_ORDER_DELIVERY_PARTY).append(LINE).append(SUBLINE).append(LINE).append(BOLD)
 				.append(DISHES_NAME).append("        ").append(NOTES).append("       ").append(COUNTS).append(LINE)
 				.append(billData).append(SUBLINE).append(LINE).append(BOLD).append(CENTER_BLANK).append(TOTAL)
-				.append(blankSpace).append(total).append("份").append(LINE).append(RIGHT_BOLD)
-				.append(order.get("WM_ORDER_REMARK").toString()).append(LINE).append(STARLINE).append(OVER).toString();
+				.append(blankSpace).append(total).append("份").append(LINE).append(RIGHT_BOLD).append(remark)
+				.append(LINE).append(STARLINE).append(OVER).toString();
 	}
 
 	@Override
@@ -302,17 +313,164 @@ public class PrintTemplate58MM extends PrintTemplate {
 		String ORDER_YFMONEY = order.get("ORDER_YFMONEY").toString();
 		ORDER_YFMONEY = Arith.div(Double.valueOf(ORDER_YFMONEY), 100, 2) + "";
 		// 备注 order.get("WM_ORDER_REMARK").toString()
-		return result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(DZL).append(LINE)
-				.append(STARLINE).append(LINE).append(BOLD).append(BILLID)
-				.append(dealBillId(order.get("ORDER_CODE").toString())).append(blank1).append(dinnerCount)
-				.append(DINNER_UNIT).append(LINE).append(BOLD).append(BILL_CREATE_TIME)
-				.append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate()))).append(blank2)
-				.append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(BOLD).append(DISHES_NAME).append("     ")
-				.append(DANJIA).append("   ").append(COUNTS).append("   ").append(XIAOJI).append(LINE).append(billData)
-				.append(BOLD).append(middleBlank4).append(total).append("份").append(blankSpace).append(TOTAL)
-				.append(totalAll).append(LINE).append(RIGHT_BOLD).append(YOUHUI).append(ORDER_YHMONEY).append(LINE)
-				.append(RIGHT_BOLD).append(ORDER_PAY_WAY).append(ORDER_YFMONEY).append(LINE).append(STARLINE)
-				.append(OVER).toString();
+		result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(DZL).append(LINE).append(STARLINE)
+				.append(LINE).append(BOLD).append(BILLID).append(dealBillId(order.get("ORDER_CODE").toString()))
+				.append(blank1).append(dinnerCount).append(DINNER_UNIT).append(LINE).append(BOLD)
+				.append(BILL_CREATE_TIME).append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate())))
+				.append(blank2).append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(BOLD).append(DISHES_NAME)
+				.append("     ").append(DANJIA).append("   ").append(COUNTS).append("   ").append(XIAOJI).append(LINE)
+				.append(billData).append(BOLD).append(middleBlank4).append(total).append("份").append(blankSpace)
+				.append(TOTAL).append(totalAll).append(LINE).append(RIGHT_BOLD).append(YOUHUI).append(ORDER_YHMONEY)
+				.append(LINE).append(RIGHT_BOLD).append(ORDER_PAY_WAY).append(ORDER_YFMONEY).append(LINE).append(LINE);
+		// .append(RIGHT_BOLD).append(SYY).append(ORDER_PAY_WAY).append(LINE)
+		// 会员卡
+		if (order.containsKey("VCARD_NUMBER")) {
+			result.append(RIGHT_BOLD).append(HYKH).append(order.get("VCARD_NUMBER").toString()).append(LINE);
+		}
+		// 卡券
+		if (order.containsKey("KAQUAN")) {
+			result.append(RIGHT_BOLD).append(KAQUAN).append(order.get("KAQUAN").toString()).append("张").append(LINE);
+		}
+		// 积分
+		if (order.containsKey("JIFEN")) {
+			result.append(RIGHT_BOLD).append(JIFEN).append(order.get("JIFEN").toString()).append("分").append(LINE);
+		}
+		// 储值
+		if (order.containsKey("CHUZHI")) {
+			result.append(RIGHT_BOLD).append(CHUZHI).append(order.get("CHUZHI").toString()).append("元").append(LINE);
+		}
+		result.append(RIGHT_BOLD).append(FKSJ).append(order.get("PAY_TIME").toString()).append(LINE).append(STARLINE)
+				.append(OVER);
+		return result.toString();
+	}
+
+	@Override
+	// 外卖对账联
+	public String getOutStoreDZTemplate() {
+		StringBuilder result = new StringBuilder();
+		// 计算空格
+		List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
+		String dishesSize = orderGoodsList.size() + "";
+		// 人数
+		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		// 第一行间隔
+		String blank1 = "";
+		for (int i = 0; i < 2 - (order.get("ORDER_RS").toString()).length(); i++) {
+			blank1 += " ";
+		}
+		// 第二行间隔
+		String blank2 = "";
+		// 桌台备注
+		String tableInfoRemark = order.get("TABLES_NAME").toString();
+		for (int i = 0; i < 8 - getStrLen(tableInfoRemark); i++) {
+			blank2 += " ";
+		}
+		// 总份数
+		int total = 0;
+		String blankSpace = "";
+		for (int i = 0; i < 9 - dishesSize.length(); i++) {
+			blankSpace += " ";
+		}
+		String billData = "";
+		String totalAll = "0";
+		// 菜品信息
+		for (Map<String, Object> orderGoods : orderGoodsList) {
+			// 计算空格
+			int nameLen = getStrLen(orderGoods.get("ORDER_DETAILS_GNAME").toString());
+			String middleBlank1 = "";
+			for (int i = 0; i < 13 - nameLen; i++) {
+				middleBlank1 += " ";
+			}
+			// 单价
+			String ORDER_DETAILS_GMONEY = orderGoods.get("ORDER_DETAILS_GMONEY").toString();
+			ORDER_DETAILS_GMONEY = Arith.div(Double.valueOf(ORDER_DETAILS_GMONEY), 100, 2) + "";
+			String middleBlank2 = "";
+			for (int i = 0; i < (7 - getStrLen(ORDER_DETAILS_GMONEY)); i++) {
+				middleBlank2 += " ";
+			}
+			// 小计
+			String totalMoney = Arith.mul(Double.valueOf(ORDER_DETAILS_GMONEY),
+					Double.valueOf(orderGoods.get("ORDER_DETAILS_FS").toString())) + "";
+			totalAll = Arith.add(Double.valueOf(totalMoney), Double.valueOf(totalAll)) + "";
+			String middleBlank3 = "";
+			for (int i = 0; i < (11 - getStrLen(
+					orderGoods.get("ORDER_DETAILS_FS").toString() + orderGoods.get("ORDER_DETAILS_DW").toString()))
+					- getStrLen(totalMoney); i++) {
+				middleBlank3 += " ";
+			}
+			billData += BOLD + (orderGoods.get("ORDER_DETAILS_GNAME").toString()) + middleBlank1 + ORDER_DETAILS_GMONEY
+					+ middleBlank2 + orderGoods.get("ORDER_DETAILS_FS").toString()
+					+ orderGoods.get("ORDER_DETAILS_DW").toString() + middleBlank3 + totalMoney + LINE;
+			total += Integer.valueOf(orderGoods.get("ORDER_DETAILS_FS").toString());
+		}
+		String middleBlank4 = "";
+		for (int i = 0; i < 13 - getStrLen(total + ""); i++) {
+			middleBlank4 += " ";
+		}
+		// 优惠金额
+		String ORDER_YHMONEY = order.get("ORDER_YHMONEY").toString();
+		ORDER_YHMONEY = Arith.div(Double.valueOf(ORDER_YHMONEY), 100, 2) + "";
+		// 支付方式
+		String ORDER_PAY_WAY = order.get("ORDER_PAY_WAY").toString();
+		if ("0".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "待支付";
+		} else if ("1".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "现金支付";
+		} else if ("2".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "扫一扫";
+		} else if ("21".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "微信扫一扫收款";
+		} else if ("22".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "支付宝扫一扫收款";
+		} else if ("23".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "银联扫一扫收款";
+		} else if ("3".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "二维码";
+		} else if ("31".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "微信二维码收款";
+		} else if ("32".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "支付宝二维码收款";
+		} else if ("4".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "pos支付";
+		} else if ("5".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "储值支付";
+		} else if ("6".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "其他";
+		}
+		// 应付金额
+		String ORDER_YFMONEY = order.get("ORDER_YFMONEY").toString();
+		ORDER_YFMONEY = Arith.div(Double.valueOf(ORDER_YFMONEY), 100, 2) + "";
+		// 备注 order.get("WM_ORDER_REMARK").toString()
+
+		result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(DZL).append(LINE).append(STARLINE)
+				.append(LINE).append(BOLD).append(BILLID).append(dealBillId(order.get("ORDER_CODE").toString()))
+				.append(blank1).append(dinnerCount).append(DINNER_UNIT).append(LINE).append(BOLD)
+				.append(BILL_CREATE_TIME).append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate())))
+				.append(blank2).append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(BOLD).append(DISHES_NAME)
+				.append("     ").append(DANJIA).append("   ").append(COUNTS).append("   ").append(XIAOJI).append(LINE)
+				.append(billData).append(BOLD).append(middleBlank4).append(total).append("份").append(blankSpace)
+				.append(TOTAL).append(totalAll).append(LINE).append(RIGHT_BOLD).append(YOUHUI).append(ORDER_YHMONEY)
+				.append(LINE).append(RIGHT_BOLD).append(ORDER_PAY_WAY).append(ORDER_YFMONEY).append(LINE).append(LINE);
+		// 会员卡
+		if (order.containsKey("VCARD_NUMBER")) {
+			result.append(RIGHT_BOLD).append(HYKH).append(order.get("VCARD_NUMBER").toString()).append(LINE);
+		}
+		// 卡券
+		if (order.containsKey("KAQUAN")) {
+			result.append(RIGHT_BOLD).append(KAQUAN).append(order.get("KAQUAN").toString()).append("张").append(LINE);
+		}
+		// 积分
+		if (order.containsKey("JIFEN")) {
+			result.append(RIGHT_BOLD).append(JIFEN).append(order.get("JIFEN").toString()).append("分").append(LINE);
+		}
+		// 储值
+		if (order.containsKey("CHUZHI")) {
+			result.append(RIGHT_BOLD).append(CHUZHI).append(order.get("CHUZHI").toString()).append("元").append(LINE);
+		}
+		result.append(RIGHT_BOLD).append(FKFS).append(ORDER_PAY_WAY).append(LINE).append(RIGHT_BOLD).append(FKSJ)
+				.append(order.get("PAY_TIME").toString()).append(LINE).append(STARLINE).append(OVER).toString();
+
+		return result.toString();
 	}
 
 	@Override
@@ -412,18 +570,161 @@ public class PrintTemplate58MM extends PrintTemplate {
 		String ORDER_YFMONEY = order.get("ORDER_YFMONEY").toString();
 		ORDER_YFMONEY = Arith.div(Double.valueOf(ORDER_YFMONEY), 100, 2) + "";
 		// 备注 order.get("WM_ORDER_REMARK").toString()
-		return result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(JSL).append(LINE)
-				.append(STARLINE).append(LINE).append(BOLD).append(BILLID)
-				.append(dealBillId(order.get("ORDER_CODE").toString())).append(blank1).append(dinnerCount)
-				.append(DINNER_UNIT).append(LINE).append(BOLD).append(BILL_CREATE_TIME)
-				.append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate()))).append(blank2)
-				.append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(BOLD).append(DISHES_NAME).append("     ")
-				.append(DANJIA).append("   ").append(COUNTS).append("   ").append(XIAOJI).append(LINE).append(billData)
-				.append(BOLD).append(middleBlank4).append(total).append("份").append(blankSpace).append(TOTAL)
-				.append(totalAll).append(LINE).append(RIGHT_BOLD).append(YOUHUI).append(ORDER_YHMONEY).append(LINE)
-				.append(RIGHT_BOLD).append(ORDER_PAY_WAY).append(ORDER_YFMONEY).append(LINE).append(SUBLINE)
-				.append(LINE).append(LEFT_BOLD).append(LXDH).append(shop.get("SHOP_TEL").toString()).append(LINE)
-				.append(LEFT_BOLD).append(shop.get("SHOP_ADDRESS").toString()).append(LINE).append(STARLINE).append(OVER).toString();
+		result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(JSL).append(LINE).append(STARLINE)
+				.append(LINE).append(BOLD).append(BILLID).append(dealBillId(order.get("ORDER_CODE").toString()))
+				.append(blank1).append(dinnerCount).append(DINNER_UNIT).append(LINE).append(BOLD)
+				.append(BILL_CREATE_TIME).append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate())))
+				.append(blank2).append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(BOLD).append(DISHES_NAME)
+				.append("     ").append(DANJIA).append("   ").append(COUNTS).append("   ").append(XIAOJI).append(LINE)
+				.append(billData).append(BOLD).append(middleBlank4).append(total).append("份").append(blankSpace)
+				.append(TOTAL).append(totalAll).append(LINE).append(RIGHT_BOLD).append(YOUHUI).append(ORDER_YHMONEY)
+				.append(LINE).append(RIGHT_BOLD).append(ORDER_PAY_WAY).append(ORDER_YFMONEY).append(LINE)
+				.append(SUBLINE).append(LINE);
+		// 会员卡
+		if (order.containsKey("VCARD_NUMBER")) {
+			result.append(LEFT_BOLD).append(HYKH).append(order.get("VCARD_NUMBER")).append(LINE);
+		}
+		// 积分
+		if (order.containsKey("JIFEN")) {
+			result.append(LEFT_BOLD).append(JIFEN).append(order.get("JIFEN")).append(LINE);
+		}
+		// 储值
+		if (order.containsKey("CHUZHI")) {
+			result.append(LEFT_BOLD).append(CHUZHI).append(order.get("CHUZHI")).append(LINE).append(SUBLINE)
+					.append(LINE);
+		}
+
+		return result.append(LEFT_BOLD).append(LXDH).append(shop.get("SHOP_TEL").toString()).append(LINE)
+				.append(LEFT_BOLD).append(shop.get("SHOP_ADDRESS").toString()).append(LINE).append(STARLINE)
+				.append(OVER).toString();
+	}
+
+	@Override
+	// 外卖结算联
+	public String getOutStoreJSTemplate() {
+		StringBuilder result = new StringBuilder();
+		// 计算空格
+		List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
+		String dishesSize = orderGoodsList.size() + "";
+		// 人数
+		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		// 第一行间隔
+		String blank1 = "";
+		for (int i = 0; i < 2 - (order.get("ORDER_RS").toString()).length(); i++) {
+			blank1 += " ";
+		}
+		// 第二行间隔
+		String blank2 = "";
+		// 桌台备注
+		String tableInfoRemark = order.get("TABLES_NAME").toString();
+		for (int i = 0; i < 8 - getStrLen(tableInfoRemark); i++) {
+			blank2 += " ";
+		}
+		// 总份数
+		int total = 0;
+		String blankSpace = "";
+		for (int i = 0; i < 9 - dishesSize.length(); i++) {
+			blankSpace += " ";
+		}
+		String billData = "";
+		String totalAll = "0";
+		// 菜品信息
+		for (Map<String, Object> orderGoods : orderGoodsList) {
+			// 计算空格
+			int nameLen = getStrLen(orderGoods.get("ORDER_DETAILS_GNAME").toString());
+			String middleBlank1 = "";
+			for (int i = 0; i < 13 - nameLen; i++) {
+				middleBlank1 += " ";
+			}
+			// 单价
+			String ORDER_DETAILS_GMONEY = orderGoods.get("ORDER_DETAILS_GMONEY").toString();
+			ORDER_DETAILS_GMONEY = Arith.div(Double.valueOf(ORDER_DETAILS_GMONEY), 100, 2) + "";
+			String middleBlank2 = "";
+			for (int i = 0; i < (7 - getStrLen(ORDER_DETAILS_GMONEY)); i++) {
+				middleBlank2 += " ";
+			}
+			// 小计
+			String totalMoney = Arith.mul(Double.valueOf(ORDER_DETAILS_GMONEY),
+					Double.valueOf(orderGoods.get("ORDER_DETAILS_FS").toString())) + "";
+			totalAll = Arith.add(Double.valueOf(totalMoney), Double.valueOf(totalAll)) + "";
+			String middleBlank3 = "";
+			for (int i = 0; i < (11 - getStrLen(
+					orderGoods.get("ORDER_DETAILS_FS").toString() + orderGoods.get("ORDER_DETAILS_DW").toString()))
+					- getStrLen(totalMoney); i++) {
+				middleBlank3 += " ";
+			}
+			billData += BOLD + (orderGoods.get("ORDER_DETAILS_GNAME").toString()) + middleBlank1 + ORDER_DETAILS_GMONEY
+					+ middleBlank2 + orderGoods.get("ORDER_DETAILS_FS").toString()
+					+ orderGoods.get("ORDER_DETAILS_DW").toString() + middleBlank3 + totalMoney + LINE;
+			total += Integer.valueOf(orderGoods.get("ORDER_DETAILS_FS").toString());
+		}
+		String middleBlank4 = "";
+		for (int i = 0; i < 13 - getStrLen(total + ""); i++) {
+			middleBlank4 += " ";
+		}
+		// 优惠金额
+		String ORDER_YHMONEY = order.get("ORDER_YHMONEY").toString();
+		ORDER_YHMONEY = Arith.div(Double.valueOf(ORDER_YHMONEY), 100, 2) + "";
+		// 支付方式
+		String ORDER_PAY_WAY = order.get("ORDER_PAY_WAY").toString();
+		if ("0".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "待支付";
+		} else if ("1".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "现金支付";
+		} else if ("2".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "扫一扫";
+		} else if ("21".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "微信扫一扫收款";
+		} else if ("22".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "支付宝扫一扫收款";
+		} else if ("23".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "银联扫一扫收款";
+		} else if ("3".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "二维码";
+		} else if ("31".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "微信二维码收款";
+		} else if ("32".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "支付宝二维码收款";
+		} else if ("4".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "pos支付";
+		} else if ("5".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "储值支付";
+		} else if ("6".equals(ORDER_PAY_WAY)) {
+			ORDER_PAY_WAY = "其他";
+		}
+		// 应付金额
+		String ORDER_YFMONEY = order.get("ORDER_YFMONEY").toString();
+		ORDER_YFMONEY = Arith.div(Double.valueOf(ORDER_YFMONEY), 100, 2) + "";
+		// 备注 order.get("WM_ORDER_REMARK").toString()
+		result.append(CENTER_BOLD).append(order.get("SHOP_NAME").toString()).append(JSL).append(LINE).append(STARLINE)
+				.append(LINE).append(BOLD).append(BILLID).append(dealBillId(order.get("ORDER_CODE").toString()))
+				.append(blank1).append(dinnerCount).append(DINNER_UNIT).append(LINE).append(BOLD)
+				.append(BILL_CREATE_TIME).append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate())))
+				.append(blank2).append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(BOLD).append(DISHES_NAME)
+				.append("     ").append(DANJIA).append("   ").append(COUNTS).append("   ").append(XIAOJI).append(LINE)
+				.append(billData).append(BOLD).append(middleBlank4).append(total).append("份").append(blankSpace)
+				.append(TOTAL).append(totalAll).append(LINE).append(RIGHT_BOLD).append(YOUHUI).append(ORDER_YHMONEY)
+				.append(LINE).append(RIGHT_BOLD).append(ORDER_PAY_WAY).append(ORDER_YFMONEY).append(LINE)
+				.append(SUBLINE).append(LINE).append(LEFT_BOLD).append(PSDH).append(order.get("WM_USERPHONE")).append("    ").append(order.get("WM_ORDER_USERNAME")).append(LINE)
+				.append(BOLD).append(PSDZ).append(order.get("WM_USER_ADDRESS")).append(LINE).append(SUBLINE).append(LINE);
+		
+		// 会员卡
+		if (order.containsKey("VCARD_NUMBER")) {
+			result.append(LEFT_BOLD).append(HYKH).append(order.get("VCARD_NUMBER")).append(LINE);
+		}
+		// 积分
+		if (order.containsKey("JIFEN")) {
+			result.append(LEFT_BOLD).append(JIFEN).append(order.get("JIFEN")).append(LINE);
+		}
+		// 储值
+		if (order.containsKey("CHUZHI")) {
+			result.append(LEFT_BOLD).append(CHUZHI).append(order.get("CHUZHI")).append(LINE).append(SUBLINE)
+					.append(LINE);
+		}
+
+		return result.append(LEFT_BOLD).append(LXDH).append(shop.get("SHOP_TEL").toString()).append(LINE)
+				.append(LEFT_BOLD).append(shop.get("SHOP_ADDRESS").toString()).append(LINE).append(STARLINE)
+				.append(OVER).toString();
 	}
 
 }
