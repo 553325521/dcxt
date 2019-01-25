@@ -269,7 +269,7 @@ public class PrinterController extends BaseController {
 	public void doPrintJSByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
 		// 根据订单id查询出来商铺id
-		map.put("sqlmapId", "slectShopIdByOrderId");
+		map.put("sqlMapId", "slectShopIdByOrderId");
 		map.put("ORDER_PK", orderId);
 		try {
 			map = (Map) openService.queryForObject(map);
@@ -405,7 +405,7 @@ public class PrinterController extends BaseController {
 	public void doPrintDZByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
 		// 根据订单id查询出来商铺id
-		map.put("sqlmapId", "slectShopIdByOrderId");
+		map.put("sqlMapId", "slectShopIdByOrderId");
 		map.put("ORDER_PK", orderId);
 		try {
 			map = (Map) openService.queryForObject(map);
@@ -564,7 +564,7 @@ public class PrinterController extends BaseController {
 	public void doPrintByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
 		// 根据订单id查询出来商铺id
-		map.put("sqlmapId", "slectShopIdByOrderId");
+		map.put("sqlMapId", "slectShopIdByOrderId");
 		map.put("ORDER_PK", orderId);
 
 		try {

@@ -955,6 +955,8 @@ public class OrderController extends BaseController {
 	public void OrderShopSettleAccounts() throws ExceptionVo {
 		//TODO
 		//先查询该用户对该订单有没有操作的权限  优惠支付，等一些东西都没弄好
+		String orderId;
+		String shopId;
 		try {
 			Map<String, Object> map = getParameterMap();
 			String shouldMoneyStr = (String) map.get("trueMoney");
@@ -1051,26 +1053,49 @@ public class OrderController extends BaseController {
 			map.put("ORDER_PAY_WAY", payWay);
 			if(!"2".equals(payWay) || !"3".equals(payWay)) {//都不需要后续操作，直接支付成功
 				map.put("ORDER_PAY_STATE", 1);
-				
-				String orderId = (String) map.get("ORDER_PK");
-				
-				//异步发送打印请求
-				new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						printerController.doPrintDZByOrderId(orderId);
-					}
-				}).start();
+				orderId = (String) map.get("ORDER_PK");
+				shopId = (String)map.get("SHOP_FK");
 				
 			}else {
 				map.put("ORDER_PAY_STATE", 0);
+				if(!openService.update(map)) {
+					throw new RuntimeException();
+				}
+				txManagerController.commit();
+				output("0000", "等待用户支付");
+				return;
 			}
+			
 			if(!openService.update(map)) {
 				throw new RuntimeException();
 			}
 			txManagerController.commit();
 			output("0000", "支付成功");
+			
+			//异步发送打印请求
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					printerController.doPrintDZByOrderId(orderId);
+					
+					//查询打不打印结算联
+					Map switchMap = new HashMap<String, Object>();
+					switchMap.put("sqlMapId", "loadFuncSwitchList");
+					switchMap.put("FK_SHOP", shopId);
+					try {
+						switchMap = (Map) openService.queryForObject(switchMap);
+					} catch (Exception e) {
+						logger.error(e);
+					}
+					String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
+					if("false".equals(CHECK_XDDYJSL)) {
+						printerController.doPrintJS(shopId, orderId, "tdjs");
+					}
+					
+				}
+			}).start();
+			
 			return;
 		} catch (Exception e) {
 			txManagerController.rollback();

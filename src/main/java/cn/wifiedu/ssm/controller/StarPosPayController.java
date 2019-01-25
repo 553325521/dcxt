@@ -539,9 +539,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 								Map switchMap = new HashMap<String, Object>();
 								switchMap.put("sqlMapId", "loadFuncSwitchList");
 								switchMap.put("FK_SHOP", shopId);
-								switchMap = (Map) openService.queryForObject(shopMap);
+								switchMap = (Map) openService.queryForObject(switchMap);
 								String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
-								if("true".equals(CHECK_XDDYJSL)) {
+								if("false".equals(CHECK_XDDYJSL)) {
 									printerController.doPrintJS(shopId, orderId, "tdjs");
 								}
 							
@@ -625,9 +625,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 								Map switchMap = new HashMap<String, Object>();
 								switchMap.put("sqlMapId", "loadFuncSwitchList");
 								switchMap.put("FK_SHOP", shopId);
-								switchMap = (Map) openService.queryForObject(shopMap);
+								switchMap = (Map) openService.queryForObject(switchMap);
 								String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
-								if("true".equals(CHECK_XDDYJSL)) {
+								if("false".equals(CHECK_XDDYJSL)) {
 									printerController.doPrintJS(shopId, orderId, "tdjs");
 								}
 							
