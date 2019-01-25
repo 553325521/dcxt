@@ -269,7 +269,7 @@ public class PrinterController extends BaseController {
 
 	public void doPrintJSByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
-		//根据订单id查询出来商铺id
+		// 根据订单id查询出来商铺id
 		map.put("sqlmapId", "slectShopIdByOrderId");
 		map.put("ORDER_PK", orderId);
 		try {
@@ -280,17 +280,17 @@ public class PrinterController extends BaseController {
 		}
 		String shopId = (String) map.get("FK_SHOP");
 		String ORDER_DIVISION = (String) map.get("ORDER_DIVISION");
-		
+
 		String type = null;
-		if("1".equals(ORDER_DIVISION)) {
+		if ("1".equals(ORDER_DIVISION)) {
 			type = "wmbw";
-		}else {
+		} else {
 			type = "tdbw";
 		}
-		
+
 		doPrintJS(shopId, orderId, type);
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -306,13 +306,13 @@ public class PrinterController extends BaseController {
 	public void doPrintJS(String shopId, String orderId, String type) {
 		try {
 
-//			shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
-//			orderId = "0151f0c7738f4957b62e20ec3287c107";
-//			type = "wmjs";
+			// shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
+			// orderId = "0151f0c7738f4957b62e20ec3287c107";
+			// type = "wmjs";
 
-//			Map<String, Object> map = getParameterMap();
+			// Map<String, Object> map = getParameterMap();
 			Map<String, Object> map = new HashMap<String, Object>();
-			
+
 			map.put("FK_SHOP", shopId);
 			// 根据shopid 去查对应的打印机
 			map.put("sqlMapId", "loadInUsePrintList");
@@ -337,21 +337,23 @@ public class PrinterController extends BaseController {
 				map.put("sqlMapId", "selectJFCZByOrderId");
 				// 根据orderId 获取会员卡信息
 				Map<String, Object> hys = (Map<String, Object>) openService.queryForObject(map);
-				// 会员卡号
-				if (hys.containsKey("VCARD_NUMBER")) {
-					order.put("VCARD_NUMBER", hys.get("VCARD_NUMBER"));
-				}
-				if (hys.containsKey("USER_VCARD_JF")) {
-					// 积分
-					order.put("JIFEN", hys.get("USER_VCARD_JF"));
-				}
-				if (hys.containsKey("USER_VCARD_CZ")) {
-					// 储值
-					order.put("CHUZHI", hys.get("USER_VCARD_CZ"));
-				}
-				// 卡券总数
-				if (hys.containsKey("CARD_NUM")) {
-					order.put("KAQUAN", "-" + hys.get("CARD_NUM").toString());
+				if (hys != null) {
+					// 会员卡号
+					if (hys.containsKey("VCARD_NUMBER")) {
+						order.put("VCARD_NUMBER", hys.get("VCARD_NUMBER"));
+					}
+					if (hys.containsKey("USER_VCARD_JF")) {
+						// 积分
+						order.put("JIFEN", hys.get("USER_VCARD_JF"));
+					}
+					if (hys.containsKey("USER_VCARD_CZ")) {
+						// 储值
+						order.put("CHUZHI", hys.get("USER_VCARD_CZ"));
+					}
+					// 卡券总数
+					if (hys.containsKey("CARD_NUM")) {
+						order.put("KAQUAN", "-" + hys.get("CARD_NUM").toString());
+					}
 				}
 				// 遍历打印机 找对应联的打印机
 				for (Map<String, Object> p : res) {
@@ -403,10 +405,9 @@ public class PrinterController extends BaseController {
 		}
 	}
 
-	
 	public void doPrintDZByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
-		//根据订单id查询出来商铺id
+		// 根据订单id查询出来商铺id
 		map.put("sqlmapId", "slectShopIdByOrderId");
 		map.put("ORDER_PK", orderId);
 		try {
@@ -417,20 +418,17 @@ public class PrinterController extends BaseController {
 		}
 		String shopId = (String) map.get("FK_SHOP");
 		String ORDER_DIVISION = (String) map.get("ORDER_DIVISION");
-		
+
 		String type = null;
-		if("1".equals(ORDER_DIVISION)) {
+		if ("1".equals(ORDER_DIVISION)) {
 			type = "wmbw";
-		}else {
+		} else {
 			type = "tdbw";
 		}
-		
-		
-		
+
 		doPrintDZ(shopId, orderId, type);
 	}
-	
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -450,7 +448,7 @@ public class PrinterController extends BaseController {
 			// orderId = "0151f0c7738f4957b62e20ec3287c107";
 			// type = "wmdz";
 
-//			Map<String, Object> map = getParameterMap();
+			// Map<String, Object> map = getParameterMap();
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("FK_SHOP", shopId);
 			// 根据shopid 去查对应的打印机
@@ -476,42 +474,44 @@ public class PrinterController extends BaseController {
 				map.put("sqlMapId", "selectPrintData1ByOrderId");
 				// 根据orderId 获取会员卡信息
 				Map<String, Object> hys = (Map<String, Object>) openService.queryForObject(map);
-				if (hys.containsKey("vard_record")) {
-					List<Map<String, Object>> hyInfo = (List<Map<String, Object>>) hys.get("vard_record");
-					if (hyInfo != null && !hyInfo.isEmpty()) {
-						// 会员卡号
-						if (hys.containsKey("VCARD_NUMBER")) {
-							order.put("VCARD_NUMBER", hys.get("VCARD_NUMBER"));
-							// 消耗类型
-							for (Map<String, Object> hy : hyInfo) {
-								if (hy.containsKey("VRECORD_TYPE")) {
-									String codeTypes[] = hy.get("VRECORD_TYPE").toString().split("");
-									String str = "";
-									if (codeTypes[0].equals("1")) {
-										str = "+";
-									} else {
-										str = "-";
-									}
-									if (codeTypes[1].equals("1")) {
-										str = str + hy.get("VRECORD_NUM").toString();
-										// 积分
-										order.put("JIFEN", str);
-									} else {
-										String chuzhi = String.valueOf(
-												Arith.div(Double.valueOf(hy.get("VRECORD_NUM").toString()), 100, 2));
-										str = str + chuzhi;
-										// 储值
-										order.put("CHUZHI", str);
+				if (hys != null) {
+					if (hys.containsKey("vard_record")) {
+						List<Map<String, Object>> hyInfo = (List<Map<String, Object>>) hys.get("vard_record");
+						if (hyInfo != null && !hyInfo.isEmpty()) {
+							// 会员卡号
+							if (hys.containsKey("VCARD_NUMBER")) {
+								order.put("VCARD_NUMBER", hys.get("VCARD_NUMBER"));
+								// 消耗类型
+								for (Map<String, Object> hy : hyInfo) {
+									if (hy.containsKey("VRECORD_TYPE")) {
+										String codeTypes[] = hy.get("VRECORD_TYPE").toString().split("");
+										String str = "";
+										if (codeTypes[0].equals("1")) {
+											str = "+";
+										} else {
+											str = "-";
+										}
+										if (codeTypes[1].equals("1")) {
+											str = str + hy.get("VRECORD_NUM").toString();
+											// 积分
+											order.put("JIFEN", str);
+										} else {
+											String chuzhi = String.valueOf(Arith
+													.div(Double.valueOf(hy.get("VRECORD_NUM").toString()), 100, 2));
+											str = str + chuzhi;
+											// 储值
+											order.put("CHUZHI", str);
+										}
 									}
 								}
 							}
+							// 卡券总数
+							if (hys.containsKey("CARD_NUM")) {
+								order.put("KAQUAN", "-" + hys.get("CARD_NUM").toString());
+							}
+							// 支付时间
+							order.put("PAY_TIME", hys.get("PAY_TIME").toString().substring(11, 16));
 						}
-						// 卡券总数
-						if (hys.containsKey("CARD_NUM")) {
-							order.put("KAQUAN", "-" + hys.get("CARD_NUM").toString());
-						}
-						// 支付时间
-						order.put("PAY_TIME", hys.get("PAY_TIME").toString().substring(11, 16));
 					}
 				}
 				// 遍历打印机 找对应联的打印机
@@ -564,13 +564,12 @@ public class PrinterController extends BaseController {
 		}
 	}
 
-	
 	public void doPrintByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
-		//根据订单id查询出来商铺id
+		// 根据订单id查询出来商铺id
 		map.put("sqlmapId", "slectShopIdByOrderId");
 		map.put("ORDER_PK", orderId);
-		
+
 		try {
 			map = (Map) openService.queryForObject(map);
 		} catch (Exception e) {
@@ -579,21 +578,21 @@ public class PrinterController extends BaseController {
 		}
 		String shopId = (String) map.get("FK_SHOP");
 		String ORDER_DIVISION = (String) map.get("ORDER_DIVISION");
-		
+
 		String type = null;
-		if("1".equals(ORDER_DIVISION)) {
+		if ("1".equals(ORDER_DIVISION)) {
 			type = "wmbw";
-		}else {
+		} else {
 			type = "tdbw";
 		}
-		
+
 		doPrint(shopId, orderId, type);
 	}
-	
+
 	/**
 	 * 
 	 * @author lps
-	 * @date Jan 25, 2019 10:17:08 PM 
+	 * @date Jan 25, 2019 10:17:08 PM
 	 * 
 	 * @description: 补单
 	 * @return void
@@ -605,25 +604,25 @@ public class PrinterController extends BaseController {
 			String orderId = (String) map.get("ORDER_PK");
 			map.put("sqlMapId", "slectShopIdByOrderId");
 			Map orderMap = (Map) openService.queryForObject(map);
-			if(orderMap.get("ORDER_PAY_STATE") == null || "0".equals(orderMap.get("ORDER_PAY_STATE"))) {
+			if (orderMap.get("ORDER_PAY_STATE") == null || "0".equals(orderMap.get("ORDER_PAY_STATE"))) {
 				map.put("sqlMapId", "loadFuncSwitchList");
 				Map switchMap = (Map) openService.queryForObject(map);
 				String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
-				if("true".equals(CHECK_XDDYJSL)) {
+				if ("true".equals(CHECK_XDDYJSL)) {
 					doPrintJSByOrderId(orderId);
 				}
-			}else {
+			} else {
 				doPrintDZByOrderId(orderId);
 				doPrintJSByOrderId(orderId);
 			}
 			doPrintByOrderId(orderId);
-			
+
 		} catch (Exception e) {
 			logger.error(e);
 		}
-	
+
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -645,7 +644,7 @@ public class PrinterController extends BaseController {
 			// orderId = "4ee530d5468a430b84a9077e8c1ed83a";
 			// type = "tdbw";
 
-//			Map<String, Object> map = getParameterMap();
+			// Map<String, Object> map = getParameterMap();
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("FK_SHOP", shopId);
 			// 根据shopid 去查对应的打印机
