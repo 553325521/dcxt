@@ -691,6 +691,10 @@ public class OrderController extends BaseController {
 	 */
 	@RequestMapping(value = "/Order_insert_OrderAddGoods", method = RequestMethod.POST)
 	public void OrderAddGoods() {
+		String orderId = null;
+		String shopId = null;
+		List<Map<String, Object>> goods = null;
+		
 		try {
 			Map<String, Object> map = getParameterMap();
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
@@ -703,11 +707,13 @@ public class OrderController extends BaseController {
 				Map<String, Object> shoppingCart = (Map<String, Object>)JSON.parse((String)map.get("SHOPPING_CART"));
 				
 				txManagerController.createTxManager();
-				
-				for (Map<String, Object> good : (List<Map<String, Object>>)shoppingCart.get("goods")) {
+				goods = (List<Map<String, Object>>)shoppingCart.get("goods");
+				for (Map<String, Object> good : goods) {
 					Map<String, Object> goodMap = new HashMap<String,Object>();
-					goodMap.put("FK_ORDER", map.get("ORDER_PK"));
-					goodMap.put("FK_SHOP", map.get("FK_SHOP").toString());
+					orderId = (String) map.get("ORDER_PK");
+					goodMap.put("FK_ORDER", orderId);
+					shopId = (String) map.get("FK_SHOP");
+					goodMap.put("FK_SHOP", shopId);
 					goodMap.put("ORDER_DETAILS_GNAME", good.get("GOODS_NAME").toString());
 					goodMap.put("ORDER_DETAILS_FS", good.get("GOODS_NUMBER").toString());
 					Object price;
@@ -742,11 +748,15 @@ public class OrderController extends BaseController {
 				
 				txManagerController.commit();
 				output("0000", "已加菜");
-				return;
 			} else {
 				output("9999", "token无效");
 				return;
 			}
+			
+			printerController.isNeedDoPrintJSByOrderId(orderId);
+			printerController.doPrintByOrderId(orderId, goods);
+			
+			
 		} catch (Exception e) {
 			logger.error("error", e);
 			txManagerController.rollback();

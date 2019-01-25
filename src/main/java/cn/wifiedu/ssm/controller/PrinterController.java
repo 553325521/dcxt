@@ -265,6 +265,43 @@ public class PrinterController extends BaseController {
 		}
 		return;
 	}
+	
+	/**
+	 * 
+	 * @author lps
+	 * @date Jan 26, 2019 12:45:03 AM 
+	 * 
+	 * @description: 是否需要打印结算联
+	 * @return void
+	 */
+	public void isNeedDoPrintJSByOrderId(String orderId) {
+		Map map = new HashMap<String, Object>();
+		// 根据订单id查询出来商铺id
+				map.put("sqlMapId", "slectShopIdByOrderId");
+				map.put("ORDER_PK", orderId);
+				try {
+					map = (Map) openService.queryForObject(map);
+				} catch (Exception e) {
+					logger.error(e);
+					return;
+				}
+				String shopId = (String) map.get("FK_SHOP");
+		
+		//查询打不打印结算联
+		Map switchMap = new HashMap<String, Object>();
+		switchMap.put("sqlMapId", "loadFuncSwitchList");
+		switchMap.put("FK_SHOP", shopId);
+		try {
+			switchMap = (Map) openService.queryForObject(switchMap);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
+		if("false".equals(CHECK_XDDYJSL)) {
+			doPrintJS(shopId, orderId, "tdjs",null);
+		}
+	}
+	
 
 	public void doPrintJSByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
@@ -290,6 +327,7 @@ public class PrinterController extends BaseController {
 		doPrintJS(shopId, orderId, type, null);
 	}
 
+	
 	/**
 	 * 
 	 * @author kqs
@@ -565,7 +603,7 @@ public class PrinterController extends BaseController {
 		}
 	}
 
-	public void doPrintByOrderId(String orderId) {
+	public void doPrintByOrderId(String orderId,List<Map<String, Object>> goods) {
 		Map map = new HashMap<String, Object>();
 		// 根据订单id查询出来商铺id
 		map.put("sqlMapId", "slectShopIdByOrderId");
@@ -587,7 +625,7 @@ public class PrinterController extends BaseController {
 			type = "tdbw";
 		}
 
-		doPrint(shopId, orderId, type, null);
+		doPrint(shopId, orderId, type, goods);
 	}
 
 	/**
@@ -616,7 +654,7 @@ public class PrinterController extends BaseController {
 				doPrintDZByOrderId(orderId);
 				doPrintJSByOrderId(orderId);
 			}
-			doPrintByOrderId(orderId);
+			doPrintByOrderId(orderId,null);
 
 		} catch (Exception e) {
 			logger.error(e);
