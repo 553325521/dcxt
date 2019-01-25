@@ -708,7 +708,9 @@ public class OrderController extends BaseController {
 				
 				txManagerController.createTxManager();
 				goods = (List<Map<String, Object>>)shoppingCart.get("goods");
+				int i = 0;
 				for (Map<String, Object> good : goods) {
+					
 					Map<String, Object> goodMap = new HashMap<String,Object>();
 					orderId = (String) map.get("ORDER_PK");
 					goodMap.put("FK_ORDER", orderId);
@@ -723,7 +725,9 @@ public class OrderController extends BaseController {
 						price = good.get("GOODS_PRICE");
 					}
 					goodMap.put("ORDER_DETAILS_GMONEY", price);
-					goodMap.put("ORDER_DETAILS_FORMAT", good.get("GOODS_FORMAT"));
+					if(good.containsKey("GOODS_FORMAT")) {
+						goodMap.put("ORDER_DETAILS_FORMAT", good.get("GOODS_FORMAT"));
+					}
 					goodMap.put("ORDER_DETAILS_TASTE", good.get("GOODS_TASTE"));
 					goodMap.put("ORDER_DETAILS_MAKING", good.get("GOODS_MAKING"));
 					goodMap.put("ORDER_DETAILS_DW", good.get("GOODS_DW").toString());
@@ -732,10 +736,13 @@ public class OrderController extends BaseController {
 					
 					goodMap.put("sqlMapId", "insertCartOrderDeatilInfo");
 					String result1 = openService.insert(goodMap);
+					goodMap.putAll(good);
+					
+					goods.set(i, goodMap);
 					if (result1 == null) {
 						throw new RuntimeException();
 					}
-					
+					i++;
 				}
 				
 				map.put("sqlMapId", "updateOrderOrderYfmoneyByOrderId");
