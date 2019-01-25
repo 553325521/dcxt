@@ -889,7 +889,7 @@ public class OrderController extends BaseController {
 		
 		try {
 			//打印备物联
-			printerController.doPrintDZ(shopId, orderId, "tdbw");
+			printerController.doPrint(shopId, orderId, "tdbw");
 			
 			//查询打不打印结算联
 			Map switchMap = new HashMap<String, Object>();
@@ -902,7 +902,7 @@ public class OrderController extends BaseController {
 			}
 			output("0000", orderId);
 		}catch(Exception e) {
-			output("9999", "订单创建成功，打印机连接失败！");
+			output("5555", "订单创建成功，打印机连接失败！");
 		}
 //		systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
 		return;
