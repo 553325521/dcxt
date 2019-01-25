@@ -873,7 +873,7 @@ public class OrderController extends BaseController {
 				}
 				
 				txManagerController.commit();
-				output("0000", orderId);
+//				output("0000", orderId);
 				//通知客户端创建订单  lps通知客户端来订单了
 				//不能放在这，用户收不到信息我就返回错误了
 				
@@ -886,10 +886,23 @@ public class OrderController extends BaseController {
 			txManagerController.rollback();
 			output("9999", "操作失败");
 		}
-		//打印备物联
-		printerController.doPrintDZ(shopId, orderId, "tdbw");
-		if(true) {
-			printerController.doPrintJS(shopId, orderId, "tdjs");
+		
+		try {
+			//打印备物联
+			printerController.doPrintDZ(shopId, orderId, "tdbw");
+			
+			//查询打不打印结算联
+			Map switchMap = new HashMap<String, Object>();
+			switchMap.put("sqlMapId", "loadFuncSwitchList");
+			switchMap.put("FK_SHOP", shopId);
+			switchMap = (Map) openService.queryForObject(map);
+			String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
+			if("true".equals(CHECK_XDDYJSL)) {
+				printerController.doPrintJS(shopId, orderId, "tdjs");
+			}
+			output("0000", orderId);
+		}catch(Exception e) {
+			output("9999", "订单创建成功，打印机连接失败！");
 		}
 //		systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
 		return;

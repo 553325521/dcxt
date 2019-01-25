@@ -525,6 +525,30 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						@Override
 						public void run() {
 							printerController.doPrintDZByOrderId(orderId);
+							//根据orderid查询店铺
+							Map shopMap = new HashMap<String, Object>();
+							//根据订单id查询出来商铺id
+							shopMap.put("sqlmapId", "slectShopIdByOrderId");
+							shopMap.put("ORDER_PK", orderId);
+							try {
+								shopMap = (Map) openService.queryForObject(shopMap);
+								
+								String shopId = (String) shopMap.get("FK_SHOP");
+								
+								//查询打不打印结算联
+								Map switchMap = new HashMap<String, Object>();
+								switchMap.put("sqlMapId", "loadFuncSwitchList");
+								switchMap.put("FK_SHOP", shopId);
+								switchMap = (Map) openService.queryForObject(shopMap);
+								String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
+								if("true".equals(CHECK_XDDYJSL)) {
+									printerController.doPrintJS(shopId, orderId, "tdjs");
+								}
+							
+							} catch (Exception e) {
+								logger.error(e);
+								return;
+							}
 						}
 					}).start();
 					
@@ -587,6 +611,30 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 						@Override
 						public void run() {
 							printerController.doPrintDZByOrderId(orderId);
+							//根据orderid查询店铺
+							Map shopMap = new HashMap<String, Object>();
+							//根据订单id查询出来商铺id
+							shopMap.put("sqlmapId", "slectShopIdByOrderId");
+							shopMap.put("ORDER_PK", orderId);
+							try {
+								shopMap = (Map) openService.queryForObject(shopMap);
+								
+								String shopId = (String) shopMap.get("FK_SHOP");
+								
+								//查询打不打印结算联
+								Map switchMap = new HashMap<String, Object>();
+								switchMap.put("sqlMapId", "loadFuncSwitchList");
+								switchMap.put("FK_SHOP", shopId);
+								switchMap = (Map) openService.queryForObject(shopMap);
+								String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
+								if("true".equals(CHECK_XDDYJSL)) {
+									printerController.doPrintJS(shopId, orderId, "tdjs");
+								}
+							
+							} catch (Exception e) {
+								logger.error(e);
+								return;
+							}
 						}
 					}).start();
 					

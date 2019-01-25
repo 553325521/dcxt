@@ -25,6 +25,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
+import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.Arith;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
@@ -309,7 +310,9 @@ public class PrinterController extends BaseController {
 //			orderId = "0151f0c7738f4957b62e20ec3287c107";
 //			type = "wmjs";
 
-			Map<String, Object> map = getParameterMap();
+//			Map<String, Object> map = getParameterMap();
+			Map<String, Object> map = new HashMap<String, Object>();
+			
 			map.put("FK_SHOP", shopId);
 			// 根据shopid 去查对应的打印机
 			map.put("sqlMapId", "loadInUsePrintList");
@@ -447,7 +450,8 @@ public class PrinterController extends BaseController {
 			// orderId = "0151f0c7738f4957b62e20ec3287c107";
 			// type = "wmdz";
 
-			Map<String, Object> map = getParameterMap();
+//			Map<String, Object> map = getParameterMap();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("FK_SHOP", shopId);
 			// 根据shopid 去查对应的打印机
 			map.put("sqlMapId", "loadInUsePrintList");
@@ -586,7 +590,39 @@ public class PrinterController extends BaseController {
 		doPrint(shopId, orderId, type);
 	}
 	
+	/**
+	 * 
+	 * @author lps
+	 * @date Jan 25, 2019 10:17:08 PM 
+	 * 
+	 * @description: 补单
+	 * @return void
+	 */
+	@RequestMapping("/Print_insert_BD")
+	public void BD() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String orderId = (String) map.get("ORDER_PK");
+			map.put("sqlMapId", "slectShopIdByOrderId");
+			Map orderMap = (Map) openService.queryForObject(map);
+			if(orderMap.get("ORDER_PAY_STATE") == null || "0".equals(orderMap.get("ORDER_PAY_STATE"))) {
+				map.put("sqlMapId", "loadFuncSwitchList");
+				Map switchMap = (Map) openService.queryForObject(map);
+				String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
+				if("true".equals(CHECK_XDDYJSL)) {
+					doPrintJSByOrderId(orderId);
+				}
+			}else {
+				doPrintDZByOrderId(orderId);
+				doPrintJSByOrderId(orderId);
+			}
+			doPrintByOrderId(orderId);
+			
+		} catch (Exception e) {
+			logger.error(e);
+		}
 	
+	}
 	
 	/**
 	 * 
@@ -609,7 +645,8 @@ public class PrinterController extends BaseController {
 			// orderId = "4ee530d5468a430b84a9077e8c1ed83a";
 			// type = "tdbw";
 
-			Map<String, Object> map = getParameterMap();
+//			Map<String, Object> map = getParameterMap();
+			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("FK_SHOP", shopId);
 			// 根据shopid 去查对应的打印机
 			map.put("sqlMapId", "loadInUsePrintList");
