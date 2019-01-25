@@ -144,12 +144,12 @@ public class PrintTemplate58MM extends PrintTemplate {
 				.append(STARLINE).append(LINE).append(BOLD).append(BILLID)
 				.append(dealBillId(order.get("ORDER_CODE").toString())).append(LINE).append(BOLD)
 				.append(BILL_CREATE_TIME).append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate())))
-				.append(LINE).append(BOLD).append(DINNER_COUNT).append(dinnerCount == 0 ? "X" : dinnerCount).append(DINNER_UNIT).append(blank)
-				.append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(SUBLINE).append(LINE).append(BOLD)
-				.append(DISHES_NAME).append("        ").append(NOTES).append("       ").append(COUNTS).append(LINE)
-				.append(billData).append(SUBLINE).append(LINE).append(BOLD).append(CENTER_BLANK).append(TOTAL)
-				.append(blankSpace).append(total).append("份").append(LINE).append(RIGHT_BOLD).append(remark)
-				.append(LINE).append(STARLINE).append(OVER).toString();
+				.append(LINE).append(BOLD).append(DINNER_COUNT).append(dinnerCount == 0 ? "X" : dinnerCount)
+				.append(DINNER_UNIT).append(LINE).append(BOLD).append(TABLE_SIT).append(tableInfoRemark).append(LINE)
+				.append(SUBLINE).append(LINE).append(BOLD).append(DISHES_NAME).append("        ").append(NOTES)
+				.append("       ").append(COUNTS).append(LINE).append(billData).append(SUBLINE).append(LINE)
+				.append(BOLD).append(CENTER_BLANK).append(TOTAL).append(blankSpace).append(total).append("份")
+				.append(LINE).append(RIGHT_BOLD).append(remark).append(LINE).append(STARLINE).append(OVER).toString();
 	}
 
 	@Override
@@ -292,7 +292,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 		String ORDER_YHMONEY = order.get("ORDER_YHMONEY").toString();
 		ORDER_YHMONEY = Arith.div(Double.valueOf(ORDER_YHMONEY), 100, 2) + "";
 		// 支付方式
-		String ORDER_PAY_WAY = order.get("ORDER_PAY_WAY").toString();
+		String ORDER_PAY_WAY = "";
+		if (!order.containsKey("ORDER_PAY_WAY")) {
+			ORDER_PAY_WAY = "未支付";
+		}
 		if ("0".equals(ORDER_PAY_WAY)) {
 			ORDER_PAY_WAY = "待支付";
 		} else if ("1".equals(ORDER_PAY_WAY)) {
@@ -423,7 +426,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 		String ORDER_YHMONEY = order.get("ORDER_YHMONEY").toString();
 		ORDER_YHMONEY = Arith.div(Double.valueOf(ORDER_YHMONEY), 100, 2) + "";
 		// 支付方式
-		String ORDER_PAY_WAY = order.get("ORDER_PAY_WAY").toString();
+		String ORDER_PAY_WAY = "";
+		if (!order.containsKey("ORDER_PAY_WAY")) {
+			ORDER_PAY_WAY = "未支付";
+		}
 		if ("0".equals(ORDER_PAY_WAY)) {
 			ORDER_PAY_WAY = "待支付";
 		} else if ("1".equals(ORDER_PAY_WAY)) {
@@ -555,7 +561,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 		String ORDER_YHMONEY = order.get("ORDER_YHMONEY").toString();
 		ORDER_YHMONEY = Arith.div(Double.valueOf(ORDER_YHMONEY), 100, 2) + "";
 		// 支付方式
-		String ORDER_PAY_WAY = order.get("ORDER_PAY_WAY").toString();
+		String ORDER_PAY_WAY = "";
+		if (!order.containsKey("ORDER_PAY_WAY")) {
+			ORDER_PAY_WAY = "未支付";
+		}
 		if ("0".equals(ORDER_PAY_WAY)) {
 			ORDER_PAY_WAY = "待支付";
 		} else if ("1".equals(ORDER_PAY_WAY)) {
@@ -684,7 +693,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 		String ORDER_YHMONEY = order.get("ORDER_YHMONEY").toString();
 		ORDER_YHMONEY = Arith.div(Double.valueOf(ORDER_YHMONEY), 100, 2) + "";
 		// 支付方式
-		String ORDER_PAY_WAY = order.get("ORDER_PAY_WAY").toString();
+		String ORDER_PAY_WAY = "";
+		if (!order.containsKey("ORDER_PAY_WAY")) {
+			ORDER_PAY_WAY = "未支付";
+		}
 		if ("0".equals(ORDER_PAY_WAY)) {
 			ORDER_PAY_WAY = "待支付";
 		} else if ("1".equals(ORDER_PAY_WAY)) {
@@ -723,9 +735,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 				.append(billData).append(BOLD).append(middleBlank4).append(total).append("份").append(blankSpace)
 				.append(TOTAL).append(totalAll).append(LINE).append(RIGHT_BOLD).append(YOUHUI).append(ORDER_YHMONEY)
 				.append(LINE).append(RIGHT_BOLD).append(ORDER_PAY_WAY).append(ORDER_YFMONEY).append(LINE)
-				.append(SUBLINE).append(LINE).append(LEFT_BOLD).append(PSDH).append(order.get("WM_USERPHONE")).append("    ").append(order.get("WM_ORDER_USERNAME")).append(LINE)
-				.append(BOLD).append(PSDZ).append(order.get("WM_USER_ADDRESS")).append(LINE).append(SUBLINE).append(LINE);
-		
+				.append(SUBLINE).append(LINE).append(LEFT_BOLD).append(PSDH).append(order.get("WM_USERPHONE"))
+				.append("    ").append(order.get("WM_ORDER_USERNAME")).append(LINE).append(BOLD).append(PSDZ)
+				.append(order.get("WM_USER_ADDRESS")).append(LINE).append(SUBLINE).append(LINE);
+
 		// 会员卡
 		if (order.containsKey("VCARD_NUMBER")) {
 			result.append(LEFT_BOLD).append(HYKH).append(order.get("VCARD_NUMBER")).append(LINE);

@@ -287,7 +287,7 @@ public class PrinterController extends BaseController {
 			type = "tdjs";
 		}
 
-		doPrintJS(shopId, orderId, type);
+		doPrintJS(shopId, orderId, type, null);
 	}
 
 	/**
@@ -302,7 +302,7 @@ public class PrinterController extends BaseController {
 	 * @description: tdjs:堂点结算 wmjs:外卖结算
 	 */
 	@RequestMapping("/Print_insert_doPrintJS")
-	public void doPrintJS(String shopId, String orderId, String type) {
+	public void doPrintJS(String shopId, String orderId, String type, List<Map<String, Object>> orderInfo) {
 		try {
 
 			// shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
@@ -325,7 +325,9 @@ public class PrinterController extends BaseController {
 
 				map.put("sqlMapId", "loadOrderDetailInfoById");
 				// 根据orderId 获取对应订单详情 总的 给其他打印联用
-				List<Map<String, Object>> orderInfo = openService.queryForList(map);
+				if (orderInfo == null || orderInfo.isEmpty()) {
+					orderInfo = openService.queryForList(map);
+				}
 				order.put("orderGoodsList", orderInfo);
 
 				map.put("sqlMapId", "getShopInfo");
@@ -423,7 +425,7 @@ public class PrinterController extends BaseController {
 			type = "tddz";
 		}
 
-		doPrintDZ(shopId, orderId, type);
+		doPrintDZ(shopId, orderId, type, null);
 	}
 
 	/**
@@ -438,7 +440,7 @@ public class PrinterController extends BaseController {
 	 * @description: tddz:堂点对账 wmdz:外卖对账
 	 */
 	@RequestMapping("/Print_insert_doPrintDZ")
-	public void doPrintDZ(String shopId, String orderId, String type) {
+	public void doPrintDZ(String shopId, String orderId, String type, List<Map<String, Object>> orderInfo) {
 		try {
 
 			// shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
@@ -460,7 +462,9 @@ public class PrinterController extends BaseController {
 
 				map.put("sqlMapId", "loadOrderDetailInfoById");
 				// 根据orderId 获取对应订单详情 总的 给其他打印联用
-				List<Map<String, Object>> orderInfo = openService.queryForList(map);
+				if (orderInfo == null || orderInfo.isEmpty()) {
+					orderInfo = openService.queryForList(map);
+				}
 				order.put("orderGoodsList", orderInfo);
 
 				map.put("sqlMapId", "getShopInfo");
@@ -583,7 +587,7 @@ public class PrinterController extends BaseController {
 			type = "tdbw";
 		}
 
-		doPrint(shopId, orderId, type);
+		doPrint(shopId, orderId, type, null);
 	}
 
 	/**
@@ -634,7 +638,7 @@ public class PrinterController extends BaseController {
 	 * @description: tdbw:堂点备物 wmbw:外卖备物
 	 */
 	@RequestMapping("/Print_insert_doPrintBW")
-	public void doPrint(String shopId, String orderId, String type) {
+	public void doPrint(String shopId, String orderId, String type, List<Map<String, Object>> orderInfo) {
 		try {
 
 			// shopId = "f11099f4816f4a6c99e511c4a7aa82d0";
@@ -656,7 +660,9 @@ public class PrinterController extends BaseController {
 
 				map.put("sqlMapId", "loadOrderDetailInfoById");
 				// 根据orderId 获取对应订单详情 总的 给其他打印联用
-				List<Map<String, Object>> orderInfo = openService.queryForList(map);
+				if (orderInfo == null || orderInfo.isEmpty()) {
+					orderInfo = openService.queryForList(map);
+				}
 				order.put("orderGoodsList", orderInfo);
 
 				map.put("sqlMapId", "getShopInfo");

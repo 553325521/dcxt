@@ -542,7 +542,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 								switchMap = (Map) openService.queryForObject(switchMap);
 								String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
 								if("false".equals(CHECK_XDDYJSL)) {
-									printerController.doPrintJS(shopId, orderId, "tdjs");
+									printerController.doPrintJS(shopId, orderId, "tdjs", null);
 								}
 							
 							} catch (Exception e) {
@@ -628,7 +628,7 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 								switchMap = (Map) openService.queryForObject(switchMap);
 								String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
 								if("false".equals(CHECK_XDDYJSL)) {
-									printerController.doPrintJS(shopId, orderId, "tdjs");
+									printerController.doPrintJS(shopId, orderId, "tdjs", null);
 								}
 							
 							} catch (Exception e) {
