@@ -60,6 +60,9 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			@Resource
 			private WxController wxController;
 			
+			@Resource
+			private PrinterController printerController;
+			
 			public OpenService getOpenService() {
 				return openService;
 			}
@@ -514,6 +517,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 				try {
 					Map<String, Object> map = getParameterMap();//里边有订单id
 					
+					String orderId = (String) map.get("ORDER_PK");
+					
+					//异步发送打印请求
+					new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							printerController.doPrintDZByOrderId(orderId);
+						}
+					}).start();
+					
 					logger.info("ShopCodePay_nextOper   360");
 					map = getCallBackMapParam(map);
 //					logger.info(request);
@@ -564,6 +578,17 @@ import cn.wifiedu.ssm.util.redis.RedisConstants;
 			public void ShopScanPayNextOper(HttpServletRequest request,HttpSession seesion){
 				try {
 					Map<String, Object> map = getParameterMap();//里边有订单id
+					
+					String orderId = (String) map.get("ORDER_PK");
+					
+					//异步发送打印请求
+					new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							printerController.doPrintDZByOrderId(orderId);
+						}
+					}).start();
 					
 					logger.info("ShopScanPay_nextOper   495");
 					logger.info(map);

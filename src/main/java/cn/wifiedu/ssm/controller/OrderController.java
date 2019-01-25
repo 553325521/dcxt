@@ -39,6 +39,9 @@ public class OrderController extends BaseController {
 	
 	@Resource
 	private FunSwitchController funSwitchController;
+	
+	@Resource
+	private PrinterController printerController;
 
 	@Resource
 	private JedisClient jedisClient;
@@ -764,13 +767,14 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/Order_insert_shoppingcreateOrder", method = RequestMethod.POST)
 	public void shoppingCreateOrder() {
 		Map<String, Object> map = null;
+		String shopId = null;
+		String orderId = null;
 		try {
 			map = getParameterMap();
 			System.out.println("");
 			
 			Map<String, Object> orderMap =  (Map<String, Object>)JSON.parse((String)map.get("SHOPPING_CART"));
 			Map<String, Object> tableMap = (Map<String, Object>)orderMap.get("table");
-			
 			
 			//查询选择开台了没
 			Map funcSwitchMap = funSwitchController.getFuncSwitch(map.get("FK_SHOP").toString());
@@ -786,8 +790,6 @@ public class OrderController extends BaseController {
 					return;
 				}
 			}
-			
-			
 			
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + map.get("FK_USER").toString());
 			if (StringUtils.isNotBlank(userJson)) {
@@ -805,6 +807,8 @@ public class OrderController extends BaseController {
 					return;
 				}
 				
+				shopId = (String) map.get("FK_SHOP");
+				
 				Map<String, Object> insertOrderMap = new HashMap<>();
 				insertOrderMap.put("ORDER_POSITION", tableMap.get("TABLES_PK").toString());
 				insertOrderMap.put("ORDER_CODE", this.getOrderCode(map));
@@ -816,14 +820,14 @@ public class OrderController extends BaseController {
 				insertOrderMap.put("ORDER_DIVISION", map.get("ORDER_DIVISION").toString());
 				insertOrderMap.put("sqlMapId", "insertCartOrderInfo");
 				txManagerController.createTxManager();
-				String result = openService.insert(insertOrderMap);
-				if(result == null) {
+				orderId = openService.insert(insertOrderMap);
+				if(orderId == null) {
 					throw new RuntimeException();
 				}
 				//循环插入订单详情信息
 				for (Map<String, Object> good : goodsList) {
 					Map<String, Object> goodMap = new HashMap<String,Object>();
-					goodMap.put("FK_ORDER", result);
+					goodMap.put("FK_ORDER", orderId);
 					goodMap.put("FK_SHOP", map.get("FK_SHOP").toString());
 					goodMap.put("ORDER_DETAILS_GNAME", good.get("GOODS_NAME").toString());
 					goodMap.put("ORDER_DETAILS_FS", good.get("GOODS_NUMBER").toString());
@@ -869,7 +873,7 @@ public class OrderController extends BaseController {
 				}
 				
 				txManagerController.commit();
-				output("0000", result);
+				output("0000", orderId);
 				//通知客户端创建订单  lps通知客户端来订单了
 				//不能放在这，用户收不到信息我就返回错误了
 				
@@ -882,7 +886,12 @@ public class OrderController extends BaseController {
 			txManagerController.rollback();
 			output("9999", "操作失败");
 		}
-//		systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toS tring(),new TextMessage(MessageType.UPDATE_ORDERDATA));
+		//打印备物联
+		printerController.doPrintDZ(shopId, orderId, "tdbw");
+		if(true) {
+			printerController.doPrintJS(shopId, orderId, "tdjs");
+		}
+//		systemWebSocketHandler.sendMessageToUser(map.get("FK_SHOP").toString(),new TextMessage(MessageType.UPDATE_ORDERDATA));
 		return;
 	}
 	
@@ -924,7 +933,7 @@ public class OrderController extends BaseController {
 	 * @author lps
 	 * @date Dec 5, 2018 7:46:51 PM 
 	 * 
-	 * @description: 用户端支付
+	 * @description: 店员端支付
 	 * @return void
 	 * @throws ExceptionVo 
 	 * 
@@ -956,9 +965,6 @@ public class OrderController extends BaseController {
 					return;
 				}
 			}
-			
-			
-			
 			
 			//OPEN_ID或者USER_PK， SHOP_FK
 			map.put("sqlMapId", "selectUserRoleByShopIdAndOpenId");
@@ -1032,6 +1038,18 @@ public class OrderController extends BaseController {
 			map.put("ORDER_PAY_WAY", payWay);
 			if(!"2".equals(payWay) || !"3".equals(payWay)) {//都不需要后续操作，直接支付成功
 				map.put("ORDER_PAY_STATE", 1);
+				
+				String orderId = (String) map.get("ORDER_PK");
+				
+				//异步发送打印请求
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						printerController.doPrintDZByOrderId(orderId);
+					}
+				}).start();
+				
 			}else {
 				map.put("ORDER_PAY_STATE", 0);
 			}

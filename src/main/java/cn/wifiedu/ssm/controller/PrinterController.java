@@ -266,6 +266,30 @@ public class PrinterController extends BaseController {
 		return;
 	}
 
+	public void doPrintJSByOrderId(String orderId) {
+		Map map = new HashMap<String, Object>();
+		//根据订单id查询出来商铺id
+		map.put("sqlmapId", "slectShopIdByOrderId");
+		map.put("ORDER_PK", orderId);
+		try {
+			map = (Map) openService.queryForObject(map);
+		} catch (Exception e) {
+			logger.error(e);
+			return;
+		}
+		String shopId = (String) map.get("FK_SHOP");
+		String ORDER_DIVISION = (String) map.get("ORDER_DIVISION");
+		
+		String type = null;
+		if("1".equals(ORDER_DIVISION)) {
+			type = "wmbw";
+		}else {
+			type = "tdbw";
+		}
+		
+		doPrintJS(shopId, orderId, type);
+	}
+	
 	/**
 	 * 
 	 * @author kqs
@@ -376,6 +400,34 @@ public class PrinterController extends BaseController {
 		}
 	}
 
+	
+	public void doPrintDZByOrderId(String orderId) {
+		Map map = new HashMap<String, Object>();
+		//根据订单id查询出来商铺id
+		map.put("sqlmapId", "slectShopIdByOrderId");
+		map.put("ORDER_PK", orderId);
+		try {
+			map = (Map) openService.queryForObject(map);
+		} catch (Exception e) {
+			logger.error(e);
+			return;
+		}
+		String shopId = (String) map.get("FK_SHOP");
+		String ORDER_DIVISION = (String) map.get("ORDER_DIVISION");
+		
+		String type = null;
+		if("1".equals(ORDER_DIVISION)) {
+			type = "wmbw";
+		}else {
+			type = "tdbw";
+		}
+		
+		
+		
+		doPrintDZ(shopId, orderId, type);
+	}
+	
+	
 	/**
 	 * 
 	 * @author kqs
@@ -508,6 +560,34 @@ public class PrinterController extends BaseController {
 		}
 	}
 
+	
+	public void doPrintByOrderId(String orderId) {
+		Map map = new HashMap<String, Object>();
+		//根据订单id查询出来商铺id
+		map.put("sqlmapId", "slectShopIdByOrderId");
+		map.put("ORDER_PK", orderId);
+		
+		try {
+			map = (Map) openService.queryForObject(map);
+		} catch (Exception e) {
+			logger.error(e);
+			return;
+		}
+		String shopId = (String) map.get("FK_SHOP");
+		String ORDER_DIVISION = (String) map.get("ORDER_DIVISION");
+		
+		String type = null;
+		if("1".equals(ORDER_DIVISION)) {
+			type = "wmbw";
+		}else {
+			type = "tdbw";
+		}
+		
+		doPrint(shopId, orderId, type);
+	}
+	
+	
+	
 	/**
 	 * 
 	 * @author kqs

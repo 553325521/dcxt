@@ -548,4 +548,8 @@
 		WHERE o.ORDER_PK = #{ORDER_PK};
 	</select>
 	
+	<select id="slectShopIdByOrderId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT FK_SHOP, ORDER_DIVISION FROM sc_order WHERE ORDER_PK = #{ORDER_PK};
+	</select>
+	
 </mapper>
