@@ -103,7 +103,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 		}
 		String blank = "";
 		// 人数
-		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		int dinnerCount = 0;
+		if (!"X".equals(order.get("ORDER_RS").toString())) {
+			dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		}
 		// 桌台备注
 		String tableInfoRemark = order.get("TABLES_NAME").toString();
 		for (int i = 0; i < 19 - (dinnerCount + getStrLen(tableInfoRemark)); i++) {
@@ -141,7 +144,7 @@ public class PrintTemplate58MM extends PrintTemplate {
 				.append(STARLINE).append(LINE).append(BOLD).append(BILLID)
 				.append(dealBillId(order.get("ORDER_CODE").toString())).append(LINE).append(BOLD)
 				.append(BILL_CREATE_TIME).append(getTimeString(StringDeal.strToDateLong(StringDeal.getStringDate())))
-				.append(LINE).append(BOLD).append(DINNER_COUNT).append(dinnerCount).append(DINNER_UNIT).append(blank)
+				.append(LINE).append(BOLD).append(DINNER_COUNT).append(dinnerCount == 0 ? "X" : dinnerCount).append(DINNER_UNIT).append(blank)
 				.append(TABLE_SIT).append(tableInfoRemark).append(LINE).append(SUBLINE).append(LINE).append(BOLD)
 				.append(DISHES_NAME).append("        ").append(NOTES).append("       ").append(COUNTS).append(LINE)
 				.append(billData).append(SUBLINE).append(LINE).append(BOLD).append(CENTER_BLANK).append(TOTAL)
@@ -163,7 +166,10 @@ public class PrintTemplate58MM extends PrintTemplate {
 		}
 		String blank = "";
 		// 人数
-		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		int dinnerCount = 0;
+		if (!"X".equals(order.get("ORDER_RS").toString())) {
+			dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		}
 		// 配送方式
 		String WM_ORDER_DELIVERY_PARTY = "";
 		if ("0".equals(order.get("WM_ORDER_DELIVERY_PARTY").toString())) {
@@ -224,10 +230,13 @@ public class PrintTemplate58MM extends PrintTemplate {
 		List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
 		String dishesSize = orderGoodsList.size() + "";
 		// 人数
-		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		int dinnerCount = 0;
+		if (!"X".equals(order.get("ORDER_RS").toString())) {
+			dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		}
 		// 第一行间隔
 		String blank1 = "";
-		for (int i = 0; i < 2 - (order.get("ORDER_RS").toString()).length(); i++) {
+		for (int i = 0; i < 2 - (String.valueOf(dinnerCount)).length(); i++) {
 			blank1 += " ";
 		}
 		// 第二行间隔
@@ -352,10 +361,13 @@ public class PrintTemplate58MM extends PrintTemplate {
 		List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
 		String dishesSize = orderGoodsList.size() + "";
 		// 人数
-		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		int dinnerCount = 0;
+		if (!"X".equals(order.get("ORDER_RS").toString())) {
+			dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		}
 		// 第一行间隔
 		String blank1 = "";
-		for (int i = 0; i < 2 - (order.get("ORDER_RS").toString()).length(); i++) {
+		for (int i = 0; i < 2 - (String.valueOf(dinnerCount)).length(); i++) {
 			blank1 += " ";
 		}
 		// 第二行间隔
@@ -481,10 +493,13 @@ public class PrintTemplate58MM extends PrintTemplate {
 		List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
 		String dishesSize = orderGoodsList.size() + "";
 		// 人数
-		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		int dinnerCount = 0;
+		if (!"X".equals(order.get("ORDER_RS").toString())) {
+			dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		}
 		// 第一行间隔
 		String blank1 = "";
-		for (int i = 0; i < 2 - (order.get("ORDER_RS").toString()).length(); i++) {
+		for (int i = 0; i < 2 - (String.valueOf((dinnerCount))).length(); i++) {
 			blank1 += " ";
 		}
 		// 第二行间隔
@@ -607,10 +622,13 @@ public class PrintTemplate58MM extends PrintTemplate {
 		List<Map<String, Object>> orderGoodsList = (List<Map<String, Object>>) order.get("orderGoodsList");
 		String dishesSize = orderGoodsList.size() + "";
 		// 人数
-		int dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		int dinnerCount = 0;
+		if (!"X".equals(order.get("ORDER_RS").toString())) {
+			dinnerCount = Integer.valueOf(order.get("ORDER_RS").toString());
+		}
 		// 第一行间隔
 		String blank1 = "";
-		for (int i = 0; i < 2 - (order.get("ORDER_RS").toString()).length(); i++) {
+		for (int i = 0; i < 2 - (String.valueOf((dinnerCount))).length(); i++) {
 			blank1 += " ";
 		}
 		// 第二行间隔

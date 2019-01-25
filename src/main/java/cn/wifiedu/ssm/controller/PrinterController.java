@@ -25,7 +25,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
-import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.Arith;
 import cn.wifiedu.ssm.util.CookieUtils;
 import cn.wifiedu.ssm.util.StringDeal;
@@ -283,9 +282,9 @@ public class PrinterController extends BaseController {
 
 		String type = null;
 		if ("1".equals(ORDER_DIVISION)) {
-			type = "wmbw";
+			type = "wmjs";
 		} else {
-			type = "tdbw";
+			type = "tdjs";
 		}
 
 		doPrintJS(shopId, orderId, type);
@@ -395,13 +394,11 @@ public class PrinterController extends BaseController {
 						// TODO 80mm 备物联样式
 					}
 				}
-				output("0000", " 打印成功! ");
 				return;
 			}
-			output("9999", " 暂无可用打印机! ");
 			return;
 		} catch (Exception e) {
-			output("9999", " Exception ", e);
+			logger.error(" Exception ", e);
 		}
 	}
 
@@ -421,9 +418,9 @@ public class PrinterController extends BaseController {
 
 		String type = null;
 		if ("1".equals(ORDER_DIVISION)) {
-			type = "wmbw";
+			type = "wmdz";
 		} else {
-			type = "tdbw";
+			type = "tddz";
 		}
 
 		doPrintDZ(shopId, orderId, type);
@@ -554,13 +551,13 @@ public class PrinterController extends BaseController {
 						// TODO 80mm 备物联样式
 					}
 				}
-				output("0000", " 打印成功! ");
+				logger.info(" 打印成功! ");
 				return;
 			}
-			output("9999", " 暂无可用打印机! ");
+			logger.info(" 暂无可用打印机! ");
 			return;
 		} catch (Exception e) {
-			output("9999", " Exception ", e);
+			logger.error(" Exception ", e);
 		}
 	}
 
@@ -741,13 +738,11 @@ public class PrinterController extends BaseController {
 						}
 					}
 				}
-				output("0000", " 打印成功! ");
 				return;
 			}
-			output("9999", " 暂无可用打印机! ");
 			return;
 		} catch (Exception e) {
-			output("9999", " Exception ", e);
+			logger.error(" Exception ", e);
 		}
 	}
 
