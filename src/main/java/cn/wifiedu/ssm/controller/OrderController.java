@@ -889,7 +889,7 @@ public class OrderController extends BaseController {
 		
 		try {
 			//打印备物联
-			printerController.doPrint(shopId, orderId, "tdbw");
+			printerController.doPrint(shopId, orderId, "tdbw", null);
 			
 			//查询打不打印结算联
 			Map switchMap = new HashMap<String, Object>();
@@ -898,7 +898,7 @@ public class OrderController extends BaseController {
 			switchMap = (Map) openService.queryForObject(map);
 			String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
 			if("true".equals(CHECK_XDDYJSL)) {
-				printerController.doPrintJS(shopId, orderId, "tdjs");
+				printerController.doPrintJS(shopId, orderId, "tdjs", null);
 			}
 			output("0000", orderId);
 		}catch(Exception e) {
@@ -1090,7 +1090,7 @@ public class OrderController extends BaseController {
 					}
 					String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
 					if("false".equals(CHECK_XDDYJSL)) {
-						printerController.doPrintJS(shopId, orderId, "tdjs");
+						printerController.doPrintJS(shopId, orderId, "tdjs", null);
 					}
 					
 				}
