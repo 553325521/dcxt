@@ -1,0 +1,22 @@
+{
+	"name": "staff_add",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/staff/add/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/staff/add/controller.js",
+	"config": {
+		"pageTitle": "扫码管理",
+		"getCodeURL" : "json/Staff_add_getCodeToRes.json",
+		"saveURL": "json/Staff_add_addStaff.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"userTag_add.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"userTag_add.confirm"
+		        	}
+				]
+			}
+	}
+}
