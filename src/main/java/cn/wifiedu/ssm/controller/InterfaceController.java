@@ -329,7 +329,7 @@ public class InterfaceController extends BaseController {
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
 			// 如果这个用户有了一个对应的公众号appid 且这个appid 不是总平台id 就让他授权小程序
-			if (userObj.containsKey("FK_APP") && !(CommonUtil.getPath("AppID")).equals(userObj.getString("FK_APP"))) {
+			if (userObj.containsKey("FK_APP")) {
 				Map<String, Object> map = new HashMap<>();
 				map.put("FK_APP", userObj.getString("FK_APP"));
 				map.put("sqlMapId", "chechSmallAppByApp");

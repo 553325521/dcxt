@@ -48,13 +48,12 @@
 	});
 
 	app.config(function($routeProvider, $locationProvider) {
-
 		$routeProvider
 			.when('/', {
 				templateUrl : 'html/main.html',
 				controller : 'MainController'
 			})
-			.when('/:LOCALPATH', {
+			.when('/ActingCustomerManagement/:LOCALPATH', {
 				templateUrl : 'html/main.html',
 				controller : 'MainController'
 			})

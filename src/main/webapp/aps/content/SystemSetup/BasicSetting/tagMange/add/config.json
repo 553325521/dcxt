@@ -1,0 +1,21 @@
+{
+	"name": "shopTag_add",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/tagMange/add/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/tagMange/add/controller.js",
+	"config": {
+		"pageTitle": "标签添加",
+		"saveURL": "json/ShopTag_insert_addNewShopTag.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"shopTag_add.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"shopTag_add.confirm"
+		        	}
+				]
+			}
+	}
+}

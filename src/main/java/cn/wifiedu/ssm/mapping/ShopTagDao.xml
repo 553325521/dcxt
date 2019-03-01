@@ -35,4 +35,25 @@
 		SHOP_TAG_NAME from SC_SHOP_TAG
 		where FK_SHOP = #{SHOP_ID} and SHOP_TAG_TYPE = '1';
 	</select>
+	
+	<!-- 新增标签 -->
+	<insert id="addNewShopTag" parameterMap="BaseParameterMap">
+		insert into
+		SC_SHOP_INFO
+		(
+		SHOP_TAG_PK,
+		SHOP_TAG_NAME,
+		FK_SHOP,
+		SHOP_TAG_TYPE,
+		INSERT_TIME
+		)
+		values(
+		#{UUID},
+		#{SHOP_TAG_PK},
+		#{SHOP_TAG_NAME},
+		#{FK_SHOP},
+		#{SHOP_TAG_TYPE},
+		NOW()
+		)
+	</insert>
 </mapper>
