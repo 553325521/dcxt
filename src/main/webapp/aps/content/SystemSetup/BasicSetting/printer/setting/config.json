@@ -6,7 +6,7 @@
 		"pageTitle": "打印机设置",
 		"saveURL":"json/Print_insert_addPinterInfo.json",
 		"findURL":"json/Print_queryForList_loadPrintList.json",
-		"findGoodTypeURL" : "json/GoodsType_select_loadGoodsTypeListByPID.json",
+		"findGoodTypeURL" : "json/ShopTag_select_selectShopGoodsPrintTagById.json",
 		"menu":{	
 	            "buttons":[
 		        	{

@@ -5,6 +5,19 @@
 	"config": {
 		"pageTitle": "打印机列表",
 		"findURL":"json/Print_queryForList_loadInUsePrintList.json",
-		"findGoodTypeURL" : "json/GoodsType_select_loadGoodsTypeListByPID.json"
+		"findGoodTypeURL" : "json/ShopTag_select_selectShopGoodsPrintTagById.json",
+		"removeUrl":"json/Print_delete_delPrintInfo.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"printer_list.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"printer_list.confirm"
+		        	}
+				]
+			}
 	}
 }

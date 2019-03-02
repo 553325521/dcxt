@@ -118,5 +118,17 @@
 		parameterMap="BaseParameterMap">
 		SELECT count(*) as PRINT_COUNT from SC_PRINT_BUG 
 	</select>
+	
+	<!-- 删除打印机设置 -->
+	<delete id="delPrintInfo"
+		parameterMap="BaseParameterMap">
+		delete from sc_printer where PRINTER_PK = #{PRINTER_PK}
+	</delete>
+	
+	<!-- 根据ID 查询打印机设置 -->
+	<select id="selectPrintInfoById" resultMap="BaseResultMap"
+		parameterMap="BaseParameterMap">
+		select * from sc_printer where PRINTER_PK = #{PRINTER_PK}
+	</select>
 
 </mapper>

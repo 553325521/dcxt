@@ -4,8 +4,6 @@
 	<resultMap id="BaseResultMap" type="java.util.HashMap"></resultMap>
 	<parameterMap id="BaseParameterMap" type="java.util.HashMap"></parameterMap>
 	
-	
-
 	<!-- 根据shopId查询商品标签 -->
 	<select id="selectShopGoodsTagById" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
@@ -31,7 +29,7 @@
 	<!-- 根据shopId查询打印标签 -->
 	<select id="selectShopGoodsPrintTagById" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		select
+		select SHOP_TAG_PK,
 		SHOP_TAG_NAME from SC_SHOP_TAG
 		where FK_SHOP = #{SHOP_ID} and SHOP_TAG_TYPE = '1';
 	</select>
@@ -39,7 +37,7 @@
 	<!-- 新增标签 -->
 	<insert id="addNewShopTag" parameterMap="BaseParameterMap">
 		insert into
-		SC_SHOP_INFO
+		sc_shop_tag
 		(
 		SHOP_TAG_PK,
 		SHOP_TAG_NAME,
@@ -49,7 +47,6 @@
 		)
 		values(
 		#{UUID},
-		#{SHOP_TAG_PK},
 		#{SHOP_TAG_NAME},
 		#{FK_SHOP},
 		#{SHOP_TAG_TYPE},

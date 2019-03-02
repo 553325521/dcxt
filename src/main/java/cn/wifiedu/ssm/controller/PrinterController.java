@@ -27,6 +27,7 @@ import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.Arith;
 import cn.wifiedu.ssm.util.CookieUtils;
+import cn.wifiedu.ssm.util.RandomStringUtils;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.print.PrintTemplate58MM;
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -106,17 +107,12 @@ public class PrinterController extends BaseController {
 	 */
 	private String createPrintNum(String shopId) {
 		try {
-			Map<String, Object> res = (Map<String, Object>) openService.queryForObject(new HashMap<String, Object>() {
-				{
-					put("sqlMapId", "loadPrintCount");
-				}
-			});
-			String printCount = "";
-			int PRINT_COUNT = Integer.valueOf(res.get("PRINT_COUNT").toString()) + 1;
-			for (int i = 0; i < 12 - (String.valueOf(PRINT_COUNT)).length(); i++) {
-				printCount += "0";
+			String printNum = RandomStringUtils.getRandomString(12);
+			if (!jedisClient.isExit(RedisConstants.PRINTNUM_LIST + printNum)) {
+				jedisClient.set(RedisConstants.PRINTNUM_LIST + printNum, shopId);
+				return printNum;
 			}
-			return printCount + PRINT_COUNT;
+			return createPrintNum(shopId);
 		} catch (Exception e) {
 			throw new RuntimeException();
 		}
@@ -193,7 +189,32 @@ public class PrinterController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
+	
+	/**
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @description:删除打印机设置 并修改打印机使用状态
+	 */
+	@RequestMapping("/Print_delete_delPrintInfo")
+	public void delPrintInfo(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "delPrintInfo");
+			if (openService.delete(map)) {
+				map.put("sqlMapId", "updatePrinterToUse");
+				if (openService.update(map)) {
+					output("0000", "保存成功!");
+					return;
+				}
+			}
+			output("9999", "操作失败!");
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+	}
 
+	
 	/**
 	 * 
 	 * @author kqs
@@ -268,8 +289,33 @@ public class PrinterController extends BaseController {
 	
 	/**
 	 * 
+	 * @author kqs
+	 * @param request
+	 * @param session
+	 * @return void
+	 * @date 2018年8月27日 - 下午2:42:35
+	 * @description:查询已添加打印机
+	 */
+	@RequestMapping("/Print_select_selectPrintInfoById")
+	public void selectPrintInfoById(HttpServletRequest request, HttpSession session) {
+		try {
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "selectPrintInfoById");
+			Map<String, Object> res = (Map<String, Object>) openService.queryForObject(map);
+			if (res != null) {
+				output("0000", res);
+				return;
+			}
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+		return;
+	}
+
+	/**
+	 * 
 	 * @author lps
-	 * @date Jan 26, 2019 12:45:03 AM 
+	 * @date Jan 26, 2019 12:45:03 AM
 	 * 
 	 * @description: 是否需要打印结算联
 	 * @return void
@@ -277,17 +323,17 @@ public class PrinterController extends BaseController {
 	public void isNeedDoPrintJSByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
 		// 根据订单id查询出来商铺id
-				map.put("sqlMapId", "slectShopIdByOrderId");
-				map.put("ORDER_PK", orderId);
-				try {
-					map = (Map) openService.queryForObject(map);
-				} catch (Exception e) {
-					logger.error(e);
-					return;
-				}
-				String shopId = (String) map.get("FK_SHOP");
-		
-		//查询打不打印结算联
+		map.put("sqlMapId", "slectShopIdByOrderId");
+		map.put("ORDER_PK", orderId);
+		try {
+			map = (Map) openService.queryForObject(map);
+		} catch (Exception e) {
+			logger.error(e);
+			return;
+		}
+		String shopId = (String) map.get("FK_SHOP");
+
+		// 查询打不打印结算联
 		Map switchMap = new HashMap<String, Object>();
 		switchMap.put("sqlMapId", "loadFuncSwitchList");
 		switchMap.put("FK_SHOP", shopId);
@@ -297,11 +343,10 @@ public class PrinterController extends BaseController {
 			logger.error(e);
 		}
 		String CHECK_XDDYJSL = (String) switchMap.get("CHECK_XDDYJSL");
-		if("false".equals(CHECK_XDDYJSL)) {
-			doPrintJS(shopId, orderId, "tdjs",null);
+		if ("false".equals(CHECK_XDDYJSL)) {
+			doPrintJS(shopId, orderId, "tdjs", null);
 		}
 	}
-	
 
 	public void doPrintJSByOrderId(String orderId) {
 		Map map = new HashMap<String, Object>();
@@ -327,7 +372,6 @@ public class PrinterController extends BaseController {
 		doPrintJS(shopId, orderId, type, null);
 	}
 
-	
 	/**
 	 * 
 	 * @author kqs
@@ -603,7 +647,7 @@ public class PrinterController extends BaseController {
 		}
 	}
 
-	public void doPrintByOrderId(String orderId,List<Map<String, Object>> goods) {
+	public void doPrintByOrderId(String orderId, List<Map<String, Object>> goods) {
 		Map map = new HashMap<String, Object>();
 		// 根据订单id查询出来商铺id
 		map.put("sqlMapId", "slectShopIdByOrderId");
@@ -654,7 +698,7 @@ public class PrinterController extends BaseController {
 				doPrintDZByOrderId(orderId);
 				doPrintJSByOrderId(orderId);
 			}
-			doPrintByOrderId(orderId,null);
+			doPrintByOrderId(orderId, null);
 
 		} catch (Exception e) {
 			logger.error(e);

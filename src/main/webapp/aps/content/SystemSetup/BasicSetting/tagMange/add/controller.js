@@ -30,15 +30,14 @@
 							var m2 = {
 								"title" : "提示",
 								"contentName" : "modal",
-								"text" : data.data,
-								"toUrl" : "aps/content/SystemSetup/BasicSetting/userTag/config.json?fid=" + scope.form.fid
+								"text" : data.data
 							}
 						} else {
 							var m2 = {
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : data.data,
-								"toUrl" : "aps/content/SystemSetup/BasicSetting/userTag/config.json?fid=" + scope.form.fid
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/tagMange/config.json?fid=" + scope.form.fid
 							}
 						}
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
@@ -54,7 +53,7 @@
 						contentName : "modal"
 					});
 				});
-				
+
 				function comboboxInit() {
 					$("#sd_select").picker({
 						title : "选择标签类型",
@@ -65,14 +64,18 @@
 								values : [ '打印标签', '商品标签' ],
 								displayValues : [ '打印标签', '商品标签' ]
 							}
-						]
+						],
+						onChange : function(e) {
+							var value = e.value[0]
+							$scope.form.SHOP_TAG_TYPE = value
+						}
 					});
 				}
-				
+
 				comboboxInit();
-				
+
 				scope.doSave = function() {
-					
+
 					if (scope.form.SHOP_TAG_TYPE == undefined || scope.form.SHOP_TAG_TYPE == '') {
 						var m2 = {
 							"title" : "提示",
@@ -82,13 +85,13 @@
 						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 						return;
 					}
-					
+
 					var $form = $("#addTagForm");
 					$form.form();
 					$form.validate(function(error) {
 						if (!error) {
 							var m2 = {
-								"url" : "aps/content/SystemSetup/BasicSetting/userTag/add/config.json",
+								"url" : "aps/content/SystemSetup/BasicSetting/tagMange/add/config.json",
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : "是否确定保存?"

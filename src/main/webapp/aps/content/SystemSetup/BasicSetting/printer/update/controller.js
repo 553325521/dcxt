@@ -193,36 +193,14 @@
 				});
 
 				var init = function() {
-					$httpService.post(config.findURL, {}).success(function(data) {
+					$httpService.post(config.findURL, {
+						PRINTER_PK : params.PRINTER_PK
+					}).success(function(data) {
 						if (data.code != '0000') {
 						} else {
-							var ids = [];
-							$.each(data.data, function(index, value) {
-								ids.push(value.PRINT_BUG_PK);
-							})
-
-							$("#key_select").picker({
-								title : "选择打印机",
-								toolbarCloseText : '确定',
-								cols : [
-									{
-										textAlign : 'center',
-										values : ids,
-										displayValues : ids
-									}
-								],
-								onChange : function(e) {
-									var value = e.value[0]
-									$scope.form.PRINTER_KEY = value
-									for (var item in data.data) {
-										if (data.data[item].PRINT_BUG_PK = value) {
-											scope.form.PRINTER_PAGE_WIDTH = data.data[item].PRINT_WIDTH
-											scope.$apply();
-											break;
-										}
-									}
-								}
-							});
+							scope.form = data.data;
+							scope.form.PRINTER_PK = params.PRINTER_PK;
+							$scope.$apply();
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
@@ -284,7 +262,6 @@
 				}
 
 				comboboxInit()
-
 			}
 		];
 	});

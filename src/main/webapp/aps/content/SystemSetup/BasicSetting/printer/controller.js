@@ -31,7 +31,7 @@
 								if (data.data[item].PRINTER_DISHES != undefined) {
 									data.data[item].PRINTER_DISHES_TEXT = data.data[item].PRINTER_DISHES
 									for (index in scope.goodType) {
-										data.data[item].PRINTER_DISHES_TEXT = (data.data[item].PRINTER_DISHES_TEXT).replace(scope.goodType[index].GTYPE_PK, scope.goodType[index].GTYPE_NAME)
+										data.data[item].PRINTER_DISHES_TEXT = (data.data[item].PRINTER_DISHES_TEXT).replace(scope.goodType[index].SHOP_TAG_PK, scope.goodType[index].SHOP_TAG_NAME)
 									}
 									data.data[item].PRINTER_DISHES_TEXT = (data.data[item].PRINTER_DISHES_TEXT).replace(/,/g, '/');
 								}
@@ -46,7 +46,6 @@
 
 				var loadGoodType = function() {
 					$httpService.post(config.findGoodTypeURL, {
-						GTYPE_PID : 0
 					}).success(function(data) {
 						if (data.code != '0000') {
 						} else {
@@ -63,6 +62,58 @@
 				scope.toHref = function(path) {
 					var m2 = {
 						"url" : "aps/content/" + path + "/config.json?fid=" + params.fid,
+						"size" : "modal-lg",
+						"contentName" : "content"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.content', m2);
+				}
+				
+				// 弹窗确认事件
+				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
+					$httpService.post(config.removeUrl, scope.toRemoveTag).success(function(data) {
+						if (data.code != '0000') {
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data
+							}
+						} else {
+							var m2 = {
+								"title" : "提示",
+								"contentName" : "modal",
+								"text" : data.data
+							}
+						}
+						eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+						init()
+					}).error(function(data) {
+						loggingService.info('获取测试信息出错');
+					});
+
+				});
+
+				// 弹窗取消事件
+				eventBusService.subscribe(controllerName, controllerName + '.close', function(event, btn) {
+					eventBusService.publish(controllerName, 'appPart.load.modal.close', {
+						contentName : "modal"
+					});
+				});
+				
+				scope.removeTag = function(tag) {
+					var m2 = {
+						"url" : "aps/content/SystemSetup/BasicSetting/printer/config.json",
+						"title" : "提示",
+						"contentName" : "modal",
+						"text" : "是否确定删除该记录?"
+					}
+					eventBusService.publish(controllerName, 'appPart.load.modal', m2);
+					
+					scope.toRemoveTag = tag
+				}
+				
+				scope.updateTag = function(tag) {
+					var m2 = {
+						"url" : "aps/content/SystemSetup/BasicSetting/printer/update/config.json?fid=" + params.fid + "&PRINTER_PK=" + tag.PRINTER_PK,
 						"size" : "modal-lg",
 						"contentName" : "content"
 					}

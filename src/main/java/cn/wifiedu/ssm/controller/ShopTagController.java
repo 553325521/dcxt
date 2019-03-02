@@ -68,10 +68,14 @@ public class ShopTagController extends BaseController {
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
 			Map<String, Object> map = getParameterMap();
-			map.put("IS_USE", String.valueOf(map.get("IS_USE")));
 			map.put("FK_SHOP", userObj.getString("FK_SHOP"));
 			map.put("sqlMapId", "addNewShopTag");
 			logger.info("insert addNewShopTag: info [ " + map + "]");
+			if (map.get("SHOP_TAG_TYPE").equals("打印标签")) {
+				map.put("SHOP_TAG_TYPE", "1");
+			} else {
+				map.put("SHOP_TAG_TYPE", "0");
+			}
 			if (StringUtils.isNotBlank(openService.insert(map))) {
 				output("0000", "保存成功！");
 				return;
@@ -118,5 +122,31 @@ public class ShopTagController extends BaseController {
 			output("9999", "查询失败");
 		}
 	}
+	
+	/**
+	 * 查询改店铺的打印标签
+	 * 
+	 * @author kqs
+	 */
+	@RequestMapping("/ShopTag_select_selectShopGoodsPrintTagById")
+	public void selectShopGoodsPrintTagById() {
+		try {
+			Map<String, Object> map = getParameterMap();
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+			map.put("SHOP_ID", userObj.get("FK_SHOP"));
 
+			// 查询打印标签
+			map.put("sqlMapId", "selectShopGoodsPrintTagById");
+			List printLabelList = openService.queryForList(map);
+
+			output("0000", printLabelList);
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+			output("9999", "查询失败");
+		}
+	}
+	
 }

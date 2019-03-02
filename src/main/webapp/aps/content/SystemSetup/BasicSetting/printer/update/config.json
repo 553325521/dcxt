@@ -1,0 +1,23 @@
+{
+	"name": "printer_update",
+	"viewUrl": "aps/content/SystemSetup/BasicSetting/printer/update/template.html",
+	"controllerUrl": "aps/content/SystemSetup/BasicSetting/printer/update/controller.js",
+	"config": {
+		"pageTitle": "打印机编辑",
+		"updateURL": "json/UserTag_update_updateUserTag.json",
+		"findURL": "json/Print_select_selectPrintInfoById.json",
+		"findGoodTypeURL" : "json/ShopTag_select_selectShopGoodsPrintTagById.json",
+		"menu":{	
+	            "buttons":[
+		        	{
+		            	"buttonName":"取消",
+		            	"buttonLink":"printer_update.close"
+		        	},
+		        	{
+		            	"buttonName":"确定",
+		            	"buttonLink":"printer_update.confirm"
+		        	}
+				]
+			}
+	}
+}
