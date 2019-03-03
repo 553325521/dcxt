@@ -166,12 +166,16 @@ public class ShopController extends BaseController {
 			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
 			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 			JSONObject userObj = JSON.parseObject(userJson);
-			map.put("USER_ID", userObj.get("USER_PK"));
+			map.put("USER_ID",userObj.get("USER_PK"));
 			map.put("sqlMapId", "selectAgentInfoById");
 
 			Map<String, Object> reMap1 = (Map) openService.queryForObject(map);
 			// 如果还未认证，跳转到认证界面
-			if (!reMap1.containsKey("AUTH_STATUS") || "0".equals(reMap1.get("AUTH_STATUS"))) {
+			if(reMap1 == null){
+				output("5555", "代理信息不完善");
+				return;
+			}
+			if (reMap1 != null && !reMap1.containsKey("AUTH_STATUS") || "0".equals(reMap1.get("AUTH_STATUS"))) {
 				output("5555", "代理信息不完善");
 				return;
 			}
