@@ -875,6 +875,7 @@ public class ShopInfoController extends BaseController {
 			map.put("sqlMapId", "selectAllOpenidByUnionid");
 			map.put("USER_UNIONID", map.get("unionid"));
 			
+			//查询该unionid下所有的opendid
 			List<Map<String, Object>> queryForList = openService.queryForList(map);
 			for(Map openidMap : queryForList) {
 				String token = (String) openidMap.get("USER_WX");
