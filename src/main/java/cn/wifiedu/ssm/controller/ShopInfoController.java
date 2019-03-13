@@ -872,6 +872,18 @@ public class ShopInfoController extends BaseController {
 	public void getGZHShopIdByXCX(){
 		try {
 			Map<String, Object> map = getParameterMap();
+			String openId = (String) map.get("openid");
+			String userJson = null;
+			userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + openId);
+			if(userJson != null) {
+				JSONObject userObj = JSON.parseObject(userJson);
+				String shopId = (String) userObj.get("FK_SHOP");
+				if(shopId != null) {
+					output("0000", shopId);
+					return;
+				}
+			}
+			
 			map.put("sqlMapId", "selectAllOpenidByUnionid");
 			map.put("USER_UNIONID", map.get("unionid"));
 			
@@ -879,7 +891,7 @@ public class ShopInfoController extends BaseController {
 			List<Map<String, Object>> queryForList = openService.queryForList(map);
 			for(Map openidMap : queryForList) {
 				String token = (String) openidMap.get("USER_WX");
-				String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+				userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
 				if(userJson != null) {
 					JSONObject userObj = JSON.parseObject(userJson);
 					String shopId = (String) userObj.get("FK_SHOP");
