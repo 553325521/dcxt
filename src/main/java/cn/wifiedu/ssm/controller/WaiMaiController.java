@@ -386,6 +386,166 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 				}
 			}
 			
+			/**
+			 * 上为聚宝盆推送
+			 */
+			
+			/**
+			 * 下为美团外卖回调
+			 */
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 * 
+			 * @description: 推送订单URL
+			 * @return void
+			 */
+			@RequestMapping("/mt/test/callback/waimai/order/acceptOrder")
+			public void mtOrderAcceptOrder(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MTWM_acceptCancel-------------------");
+					logger.info(params);
+					
+					logger.info("----------MTWM_acceptCancel----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"OK\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MTWM_acceptCancel fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+
+			/**
+			 * 
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 * 
+			 * @description: 美团用户或客服取消URL
+			 * @return void
+			 */
+			@RequestMapping("/mt/test/callback/waimai/order/acceptCancel")
+			public void mtOrderAcceptCancel(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MTWM_acceptCancel-------------------");
+					logger.info(params);
+					
+					logger.info("----------MTWM_acceptCancel----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"OK\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MTWM_acceptCancel fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 * 
+			 * @description: 订单配送状态回调URL
+			 * @return void
+			 */
+			@RequestMapping("/mt/test/callback/waimai/order/acceptShippingStatus")
+			public void mtOrderAcceptShippingStatus(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MTWM_acceptShippingStatus-------------------");
+					logger.info(params);
+					
+					logger.info("----------MTWM_acceptShippingStatus----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"OK\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MTWM_acceptShippingStatus fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 * 
+			 * @description: 已完成订单推送回调URL
+			 * @return void
+			 */
+			@RequestMapping("/mt/test/callback/waimai/order/acceptCompleteOrder")
+			public void mtOrderAcceptCompleteOrder(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					
+					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
+					StringBuffer sb = new StringBuffer("");
+					String temp;
+					while ((temp = br.readLine()) != null) {
+					sb.append(temp);
+					}
+					br.close();
+					String params = sb.toString();
+					logger.info("-------------MTWM_acceptCompleteOrder-------------------");
+					logger.info(params);
+					
+					logger.info("----------MTWM_acceptCompleteOrder----------");
+					logger.info(map);
+					reponse.getWriter().write("{\"data\":\"OK\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MTWM_acceptCompleteOrder fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+			
+/**
+ * 如上为美团外卖回调			
+ */
+			
+			
 			
 			/**
 			 * 
