@@ -26,14 +26,6 @@
 	</div>
 	<div class="weui_cell">
 		<div class="weui_cell_hd">
-			<label class="weui_label label">密匙</label>
-		</div>
-		<div class="weui_cell_bd weui_cell_primary">
-			<input class="weui_input label-input" type="text" ng-model="form.PRINTER_PK">
-		</div>
-	</div>
-	<div class="weui_cell">
-		<div class="weui_cell_hd">
 			<label class="weui_label label">宽度</label>
 		</div>
 		<div class="weui_cell_bd weui_cell_primary">
@@ -72,8 +64,9 @@
 					style="margin-left: {{$index == 0 ? 0 : 10}}px;"
 					ng-repeat="item in printer_level">
 					<input class="weui-form-checkbox" name="f3" id="h{{$index + 1}}"
-						value="{{item.value}}" type="checkbox" ng-model="item.checked"
-						ng-change="selectLevel(item)"> <label
+						value="{{item.value}}" type="checkbox" ng-model="item.checked" 
+						ng-change="selectLevels(item)"
+						ng-checked="doPrintNoCheckArr.indexOf(item.value)==-1"> <label
 						for="h{{$index + 1}}"> <i
 						class="weui-icon-checkbox icon-checkbox-self" style="margin: 0;"></i>
 						<div class="weui-form-text label-input" style="margin: 0;">

@@ -2,7 +2,7 @@ package cn.wifiedu.ssm.util;
 
 import java.util.Random;
 
-public class RandomStringUtils {
+public class RandomStringUtil {
 	public static String getRandomString(int length) {
 		String str = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		Random random = new Random();

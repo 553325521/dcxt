@@ -19,9 +19,12 @@
 				};
 
 				scope = $scope;
-
+				// 标签范围数组
 				scope.noCheckArr = [];
-
+				
+				// 联数组
+				scope.doPrintNoCheckArr = [1, 2, 3];
+				
 				// 定义页面标题
 				scope.pageTitle = config.pageTitle
 
@@ -55,7 +58,17 @@
 
 				// 初始化 菜品列表
 				scope.form.KIND_OF_DISHES = false;
-
+				
+				// 菜品勾选
+				scope.selectLevels = function(item) {
+					var action = (item.checked ? 'add' : 'remove');
+					if (action == "remove") {
+						scope.doPrintNoCheckArr.push(item.value);
+					} else {
+						scope.doPrintNoCheckArr.remove(item.value);
+					}
+				}
+				
 				$scope.$watch('form.PRINTER_PRODUCT_RANGE', function(newValue, oldValue) {
 					if (newValue === oldValue) {
 						return;
@@ -119,8 +132,16 @@
 								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 								return;
 							}
-
-							if (scope.form.PRINTER_LEVEL == undefined || scope.form.PRINTER_LEVEL == '') {
+							
+							var printLevel = []
+							$.each(scope.printer_level, function(index, item) {
+								if (scope.doPrintNoCheckArr.indexOf(item.value) == -1) {
+									printLevel.push(item.value)
+								}
+							})
+							scope.form.PRINTER_LEVEL = printLevel.join(',');
+							
+							if (printLevel.length == 0 || scope.form.PRINTER_LEVEL == undefined || scope.form.PRINTER_LEVEL == '') {
 								var m2 = {
 									"title" : "提示",
 									"contentName" : "modal",
@@ -134,7 +155,6 @@
 							scope.form.PRINTER_DISHES = []
 
 							$.each(scope.printer_dishes_list, function(index, item) {
-								debugger;
 								if (scope.noCheckArr.indexOf(item.value) == -1) {
 									scope.form.PRINTER_DISHES.push(item.value)
 								}

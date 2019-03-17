@@ -27,7 +27,7 @@ import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.ssm.util.Arith;
 import cn.wifiedu.ssm.util.CookieUtils;
-import cn.wifiedu.ssm.util.RandomStringUtils;
+import cn.wifiedu.ssm.util.RandomStringUtil;
 import cn.wifiedu.ssm.util.StringDeal;
 import cn.wifiedu.ssm.util.print.PrintTemplate58MM;
 import cn.wifiedu.ssm.util.redis.JedisClient;
@@ -107,7 +107,7 @@ public class PrinterController extends BaseController {
 	 */
 	private String createPrintNum(String shopId) {
 		try {
-			String printNum = RandomStringUtils.getRandomString(12);
+			String printNum = RandomStringUtil.getRandomString(12);
 			if (!jedisClient.isExit(RedisConstants.PRINTNUM_LIST + printNum)) {
 				jedisClient.set(RedisConstants.PRINTNUM_LIST + printNum, shopId);
 				return printNum;
@@ -189,7 +189,7 @@ public class PrinterController extends BaseController {
 			output("9999", " Exception ", e);
 		}
 	}
-	
+
 	/**
 	 * @author kqs
 	 * @param request
@@ -214,7 +214,6 @@ public class PrinterController extends BaseController {
 		}
 	}
 
-	
 	/**
 	 * 
 	 * @author kqs
@@ -286,7 +285,7 @@ public class PrinterController extends BaseController {
 		}
 		return;
 	}
-	
+
 	/**
 	 * 
 	 * @author kqs
@@ -895,6 +894,25 @@ public class PrinterController extends BaseController {
 			List<Map<String, Object>> res = openService.queryForList(map);
 			if (res != null) {
 				output("0000", res);
+				return;
+			}
+		} catch (Exception e) {
+			output("9999", " Exception ", e);
+		}
+		return;
+	}
+
+	@RequestMapping("/Print_update_updatePrintInfo")
+	public void updatePrintInfo(HttpServletRequest request, HttpSession session) {
+		try {
+			String token = CookieUtils.getCookieValue(request, "DCXT_TOKEN");
+			String userJson = jedisClient.get(RedisConstants.REDIS_USER_SESSION_KEY + token);
+			JSONObject userObj = JSON.parseObject(userJson);
+
+			Map<String, Object> map = getParameterMap();
+			map.put("sqlMapId", "updatePrintByPrimaryKey");
+			if (openService.update(map)) {
+				output("0000", "操作成功!");
 				return;
 			}
 		} catch (Exception e) {

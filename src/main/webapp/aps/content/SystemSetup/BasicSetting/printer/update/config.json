@@ -4,7 +4,7 @@
 	"controllerUrl": "aps/content/SystemSetup/BasicSetting/printer/update/controller.js",
 	"config": {
 		"pageTitle": "打印机编辑",
-		"updateURL": "json/UserTag_update_updateUserTag.json",
+		"updateURL": "json/Print_update_updatePrintInfo.json", 
 		"findURL": "json/Print_select_selectPrintInfoById.json",
 		"findGoodTypeURL" : "json/ShopTag_select_selectShopGoodsPrintTagById.json",
 		"menu":{	

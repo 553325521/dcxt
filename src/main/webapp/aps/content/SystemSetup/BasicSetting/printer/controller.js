@@ -21,13 +21,30 @@
 						if (data.code != '0000') {
 						} else {
 							for (item in data.data) {
-								if (data.data[item].PRINTER_LEVEL == '1') {
-									data.data[item].PRINTER_LEVEL_NAME = '结算联'
-								} else if (data.data[item].PRINTER_LEVEL == '2') {
-									data.data[item].PRINTER_LEVEL_NAME = '对账联'
-								} else if (data.data[item].PRINTER_LEVEL == '3') {
-									data.data[item].PRINTER_LEVEL_NAME = '备物联'
+								var printLever = data.data[item].PRINTER_LEVEL;
+								if (printLever != undefined) {
+									if (printLever.indexOf('1') >= 0) {
+										printLever = printLever.replace('1', '结算联');
+									}
+									if (printLever.indexOf('2') >= 0) {
+										printLever = printLever.replace('2', '对账联');
+									}
+									if (printLever.indexOf('3') >= 0) {
+										printLever = printLever.replace('3', '备物联');
+									}
+									if (printLever.indexOf(',') >= 0) {
+										printLever = printLever.replace(',', '/');
+									}
+									data.data[item].PRINTER_LEVEL_NAME = printLever;
 								}
+								//data.data[item].PRINTER_LEVEL = data.data[item].PRINTER_LEVEL.replace('1', '结算联').replace('2', '对账联').replace('3', '备物联').replace(/,/g, '/')
+								//								if (data.data[item].PRINTER_LEVEL == '1') {
+								//									data.data[item].PRINTER_LEVEL_NAME = '结算联'
+								//								} else if (data.data[item].PRINTER_LEVEL == '2') {
+								//									data.data[item].PRINTER_LEVEL_NAME = '对账联'
+								//								} else if (data.data[item].PRINTER_LEVEL == '3') {
+								//									data.data[item].PRINTER_LEVEL_NAME = '备物联'
+								//								}
 								if (data.data[item].PRINTER_DISHES != undefined) {
 									data.data[item].PRINTER_DISHES_TEXT = data.data[item].PRINTER_DISHES
 									for (index in scope.goodType) {
@@ -67,7 +84,7 @@
 					}
 					eventBusService.publish(controllerName, 'appPart.load.content', m2);
 				}
-				
+
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 					$httpService.post(config.removeUrl, scope.toRemoveTag).success(function(data) {
@@ -98,7 +115,7 @@
 						contentName : "modal"
 					});
 				});
-				
+
 				scope.removeTag = function(tag) {
 					var m2 = {
 						"url" : "aps/content/SystemSetup/BasicSetting/printer/config.json",
@@ -107,10 +124,10 @@
 						"text" : "是否确定删除该记录?"
 					}
 					eventBusService.publish(controllerName, 'appPart.load.modal', m2);
-					
+
 					scope.toRemoveTag = tag
 				}
-				
+
 				scope.updateTag = function(tag) {
 					var m2 = {
 						"url" : "aps/content/SystemSetup/BasicSetting/printer/update/config.json?fid=" + params.fid + "&PRINTER_PK=" + tag.PRINTER_PK,

@@ -56,6 +56,16 @@
 				// 初始化 菜品列表
 				scope.form.KIND_OF_DISHES = false;
 
+				// 菜品勾选
+				scope.selectLevels = function(item) {
+					var action = (item.checked ? 'add' : 'remove');
+					if (action == "remove") {
+						scope.doPrintNoCheckArr.push(item.value);
+					} else {
+						scope.doPrintNoCheckArr.remove(item.value);
+					}
+				}
+				
 				$scope.$watch('form.PRINTER_PRODUCT_RANGE', function(newValue, oldValue) {
 					if (newValue === oldValue) {
 						return;
@@ -119,7 +129,15 @@
 								eventBusService.publish(controllerName, 'appPart.load.modal', m2);
 								return;
 							}
-
+							
+							var printLevel = []
+							$.each(scope.printer_level, function(index, item) {
+								if (scope.doPrintNoCheckArr.indexOf(item.value) == -1) {
+									printLevel.push(item.value)
+								}
+							})
+							scope.form.PRINTER_LEVEL = printLevel.join(',');
+							
 							if (scope.form.PRINTER_LEVEL == undefined || scope.form.PRINTER_LEVEL == '') {
 								var m2 = {
 									"title" : "提示",
@@ -134,7 +152,6 @@
 							scope.form.PRINTER_DISHES = []
 
 							$.each(scope.printer_dishes_list, function(index, item) {
-								debugger;
 								if (scope.noCheckArr.indexOf(item.value) == -1) {
 									scope.form.PRINTER_DISHES.push(item.value)
 								}
@@ -151,7 +168,7 @@
 							}
 
 							var m2 = {
-								"url" : "aps/content/SystemSetup/BasicSetting/printer/setting/config.json",
+								"url" : "aps/content/SystemSetup/BasicSetting/printer/update/config.json",
 								"title" : "提示",
 								"contentName" : "modal",
 								"text" : "是否确定保存?"
@@ -164,12 +181,13 @@
 				// 弹窗确认事件
 				eventBusService.subscribe(controllerName, controllerName + '.confirm', function(event, btn) {
 					scope.form.PRINTER_DISHES_STR = scope.form.PRINTER_DISHES.join(',');
-					$httpService.post(config.saveURL, $scope.form).success(function(data) {
+					$httpService.post(config.updateURL, $scope.form).success(function(data) {
 						if (data.code != '0000') {
 							var m2 = {
 								"title" : "提示",
 								"contentName" : "modal",
-								"text" : data.data
+								"text" : data.data,
+								"toUrl" : "aps/content/SystemSetup/BasicSetting/printer/config.json?fid=" + params.fid
 							}
 						} else {
 							var m2 = {
@@ -200,30 +218,36 @@
 						} else {
 							scope.form = data.data;
 							scope.form.PRINTER_PK = params.PRINTER_PK;
+							if (scope.form.PRINTER_LEVEL != undefined) {
+								scope.doPrintNoCheckArr = scope.form.PRINTER_LEVEL.split(',');
+							}
+							
 							$scope.$apply();
+							
+							$httpService.post(config.findGoodTypeURL, {
+							}).success(function(data) {
+								if (data.code != '0000') {
+								} else {
+									// 菜品数据源
+									scope.printer_dishes_list = [];
+									scope.goodTypes = data.data;
+									$.each(scope.goodTypes, function(index, value) {
+										scope.printer_dishes_list.push({
+											title : value.SHOP_TAG_NAME,
+											value : value.SHOP_TAG_PK
+										});
+										scope.noCheckArr.push(value.SHOP_TAG_PK);
+									})
+								}
+							}).error(function(data) {
+								loggingService.info('获取测试信息出错');
+							});
+							
 						}
 					}).error(function(data) {
 						loggingService.info('获取测试信息出错');
 					});
 
-					$httpService.post(config.findGoodTypeURL, {
-					}).success(function(data) {
-						if (data.code != '0000') {
-						} else {
-							// 菜品数据源
-							scope.printer_dishes_list = [];
-							scope.goodTypes = data.data;
-							$.each(scope.goodTypes, function(index, value) {
-								scope.printer_dishes_list.push({
-									title : value.SHOP_TAG_NAME,
-									value : value.SHOP_TAG_PK
-								});
-								scope.noCheckArr.push(value.SHOP_TAG_PK);
-							})
-						}
-					}).error(function(data) {
-						loggingService.info('获取测试信息出错');
-					});
 				}
 
 				init()

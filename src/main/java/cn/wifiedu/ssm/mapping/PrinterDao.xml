@@ -66,6 +66,43 @@
 		)
 	</insert>
 
+	<update id="updatePrintByPrimaryKey" parameterMap="BaseParameterMap">
+		update sc_printer
+		<set>
+			<if test="PRINTER_NAME != null">
+				PRINTER_NAME = #{PRINTER_NAME,jdbcType=VARCHAR},
+			</if>
+			<if test="PRINTER_PAGE_NUMS != null">
+				PRINTER_PAGE_NUMS =
+				#{PRINTER_PAGE_NUMS,jdbcType=VARCHAR},
+			</if>
+			<if test="PRINTER_PAGE_WIDTH != null">
+				PRINTER_PAGE_WIDTH =
+				#{PRINTER_PAGE_WIDTH,jdbcType=VARCHAR},
+			</if>
+			<if test="RPINTER_SPEED != null">
+				RPINTER_SPEED = #{RPINTER_SPEED,jdbcType=VARCHAR},
+			</if>
+			<if test="PRINTER_DISHES != null">
+				PRINTER_DISHES = #{PRINTER_DISHES,jdbcType=VARCHAR},
+			</if>
+			<if test="PRINTER_TG_TEXT != null">
+				PRINTER_TG_TEXT = #{PRINTER_TG_TEXT,jdbcType=VARCHAR},
+			</if>
+			<if test="PRINTER_SAMLL_DZ != null">
+				PRINTER_SAMLL_DZ = #{PRINTER_SAMLL_DZ,jdbcType=VARCHAR},
+			</if>
+			<if test="PRINTER_LEVEL != null">
+				PRINTER_LEVEL = #{PRINTER_LEVEL,jdbcType=VARCHAR},
+			</if>
+			<if test="PRINTER_BILL_HEAD != null">
+				PRINTER_BILL_HEAD =
+				#{PRINTER_BILL_HEAD,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where PRINTER_PK = #{PRINTER_PK,jdbcType=VARCHAR}
+	</update>
+
 	<!-- 查询打印机相关信息 -->
 	<select id="loadPrintRelevantList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
@@ -98,7 +135,7 @@
 		</where>
 	</select>
 
-	<!-- 查询已购打印机列表 --> 
+	<!-- 查询已购打印机列表 -->
 	<select id="loadPrintList" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
 		SELECT PRINT_BUG_PK, PRINT_WIDTH FROM SC_PRINT_BUG WHERE
@@ -112,19 +149,19 @@
 			AND PRINT_BUG_PK = #{PRINTER_KEY}
 		</where>
 	</update>
-	
+
 	<!-- 查询已购打印机列表 -->
 	<select id="loadPrintCount" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		SELECT count(*) as PRINT_COUNT from SC_PRINT_BUG 
+		SELECT count(*) as PRINT_COUNT from SC_PRINT_BUG
 	</select>
-	
+
 	<!-- 删除打印机设置 -->
-	<delete id="delPrintInfo"
-		parameterMap="BaseParameterMap">
-		delete from sc_printer where PRINTER_PK = #{PRINTER_PK}
+	<delete id="delPrintInfo" parameterMap="BaseParameterMap">
+		delete from sc_printer
+		where PRINTER_PK = #{PRINTER_PK}
 	</delete>
-	
+
 	<!-- 根据ID 查询打印机设置 -->
 	<select id="selectPrintInfoById" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
