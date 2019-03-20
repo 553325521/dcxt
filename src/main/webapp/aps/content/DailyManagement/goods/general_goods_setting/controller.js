@@ -59,18 +59,21 @@
 						//发送post请求
 						$httpService.post(config.getLabel).success(function(data) {
 							if(data.code == '0000'){
+								//标签列表
+								scope.labelList = data.data.goodTag;
+								scope.printLabelList = data.data.printTag;
 								
 								//商品标签库
 								scope.label_library = {}
 								angular.forEach(data.data.goodTag, function(data, index, array) {
-									scope.label_library[data.SHOP_TAG_NAME] = "false"
+									scope.label_library[data.SHOP_TAG_PK] = "false"
 								})
 								
 								
 								//打印标签库
 								scope.print_label_library={}
 								angular.forEach(data.data.printTag, function(data, index, array) {
-									scope.print_label_library[data.SHOP_TAG_NAME] = "false"
+									scope.print_label_library[data.SHOP_TAG_PK] = "false"
 								})
 								
 								//当前选择的标签

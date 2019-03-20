@@ -242,7 +242,7 @@ public class WxController extends BaseController {
 				}
 //这一行是为了让微信审核人员有个店铺，审核完毕可删除
 //TODO
-				userMap.put("FK_SHOP", "f11099f4816f4a6c99e511c4a7aa82d0");
+//				userMap.put("FK_SHOP", "f11099f4816f4a6c99e511c4a7aa82d0");
 				logger.info("246");
 				logger.info(userMap);
 				// redis存储用户登录信息

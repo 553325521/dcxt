@@ -422,7 +422,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					
 					logger.info("----------MTWM_acceptCancel----------");
 					logger.info(map);
-					reponse.getWriter().write("{\"data\":\"OK\"}");
+					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
 				} catch (Exception e) {
 					logger.error("-------------MTWM_acceptCancel fail-------------------");
@@ -458,7 +458,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					
 					logger.info("----------MTWM_acceptCancel----------");
 					logger.info(map);
-					reponse.getWriter().write("{\"data\":\"OK\"}");
+					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
 				} catch (Exception e) {
 					logger.error("-------------MTWM_acceptCancel fail-------------------");
@@ -495,7 +495,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					
 					logger.info("----------MTWM_acceptShippingStatus----------");
 					logger.info(map);
-					reponse.getWriter().write("{\"data\":\"OK\"}");
+					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
 				} catch (Exception e) {
 					logger.error("-------------MTWM_acceptShippingStatus fail-------------------");
@@ -532,7 +532,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					
 					logger.info("----------MTWM_acceptCompleteOrder----------");
 					logger.info(map);
-					reponse.getWriter().write("{\"data\":\"OK\"}");
+					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
 				} catch (Exception e) {
 					logger.error("-------------MTWM_acceptCompleteOrder fail-------------------");

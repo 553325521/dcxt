@@ -10,6 +10,18 @@
 			return $sce.trustAsHtml(input);
 		}
 	});
+	
+	app.filter('valueToKey', function($sce) {
+		return function(input, list) {
+			for (let i = 0; i < list.length; i++) {
+				if (input === list[i].SHOP_TAG_PK) {
+					return list[i].SHOP_TAG_NAME;
+				}
+			}
+			
+			return input;
+		}
+	});
 
 	app.filter('trustRole', function($sce) {
 		return function(input) {

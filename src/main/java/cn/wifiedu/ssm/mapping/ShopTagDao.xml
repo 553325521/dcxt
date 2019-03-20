@@ -7,7 +7,7 @@
 	<!-- 根据shopId查询商品标签 -->
 	<select id="selectShopGoodsTagById" resultMap="BaseResultMap"
 		parameterMap="BaseParameterMap">
-		select
+		select SHOP_TAG_PK,
 		SHOP_TAG_NAME from SC_SHOP_TAG
 		where FK_SHOP = #{SHOP_ID} and SHOP_TAG_TYPE = '0';
 	</select>
@@ -34,6 +34,7 @@
 		where FK_SHOP = #{SHOP_ID} and SHOP_TAG_TYPE = '1';
 	</select>
 	
+
 	<!-- 新增标签 -->
 	<insert id="addNewShopTag" parameterMap="BaseParameterMap">
 		insert into

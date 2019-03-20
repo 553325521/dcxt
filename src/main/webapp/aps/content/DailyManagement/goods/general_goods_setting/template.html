@@ -242,7 +242,7 @@
          </div> -->
         <div class="weui_cell no-broder" style="display: -webkit-box;display: -webkit-flex; padding-right:0px;padding-bottom:4px;">
 			<div class="weui_cell_bd" style="padding:4px 0;">
-				<span class="{{value == 'true' ? 'bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="(key,value) in label_library" ng-click="clickLabel(key)">{{key}}</span>
+				<span class="{{value == 'true' ? 'bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="(key,value) in label_library" ng-click="clickLabel(key)">{{key | valueToKey : labelList}}</span>
 			</div>
 		</div>
         <!--  <div class="weui_cell cancelBorder">
@@ -259,7 +259,7 @@
          </div> -->
         <div class="weui_cell no-broder" style="display: -webkit-box;display: -webkit-flex; padding-right:0px;padding-bottom:4px;">
 			<div class="weui_cell_bd" style="padding:4px 0;">
-				<span class="{{value == 'true' ? 'bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="(key,value) in print_label_library" ng-click="clickPrintLabel(key)">{{key}}</span>
+				<span class="{{value == 'true' ? 'bg-blue f-white':'bg-white f-black'}} dcxt_select_span" ng-repeat="(key,value) in print_label_library" ng-click="clickPrintLabel(key)">{{key | valueToKey : printLabelList}}</span>
 			</div>
 		</div>
          
