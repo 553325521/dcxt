@@ -141,7 +141,7 @@
 											
 											//分转换成元
 											scope.form.GOODS_PRICE = Number(scope.form.GOODS_PRICE)/100;
-											if(scope.form.GOODS_TRUE_PRICE != ""){
+											if(scope.form.GOODS_TRUE_PRICE !=  undefined && scope.form.GOODS_TRUE_PRICE != ""){
 												scope.form.GOODS_TRUE_PRICE = Number(scope.form.GOODS_TRUE_PRICE)/100;
 											}
 											//解决下拉选择框默认是第一个的问题
@@ -293,6 +293,11 @@
 						if(!a){
 							$.toptips('至少选择一个显示范围')
 							return;
+						}
+						
+						// 价格bug修改，这是为了保险修改的第二个地方
+						if (scope.form.GOODS_TRUE_PRICE === undefined) {
+							scope.form.GOODS_TRUE_PRICE = "";
 						}
 						
 						//数组和Map都转换成String，不然会解析失败
