@@ -11,8 +11,9 @@
 			ORDER_STASUS_PK,
 			status,
 			utime,
-			ORDER_FK,
-			CREATE_TIME,
+			order_id,
+			source,
+			CREATE_TIME
 		)
 		VALUES
 		(
@@ -20,7 +21,8 @@
 			#{status}, 
 			#{utime}, 
 			#{order_id},
-			#NOW()
+			#{source},
+			NOW()
 		)
 	</insert>
 	

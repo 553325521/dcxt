@@ -392,9 +392,9 @@ public class MTWaiMai{
     public static void main(String[] args){
     	
     	Map<String, Object> map = new HashMap();
-//    	String appPoiCode = "2898393";
-//    	System.out.println(poiOpen(appPoiCode));
-    	System.out.println(orderArrived("28983932771969648"));
+    	String appPoiCode = "2898393";
+    	System.out.println(poiOpen(appPoiCode));
+//    	System.out.println(orderArrived("28983932771969648"));
     	
     	
     	/**

@@ -658,6 +658,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 							logger.error("-------------orderConfirm fail-------------------");
 							logger.error(orderId);
 						}
+					} else {
+						output("9999", orderConfirm);
+						return;
 					}
 					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
@@ -693,6 +696,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 							logger.error("-------------order/delivering-------------------");
 							logger.error(orderId);
 						}
+					} else {
+						output("9999", orderConfirm);
+						return;
 					}
 					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
@@ -728,6 +734,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 							logger.error("-------------order/arrived fail-------------------");
 							logger.error(orderId);
 						}
+					} else {
+						output("9999", orderConfirm);
+						return;
 					}
 					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
@@ -756,6 +765,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					// 修改订单状态
 					// 需要status order_id
 					map.put("sqlMapId", "updateMTWMOrderStatusByOrderId");
+					map.put("order_id", orderId);
 					map.put("status", status);
 					boolean update = openService.update(map);
 					if (!update) {
@@ -764,7 +774,8 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					
 					// 需要status utime order_id
 					map.put("sqlMapId", "insertWaiMaiOrderStatusById");
-					map.put("from", "1");
+					map.put("utime", System.currentTimeMillis() / 1000);
+					map.put("source", "1");
 				
 					String insert = openService.insert(map);
 					
@@ -773,6 +784,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					logger.error(e);
 				}
 				
 				return false;

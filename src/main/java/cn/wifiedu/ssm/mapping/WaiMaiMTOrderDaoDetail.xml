@@ -37,19 +37,11 @@
 			#{item.food_discount}, 
 			#{item.food_property}, 
 			#{item.cart_id},
-			#NOW()
+			NOW()
 		)
 		</foreach>	
 	</insert>
 	
-	<!-- 根据OrderId修改配送状态  --> 
-	<update id="updateMTWMOrderStatusByOrderId" parameterMap="BaseParameterMap" >
-		UPDATE sc_waimai_mt_order SET 
-			STATUS = #{status}, 
-			UPDATE_TIME = NOW()
-		WHERE 
-			ORDER_ID = #{order_id};
-	</update>
 	<!-- 
  根据OrderId需改物流类型
 	<update id="updaeteWaiMaiWLByEBOrderId" parameterMap="BaseParameterMap" >
