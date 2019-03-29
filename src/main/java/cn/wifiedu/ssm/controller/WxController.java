@@ -119,13 +119,13 @@ public class WxController extends BaseController {
 		try {
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
-				String openId = getOpenIdByCode(code);
+				Map<String, Object> map = getParameterMap();
+				String openId = getOpenIdByCode(code, map);
 				logger.info("WeChart openId : " + openId);
 
 				String state = request.getParameter("state");
 				logger.info("WeChart params : " + state);
 
-				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
 				map.put("sqlMapId", "checkUserWx");
 
@@ -273,7 +273,8 @@ public class WxController extends BaseController {
 			String code = request.getParameter("code");
 			String appid = request.getParameter("appid");
 			if (null != code && !"".equals(code)) {
-				String openId = getOpenIdByCode2(code, appid);
+				Map<String, Object> userMap = new HashMap<>();
+				String openId = getOpenIdByCode2(code, appid, userMap);
 				logger.info("WeChart openId : " + openId);
 				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
@@ -281,7 +282,6 @@ public class WxController extends BaseController {
 
 				List<Map<String, Object>> checkList = openService.queryForList(map);
 				logger.info("checkList: " + checkList);
-				Map<String, Object> userMap = new HashMap<>();
 				userMap.put("USER_WX", openId);
 				userMap.put("FK_APP", appid);
 				if (checkList != null && checkList.size() == 0) {
@@ -330,9 +330,10 @@ public class WxController extends BaseController {
 		try {
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
-				String openId = getOpenIdByCode(code);
-				logger.info("WeChart openId : " + openId);
 				Map<String, Object> map = getParameterMap();
+				String openId = getOpenIdByCode(code, map);
+				logger.info("WeChart openId : " + openId);
+				
 				map.put("OPENID", openId);
 				map.put("sqlMapId", "checkUserWx");
 				List<Map<String, Object>> checkList = openService.queryForList(map);
@@ -441,12 +442,13 @@ public class WxController extends BaseController {
 	 * 
 	 * @author kqs
 	 * @param code
+	 * @param userMap 
 	 * @return
 	 * @return String
 	 * @date 2018年8月8日 - 下午4:03:38
 	 * @description:根据第三方平台基础获取openId
 	 */
-	public String getOpenIdByCode2(String code, String appid) {
+	public String getOpenIdByCode2(String code, String appid, Map<String, Object> userMap) {
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL-plat");
 		url = url.replace("CODE", code).replace("APPID", appid).replace("COMPONENT_ACCESS_TOKEN",
 				interCtrl.getComponentAccessToken());
@@ -460,7 +462,9 @@ public class WxController extends BaseController {
 		String refresh_token = succesResponse.getString("refresh_token");
 
 		String access_token = succesResponse.getString("access_token");
-
+		
+		String unionid = succesResponse.getString("unionid");
+		
 		// redis存储refresh_token
 		jedisClient.set(RedisConstants.WX_REFRESH_TOKEN + openId, refresh_token);
 		// jedisClient.expire(RedisConstants.WX_REFRESH_TOKEN + openId, 1000 *
@@ -470,8 +474,11 @@ public class WxController extends BaseController {
 		jedisClient.set(RedisConstants.WX_ACCESS_TOKEN + openId, access_token);
 		// 设置access_token的过期时间2小时
 		jedisClient.expire(RedisConstants.WX_ACCESS_TOKEN + openId, 3600 * 1);
-
-		logger.info(appid + "====" + openId);
+		
+		// 插入uid
+		userMap.put("USER_UNIONID", unionid);
+		
+		logger.info(appid + "====" + openId + "====" + unionid);
 		return openId;
 	}
 
@@ -519,7 +526,7 @@ public class WxController extends BaseController {
 		return openId;
 	}
 
-	public String getOpenIdByCode(String code) {
+	public String getOpenIdByCode(String code, Map<String, Object> userMap) {
 		String url = CommonUtil.getPath("WX_GET_OPENID_URL");
 		url = url.replace("CODE", code);
 		logger.info("getOpenIdByCode=" + url);
@@ -532,6 +539,8 @@ public class WxController extends BaseController {
 		String refresh_token = result.get("refresh_token").toString();
 
 		String access_token = result.get("access_token").toString();
+		String unionid = result.get("unionid").toString();
+		userMap.put("USER_UNIONID", unionid);
 
 		logger.info("openId:" + openId);
 		logger.info("refresh_token:" + refresh_token);
@@ -554,13 +563,13 @@ public class WxController extends BaseController {
 		try {
 			String code = request.getParameter("code");
 			if (null != code && !"".equals(code)) {
-				String openId = getOpenIdByCode(code);
+				Map<String, Object> map = getParameterMap();
+				String openId = getOpenIdByCode(code, map);
 				logger.info("WeChart openId : " + openId);
 
 				String state = request.getParameter("state");
 				logger.info("WeChart COURSE : " + state);
 
-				Map<String, Object> map = getParameterMap();
 				map.put("OPENID", openId);
 				map.put("ROLE_PK", state);
 				map.put("sqlMapId", "checkUserWx");
@@ -632,7 +641,6 @@ public class WxController extends BaseController {
 						} else {
 							logger.info("add user agent error");
 						}
-						;
 
 						// 返回到成功页面
 						response.sendRedirect(CommonUtil.getPath("project_url").replace("json/DATA.json", "")
