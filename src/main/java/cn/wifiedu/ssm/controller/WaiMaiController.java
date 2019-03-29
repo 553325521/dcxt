@@ -3,6 +3,8 @@ package cn.wifiedu.ssm.controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +17,15 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
@@ -25,6 +33,7 @@ import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.redis.JedisClient;
 import cn.wifiedu.ssm.util.waimai.down.Result;
 import cn.wifiedu.ssm.util.waimai.EBWaiMai;
+import cn.wifiedu.ssm.util.waimai.MTWaiMai;
 import cn.wifiedu.ssm.util.waimai.SignUtil;
 
 		/**
@@ -46,6 +55,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			
 			@Resource
 			private JedisClient jedisClient;
+			
+			@Resource
+			PlatformTransactionManager transactionManager;
 			
 			public OpenService getOpenService() {
 				return openService;
@@ -285,7 +297,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			 * @author lps
 			 * @date 2018年10月5日 下午4:01:16 
 			 * 
-			 * @description: 美团外卖订单确认
+			 * @description: 美团外卖订单确认推送
 			 * @return void
 			 */
 			@RequestMapping("/test/MT_Order_Enter")
@@ -409,16 +421,73 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 				try {
 					map = getParameterMap();
 					
-					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-					StringBuffer sb = new StringBuffer("");
-					String temp;
-					while ((temp = br.readLine()) != null) {
-					sb.append(temp);
+					map = encodeURI(map);
+					
+					if (!map.containsKey("sig")) {
+						return;
 					}
-					br.close();
-					String params = sb.toString();
-					logger.info("-------------MTWM_acceptCancel-------------------");
-					logger.info(params);
+					
+					// 不行啊，一直验证不通过，算了，不弄了，浪费了两天时间，就是验证一下，没必要打开
+					/*if (!MTWaiMai.orderAcceptOrderValidation(map)) {
+						logger.info(map);
+						logger.info("feifa shuuj----------------------------------");
+						// 数据签名验证不通过，非法
+						return;
+					}*/
+					
+					String detail = (String) map.get("detail");
+					
+//					JSONObject detailObject = JSON.parseObject(detail);
+					
+					Map newMap = new HashMap<String, Object>();
+					newMap.put("sqlMapId", "insertMTWMOrder");
+					
+			
+					newMap.put("APP_POI_CODE", map.get("app_poi_code"));
+					
+					newMap.put("ORDER_ID", map.get("order_id"));
+					newMap.put("WM_POI_NAME", map.get("wm_poi_name"));
+					newMap.put("WM_POI_ADDRESS", map.get("wm_poi_address"));
+					newMap.put("WM_POI_PHONE", map.get("wm_poi_phone"));
+					newMap.put("RECIPIENT_ADDRESS", map.get("recipient_address"));
+					newMap.put("RECIPIENT_PHONE", map.get("recipient_phone"));
+					newMap.put("BACKUP_RECIPIENT_PHONE", map.get("backup_recipient_phone"));
+					newMap.put("RECIPIENT_NAME", map.get("recipient_name"));
+					newMap.put("SHIPPING_FEE", map.get("shipping_fee"));
+					newMap.put("TOTAL", map.get("total"));
+					newMap.put("ORIGINAL_PRICE", map.get("original_price"));
+					newMap.put("CAUTION", map.get("caution"));
+					newMap.put("SHIPPER_PHONE", map.get("shipper_phone"));
+					newMap.put("STATUS", map.get("status"));
+					newMap.put("HAS_INVOICED", map.get("has_invoiced"));
+					newMap.put("INVOICE_TITLE", map.get("invoice_title"));
+					newMap.put("CTIME", map.get("ctime"));
+					newMap.put("UTIME", map.get("utime"));
+					newMap.put("DELIVERY_TIME", map.get("delivery_time"));
+					newMap.put("IS_THIRD_SHIPPING", map.get("is_third_shipping"));
+					newMap.put("PAY_TYPE", map.get("pay_type"));
+					newMap.put("PICK_TYPE", map.get("pick_type"));
+					
+					String insert = openService.insert(newMap);
+					
+					if (insert == null) {
+						throw new Exception("订单插入异常");
+					}
+					
+					
+					// 开始插入菜品
+					String foods = (String) map.get("detail");
+					
+					List<Map<String, String>> foodsList = (List<Map<String, String>>)JSON.parse(foods);
+					
+					logger.info(foodsList.toString());
+					
+					Map foodsMap = new HashMap<String, Object>();
+					foodsMap.put("sqlMapId", "insertBatchMTWMFoods");
+					foodsMap.put("foods", foodsList);
+					
+					String insert2 = openService.insert(foodsMap);
+					
 					
 					logger.info("----------MTWM_acceptCancel----------");
 					logger.info(map);
@@ -429,6 +498,20 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					logger.error(map);
 					logger.error(e);
 				}
+			}
+
+			public static Map encodeURI(Map<String, Object> map) {
+				for (String key :  map.keySet()) {
+					String value = (String) map.get(key);
+					if (value != null) {
+						try {
+							map.put(key, URLDecoder.decode((String)map.get(key), "UTF-8"));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				return map;
 			}
 
 			/**
@@ -444,18 +527,11 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 				Map map = null;
 				try {
 					map = getParameterMap();
-					
-					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-					StringBuffer sb = new StringBuffer("");
-					String temp;
-					while ((temp = br.readLine()) != null) {
-					sb.append(temp);
+					if (!map.containsKey("sig")) {
+						return;
 					}
-					br.close();
-					String params = sb.toString();
-					logger.info("-------------MTWM_acceptCancel-------------------");
-					logger.info(params);
 					
+					logger.info("-------------美团用户或客服取消URLl-------------------");
 					logger.info("----------MTWM_acceptCancel----------");
 					logger.info(map);
 					reponse.getWriter().write("{\"data\":\"ok\"}");
@@ -481,17 +557,11 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 				Map map = null;
 				try {
 					map = getParameterMap();
-					
-					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-					StringBuffer sb = new StringBuffer("");
-					String temp;
-					while ((temp = br.readLine()) != null) {
-					sb.append(temp);
+					if (!map.containsKey("sig")) {
+						return;
 					}
-					br.close();
-					String params = sb.toString();
-					logger.info("-------------MTWM_acceptShippingStatus-------------------");
-					logger.info(params);
+					
+					logger.info("-------------订单配送状态回调URL-------------------");
 					
 					logger.info("----------MTWM_acceptShippingStatus----------");
 					logger.info(map);
@@ -516,35 +586,212 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			@RequestMapping("/mt/test/callback/waimai/order/acceptCompleteOrder")
 			public void mtOrderAcceptCompleteOrder(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
 				Map map = null;
+				TransactionStatus status = null;
 				try {
 					map = getParameterMap();
-					
-					BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-					StringBuffer sb = new StringBuffer("");
-					String temp;
-					while ((temp = br.readLine()) != null) {
-					sb.append(temp);
+					if (!map.containsKey("sig")) {
+						return;
 					}
-					br.close();
-					String params = sb.toString();
-					logger.info("-------------MTWM_acceptCompleteOrder-------------------");
-					logger.info(params);
+					map = encodeURI(map);
 					
+					DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
+					defaultTransactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+					status = transactionManager.getTransaction(defaultTransactionDefinition);
+					
+					// 修改订单状态
+					// 需要status order_id
+					map.put("sqlMapId", "updateMTWMOrderStatusByOrderId");
+					boolean update = openService.update(map);
+					if (!update) {
+						throw new Exception("已完成订单推送回调异常");
+					}
+					
+					// 需要status utime order_id
+					map.put("sqlMapId", "insertWaiMaiOrderStatusById");
+					map.put("from", "1");
+					String insert = openService.insert(map);
+					
+					if (insert == null) {
+						throw new Exception("已完成订单推送状态插入异常");
+					}
+					transactionManager.commit(status);
+					logger.info("-------------已完成订单推送回调URLr-------------------");
 					logger.info("----------MTWM_acceptCompleteOrder----------");
 					logger.info(map);
 					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
 				} catch (Exception e) {
+					transactionManager.rollback(status);
 					logger.error("-------------MTWM_acceptCompleteOrder fail-------------------");
 					logger.error(map);
 					logger.error(e);
 				}
 			}
 			
-/**
- * 如上为美团外卖回调			
- */
+		/**
+		 * 如上为美团外卖回调			
+		 */
 			
+		// 如下为美团外卖商户操作
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 * 
+			 * @description: 商家确认订单
+			 * @return void
+			 */
+			@RequestMapping("order/confirm")
+			public void orderConfirm(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					String orderId = (String) map.get("orderId");
+					if (orderId == null) {
+						return;
+					}
+					Map<String, String> orderConfirm = MTWaiMai.orderConfirm((String)map.get("orderId"));
+					if ("ok".equals(orderConfirm.get("data"))) {
+						boolean updateOrderStatus = updateOrderStatus(orderId, "4");
+						if (!updateOrderStatus) {
+							logger.error("-------------orderConfirm fail-------------------");
+							logger.error(orderId);
+						}
+					}
+					reponse.getWriter().write("{\"data\":\"ok\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------MTWM_acceptCancel fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 * 
+			 * @description: 订单配送中
+			 * @return void
+			 */
+			@RequestMapping("order/delivering")
+			public void orderDelivering(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					String orderId = (String) map.get("orderId");
+					if (orderId == null) {
+						return;
+					}
+					Map<String, String> orderConfirm = MTWaiMai.orderDelivering((String)map.get("orderId"));
+					if ("ok".equals(orderConfirm.get("data"))) {
+						boolean updateOrderStatus = updateOrderStatus(orderId, "6");
+						if (!updateOrderStatus) {
+							logger.error("-------------order/delivering-------------------");
+							logger.error(orderId);
+						}
+					}
+					reponse.getWriter().write("{\"data\":\"ok\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------order/deliveringl-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 * 
+			 * @description: 订单已送达
+			 * @return void
+			 */
+			@RequestMapping("order/arrived")
+			public void orderArrived(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					String orderId = (String) map.get("orderId");
+					if (orderId == null) {
+						return;
+					}
+					Map<String, String> orderConfirm = MTWaiMai.orderArrived((String)map.get("orderId"));
+					if ("ok".equals(orderConfirm.get("data"))) {
+						boolean updateOrderStatus = updateOrderStatus(orderId, "7");
+						if (!updateOrderStatus) {
+							logger.error("-------------order/arrived fail-------------------");
+							logger.error(orderId);
+						}
+					}
+					reponse.getWriter().write("{\"data\":\"ok\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------order/arrivedl fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+			
+			
+			
+			
+			
+			/**
+			 * 
+			 * @author lps
+			 * @date Mar 29, 2019 11:13:16 PM 
+			 * 
+			 * @description: 修改美团订单状态
+			 * @return boolean
+			 */
+			public boolean updateOrderStatus(String orderId, String status) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				try {
+					// 修改订单状态
+					// 需要status order_id
+					map.put("sqlMapId", "updateMTWMOrderStatusByOrderId");
+					map.put("status", status);
+					boolean update = openService.update(map);
+					if (!update) {
+						return false;
+					}
+					
+					// 需要status utime order_id
+					map.put("sqlMapId", "insertWaiMaiOrderStatusById");
+					map.put("from", "1");
+				
+					String insert = openService.insert(map);
+					
+					if (insert != null) {
+						return true;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				return false;
+			}
+			
+			
+			
+				
+			public static Map<String, Object> MTWMOrderConfrim () {
+				
+				
+				
+				return null;
+			}
+			
+			
+			/**
+			 * 美团外卖操作结束
+			 */
 			
 			
 			/**

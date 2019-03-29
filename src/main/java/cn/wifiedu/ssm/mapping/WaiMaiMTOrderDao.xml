@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="waiMaiMTOrder" >
+  <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
+  <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
+	
+	<!-- 插入外卖订单信息 -->
+	<insert id="insertMTWMOrder" parameterMap="BaseParameterMap" >
+		INSERT INTO sc_waimai_mt_order
+		(
+			MTWM_ORDER_PK,
+			ORDER_ID,
+			APP_POI_CODE,
+			WM_POI_NAME,
+			WM_POI_ADDRESS,
+			WM_POI_PHONE,
+			RECIPIENT_ADDRESS,
+			RECIPIENT_PHONE,
+			BACKUP_RECIPIENT_PHONE,
+			RECIPIENT_NAME,
+			SHIPPING_FEE,
+			TOTAL,
+			ORIGINAL_PRICE,
+			CAUTION,
+			SHIPPER_PHONE,
+			STATUS,
+			HAS_INVOICED,
+			INVOICE_TITLE,
+			CTIME,
+			UTIME,
+			DELIVERY_TIME,
+			IS_THIRD_SHIPPING,
+			PAY_TYPE,
+			PICK_TYPE,
+			CREATE_TIME,
+			CREATE_BY
+		)
+		VALUES
+		(
+			#{UUID},
+			#{ORDER_ID},
+			#{APP_POI_CODE},
+			#{WM_POI_NAME},
+			#{WM_POI_ADDRESS},
+			#{WM_POI_PHONE},
+			#{RECIPIENT_ADDRESS},
+			#{RECIPIENT_PHONE},
+			#{BACKUP_RECIPIENT_PHONE},
+			#{RECIPIENT_NAME},
+			#{SHIPPING_FEE},
+			#{TOTAL},
+			#{ORIGINAL_PRICE},
+			#{CAUTION},
+			#{SHIPPER_PHONE},
+			#{STATUS},
+			#{HAS_INVOICED},
+			#{INVOICE_TITLE},
+			#{CTIME},
+			#{UTIME},
+			#{DELIVERY_TIME},
+			#{IS_THIRD_SHIPPING},
+			#{PAY_TYPE},
+			#{PICK_TYPE},
+			NOW(),
+			#{CREATE_BY}
+		)
+	
+	</insert>
+	
+	<!-- 根据OrderId修改配送状态  --> 
+	<update id="updateMTWMOrderStatusByOrderId" parameterMap="BaseParameterMap" >
+		UPDATE sc_waimai_mt_order SET 
+			STATUS = #{status}, 
+			UPDATE_TIME = NOW()
+		WHERE 
+			ORDER_ID = #{order_id};
+	</update>
+	<!-- 根据OrderId修改配送状态 
+	<update id="updaeteWaiMaiStatusByREBOrderId" parameterMap="BaseParameterMap" >
+		UPDATE sc_waimai_eb_order SET 
+			ORDER_STATUS = #{ORDER_STATUS}, 
+			ORDER_STATUS_TIME = #{ORDER_STATUS_TIME}, 
+			UPDATE_TIME = NOW(), 
+			UPDATE_BY = #{UPDATE_BY}
+		WHERE 
+			ORDER_ID = #{ORDER_ID};
+	</update>
+	
+ 根据OrderId需改物流类型
+	<update id="updaeteWaiMaiWLByEBOrderId" parameterMap="BaseParameterMap" >
+		UPDATE sc_waimai_eb_order SET 
+			ORDER_DELIVERY_PARTY = #{ORDER_DELIVERY_PARTY},
+			UPDATE_TIME = NOW(), 
+			UPDATE_BY = #{UPDATE_BY}
+		WHERE 
+			ORDER_ID = #{ORDER_ID};
+	</update>
+	
+	根据店铺id查询所有订单基本信息
+	<select id="selectWaiMaiBaseListByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			ORDER_PK, ORDER_FROM, ORDER_SEND_IMMEDIATELY, ORDER_STATUS, ORDER_DELIVERY_PARTY, ORDER_SHOP_FEE, ORDER_CREATE_TIME, USER_NAME, USER_PHONE, PRODUCTS
+		FROM 
+			 sc_waimai_eb_order
+		WHERE 
+			SHOP_BAIDU_ID = (SELECT EB_SHOP_ID FROM sc_shop_info WHERE SHOP_ID = #{SHOP_ID});
+	</select>
+	
+	根据OrderId查询订单详细信息
+	<select id="selectWaiMaiByOrderId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT 
+			ORDER_PK, ORDER_ID, ORDER_FROM, ORDER_SEND_IMMEDIATELY, ORDER_STATUS, ORDER_DELIVERY_PARTY,ORDER_FLAG,ORDER_STATUS_TIME,ORDER_REMARK, ORDER_PACKAGE_FEE, ORDER_SEND_FEE, ORDER_DISCOUNT_FEE,ORDER_USER_FEE,
+			ORDER_TOTAL_FEE, ORDER_SHOP_FEE, ORDER_SHOP_FEE, ORDER_CREATE_TIME,ORDER_SEND_TIME, USER_NAME, USER_PHONE, USER_GENDER, USER_ADDRESS, SHOP_NAME, PRODUCTS
+		FROM 
+			 sc_waimai_eb_order
+		WHERE 
+			ORDER_PK = #{ORDER_PK};
+	</select> -->
+	
+	
+	
+	
+	
+	
+</mapper>
