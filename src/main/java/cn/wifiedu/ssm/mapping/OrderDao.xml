@@ -78,7 +78,8 @@
 		GROUP BY od.FK_ORDER
 	</select>
 	
-	
+
+
  	<!-- 根据订单id查询订单详情 -->
  	<select id="selectOrderDetailByOrderPK" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
  		select 	o.ORDER_PK,
@@ -343,6 +344,46 @@
 					AND eb.SHOP_BAIDU_ID = (SELECT s.EB_SHOP_ID  FROM sc_shop_info s 
 							WHERE s.SHOP_ID = #{FK_SHOP})
 	</select>
+
+	<!-- 查询今日美团订单消费总金额 -->
+	<select id="selectMTMoney" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT
+			mt.TOTAL
+		FROM
+			sc_waimai_mt_order mt
+		WHERE
+			str_to_date( mt.CREATE_TIME, '%Y-%m-%d %H:%i:%s' ) BETWEEN str_to_date(#{todayStart},'%Y-%m-%d %H:%i:%s')
+
+				AND str_to_date(#{todayEnd},'%Y-%m-%d %H:%i:%s')
+
+					AND mt.APP_POI_CODE = (
+					SELECT
+						s.MT_SHOP_ID
+					FROM
+						sc_shop_info s
+				WHERE
+			s.SHOP_ID = #{FK_SHOP})
+	</select>
+	<!-- 查询今日美团订单商品总份数-->
+	<select id="selectMTOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT
+			COUNT( od.QUANTITY ) AS EB_ORDER_NUMBER
+		FROM
+			sc_waimai_mt_order mt
+			LEFT JOIN sc_mt_order_detail od ON mt.MTWM_ORDER_PK = od.ORDER_FK
+		WHERE
+			str_to_date( mt.CREATE_TIME, '%Y-%m-%d %H:%i:%s' ) BETWEEN str_to_date(#{todayStart},'%Y-%m-%d %H:%i:%s')
+
+				AND str_to_date(#{todayEnd},'%Y-%m-%d %H:%i:%s')
+
+					AND mt.APP_POI_CODE = (
+					SELECT
+						s.MT_SHOP_ID
+					FROM
+						sc_shop_info s
+				WHERE
+			s.SHOP_ID = #{FK_SHOP})
+	</select>
 	
 
 	<select id="loadCountOrderWei" parameterMap="BaseParameterMap"
@@ -386,6 +427,25 @@
 				BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') 
 				AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
 	</select>
+	<!-- 查询美团外卖数据 -->
+	<select id="selectMTWMOrderData" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT
+			mo.MTWM_ORDER_PK,
+			mo.CREATE_TIME,
+			mo.TOTAL AS ORDER_SHOPMONEY,
+			mo.RECIPIENT_NAME AS WM_ORDER_USERNAME,
+			mo.RECIPIENT_PHONE AS WM_USERPHONE,
+			mo.IS_THIRD_SHIPPING AS WM_ORDER_DELIVERY_PARTY,
+			( SELECT COUNT( od.MT_ORDER_DETAIL_ID ) FROM sc_mt_order_detail od WHERE od.ORDER_FK = mo.MTWM_ORDER_PK ) AS GOODS_FS
+		FROM
+			sc_waimai_mt_order mo
+		WHERE
+			mo.APP_POI_CODE = ( SELECT s.MT_SHOP_ID FROM sc_shop_info s WHERE s.SHOP_ID = #{FK_SHOP} )
+			AND mo.STATUS = #{orderStatus}
+			AND str_to_date(eo.CREATE_TIME,'%Y-%m-%d %H:%i:%s')
+				BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s')
+				AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+	</select>
 	<!-- 查询智慧云订单状态的分别数量 -->
 	<select id="loadZHYOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT o.WM_ORDER_STATE,COUNT(o.ORDER_PK) AS ORDER_NUMBER
@@ -410,6 +470,23 @@
 				BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s') 
 				AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
 			GROUP BY eo.ORDER_STATUS
+	</select>
+	<!-- 查询美团订单状态的分别数量 -->
+	<select id="loadMTOrderNumber" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT
+			mo.STATUS AS WM_ORDER_STATE,
+			COUNT( mo.MTWM_ORDER_PK ) AS ORDER_NUMBER
+		FROM
+			sc_waimai_mt_order mo
+		WHERE
+			mo.APP_POI_CODE = ( SELECT s.MT_SHOP_ID FROM sc_shop_info s WHERE s.SHOP_ID = #{FK_SHOP}
+			)
+			AND str_to_date( mo.CREATE_TIME, '%Y-%m-%d %H:%i:%s' ) BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s')
+
+				AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')
+
+			GROUP BY
+			mo.STATUS
 	</select>
 	<resultMap id="wmOrderDetail" type="java.util.HashMap">
             <id column="ORDER_PK" property="ORDER_PK"/>

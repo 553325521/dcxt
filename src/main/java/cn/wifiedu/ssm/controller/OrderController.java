@@ -389,7 +389,28 @@ public class OrderController extends BaseController {
 			}
 			//如果包含美团外卖端，加载美团外卖数据
 			if(CheckArrayContainsValue(orderSourceArray,"美团外卖")){
-				
+				map.put("sqlMapId", "selectMTWMOrderData");
+				List<Map<String,Object>> bdResultList = openService.queryForList(map);
+				if(bdResultList.size()!=0){
+					for(Map<String,Object> o:bdResultList){
+						o.put("SOURCENAME", "美团外卖");
+						returnData.add(o);
+					}
+				}
+				//订单数量
+				map.put("sqlMapId", "loadMTOrderNumber");
+				List<Map<String,Object>> eNumberResultList = openService.queryForList(map);
+				if(eNumberResultList.size()!=0){
+					for(Map<String,Object> o:eNumberResultList){
+						if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("2")){
+							noConfirmNumber = noConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("8")){
+							isFinishNumber = isFinishNumber+Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}else if(o.containsKey("WM_ORDER_STATE")&&o.get("WM_ORDER_STATE").equals("4")){
+							isConfirmNumber = isConfirmNumber + Integer.parseInt(o.get("ORDER_NUMBER").toString());
+						}
+					}
+				}
 			}
 			numberData.put("noConfirmNumber",noConfirmNumber);
 			numberData.put("isFinishNumber",isFinishNumber);

@@ -20,6 +20,7 @@
 			FOOD_DISCOUNT,
 			FOOD_PROPERTY,
 			CARD_ID,
+			ORDER_FK,
 			CREATE_TIME
 		)
 		VALUES
@@ -35,8 +36,9 @@
 			#{item.box_price}, 
 			#{item.unit},
 			#{item.food_discount}, 
-			#{item.food_property}, 
+			#{item.food_property},
 			#{item.cart_id},
+			#{ORDER_FK},
 			NOW()
 		)
 		</foreach>	

@@ -66,7 +66,8 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			public void setOpenService(OpenService openService) {
 			this.openService = openService;
 			}
-			
+
+
 			
 			/**
 			 * 
@@ -434,17 +435,22 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 						// 数据签名验证不通过，非法
 						return;
 					}*/
-					
-					String detail = (String) map.get("detail");
-					
-//					JSONObject detailObject = JSON.parseObject(detail);
-					
+
+					// 元转换成分
+					float total = (float)map.get("total");
+					float shippingFee = (float)map.get("shipping_fee");
+					float originalPrice = (float)map.get("original_price");
+
 					Map newMap = new HashMap<String, Object>();
+
+					newMap.put("TOTAL", total);
+					newMap.put("SHIPPING_FEE", shippingFee);
+					newMap.put("ORIGINAL_PRICE", originalPrice);
+
+
 					newMap.put("sqlMapId", "insertMTWMOrder");
 					
-			
 					newMap.put("APP_POI_CODE", map.get("app_poi_code"));
-					
 					newMap.put("ORDER_ID", map.get("order_id"));
 					newMap.put("WM_POI_NAME", map.get("wm_poi_name"));
 					newMap.put("WM_POI_ADDRESS", map.get("wm_poi_address"));
@@ -453,9 +459,6 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					newMap.put("RECIPIENT_PHONE", map.get("recipient_phone"));
 					newMap.put("BACKUP_RECIPIENT_PHONE", map.get("backup_recipient_phone"));
 					newMap.put("RECIPIENT_NAME", map.get("recipient_name"));
-					newMap.put("SHIPPING_FEE", map.get("shipping_fee"));
-					newMap.put("TOTAL", map.get("total"));
-					newMap.put("ORIGINAL_PRICE", map.get("original_price"));
 					newMap.put("CAUTION", map.get("caution"));
 					newMap.put("SHIPPER_PHONE", map.get("shipper_phone"));
 					newMap.put("STATUS", map.get("status"));
@@ -468,9 +471,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					newMap.put("PAY_TYPE", map.get("pay_type"));
 					newMap.put("PICK_TYPE", map.get("pick_type"));
 					
-					String insert = openService.insert(newMap);
+					String orderId = openService.insert(newMap);
 					
-					if (insert == null) {
+					if (orderId == null) {
 						throw new Exception("订单插入异常");
 					}
 					
@@ -478,13 +481,15 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					// 开始插入菜品
 					String foods = (String) map.get("detail");
 					
-					List<Map<String, String>> foodsList = (List<Map<String, String>>)JSON.parse(foods);
-					
-					logger.info(foodsList.toString());
-					
+					List<Map<String, Object>> foodsList = (List<Map<String, Object>>)JSON.parse(foods);
+
+					// 元转换成分
+					foodsList.forEach((food) -> food.put("price" , ((float)food.get("price")) * 100));
+
 					Map foodsMap = new HashMap<String, Object>();
 					foodsMap.put("sqlMapId", "insertBatchMTWMFoods");
 					foodsMap.put("foods", foodsList);
+					foodsMap.put("ORDER_FK", orderId);
 					
 					String insert2 = openService.insert(foodsMap);
 					
@@ -746,11 +751,47 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					logger.error(e);
 				}
 			}
-			
-			
-			
-			
-			
+
+
+			/**
+			 *
+			 * @author lps
+			 * @date 2019年03月14日22:58:28
+			 *
+			 * @description: 取消订单
+			 * @return void
+			 */
+			@RequestMapping("order/cancel")
+			public void OrderCancel(HttpServletRequest request,HttpSession seesion, HttpServletResponse reponse){
+				Map map = null;
+				try {
+					map = getParameterMap();
+					String orderId = (String) map.get("orderId");
+					if (orderId == null) {
+						return;
+					}
+					Map<String, String> orderCancel = MTWaiMai.orderCancel((String)map.get("orderId"), "" ,"");
+					if ("ok".equals(orderCancel.get("data"))) {
+						boolean updateOrderStatus = updateOrderStatus(orderId, "7");
+						if (!updateOrderStatus) {
+							logger.error("-------------order/cancel fail-------------------");
+							logger.error(orderId);
+						}
+					} else {
+						output("9999", orderCancel);
+						return;
+					}
+					reponse.getWriter().write("{\"data\":\"ok\"}");
+					return;
+				} catch (Exception e) {
+					logger.error("-------------order/cancel fail-------------------");
+					logger.error(map);
+					logger.error(e);
+				}
+			}
+
+
+
 			/**
 			 * 
 			 * @author lps
@@ -771,6 +812,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					if (!update) {
 						return false;
 					}
+					
 					
 					// 需要status utime order_id
 					map.put("sqlMapId", "insertWaiMaiOrderStatusById");
