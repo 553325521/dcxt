@@ -86,7 +86,6 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					map = getParameterMap();
 					logger.info("----------MT_Heartbeat_CallBack----------");
 					logger.info(map);
-					
 
 					reponse.getWriter().write("{\"data\":\"success\"}");
 					return;
