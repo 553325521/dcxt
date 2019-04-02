@@ -8,6 +8,8 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,7 @@ import cn.wifiedu.core.controller.BaseController;
 import cn.wifiedu.core.service.OpenService;
 import cn.wifiedu.core.vo.ExceptionVo;
 import cn.wifiedu.ssm.util.redis.JedisClient;
+import cn.wifiedu.ssm.util.redis.RedisConstants;
 import cn.wifiedu.ssm.util.waimai.down.Result;
 import cn.wifiedu.ssm.util.waimai.EBWaiMai;
 import cn.wifiedu.ssm.util.waimai.MTWaiMai;
@@ -58,6 +61,8 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			
 			@Resource
 			PlatformTransactionManager transactionManager;
+			
+			ExecutorService executorService = Executors.newCachedThreadPool();
 			
 			public OpenService getOpenService() {
 				return openService;
@@ -434,11 +439,13 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 						// 数据签名验证不通过，非法
 						return;
 					}*/
+					
+					System.out.println("fdsfsdgrsdg");
 
 					// 元转换成分
-					float total = (float)map.get("total");
-					float shippingFee = (float)map.get("shipping_fee");
-					float originalPrice = (float)map.get("original_price");
+					float total = Float.parseFloat((String) map.get("total"));
+					float shippingFee = Float.parseFloat((String)map.get("shipping_fee"));
+					float originalPrice = Float.parseFloat((String)map.get("original_price"));
 
 					Map newMap = new HashMap<String, Object>();
 
@@ -483,7 +490,7 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					List<Map<String, Object>> foodsList = (List<Map<String, Object>>)JSON.parse(foods);
 
 					// 元转换成分
-					foodsList.forEach((food) -> food.put("price" , ((float)food.get("price")) * 100));
+					foodsList.forEach((food) -> food.put("price" , (Float.parseFloat(String.valueOf(food.get("price")))) * 100));
 
 					Map foodsMap = new HashMap<String, Object>();
 					foodsMap.put("sqlMapId", "insertBatchMTWMFoods");
@@ -491,6 +498,18 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					foodsMap.put("ORDER_FK", orderId);
 					
 					String insert2 = openService.insert(foodsMap);
+					
+					
+					// 插入状态表
+					// 需要status utime order_id
+					map.put("sqlMapId", "insertWaiMaiOrderStatusById");
+					map.put("from", "1");
+					map.put("status", "2");
+					String insert = openService.insert(map);
+					
+					// 自动接单任务执行
+					String appPoiCode = (String)map.get("app_poi_code");
+					this.autoEnterOrder(appPoiCode, (String)map.get("order_id"));
 					
 					
 					logger.info("----------MTWM_acceptCancel----------");
@@ -502,6 +521,39 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 					logger.error(map);
 					logger.error(e);
 				}
+			}
+
+			// 自动接单
+			private void autoEnterOrder(String appPoiCode, String orderId) {
+				executorService.execute(new Runnable() {
+					@Override
+					public void run() {
+						Map map = new HashMap<String, Object>();
+						
+							try {
+								// 先获取美团推送的店铺id，按理说这个和本地的是一样的，TODO
+								map.put("MT_SHOP_ID", appPoiCode);
+								map.put("sqlMapId", "getShopIdByMTShopId");
+								Map<String, Object> shopIdMap = (Map<String, Object>)openService.queryForObject(map);
+								
+								String shopId = (String)shopIdMap.get("SHOP_ID");
+								
+								// 获取商铺外卖信息，查询是否自动接单
+								map.put("SHOP_ID", shopId);
+								map.put("sqlMapId", "selectWaiMaiSettingByShopId");
+								Map waiMaiSettingMap = (Map<String, String>)openService.queryForObject(map);
+								
+								// 自动接单开关
+								String enterOrderSwitch = (String)waiMaiSettingMap.get("WM_ZDQRDD");
+								
+								if ("1".equals(enterOrderSwitch)) {
+									MTWaiMai.orderConfirm(orderId);
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+					}
+				});
 			}
 
 			public static Map encodeURI(Map<String, Object> map) {
@@ -535,13 +587,13 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 						return;
 					}
 					
+					this.updateOrderStatus((String)map.get("order_id"), "9");
+					
 					logger.info("-------------美团用户或客服取消URLl-------------------");
-					logger.info("----------MTWM_acceptCancel----------");
 					logger.info(map);
 					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
 				} catch (Exception e) {
-					logger.error("-------------MTWM_acceptCancel fail-------------------");
 					logger.error(map);
 					logger.error(e);
 				}
@@ -565,9 +617,9 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 						return;
 					}
 					
-					logger.info("-------------订单配送状态回调URL-------------------");
+//					this.updateOrderStatus((String)map.get("order_id"), (String)map.get("status"));
 					
-					logger.info("----------MTWM_acceptShippingStatus----------");
+					logger.info("-------------订单配送状态回调URL-------------------");
 					logger.info(map);
 					reponse.getWriter().write("{\"data\":\"ok\"}");
 					return;
@@ -1149,14 +1201,18 @@ import cn.wifiedu.ssm.util.waimai.SignUtil;
 			
 			public static void main(String[] args) {
 				
+				float parseFloat = Float.parseFloat("0.01") * 100;
 				
-				String s = "{\"body\":{\"errno\":0,\"error\":\"success\",\"data\":{\"source\":\"62863\",\"shop\":{\"id\":\"test_781544_62863\",\"name\":\"\\u738b\\u666f\\u9f99\\u5927\\u6392\\u6863\",\"baidu_shop_id\":\"2234526556\"},\"order\":{\"order_from\":\"2\",\"cold_box_fee\":\"0\",\"eleme_order_id\":\"2100170426395197452\",\"order_flag\":0,\"ext\":{\"taoxi_flag\":0},\"is_cold_box_order\":0,\"expect_time_mode\":1,\"pickup_time\":0,\"atshop_time\":0,\"delivery_time\":0,\"delivery_phone\":\"\",\"finished_time\":\"0\",\"confirm_time\":\"1539718241\",\"meal_num\":\"\",\"commission\":0,\"order_id\":\"15397181282021\",\"order_index\":\"3\",\"status\":10,\"send_immediately\":1,\"send_time\":\"1\",\"send_fee\":0,\"package_fee\":0,\"total_fee\":1,\"shop_fee\":1,\"user_fee\":1,\"responsible_party\":\"\\u9910\\u5385\",\"down_flag\":0,\"pay_type\":2,\"pay_status\":2,\"need_invoice\":2,\"invoice_title\":\"\",\"taxer_id\":\"\",\"remark\":\"\",\"delivery_party\":6,\"create_time\":\"1539718127\",\"cancel_time\":\"1539718272\",\"is_private\":0,\"discount_fee\":0},\"user\":{\"name\":\"\\u9646\\u4e15\\u5c71\",\"phone\":\"17865218840\",\"gender\":1,\"address\":\"\\u6d4e\\u5b81\\u5b66\\u9662\\u6587\\u5316\\u9152\\u5e971\\u697c\\u5317\\u95e8\",\"province\":null,\"city\":null,\"district\":null,\"coord\":{\"longitude\":116.962363,\"latitude\":35.557141}},\"products\":[[{\"baidu_product_id\":\"1539717705337067\",\"upc\":\"wm85535096914917\",\"custom_sku_id\":\"\",\"product_name\":\"\\u874c\\u86aa\\u5543\\u8721\",\"product_type\":1,\"product_price\":1,\"product_amount\":1,\"product_fee\":1,\"package_price\":0,\"package_amount\":0,\"package_fee\":0,\"total_fee\":1,\"product_attr\":[],\"product_features\":[],\"product_custom_index\":\"1539717705337067_0_0\",\"product_subsidy\":{\"discount\":0,\"baidu_rate\":0,\"shop_rate\":0,\"user_rate\":0,\"agent_rate\":0,\"logistics_rate\":0},\"prescription_id\":\"\",\"supply_type\":0}]],\"discount\":[]}},\"cmd\":\"resp.order.get\",\"encrypt\":\"\",\"sign\":\"6C83EF3EF76117FB007547279064039C\",\"source\":\"62863\",\"ticket\":\"5001ABFE-43B1-C887-A7C7-EAF9F16F8D3D\",\"timestamp\":1539940745,\"version\":\"3\"}";
-				Map parse = (Map)JSON.parse(s);
-				Map reBody = (Map)parse.get("body");
+				System.out.println(parseFloat);
 				
 				
-				System.out.println("0".equals(reBody.get("errno").toString()));
-				
+//				String s = "{\"body\":{\"errno\":0,\"error\":\"success\",\"data\":{\"source\":\"62863\",\"shop\":{\"id\":\"test_781544_62863\",\"name\":\"\\u738b\\u666f\\u9f99\\u5927\\u6392\\u6863\",\"baidu_shop_id\":\"2234526556\"},\"order\":{\"order_from\":\"2\",\"cold_box_fee\":\"0\",\"eleme_order_id\":\"2100170426395197452\",\"order_flag\":0,\"ext\":{\"taoxi_flag\":0},\"is_cold_box_order\":0,\"expect_time_mode\":1,\"pickup_time\":0,\"atshop_time\":0,\"delivery_time\":0,\"delivery_phone\":\"\",\"finished_time\":\"0\",\"confirm_time\":\"1539718241\",\"meal_num\":\"\",\"commission\":0,\"order_id\":\"15397181282021\",\"order_index\":\"3\",\"status\":10,\"send_immediately\":1,\"send_time\":\"1\",\"send_fee\":0,\"package_fee\":0,\"total_fee\":1,\"shop_fee\":1,\"user_fee\":1,\"responsible_party\":\"\\u9910\\u5385\",\"down_flag\":0,\"pay_type\":2,\"pay_status\":2,\"need_invoice\":2,\"invoice_title\":\"\",\"taxer_id\":\"\",\"remark\":\"\",\"delivery_party\":6,\"create_time\":\"1539718127\",\"cancel_time\":\"1539718272\",\"is_private\":0,\"discount_fee\":0},\"user\":{\"name\":\"\\u9646\\u4e15\\u5c71\",\"phone\":\"17865218840\",\"gender\":1,\"address\":\"\\u6d4e\\u5b81\\u5b66\\u9662\\u6587\\u5316\\u9152\\u5e971\\u697c\\u5317\\u95e8\",\"province\":null,\"city\":null,\"district\":null,\"coord\":{\"longitude\":116.962363,\"latitude\":35.557141}},\"products\":[[{\"baidu_product_id\":\"1539717705337067\",\"upc\":\"wm85535096914917\",\"custom_sku_id\":\"\",\"product_name\":\"\\u874c\\u86aa\\u5543\\u8721\",\"product_type\":1,\"product_price\":1,\"product_amount\":1,\"product_fee\":1,\"package_price\":0,\"package_amount\":0,\"package_fee\":0,\"total_fee\":1,\"product_attr\":[],\"product_features\":[],\"product_custom_index\":\"1539717705337067_0_0\",\"product_subsidy\":{\"discount\":0,\"baidu_rate\":0,\"shop_rate\":0,\"user_rate\":0,\"agent_rate\":0,\"logistics_rate\":0},\"prescription_id\":\"\",\"supply_type\":0}]],\"discount\":[]}},\"cmd\":\"resp.order.get\",\"encrypt\":\"\",\"sign\":\"6C83EF3EF76117FB007547279064039C\",\"source\":\"62863\",\"ticket\":\"5001ABFE-43B1-C887-A7C7-EAF9F16F8D3D\",\"timestamp\":1539940745,\"version\":\"3\"}";
+//				Map parse = (Map)JSON.parse(s);
+//				Map reBody = (Map)parse.get("body");
+//				
+//				
+//				System.out.println("0".equals(reBody.get("errno").toString()));
+//				
 				
 				
 				

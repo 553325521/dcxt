@@ -412,4 +412,14 @@
 		SELECT * FROM sc_shop_info WHERE SHOP_ID = #{SHOP_ID};
 	</select>
 	
+	<!-- 根绝美团商铺id查询智慧云商铺id -->
+	<select id="getShopIdByMTShopId" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT SHOP_ID FROM sc_shop_info WHERE MT_SHOP_ID = #{MT_SHOP_ID}
+	</select>
+	
+	<!-- 根绝饿百商铺id查询智慧云商铺id -->
+	<select id="getShopIdByEBShopId" resultMap="BaseResultMap" parameterMap="BaseParameterMap">
+		SELECT SHOP_ID FROM sc_shop_info WHERE EB_SHOP_ID = #{EB_SHOP_ID}
+	</select>
+	
 </mapper>

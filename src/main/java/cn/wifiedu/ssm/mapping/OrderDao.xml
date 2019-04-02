@@ -441,7 +441,7 @@
 			sc_waimai_mt_order mo
 		WHERE
 			mo.APP_POI_CODE = ( SELECT s.MT_SHOP_ID FROM sc_shop_info s WHERE s.SHOP_ID = #{FK_SHOP} )
-			AND mo.STATUS = #{orderStatus}
+			AND mo.STATUS = #{STATUS}
 			AND str_to_date(mo.CREATE_TIME,'%Y-%m-%d %H:%i:%s')
 				BETWEEN str_to_date(#{startTime},'%Y-%m-%d %H:%i:%s')
 				AND str_to_date(#{endTime},'%Y-%m-%d %H:%i:%s')

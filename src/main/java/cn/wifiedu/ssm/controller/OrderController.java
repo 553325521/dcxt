@@ -390,6 +390,16 @@ public class OrderController extends BaseController {
 			//如果包含美团外卖端，加载美团外卖数据
 			if(CheckArrayContainsValue(orderSourceArray,"美团外卖")){
 				map.put("sqlMapId", "selectMTWMOrderData");
+				if ("1".equals(map.get("orderStatus"))) {
+					map.put("STATUS", "2");
+				}
+				if ("5".equals(map.get("orderStatus"))) {
+					map.put("STATUS", "4");
+				}
+				if ("9".equals(map.get("orderStatus"))) {
+					map.put("STATUS", "8");
+				}
+				
 				List<Map<String,Object>> bdResultList = openService.queryForList(map);
 				if(bdResultList.size()!=0){
 					for(Map<String,Object> o:bdResultList){
@@ -419,6 +429,7 @@ public class OrderController extends BaseController {
 			returnMap.put("orderNumber", numberData);
 			output("0000",returnMap);
 		} catch (ExceptionVo e) {
+			logger.error(e);
 			e.printStackTrace();
 			output("9999","没有外卖订单数据");
 		} catch (Exception e) {

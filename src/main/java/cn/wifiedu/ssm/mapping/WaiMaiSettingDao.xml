@@ -4,9 +4,14 @@
   <resultMap id="BaseResultMap" type="java.util.HashMap" ></resultMap>
   <parameterMap id="BaseParameterMap" type="java.util.HashMap" ></parameterMap>
   
-  <!-- 查询外卖设置信息 -->
-	<select id="selectWaiMaiSettingByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+  	<!-- 查询美团外卖设置信息 -->
+	<select id="selectMTWaiMaiSettingByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
 		SELECT a.*,m.MTYS_PK FROM sc_waimai_setting a LEFT JOIN sc_mt_shop_mapping m ON a.SHOP_FK = m.MTYS_EPOILD WHERE SHOP_FK = #{SHOP_ID};
+	</select>
+	
+	 <!-- 根据商铺id查询外卖设置信息 -->
+	<select id="selectWaiMaiSettingByShopId" parameterMap="BaseParameterMap" resultMap="BaseResultMap">
+		SELECT * FROM sc_waimai_setting WHERE SHOP_FK = #{SHOP_ID};
 	</select>
 	
 	<!-- 插入外卖设置 -->
